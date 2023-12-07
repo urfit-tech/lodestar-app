@@ -436,12 +436,17 @@ const ProgramContentPlayerWrapper = (props: {
         { type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' },
       ])
     }
+    // aws cloudfront cookie
+    Cookies.remove('CloudFront-Policy')
+    Cookies.remove('CloudFront-Key-Pair-Id')
+    Cookies.remove('CloudFront-Signature')
+    // path from lambda function => cloudfront.playPaths (file generated from Media Convert)
     if (props.options?.cloudfront?.playPaths) {
       const { hls, dash } = props.options.cloudfront.playPaths
       const path = hls.split('hls')
       axios
         .post(
-          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-url`,
+          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-cookies`,
           {
             url: `${path[0]}*`,
           },
@@ -449,19 +454,20 @@ const ProgramContentPlayerWrapper = (props: {
             headers: {
               Authorization: `Bearer ${authToken}`,
             },
+            withCredentials: true,
           },
         )
         .then(({ data }) => {
-          const url = data.result
-          Cookies.set('cloudfront-signed', new URL(url).search, { expires: 1 / 12 })
           setSources([
             {
               type: 'application/x-mpegURL',
               src: hls,
+              withCredentials: true,
             },
             {
               type: 'application/dash+xml',
               src: dash,
+              withCredentials: true,
             },
           ])
         })
@@ -476,7 +482,7 @@ const ProgramContentPlayerWrapper = (props: {
 
       axios
         .post(
-          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-url`,
+          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-cookies`,
           {
             url: `${path.split('manifest')[0]}*`,
           },
@@ -484,15 +490,15 @@ const ProgramContentPlayerWrapper = (props: {
             headers: {
               Authorization: `Bearer ${authToken}`,
             },
+            withCredentials: true,
           },
         )
         .then(({ data }) => {
-          const url = data.result
-          Cookies.set('cloudfront-signed', new URL(url).search, { expires: 1 / 12 })
           setSources([
             {
               type: 'application/x-mpegURL',
               src: path,
+              withCredentials: true,
             },
           ])
         })
