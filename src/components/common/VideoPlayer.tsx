@@ -11,7 +11,7 @@ import { isIOS, isMobile } from '../../helpers'
 type VideoJsPlayerProps = {
   loading?: boolean
   error?: string | null
-  sources: { src: string; type: string; withCredentials?: boolean }[]
+  sources: { src: string; type: string }[]
   poster?: string
   onReady?: (player: VideoJsPlayer) => void
   onDurationChange?: (player: VideoJsPlayer, event: Event) => void
@@ -39,11 +39,15 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
 
   const videoOptions: VideoJsPlayerOptions = {
     html5: {
+      hls: {
+        withCredentials: true,
+      },
       vhs: {
         overrideNative: !videojs.browser.IS_SAFARI,
         limitRenditionByPlayerDimensions: false,
         useBandwidthFromLocalStorage: true,
         useNetworkInformationApi: true,
+        withCredentials: true,
       },
       nativeTextTracks: videojs.browser.IS_SAFARI,
       nativeAudioTracks: videojs.browser.IS_SAFARI,

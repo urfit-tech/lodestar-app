@@ -422,7 +422,7 @@ const ProgramContentPlayerWrapper = (props: {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [poster, setPoster] = useState<string>()
-  const [sources, setSources] = useState<{ src: string; type: string; withCredentials?: boolean }[]>([])
+  const [sources, setSources] = useState<{ src: string; type: string }[]>([])
   const { authToken } = useAuth()
   useEffect(() => {
     if (props.data?.source === 'youtube') {
@@ -444,6 +444,7 @@ const ProgramContentPlayerWrapper = (props: {
     if (props.options?.cloudfront?.playPaths) {
       const { hls, dash } = props.options.cloudfront.playPaths
       const path = hls.split('hls')
+      console.log(path)
       axios
         .post(
           `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-cookies`,
@@ -462,18 +463,16 @@ const ProgramContentPlayerWrapper = (props: {
             {
               type: 'application/x-mpegURL',
               src: hls,
-              withCredentials: true,
             },
             {
               type: 'application/dash+xml',
               src: dash,
-              withCredentials: true,
             },
           ])
+          return
         })
         .catch(error => setError(error.toString()))
         .finally(() => setLoading(false))
-      return
     }
 
     // file migrate from cloudflare => cloudfront.path (file generated from cloudflare)
@@ -498,14 +497,14 @@ const ProgramContentPlayerWrapper = (props: {
             {
               type: 'application/x-mpegURL',
               src: path,
-              withCredentials: true,
             },
           ])
+          return
         })
         .catch(error => setError(error.toString()))
         .finally(() => setLoading(false))
-      return
     }
+
     if (props.options?.cloudflare) {
       setLoading(true)
       axios
@@ -537,7 +536,6 @@ const ProgramContentPlayerWrapper = (props: {
         })
         .catch(error => setError(error.toString()))
         .finally(() => setLoading(false))
-      return
     }
   }, [authToken, props.data, props.options, props.videoId])
   return props.children({ loading, error, sources, poster })
