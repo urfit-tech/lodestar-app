@@ -11,7 +11,7 @@ import { isIOS, isMobile } from '../../helpers'
 type VideoJsPlayerProps = {
   loading?: boolean
   error?: string | null
-  sources: { src: string; type: string; withCredentials?: boolean }[]
+  sources: { src: string; type: string }[]
   poster?: string
   onReady?: (player: VideoJsPlayer) => void
   onDurationChange?: (player: VideoJsPlayer, event: Event) => void
