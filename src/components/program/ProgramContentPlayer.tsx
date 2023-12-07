@@ -421,7 +421,7 @@ const ProgramContentPlayerWrapper = (props: {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [poster, setPoster] = useState<string>()
-  const [sources, setSources] = useState<{ src: string; type: string }[]>([])
+  const [sources, setSources] = useState<{ src: string; type: string; withCredentials?: boolean }[]>([])
   const { authToken } = useAuth()
   useEffect(() => {
     if (props.data?.source === 'youtube') {
@@ -434,6 +434,71 @@ const ProgramContentPlayerWrapper = (props: {
         { type: 'application/x-mpegURL', src: props.data?.url + '(format=m3u8-cmaf)' },
         { type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' },
       ])
+    }
+    if (props.options?.cloudfront?.playPaths) {
+      const { hls, dash } = props.options.cloudfront.playPaths
+      const output = hls.split('hls')
+      axios
+        .post(
+          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-url`,
+          {
+            url: `${output[0]}*`,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          },
+        )
+        .then(({ data }) => {
+          const url = data.result
+          const hlsPath = new URL(hls).pathname
+          const dashPath = new URL(dash).pathname
+          setSources([
+            {
+              type: 'application/x-mpegURL',
+              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/storage${hlsPath}${new URL(url).search}`,
+            },
+            {
+              type: 'application/dash+xml',
+              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/storage${dashPath}${new URL(url).search}`,
+            },
+          ])
+        })
+        .catch(error => setError(error.toString()))
+        .finally(() => setLoading(false))
+      return
+    }
+
+    // file migrate from cloudflare => cloudfront.path (file generated from cloudflare)
+    if (props.options?.cloudfront?.path) {
+      const { path } = props.options.cloudfront
+
+      axios
+        .post(
+          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-url`,
+          {
+            url: `${path.split('manifest')[0]}*`,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          },
+        )
+        .then(({ data }) => {
+          const search = new URL(data.result).search
+          const pathname = new URL(path).pathname
+          setSources([
+            {
+              type: 'application/x-mpegURL',
+              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/storage${pathname}${search}`,
+            },
+          ])
+        })
+        .catch(error => setError(error.toString()))
+        .finally(() => setLoading(false))
+      return
     }
     if (props.options?.cloudflare) {
       setLoading(true)
@@ -466,6 +531,7 @@ const ProgramContentPlayerWrapper = (props: {
         })
         .catch(error => setError(error.toString()))
         .finally(() => setLoading(false))
+      return
     }
   }, [authToken, props.data, props.options, props.videoId])
   return props.children({ loading, error, sources, poster })

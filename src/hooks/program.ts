@@ -303,6 +303,9 @@ export const useProgram = (programId: string) => {
               sale_price
               sold_at
               content_body_id
+              program_content_progress(order_by: { updated_at: desc }, limit: 1) {
+                last_progress
+              }
               program_content_type {
                 id
                 type
@@ -449,6 +452,7 @@ export const useProgram = (programId: string) => {
             salePrice: programContent.sale_price,
             soldAt: programContent.sold_at && new Date(programContent.sold_at),
             contentBodyId: programContent.content_body_id,
+            lastProgress: programContent.program_content_progress[0]?.last_progress || 0,
             videos: programContent.program_content_videos.map(v => ({
               id: v.attachment.id,
               size: v.attachment.size,
@@ -566,6 +570,9 @@ export const GetProgramContent = gql`
         options
         created_at
       }
+      program_content_progress(order_by: { updated_at: desc }, limit: 1) {
+        last_progress
+      }
     }
   }
 `
@@ -630,6 +637,7 @@ export const useProgramContent = (programContentId: string) => {
               options: u.options,
               createdAt: u.created_at,
             })),
+            lastProgress: data.program_content_by_pk.program_content_progress[0]?.last_progress || 0,
           },
     [data],
   )
@@ -900,43 +908,6 @@ export const useMutateMaterialAuditLog = () => {
   }
 }
 
-export const useProgramContentLog = (programId: string, memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<hasura.GetProgramContentLog, hasura.GetProgramContentLogVariables>(
-    gql`
-      query GetProgramContentLog($programId: uuid!, $memberId: String!) {
-        program_content_log(
-          where: {
-            member_id: { _eq: $memberId }
-            program_content: { program_content_section: { program_id: { _eq: $programId } } }
-          }
-          distinct_on: program_content_id
-          order_by: [{ created_at: desc, program_content_id: asc }]
-        ) {
-          created_at
-          program_content_id
-          ended_at
-        }
-      }
-    `,
-    { variables: { programId, memberId } },
-  )
-
-  const programContentLog =
-    loading || error || !data
-      ? undefined
-      : data.program_content_log.map(log => ({
-          contentId: log.program_content_id,
-          endedAt: log.ended_at,
-        }))
-
-  return {
-    loadingContentLog: loading,
-    errorContentLog: error,
-    programContentLog,
-    refetchContentLog: refetch,
-  }
-}
-
 export const useInsertProgress = ({
   memberId,
   programContentId,
@@ -987,39 +958,17 @@ export const useInsertProgress = ({
   return insertProgramContentProgress
 }
 
-export const useProgramId = (contentId: string) => {
+export const useRecentProgramContent = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<
-    hasura.GetProgramIdByContentId,
-    hasura.GetProgramIdByContentIdVariables
+    hasura.GetRecentProgramContent,
+    hasura.GetRecentProgramContentVariables
   >(
     gql`
-      query GetProgramIdByContentId($contentId: uuid!) {
-        program(where: { program_content_sections: { program_contents: { id: { _eq: $contentId } } } }) {
-          id
-        }
-      }
-    `,
-    { variables: { contentId } },
-  )
-  const recentProgramId = loading || error || !data ? undefined : data.program.map(program => program.id)[0]
-  return {
-    recentProgramId,
-    RefetchRecentProgramId: refetch,
-    loadingRecentProgramId: loading,
-  }
-}
-
-export const useRecentProgramContentLogContentId = (memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GetRecentProgramContentLogContentId,
-    hasura.GetRecentProgramContentLogContentIdVariables
-  >(
-    gql`
-      query GetRecentProgramContentLogContentId($memberId: String!) {
-        program_content_log(where: { member_id: { _eq: $memberId } }, order_by: { created_at: desc }, limit: 1) {
-          created_at
+      query GetRecentProgramContent($memberId: String!) {
+        program_content_progress(where: { member_id: { _eq: $memberId } }, order_by: { updated_at: desc }, limit: 1) {
+          updated_at
           program_content_id
-          ended_at
+          last_progress
           program_content {
             program_content_body {
               type
@@ -1044,21 +993,22 @@ export const useRecentProgramContentLogContentId = (memberId: string) => {
   const recentProgramContent =
     loading || error || !data
       ? undefined
-      : data?.program_content_log.map(log => {
-          const contentType = log.program_content.program_content_body.type
-          const audiosLength = log.program_content.program_content_audios.length
-          const contentVideo = log.program_content.program_content_videos[0]
+      : data?.program_content_progress.map(progress => {
+          const contentType = progress.program_content.program_content_body.type
+          const audiosLength = progress.program_content.program_content_audios.length
+          const videosLength = progress.program_content.program_content_videos.length
+          const contentVideo = progress.program_content.program_content_videos[0]
           const videoSource = contentVideo?.attachment?.options?.cloudflare
             ? 'cloudflare'
-            : log.program_content.program_content_videos[0]?.attachment?.data?.source
+            : progress.program_content.program_content_videos[0]?.attachment?.data?.source
           if (
             (contentType === 'audio' && audiosLength !== 0) ||
-            (contentType === 'video' && videoSource) !== 'youtube'
+            (contentType === 'video' && videoSource !== 'youtube' && videosLength !== 0)
           ) {
             return {
-              contentType: log.program_content.program_content_body.type || '',
-              contentId: log.program_content_id,
-              endedAt: log.ended_at,
+              contentType: progress.program_content.program_content_body.type,
+              contentId: progress.program_content_id,
+              lastProgress: progress.last_progress,
               source: videoSource,
               videoId: contentVideo?.id,
             }
@@ -1068,6 +1018,7 @@ export const useRecentProgramContentLogContentId = (memberId: string) => {
 
   return {
     recentProgramContent,
-    RefetchRecentProgramContentId: refetch,
+    loadingRecentProgramContent: loading,
+    RefetchRecentProgramContent: refetch,
   }
 }
