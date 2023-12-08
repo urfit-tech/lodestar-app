@@ -244,6 +244,7 @@ const ProgramContentPlayer: React.VFC<
                   loading={programContentVideo.loading}
                   error={programContentVideo.error}
                   sources={programContentVideo.sources}
+                  captions={programContentVideo.captions}
                   poster={programContentVideo.poster}
                   onLoadStart={player => {
                     player.volume(initialVolume)
@@ -416,12 +417,14 @@ const ProgramContentPlayerWrapper = (props: {
     loading: boolean
     error: string | null
     sources: { src: string; type: string }[]
+    captions: string[]
   }) => React.ReactElement
 }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [poster, setPoster] = useState<string>()
   const [sources, setSources] = useState<{ src: string; type: string; withCredentials?: boolean }[]>([])
+  const [captions, setCaptions] = useState<string[]>([])
   const { authToken } = useAuth()
   useEffect(() => {
     if (props.data?.source === 'youtube') {
@@ -437,12 +440,12 @@ const ProgramContentPlayerWrapper = (props: {
     }
     if (props.options?.cloudfront?.playPaths) {
       const { hls, dash } = props.options.cloudfront.playPaths
-      const output = hls.split('hls')
+      const output = hls.split('hls')[0]
       axios
         .post(
           `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-url`,
           {
-            url: `${output[0]}*`,
+            url: `${output}*`,
           },
           {
             headers: {
@@ -451,19 +454,49 @@ const ProgramContentPlayerWrapper = (props: {
           },
         )
         .then(({ data }) => {
-          const url = data.result
+          const search = new URL(data.result).search
           const hlsPath = new URL(hls).pathname
           const dashPath = new URL(dash).pathname
           setSources([
             {
               type: 'application/x-mpegURL',
-              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/storage${hlsPath}${new URL(url).search}`,
+              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${hlsPath}${search}`,
             },
             {
               type: 'application/dash+xml',
-              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/storage${dashPath}${new URL(url).search}`,
+              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${dashPath}${search}`,
             },
           ])
+        })
+        .catch(error => setError(error.toString()))
+        .finally(() => setLoading(false))
+      // sign captions
+      const captionsPath = output.replace('output', 'captions')
+      axios
+        .post(
+          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-url`,
+          {
+            url: `${captionsPath}*`,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          },
+        )
+        .then(({ data }) => {
+          const search = new URL(data.result).search
+          axios
+            .get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos/${props.videoId}/captions`, {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            })
+            .then(response => {
+              const urls = response.data.result
+              const signedUrls = urls.map((key: any) => `${key}${search}`)
+              setCaptions(signedUrls)
+            })
         })
         .catch(error => setError(error.toString()))
         .finally(() => setLoading(false))
@@ -492,9 +525,39 @@ const ProgramContentPlayerWrapper = (props: {
           setSources([
             {
               type: 'application/x-mpegURL',
-              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/storage${pathname}${search}`,
+              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${pathname}${search}`,
             },
           ])
+        })
+        .catch(error => setError(error.toString()))
+        .finally(() => setLoading(false))
+      // sign captions
+      const captionsPath = path.split('manifest')[0]
+      axios
+        .post(
+          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-url`,
+          {
+            url: `${captionsPath}*`,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          },
+        )
+        .then(({ data }) => {
+          const search = new URL(data.result).search
+          axios
+            .get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos/${props.videoId}/captions`, {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            })
+            .then(response => {
+              const keys = response.data.result
+              const signedKeys = keys.map((key: any) => `${key}${search}`)
+              setCaptions(signedKeys)
+            })
         })
         .catch(error => setError(error.toString()))
         .finally(() => setLoading(false))
@@ -534,6 +597,6 @@ const ProgramContentPlayerWrapper = (props: {
       return
     }
   }, [authToken, props.data, props.options, props.videoId])
-  return props.children({ loading, error, sources, poster })
+  return props.children({ loading, error, sources, captions, poster })
 }
 export default ProgramContentPlayer
