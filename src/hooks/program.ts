@@ -303,9 +303,6 @@ export const useProgram = (programId: string) => {
               sale_price
               sold_at
               content_body_id
-              program_content_progress(order_by: { updated_at: desc }, limit: 1) {
-                last_progress
-              }
               program_content_type {
                 id
                 type
@@ -452,7 +449,6 @@ export const useProgram = (programId: string) => {
             salePrice: programContent.sale_price,
             soldAt: programContent.sold_at && new Date(programContent.sold_at),
             contentBodyId: programContent.content_body_id,
-            lastProgress: programContent.program_content_progress[0]?.last_progress || 0,
             videos: programContent.program_content_videos.map(v => ({
               id: v.attachment.id,
               size: v.attachment.size,
@@ -1021,4 +1017,83 @@ export const useRecentProgramContent = (memberId: string) => {
     loadingRecentProgramContent: loading,
     RefetchRecentProgramContent: refetch,
   }
+}
+
+export const useProgramContentEnrollment = (programId: string) => {
+  const { currentMemberId } = useAuth()
+  const { data: programContentEnrollmentData } = useQuery<
+    hasura.GetProgramContentEnrollmentIds,
+    hasura.GetProgramContentEnrollmentIdsVariables
+  >(
+    gql`
+      query GetProgramContentEnrollmentIds($programId: uuid!, $currentMemberId: String!) {
+        program_content_enrollment(where: { program_id: { _eq: $programId }, member_id: { _eq: $currentMemberId } }) {
+          program_content_id
+        }
+      }
+    `,
+    {
+      variables: {
+        programId,
+        currentMemberId: currentMemberId || '',
+      },
+    },
+  )
+  const contentIds = programContentEnrollmentData?.program_content_enrollment.map(content => content.program_content_id)
+
+  const { data: programContentData } = useQuery<
+    hasura.GetProgramContentDisplayMode,
+    hasura.GetProgramContentDisplayModeVariables
+  >(
+    gql`
+      query GetProgramContentDisplayMode($contentIds: [uuid!]) {
+        program_content(where: { id: { _in: $contentIds } }) {
+          id
+          display_mode
+        }
+      }
+    `,
+    {
+      variables: {
+        contentIds,
+      },
+    },
+  )
+
+  const programContentEnrollment = programContentEnrollmentData?.program_content_enrollment.map(enrollment => {
+    const displayMode = programContentData?.program_content.find(
+      content => enrollment.program_content_id === content.id,
+    )?.display_mode
+
+    return {
+      contentId: enrollment.program_content_id,
+      displayMode,
+    }
+  })
+
+  return {
+    programContentEnrollment,
+  }
+}
+
+export const useProgramProgress = (programContentIds: string[]) => {
+  const { data } = useQuery<hasura.GetProgramProgress, hasura.GetProgramProgressVariables>(
+    gql`
+      query GetProgramProgress($programContentIds: [uuid!]) {
+        program_content_progress(
+          where: { program_content_id: { _in: $programContentIds } }
+          order_by: { updated_at: desc }
+        ) {
+          program_content_id
+          last_progress
+        }
+      }
+    `,
+    { variables: { programContentIds } },
+  )
+  const programContentProgress = data?.program_content_progress.map(progress => ({
+    contentId: progress.program_content_id,
+    lastProgress: progress.last_progress,
+  }))
+  return { programContentProgress }
 }
