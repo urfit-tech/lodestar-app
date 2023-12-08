@@ -1,5 +1,4 @@
 import { Skeleton } from '@chakra-ui/skeleton'
-import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext, useEffect, useRef } from 'react'
 import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from 'video.js'
@@ -34,11 +33,6 @@ type VideoJsPlayerProps = {
   onError?: (player: VideoJsPlayer, event: Event) => void
 }
 const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
-  ;(videojs as any).Vhs.xhr.beforeRequest = (options: videojs.XhrOptions) => {
-    const signed = Cookies.get('cloudfront-signed')
-    if (options.uri && options.uri.includes('kolable.com/')) options.uri = options.uri + signed
-    return options
-  }
   const playerRef = useRef<VideoJsPlayer | null>(null)
   const { currentLocale } = useContext(LocaleContext)
   const { enabledModules } = useApp()
