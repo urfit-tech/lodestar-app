@@ -11,7 +11,7 @@ import { isIOS, isMobile } from '../../helpers'
 type VideoJsPlayerProps = {
   loading?: boolean
   error?: string | null
-  sources: { src: string; type: string }[]
+  sources: { src: string; type: string; withCredentials?: boolean }[]
   poster?: string
   onReady?: (player: VideoJsPlayer) => void
   onDurationChange?: (player: VideoJsPlayer, event: Event) => void
@@ -36,7 +36,6 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
   const playerRef = useRef<VideoJsPlayer | null>(null)
   const { currentLocale } = useContext(LocaleContext)
   const { enabledModules } = useApp()
-
   const videoOptions: VideoJsPlayerOptions = {
     html5: {
       vhs: {
