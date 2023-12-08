@@ -113,7 +113,6 @@ export type ProgramContent = {
   listPrice: number | null
   salePrice: number | null
   soldAt: Date | null
-  lastProgress: number
   // materials?: ProgramContentMaterialProps[]
   videos: { id: string; size: number; options: { cloudflare?: object }; data: { source?: string } }[]
   audios: { data: object }[]

@@ -372,7 +372,12 @@ const AudioPlayer: React.VFC<{
   audioUrl: string
   mode: AudioPlayerMode
   lastProgress: number | undefined
-  playList: (ProgramContent & { programId?: string; contentSectionTitle?: string; progress?: number })[]
+  playList: (ProgramContent & {
+    programId?: string
+    contentSectionTitle?: string
+    progress?: number
+    isLock: boolean
+  })[]
   currentIndex: number
   mimeType: string
   onPlay: (state: boolean) => void
