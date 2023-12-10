@@ -1,4 +1,5 @@
 import { Skeleton } from '@chakra-ui/skeleton'
+import { first, last } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext, useEffect, useRef } from 'react'
 import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from 'video.js'
@@ -12,6 +13,7 @@ type VideoJsPlayerProps = {
   loading?: boolean
   error?: string | null
   sources: { src: string; type: string; withCredentials?: boolean }[]
+  captions?: string[]
   poster?: string
   onReady?: (player: VideoJsPlayer) => void
   onDurationChange?: (player: VideoJsPlayer, event: Event) => void
@@ -93,8 +95,49 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
         : undefined,
   }
 
+  const remoteTrackOptionFormatter = (src: string): videojs.TextTrackOptions => {
+    const trackSettings = [
+      { srclang: 'zh', language: 'Mandarin Chinese', label: '中文' },
+      { srclang: 'en', language: ' English', label: 'English' },
+      { srclang: 'ko', language: 'Korean', label: '조선말' },
+      { srclang: 'ja', language: 'Japanese', label: '日本語' },
+      { srclang: 'hi', language: 'Hindi', label: 'हिन्दी' },
+      { srclang: 'es', language: 'Spanish', label: 'Español' },
+      { srclang: 'ar', language: 'Arabic', label: 'Arabic' },
+      { srclang: 'pt', language: 'Portuguese', label: 'Portuguese' },
+      { srclang: 'bn', language: 'Bengali', label: 'Bengali' },
+      { srclang: 'ru', language: 'Russian', label: 'Russian' },
+      { srclang: 'de', language: 'German', label: 'German' },
+      { srclang: 'pa', language: 'Panjabi', label: 'Panjabi' },
+      { srclang: 'jv', language: 'Javanese', label: 'Javanese' },
+      { srclang: 'vi', language: 'Vietnamese', label: 'Vietnamese' },
+      { srclang: 'fr', language: 'French', label: 'French' },
+      { srclang: 'ur', language: 'Urdu', label: 'Urdu' },
+      { srclang: 'it', language: 'Italian', label: 'Italian' },
+      { srclang: 'tr', language: 'Turkish', label: 'Turkish' },
+      { srclang: 'fa', language: 'Persian', label: 'Persian' },
+      { srclang: 'pl', language: 'Polish', label: 'Polish' },
+      { srclang: 'uk', language: 'Ukrainian', label: 'Ukrainian' },
+      { srclang: 'my', language: 'Burmese', label: 'Burmese' },
+      { srclang: 'th', language: 'Thai', label: 'Thai' },
+    ]
+    const filename = last(src.split('/'))
+    const currentLang = trackSettings.find(setting => setting.srclang === first(filename?.split('.')))
+    return { src, kind: 'subtitles', ...currentLang }
+  }
+
   const setCaption = (player: VideoJsPlayer) => {
     const textTracks = player?.textTracks() ?? []
+    props.captions?.forEach(src => {
+      const labels = []
+      for (let i = 0; i < textTracks.length; i++) {
+        let track = textTracks[i]
+        labels.push(track.label)
+      }
+      const textTrackOption = remoteTrackOptionFormatter(src)
+      if (!labels.includes(textTrackOption?.label || '')) player.addRemoteTextTrack(textTrackOption, false)
+    })
+
     for (let i = 0; i < textTracks.length; i++) {
       let track = textTracks[i]
       if (track.kind === 'captions' || track.kind === 'subtitles') {
@@ -159,7 +202,7 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
         onLoadedData={handleOnLoadedData}
         autoPlay
         controls
-      />
+      ></video>
     </div>
   )
 }
