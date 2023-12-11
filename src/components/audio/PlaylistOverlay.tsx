@@ -1,6 +1,7 @@
 import { CheckIcon } from '@chakra-ui/icons'
-import { Icon } from '@chakra-ui/react'
+import { HStack, Icon } from '@chakra-ui/react'
 import { List } from 'antd'
+import dayjs from 'dayjs'
 import React, { useContext } from 'react'
 import { AiOutlineFileText, AiOutlineVideoCamera } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -8,8 +9,9 @@ import { useHistory, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import AudioPlayerContext from '../../contexts/AudioPlayerContext'
 import { durationFormatter, rgba } from '../../helpers'
-import { podcastMessages } from '../../helpers/translation'
+import { commonMessages, podcastMessages } from '../../helpers/translation'
 import { MicrophoneIcon } from '../../images'
+import { ReactComponent as LockIcon } from '../../images/icon-lock.svg'
 import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
 import { ProgramContent } from '../../types/program'
 import { BREAK_POINT } from '../common/Responsive'
@@ -91,14 +93,15 @@ const StyledListItem = styled(List.Item)<{ variant?: 'playing' }>`
 
 const PlaylistOverlay: React.VFC<{
   title?: string
-  playList: (ProgramContent & { programId?: string; contentSectionTitle?: string; progress?: number })[]
+  playList: (ProgramContent & {
+    programId?: string
+    contentSectionTitle?: string
+    progress?: number
+    isLock: boolean
+  })[]
   currentIndex: number
 }> = ({ title, playList, currentIndex }) => {
-  const history = useHistory()
-  const location = useLocation()
-  const pathname = location.pathname
   const { formatMessage } = useIntl()
-  const { setup, isBackgroundMode } = useContext(AudioPlayerContext)
 
   return (
     <StyledWrapper>
@@ -118,45 +121,28 @@ const PlaylistOverlay: React.VFC<{
               id: contentId,
               contentSectionTitle,
               contentType,
+              publishedAt,
               progress = 0,
               audios,
+              duration,
               videos,
+              isLock,
             } = item
             return (
               <PlayListItem
                 key={index}
                 title={title}
                 progress={progress}
-                duration={item.duration || 0}
+                publishedAt={publishedAt}
+                contentId={contentId}
+                programId={programId || ''}
+                audios={audios}
+                videos={videos}
+                isLock={isLock}
+                contentSectionTitle={contentSectionTitle || ''}
+                duration={duration || 0}
                 isPlaying={index === currentIndex}
                 contentType={contentType}
-                onClick={() => {
-                  const videoSource = videos[0]?.data?.source
-                  if (pathname.includes('contents') && (contentType === 'audio' || contentType === 'video')) {
-                    history.push(`/programs/${programId}/contents/${contentId}`)
-                  }
-                  if (
-                    !pathname.includes('contents') &&
-                    ((contentType !== 'audio' && contentType !== 'video') ||
-                      (contentType === 'audio' && audios?.length === 0) ||
-                      (!isBackgroundMode && contentType === 'video') ||
-                      (isBackgroundMode &&
-                        contentType === 'video' &&
-                        (videoSource === 'youtube' || videos?.length === 0)))
-                  ) {
-                    history.push(`/programs/${programId}/contents/${contentId}`)
-                  }
-                  setup?.({
-                    backgroundMode: isBackgroundMode,
-                    title,
-                    contentSectionTitle: contentSectionTitle || '',
-                    source: videos[0]?.options?.cloudflare ? 'cloudflare' : videos[0]?.data?.source,
-                    videoId: videos[0]?.id,
-                    programId,
-                    contentId,
-                    contentType: contentType || '',
-                  })
-                }}
               />
             )
           })}
@@ -171,32 +157,95 @@ const PlayListItem: React.VFC<{
   progress: number
   contentType: string | null
   title: string
-  onClick: () => void
-}> = ({ title, contentType, isPlaying, onClick, progress, duration }) => {
+  isLock: boolean
+  videos: ProgramContent['videos']
+  audios: ProgramContent['audios']
+  contentSectionTitle: string
+  contentId: string
+  programId: string
+  publishedAt: Date | null
+}> = ({
+  title,
+  contentId,
+  programId,
+  isLock,
+  contentType,
+  isPlaying,
+  contentSectionTitle,
+  progress,
+  duration,
+  publishedAt,
+  videos,
+  audios,
+}) => {
+  const { formatMessage } = useIntl()
+  const { setup, isBackgroundMode } = useContext(AudioPlayerContext)
+  const history = useHistory()
+  const location = useLocation()
+  const pathname = location.pathname
+
   const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
+  const videoSource = videos[0]?.data?.source
+  const isPublish = (publishedAt && dayjs().isSame(publishedAt)) || dayjs().isAfter(publishedAt)
 
   return (
     <StyledListItem
       className={`d-flex align-items-center justify-content-between px-4 ${
-        isPlaying ? 'playing' : undefined
-      } ${progressStatus}`}
-      onClick={onClick}
+        isPlaying ? 'playing' : isLock ? 'lock' : undefined
+      } ${progressStatus} `}
+      onClick={() => {
+        if (pathname.includes('contents') && (contentType === 'audio' || contentType === 'video')) {
+          history.push(`/programs/${programId}/contents/${contentId}`)
+        }
+        if (
+          !pathname.includes('contents') &&
+          (!isPublish ||
+            isLock ||
+            (contentType !== 'audio' && contentType !== 'video') ||
+            (contentType === 'audio' && audios?.length === 0) ||
+            (!isBackgroundMode && contentType === 'video') ||
+            (isBackgroundMode && contentType === 'video' && (videoSource === 'youtube' || videos?.length === 0)))
+        ) {
+          history.push(`/programs/${programId}/contents/${contentId}`)
+        } else {
+          setup?.({
+            backgroundMode: isBackgroundMode,
+            title,
+            contentSectionTitle: contentSectionTitle || '',
+            source: videos[0]?.options?.cloudflare ? 'cloudflare' : videos[0]?.data?.source,
+            videoId: videos[0]?.id,
+            programId,
+            contentId,
+            contentType: contentType || '',
+          })
+        }
+      }}
     >
       <div className="flex-grow-1 cursor-pointer" style={{ position: 'relative' }}>
         <StyledTitle>{title}</StyledTitle>
-        {contentType === 'video' || contentType === 'audio' ? (
-          <>
-            <Icon
-              as={contentType === 'video' ? AiOutlineVideoCamera : MicrophoneIcon}
-              className="mr-2"
-              fontSize="16px"
-            />
-            <span>{durationFormatter(duration)}</span>
-          </>
+        {isLock ? (
+          <HStack spacing="8px" alignItems="center">
+            <Icon as={LockIcon} fontSize="16px" />
+            <span>
+              {(contentType === 'video' || contentType === 'audio') && <span>{durationFormatter(duration)}</span>}
+            </span>
+          </HStack>
+        ) : contentType === 'video' || contentType === 'audio' ? (
+          <HStack spacing="8px" alignItems="center">
+            <Icon as={contentType === 'video' ? AiOutlineVideoCamera : MicrophoneIcon} fontSize="16px" />
+            <span>
+              {isPublish
+                ? `${durationFormatter(duration)}`
+                : publishedAt &&
+                  `${durationFormatter(duration)} (${dayjs(publishedAt).format('MM/DD')}) ${formatMessage(
+                    commonMessages.text.publish,
+                  )}`}
+            </span>
+          </HStack>
         ) : contentType === 'practice' ? (
-          <Icon as={PracticeIcon} className="mr-2" />
+          <Icon as={PracticeIcon} fontSize="16px" />
         ) : (
-          <Icon as={AiOutlineFileText} fontSize="16px" className="mr-2" />
+          <Icon as={AiOutlineFileText} fontSize="16px" />
         )}
         <StyledIconWrapper>
           <Icon as={CheckIcon} />
