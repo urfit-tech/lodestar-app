@@ -563,39 +563,39 @@ const ProgramContentPlayerWrapper = (props: {
         .finally(() => setLoading(false))
       return
     }
-    // if (props.options?.cloudflare) {
-    //   setLoading(true)
-    //   axios
-    //     .post(
-    //       `${process.env.REACT_APP_API_BASE_ROOT}/videos/${props.videoId}/token`,
-    //       {},
-    //       {
-    //         headers: {
-    //           Authorization: `Bearer ${authToken}`,
-    //         },
-    //       },
-    //     )
-    //     .then(({ data }) => {
-    //       if (data.code === 'SUCCESS') {
-    //         setSources([
-    //           {
-    //             type: 'application/x-mpegURL',
-    //             src: `https://cloudflarestream.com/${data.result.token}/manifest/video.m3u8`,
-    //           },
-    //           {
-    //             type: 'application/dash+xml',
-    //             src: `https://cloudflarestream.com/${data.result.token}/manifest/video.mpd`,
-    //           },
-    //         ])
-    //         setPoster(`https://cloudflarestream.com/${data.result.token}/thumbnails/thumbnail.jpg`)
-    //       } else {
-    //         setError(data.error)
-    //       }
-    //     })
-    //     .catch(error => setError(error.toString()))
-    //     .finally(() => setLoading(false))
-    //   return
-    // }
+    if (props.options?.cloudflare) {
+      setLoading(true)
+      axios
+        .post(
+          `${process.env.REACT_APP_API_BASE_ROOT}/videos/${props.videoId}/token`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          },
+        )
+        .then(({ data }) => {
+          if (data.code === 'SUCCESS') {
+            setSources([
+              {
+                type: 'application/x-mpegURL',
+                src: `https://cloudflarestream.com/${data.result.token}/manifest/video.m3u8`,
+              },
+              {
+                type: 'application/dash+xml',
+                src: `https://cloudflarestream.com/${data.result.token}/manifest/video.mpd`,
+              },
+            ])
+            setPoster(`https://cloudflarestream.com/${data.result.token}/thumbnails/thumbnail.jpg`)
+          } else {
+            setError(data.error)
+          }
+        })
+        .catch(error => setError(error.toString()))
+        .finally(() => setLoading(false))
+      return
+    }
   }, [authToken, props.data, props.options, props.videoId])
   return props.children({ loading, error, sources, captions, poster })
 }
