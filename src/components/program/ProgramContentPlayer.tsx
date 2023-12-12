@@ -438,81 +438,52 @@ const ProgramContentPlayerWrapper = (props: {
         { type: 'application/dash+xml', src: props.data?.url + '(format=mpd-time-cmaf)' },
       ])
     }
-    if (props.options?.cloudfront?.playPaths) {
-      const { hls, dash } = props.options.cloudfront.playPaths
-      const output = hls.split('hls')[0]
+    if (props.options?.cloudfront) {
       axios
-        .post(
-          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-url`,
-          {
-            url: `${output}*`,
+        .get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos/${props.videoId}/sign`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          },
-        )
-        .then(({ data }) => {
-          const search = new URL(data.result).search
-          const hlsPath = new URL(hls).pathname
-          const dashPath = new URL(dash).pathname
-          setSources([
-            {
-              type: 'application/x-mpegURL',
-              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${hlsPath}${search}`,
-            },
-            {
-              type: 'application/dash+xml',
-              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${dashPath}${search}`,
-            },
-          ])
         })
-        .catch(error => setError(error.toString()))
-        .finally(() => setLoading(false))
-      // sign captions
-      const captionsPath = output.replace('output', 'captions')
-      axios
-        .post(
-          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-url`,
-          {
-            url: `${captionsPath}*`,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          },
-        )
         .then(({ data }) => {
-          const search = new URL(data.result).search
-          axios
-            .get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos/${props.videoId}/captions`, {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-              },
-            })
-            .then(response => {
-              const urls = response.data.result
-              const signedUrls = urls.map((key: any) => `${key}${search}`)
-              setCaptions(signedUrls)
-            })
+          const { signedVideoUrl, signedCaptionUrl, cloudfrontOptions, captionPaths } = data.result
+          const videoSearch = new URL(signedVideoUrl).search
+          const captionSearch = new URL(signedCaptionUrl).search
+          const hlsPath = cloudfrontOptions?.playPaths ? new URL(cloudfrontOptions.playPaths.hls).pathname : null
+          const dashPath = cloudfrontOptions?.playPaths ? new URL(cloudfrontOptions.playPaths.dash).pathname : null
+          const cloudfrontMigratedHlsPath = cloudfrontOptions?.path ? new URL(cloudfrontOptions.path).pathname : null
+          const source = cloudfrontOptions?.playPaths
+            ? [
+                {
+                  type: 'application/x-mpegURL',
+                  src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${hlsPath}${videoSearch}`,
+                },
+                {
+                  type: 'application/dash+xml',
+                  src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${dashPath}${videoSearch}`,
+                },
+              ]
+            : [
+                {
+                  type: 'application/x-mpegURL',
+                  src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${cloudfrontMigratedHlsPath}${videoSearch}`,
+                },
+              ]
+          const captions = captionPaths?.map((captionUrl: string) => `${captionUrl}${captionSearch}`)
+          setSources(source)
+          setCaptions(captions)
         })
         .catch(error => setError(error.toString()))
         .finally(() => setLoading(false))
       return
     }
 
-    // file migrate from cloudflare => cloudfront.path (file generated from cloudflare)
-    if (props.options?.cloudfront?.path) {
-      const { path } = props.options.cloudfront
-
+    if (props.options?.cloudflare) {
+      setLoading(true)
       axios
         .post(
-          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-url`,
-          {
-            url: `${path.split('manifest')[0]}*`,
-          },
+          `${process.env.REACT_APP_API_BASE_ROOT}/videos/${props.videoId}/token`,
+          {},
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -520,82 +491,26 @@ const ProgramContentPlayerWrapper = (props: {
           },
         )
         .then(({ data }) => {
-          const search = new URL(data.result).search
-          const pathname = new URL(path).pathname
-          setSources([
-            {
-              type: 'application/x-mpegURL',
-              src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${pathname}${search}`,
-            },
-          ])
-        })
-        .catch(error => setError(error.toString()))
-        .finally(() => setLoading(false))
-      // sign captions
-      const captionsPath = path.split('manifest')[0]
-      axios
-        .post(
-          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/auth/sign-cloudfront-url`,
-          {
-            url: `${captionsPath}*`,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          },
-        )
-        .then(({ data }) => {
-          const search = new URL(data.result).search
-          axios
-            .get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos/${props.videoId}/captions`, {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
+          if (data.code === 'SUCCESS') {
+            setSources([
+              {
+                type: 'application/x-mpegURL',
+                src: `https://cloudflarestream.com/${data.result.token}/manifest/video.m3u8`,
               },
-            })
-            .then(response => {
-              const keys = response.data.result
-              const signedKeys = keys.map((key: any) => `${key}${search}`)
-              setCaptions(signedKeys)
-            })
+              {
+                type: 'application/dash+xml',
+                src: `https://cloudflarestream.com/${data.result.token}/manifest/video.mpd`,
+              },
+            ])
+            setPoster(`https://cloudflarestream.com/${data.result.token}/thumbnails/thumbnail.jpg`)
+          } else {
+            setError(data.error)
+          }
         })
         .catch(error => setError(error.toString()))
         .finally(() => setLoading(false))
       return
     }
-    // if (props.options?.cloudflare) {
-    //   setLoading(true)
-    //   axios
-    //     .post(
-    //       `${process.env.REACT_APP_API_BASE_ROOT}/videos/${props.videoId}/token`,
-    //       {},
-    //       {
-    //         headers: {
-    //           Authorization: `Bearer ${authToken}`,
-    //         },
-    //       },
-    //     )
-    //     .then(({ data }) => {
-    //       if (data.code === 'SUCCESS') {
-    //         setSources([
-    //           {
-    //             type: 'application/x-mpegURL',
-    //             src: `https://cloudflarestream.com/${data.result.token}/manifest/video.m3u8`,
-    //           },
-    //           {
-    //             type: 'application/dash+xml',
-    //             src: `https://cloudflarestream.com/${data.result.token}/manifest/video.mpd`,
-    //           },
-    //         ])
-    //         setPoster(`https://cloudflarestream.com/${data.result.token}/thumbnails/thumbnail.jpg`)
-    //       } else {
-    //         setError(data.error)
-    //       }
-    //     })
-    //     .catch(error => setError(error.toString()))
-    //     .finally(() => setLoading(false))
-    //   return
-    // }
   }, [authToken, props.data, props.options, props.videoId])
   return props.children({ loading, error, sources, captions, poster })
 }
