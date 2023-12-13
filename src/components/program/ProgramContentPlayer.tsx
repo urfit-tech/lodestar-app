@@ -439,6 +439,7 @@ const ProgramContentPlayerWrapper = (props: {
       ])
     }
     if (props.options?.cloudfront) {
+      setLoading(true)
       axios
         .get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos/${props.videoId}/sign`, {
           headers: {
