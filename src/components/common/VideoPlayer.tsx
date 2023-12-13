@@ -41,14 +41,14 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
   const videoOptions: VideoJsPlayerOptions = {
     html5: {
       vhs: {
-        overrideNative: !isMobile,
+        overrideNative: !(isMobile && isIOS),
         limitRenditionByPlayerDimensions: false,
         useBandwidthFromLocalStorage: true,
         useNetworkInformationApi: true,
       },
-      nativeTextTracks: isMobile,
-      nativeAudioTracks: isMobile,
-      nativeVideoTracks: isMobile,
+      nativeTextTracks: isMobile && isIOS,
+      nativeAudioTracks: isMobile && isIOS,
+      nativeVideoTracks: isMobile && isIOS,
     },
     language: currentLocale,
     playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4],
