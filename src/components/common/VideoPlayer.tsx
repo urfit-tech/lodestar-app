@@ -41,14 +41,14 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
   const videoOptions: VideoJsPlayerOptions = {
     html5: {
       vhs: {
-        overrideNative: true,
+        overrideNative: !isMobile,
         limitRenditionByPlayerDimensions: false,
         useBandwidthFromLocalStorage: true,
         useNetworkInformationApi: true,
       },
-      nativeTextTracks: false,
-      nativeAudioTracks: false,
-      nativeVideoTracks: false,
+      nativeTextTracks: isMobile,
+      nativeAudioTracks: isMobile,
+      nativeVideoTracks: isMobile,
     },
     language: currentLocale,
     playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4],
@@ -98,7 +98,7 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
   const remoteTrackOptionFormatter = (src: string): videojs.TextTrackOptions => {
     const trackSettings = [
       { srclang: 'zh', language: 'Mandarin Chinese', label: '中文' },
-      { srclang: 'en', language: ' English', label: 'English' },
+      { srclang: 'en', language: 'English', label: 'English' },
       { srclang: 'ko', language: 'Korean', label: '조선말' },
       { srclang: 'ja', language: 'Japanese', label: '日本語' },
       { srclang: 'hi', language: 'Hindi', label: 'हिन्दी' },
@@ -135,7 +135,12 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
 
     for (let i = 0; i < textTracks.length; i++) {
       let track = textTracks[i]
-      if (track.kind === 'captions' || track.kind === 'subtitles') {
+
+      if (track.kind === 'captions') {
+        track.mode = 'hidden'
+        break
+      }
+      if (track.kind === 'subtitles') {
         track.mode = 'showing'
         break
       }
@@ -174,6 +179,10 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
         ref={ref => {
           if (ref && !playerRef.current && Number(videoOptions.sources?.length) > 0) {
             playerRef.current = videojs(ref, videoOptions, function () {
+              this.on('loadeddata', () => {
+                setCaption(playerRef.current as VideoJsPlayer)
+                props.onLoadedData && props.onLoadedData.bind(null, this)
+              })
               props.onDurationChange && this.on('durationchange', props.onDurationChange.bind(null, this))
               props.onVolumeChange && this.on('volumechange', props.onVolumeChange.bind(null, this))
               props.onRateChange && this.on('ratechange', props.onRateChange.bind(null, this))
@@ -186,7 +195,6 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
               props.onSeeked && this.on('seeked', props.onSeeked.bind(null, this))
               props.onLoadStart && this.on('loadstart', props.onLoadStart.bind(null, this))
               props.onLoadedMetadata && this.on('loadedmetadata', props.onLoadedMetadata.bind(null, this))
-              props.onLoadedData && this.on('loadeddata', props.onLoadedData.bind(null, this))
               props.onFullscreenChange && this.on('fullscreenchange', props.onFullscreenChange.bind(null, this))
               props.onWaiting && this.on('waiting', props.onWaiting.bind(null, this))
               props.onCanPlaythrough && this.on('canplaythrough', props.onCanPlaythrough.bind(null, this))
@@ -194,7 +202,6 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
             })
           }
         }}
-        onLoadedData={handleOnLoadedData}
         autoPlay
         controls
       ></video>
