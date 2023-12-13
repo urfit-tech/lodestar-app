@@ -420,14 +420,13 @@ const ProgramContentPlayerWrapper = (props: {
     captions: string[]
   }) => React.ReactElement
 }) => {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [poster, setPoster] = useState<string>()
   const [sources, setSources] = useState<{ src: string; type: string; withCredentials?: boolean }[]>([])
   const [captions, setCaptions] = useState<string[]>([])
   const { authToken } = useAuth()
   useEffect(() => {
-    setLoading(true)
     if (props.data?.source === 'youtube') {
       setSources([{ type: 'video/vnd.youtube.yt', src: props.data?.url }])
     }
@@ -440,6 +439,7 @@ const ProgramContentPlayerWrapper = (props: {
       ])
     }
     if (props.options?.cloudfront) {
+      setLoading(true)
       axios
         .get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos/${props.videoId}/sign`, {
           headers: {
@@ -480,6 +480,7 @@ const ProgramContentPlayerWrapper = (props: {
     }
 
     if (props.options?.cloudflare) {
+      setLoading(true)
       axios
         .post(
           `${process.env.REACT_APP_API_BASE_ROOT}/videos/${props.videoId}/token`,
