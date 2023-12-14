@@ -439,6 +439,7 @@ const ProgramContentPlayerWrapper = (props: {
       ])
     }
     if (props.options?.cloudfront) {
+      setLoading(true)
       axios
         .get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos/${props.videoId}/sign`, {
           headers: {
@@ -446,32 +447,31 @@ const ProgramContentPlayerWrapper = (props: {
           },
         })
         .then(({ data }) => {
-          const { signedVideoUrl, signedCaptionUrl, cloudfrontOptions, captionPaths } = data.result
-          const videoSearch = new URL(signedVideoUrl).search
-          const captionSearch = new URL(signedCaptionUrl).search
-          const hlsPath = cloudfrontOptions?.playPaths ? new URL(cloudfrontOptions.playPaths.hls).pathname : null
-          const dashPath = cloudfrontOptions?.playPaths ? new URL(cloudfrontOptions.playPaths.dash).pathname : null
-          const cloudfrontMigratedHlsPath = cloudfrontOptions?.path ? new URL(cloudfrontOptions.path).pathname : null
-          const source = cloudfrontOptions?.playPaths
-            ? [
-                {
-                  type: 'application/x-mpegURL',
-                  src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${hlsPath}${videoSearch}`,
-                },
-                {
-                  type: 'application/dash+xml',
-                  src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${dashPath}${videoSearch}`,
-                },
-              ]
-            : [
-                {
-                  type: 'application/x-mpegURL',
-                  src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${cloudfrontMigratedHlsPath}${videoSearch}`,
-                },
-              ]
-          const captions = captionPaths?.map((captionUrl: string) => `${captionUrl}${captionSearch}`)
+          const {
+            videoSignedPaths: { hlsPath, dashPath, cloudfrontMigratedHlsPath },
+            captionSignedUrls,
+          } = data.result
+
+          const source =
+            hlsPath && dashPath
+              ? [
+                  {
+                    type: 'application/x-mpegURL',
+                    src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${hlsPath}&token=${authToken}`,
+                  },
+                  {
+                    type: 'application/dash+xml',
+                    src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${dashPath}&token=${authToken}`,
+                  },
+                ]
+              : [
+                  {
+                    type: 'application/x-mpegURL',
+                    src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${cloudfrontMigratedHlsPath}&token=${authToken}`,
+                  },
+                ]
           setSources(source)
-          setCaptions(captions)
+          setCaptions(captionSignedUrls)
         })
         .catch(error => setError(error.toString()))
         .finally(() => setLoading(false))
