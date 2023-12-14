@@ -84,6 +84,7 @@ const MeetingPage = () => {
     } catch (error) {
       utm = {}
     }
+
     // This API includes an update event
     try {
       const res = await axios.post(
@@ -100,7 +101,6 @@ const MeetingPage = () => {
             { name: '聯盟來源', value: utm.utm_source || '' },
             { name: '聯盟會員編號', value: utm.utm_id || '' },
             { name: '聯盟成交編號', value: utm.utm_term || '' },
-            { name: '行銷內容', value: utm.utm_content || '' },
             { name: '來源網址', value: landingPage || '' },
             { name: '廣告素材', value: propertyDefaultValue['廣告素材'] || '' },
             { name: '行銷活動', value: propertyDefaultValue['行銷活動'] || '' },
