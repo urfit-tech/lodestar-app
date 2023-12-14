@@ -51,8 +51,16 @@ const StyledUploadWarning = styled.div`
 
 const StyledLink = styled.a`
   transition: 0.2s;
-  &:hover {
-    color: #019d96;
+`
+
+const StyledDescription = styled.div`
+  .primary {
+    color: ${props => props.theme['@primary-color']};
+    &:hover,
+    &:focus {
+      color: ${props => props.theme['@primary-color']};
+      opacity: 0.8;
+    }
   }
 `
 
@@ -203,15 +211,17 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
           </Button>
         </Form.Item>
       </StyledForm>
-      <p>
-        <span>若需修改密碼、會員資料，請至</span>
-        <StyledLink href="https://www.cw.com.tw/member" target="_blank">
-          <u>
-            <b>天下雜誌會員中心</b>
-          </u>
-        </StyledLink>
-        <span>，登入後進行修改。</span>
-      </p>
+      <StyledDescription>
+        <Typography.Paragraph>
+          <p>
+            若需修改密碼、會員資料，請至
+            <StyledLink href="https://www.cw.com.tw/member" target="_blank" className="primary">
+              天下雜誌會員中心
+            </StyledLink>
+            ，登入後進行修改。
+          </p>
+        </Typography.Paragraph>
+      </StyledDescription>
     </AdminCard>
   )
 }
