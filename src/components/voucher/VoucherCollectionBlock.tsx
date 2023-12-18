@@ -30,8 +30,8 @@ const VoucherCollectionBlock: React.VFC = () => {
   const {
     loading: loadingEnrolledVoucherCollection,
     error: errorEnrolledVoucherCollection,
-    enrolledVoucherCollection,
-    refetch: refetchEnrolledVoucherCollection,
+    data: enrolledVoucherCollection,
+    fetch: refetchEnrolledVoucherCollection,
   } = useEnrolledVoucherCollection(currentMemberId || '')
 
   const handleRefetch = () => {
