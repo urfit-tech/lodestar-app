@@ -1,4 +1,5 @@
 import { gql, QueryHookOptions, useMutation, useQuery } from '@apollo/client'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum, uniq } from 'ramda'
 import { useMemo } from 'react'
@@ -362,6 +363,17 @@ export const useProgram = (programId: string) => {
     { variables: { programId } },
   )
 
+  const { enabledModules } = useApp()
+
+  const allowedModulesArray = ['exercise']
+
+  const getModulePermission = (moduleType: string | null): boolean => {
+    if (moduleType === null || !allowedModulesArray.includes(moduleType)) {
+      return true
+    }
+    return enabledModules[moduleType as keyof typeof enabledModules] === true
+  }
+
   const program: (Program & { duration: number | null; score: number | null }) | null = useMemo(() => {
     return {
       id: data?.program_by_pk?.id,
@@ -431,34 +443,44 @@ export const useProgram = (programId: string) => {
           id: programContentSection.id,
           title: programContentSection.title,
           description: programContentSection.description || '',
-          contents: programContentSection.program_contents.map(programContent => ({
-            id: programContent.id,
-            title: programContent.title,
-            programId: data?.program_by_pk?.id,
-            contentSectionTitle: programContentSection.title,
-            abstract: programContent.abstract || '',
-            metadata: programContent.metadata,
-            duration: programContent.duration,
-            contentType:
-              programContent.program_content_videos.length > 0
-                ? 'video'
-                : programContent.program_content_type?.type || '',
-            publishedAt: new Date(programContent.published_at),
-            displayMode: programContent.display_mode as DisplayMode,
-            listPrice: programContent.list_price,
-            salePrice: programContent.sale_price,
-            soldAt: programContent.sold_at && new Date(programContent.sold_at),
-            contentBodyId: programContent.content_body_id,
-            videos: programContent.program_content_videos.map(v => ({
-              id: v.attachment.id,
-              size: v.attachment.size,
-              options: v.attachment.options,
-              data: v.attachment.data,
-            })),
-            audios: programContent.program_content_audios.map(v => ({
-              data: v.data,
-            })),
-          })),
+          contents: programContentSection.program_contents
+            .map(programContent => {
+              const contentType =
+                programContent.program_content_videos.length > 0
+                  ? 'video'
+                  : programContent.program_content_type?.type || ''
+
+              return {
+                id: programContent.id,
+                title: programContent.title,
+                programId: data?.program_by_pk?.id,
+                contentSectionTitle: programContentSection.title,
+                abstract: programContent.abstract || '',
+                metadata: programContent.metadata,
+                duration: programContent.duration,
+                contentType:
+                  programContent.program_content_videos.length > 0
+                    ? 'video'
+                    : programContent.program_content_type?.type || '',
+                publishedAt: new Date(programContent.published_at),
+                displayMode: programContent.display_mode as DisplayMode,
+                listPrice: programContent.list_price,
+                salePrice: programContent.sale_price,
+                soldAt: programContent.sold_at && new Date(programContent.sold_at),
+                contentBodyId: programContent.content_body_id,
+                videos: programContent.program_content_videos.map(v => ({
+                  id: v.attachment.id,
+                  size: v.attachment.size,
+                  options: v.attachment.options,
+                  data: v.attachment.data,
+                })),
+                audios: programContent.program_content_audios.map(v => ({
+                  data: v.data,
+                })),
+                hasPermission: getModulePermission(contentType),
+              }
+            })
+            .filter(programContent => programContent.hasPermission),
         })) || [],
     }
   }, [data, programPlans])
