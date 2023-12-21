@@ -22,7 +22,6 @@ import { defineMessages, useIntl } from 'react-intl'
 import { Redirect, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
-import { renderMemberAbstract } from '../../components/common/CustomRender'
 import MemberAvatar from '../../components/common/MemberAvatar'
 import PageHelmet from '../../components/common/PageHelmet'
 import DefaultLayout from '../../components/layout/DefaultLayout'
@@ -33,7 +32,6 @@ import ProjectPlanCollectionBlock from '../../containers/project/ProjectPlanColl
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useMemberPageEnrollmentsCounts, useProductEnrollment } from '../../hooks/common'
 import { usePublicMember } from '../../hooks/member'
-import { MemberPublicProps } from '../../types/member'
 import ActivityTicketCollectionBlock from './ActivityTicketCollectionBlock'
 import AppointmentPlanCollectionBlock from './AppointmentPlanCollectionBlock'
 import PodcastProgramCollectionBlock from './PodcastProgramCollectionBlock'
@@ -138,11 +136,11 @@ export const ViewSwitch: React.FC<{ view: string; onClick: () => void; className
   )
 }
 
-const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.ReactNode }> = ({ renderText }) => {
+const MemberPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { memberId } = useParams<{ memberId: string }>()
   const { isAuthenticated, currentMemberId, permissions } = useAuth()
-  const { id: appId, settings, loading: loadingApp } = useApp()
+  const { settings, loading: loadingApp } = useApp()
   const { member } = usePublicMember(memberId)
   const {
     loadingProjectPlanEnrollments,
@@ -158,13 +156,11 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
   const [programTab, setProgramTab] = useState('program')
 
   const {
-    fetch: fetchProgramEnrollment,
     data: programEnrollment,
     error: programEnrollmentError,
     loading: programEnrollmentLoading,
   } = useProductEnrollment('program', memberId)
   const {
-    fetch: fetchExpiredProgramEnrollment,
     data: expiredProgramEnrollment,
     error: expiredProgramEnrollmentError,
     loading: expiredProgramEnrollmentLoading,
@@ -349,22 +345,11 @@ const MemberPage: React.VFC<{ renderText?: (member: MemberPublicProps) => React.
           ) : (
             <>
               <MemberAvatar memberId={member.id} withName={false} size={128} />
-
               <div className="d-flex flex-column align-items-center align-items-sm-start flex-sm-grow-1 ml-sm-4">
-                {renderText?.(member) || (
-                  <>
-                    <Typography.Title level={4}>{member.name}</Typography.Title>
-                    {settings['feature.custom_member_abstract.enable'] ? (
-                      <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
-                        {renderMemberAbstract(appId)}
-                      </Typography.Paragraph>
-                    ) : (
-                      <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
-                        <p>{member.abstract}</p>
-                      </Typography.Paragraph>
-                    )}
-                  </>
-                )}
+                <Typography.Title level={4}>{member.name}</Typography.Title>
+                <Typography.Paragraph>
+                  <p>{member.abstract}</p>
+                </Typography.Paragraph>
               </div>
             </>
           )}
