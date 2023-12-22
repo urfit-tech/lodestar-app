@@ -25,21 +25,30 @@ export const useEnrolledVoucherCollection = (memberId: string) => {
           },
         )
         setData(
-          data.map(
-            (
-              voucher: VoucherProps & {
-                voucherPlanProducts: { id: string; productId: string }[]
-                voucherPlanId: string
-              },
-            ) => ({
-              ...voucher,
-              startedAt: voucher.startedAt ? new Date(voucher.startedAt) : undefined,
-              endedAt: voucher.endedAt ? new Date(voucher.endedAt) : undefined,
-              description: decodeURI(voucher.description || ''),
-              available: !!voucher.status && !voucher.status.outdated && !voucher.status.used,
-              productIds: voucher.voucherPlanProducts.map(product => product.productId),
-            }),
-          ) || [],
+          data
+            .filter(
+              (
+                d: VoucherProps & {
+                  voucherPlanProducts: { id: string; productId: string }[]
+                  voucherPlanId: string
+                },
+              ) => d.voucherCode.deletedAt === null,
+            )
+            .map(
+              (
+                voucher: VoucherProps & {
+                  voucherPlanProducts: { id: string; productId: string }[]
+                  voucherPlanId: string
+                },
+              ) => ({
+                ...voucher,
+                startedAt: voucher.startedAt ? new Date(voucher.startedAt) : undefined,
+                endedAt: voucher.endedAt ? new Date(voucher.endedAt) : undefined,
+                description: decodeURI(voucher.description || ''),
+                available: !!voucher.status && !voucher.status.outdated && !voucher.status.used,
+                productIds: voucher.voucherPlanProducts.map(product => product.productId),
+              }),
+            ) || [],
         )
       } catch (err) {
         console.log(err)
