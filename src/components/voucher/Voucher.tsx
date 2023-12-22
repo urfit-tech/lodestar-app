@@ -105,6 +105,7 @@ export type VoucherProps = {
   voucherCode: {
     id: string
     code: string
+    deletedAt?: Date | null
   }
   status: {
     outdated?: boolean | null
