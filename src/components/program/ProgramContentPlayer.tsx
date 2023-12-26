@@ -457,17 +457,17 @@ const ProgramContentPlayerWrapper = (props: {
               ? [
                   {
                     type: 'application/x-mpegURL',
-                    src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${hlsPath}&token=${authToken}`,
+                    src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${hlsPath}`,
                   },
                   {
                     type: 'application/dash+xml',
-                    src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${dashPath}&token=${authToken}`,
+                    src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${dashPath}`,
                   },
                 ]
               : [
                   {
                     type: 'application/x-mpegURL',
-                    src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${cloudfrontMigratedHlsPath}&token=${authToken}`,
+                    src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${cloudfrontMigratedHlsPath}`,
                   },
                 ]
           setSources(source)
