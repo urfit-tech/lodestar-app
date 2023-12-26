@@ -365,7 +365,7 @@ export const useProgram = (programId: string) => {
 
   const { enabledModules } = useApp()
 
-  const allowedModulesArray = ['exercise']
+  const allowedModulesArray = ['exercise', 'exam', 'practice']
 
   const getModulePermission = (moduleType: string | null): boolean => {
     if (moduleType === null || !allowedModulesArray.includes(moduleType)) {
