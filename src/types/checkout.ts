@@ -67,8 +67,6 @@ export type CouponProps = {
       amount: number
       title: string
       description: string | null
-      count: number
-      remaining: number
       scope: string[] | null
       productIds?: string[]
     }

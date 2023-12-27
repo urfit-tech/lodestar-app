@@ -14,7 +14,7 @@ import { StyledTabList, StyledTabPanel } from '../GroupBuyingCollectionPage'
 const CouponCollectionAdminPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
-  const { loadingCoupons, coupons } = useCouponCollection(currentMemberId || '')
+  const { loading: loadingCoupons, data: coupons } = useCouponCollection(currentMemberId || '')
   const [activeKey, setActiveKey] = useState('available')
 
   const tabContents = [
