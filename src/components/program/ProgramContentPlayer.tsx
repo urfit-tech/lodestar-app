@@ -471,7 +471,7 @@ const ProgramContentPlayerWrapper = (props: {
                   },
                 ]
           setSources(source)
-          setCaptions(captions)
+          setCaptions(captionSignedUrls)
         })
         .catch(error => setError(error.toString()))
         .finally(() => setLoading(false))
