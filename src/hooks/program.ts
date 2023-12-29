@@ -598,10 +598,7 @@ export const useProgramContent = (programContentId: string) => {
             abstract: data.program_content_by_pk.abstract || '',
             metadata: data.program_content_by_pk.metadata,
             duration: data.program_content_by_pk.duration,
-            contentType:
-              data.program_content_by_pk.program_content_videos.length > 0
-                ? 'video'
-                : data.program_content_by_pk.program_content_body?.type || null,
+            contentType: data.program_content_by_pk.program_content_body?.type || null,
             publishedAt: data.program_content_by_pk.published_at
               ? new Date(data.program_content_by_pk.published_at)
               : null,
