@@ -1,10 +1,11 @@
 import { Button } from '@chakra-ui/react'
-import html2canvas from 'html2canvas'
+import DOMPurify from 'dompurify'
+import * as htmlToImage from 'html-to-image'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import { render } from 'mustache'
-import { forwardRef, RefObject, useCallback, useEffect, useRef, useState } from 'react'
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StyledCode, StyledDate } from '../../components/common/CertificateCard'
@@ -58,7 +59,7 @@ const StyledContentBlockFooter = styled.div`
   justify-content: space-between;
   padding: 1.25rem 1.25rem 1.25rem 2rem;
 `
-const StyledButton = styled(Button)`
+const StyledButton = styled.button`
   width: 105px;
   height: 44px;
   border-radius: 4px;
@@ -96,24 +97,23 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
   }
   const certificateRef = useRef<HTMLDivElement | null>(null)
 
-  const CERTIFICATE_IMAGE_SIZE = 2400
-  const onDownLoad = () => {
+  const onDownLoad = async () => {
     if (!certificateRef.current) {
       return null
     }
-    const scale = CERTIFICATE_IMAGE_SIZE / (certificateRef as RefObject<HTMLDivElement>).current!.offsetWidth
-    html2canvas(certificateRef.current, {
-      // NOTE: Cannot get background image without allowTaint and useCORS
-      allowTaint: true,
-      useCORS: true,
-      scale,
-    }).then(canvas => {
-      const img = canvas.toDataURL('image/png', 1)
+
+    try {
+      const dataUri = await htmlToImage.toPng(certificateRef.current)
+
+      const img = dataUri
+
       const link = document.createElement('a')
       link.download = `${certificate.title}.png`
       link.href = img
       link.click()
-    })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -149,7 +149,12 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
         </StyledAbstract>
       </StyledContentBlock>
       {/* TEMPLATE */}
-      <Certificate template={certificate.template || ''} templateVars={templateVars} ref={certificateRef} />
+      {/* <Certificate template={certificate.template || ''} templateVars={templateVars} ref={certificateRef} /> */}
+      <CertificateImpl
+        template={certificate.template || ''}
+        templateVars={templateVars}
+        certificateRef={certificateRef}
+      />
       {/* TEMPLATE */}
       <StyledContentBlockFooter>
         <StyledAbstract className="mr-3">
@@ -204,25 +209,27 @@ const CertificateImpl: React.VFC<{
     return () => window.removeEventListener('resize', handleResize)
   }, [handleResize])
 
+  const sanitizedTemplate = DOMPurify.sanitize(template)
+
   return (
     <StyledCertificateContainer ref={certificateRef}>
       <StyledCertificateCard
         ref={cardRef}
         scale={scale}
-        dangerouslySetInnerHTML={{ __html: render(template, templateVars) }}
+        dangerouslySetInnerHTML={{ __html: render(sanitizedTemplate, templateVars) }}
       />
     </StyledCertificateContainer>
   )
 }
 
-const Certificate = forwardRef(
-  (
-    props: {
-      template: string
-      templateVars?: any
-    },
-    ref?: React.Ref<HTMLDivElement>,
-  ) => <CertificateImpl {...props} certificateRef={ref} />,
-)
+// const Certificate = forwardRef(
+//   (
+//     props: {
+//       template: string
+//       templateVars?: any
+//     },
+//     ref?: React.Ref<HTMLDivElement>,
+//   ) => <CertificateImpl {...props} certificateRef={ref} />,
+// )
 
 export default CertificateContentBlock
