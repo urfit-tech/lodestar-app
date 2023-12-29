@@ -47,6 +47,7 @@ const ProgramContentPage: React.VFC = () => {
   const { resourceCollection } = useResourceCollection([`${appId}:program_content:${programContentId}`])
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
   const [previousPage] = useQueryParam('back', StringParam)
+  const [ebookLocation, setEbookLocation] = useState<string | number>(0)
 
   if (isAuthenticating || loadingProgram) {
     return <LoadingPage />
@@ -161,6 +162,8 @@ const ProgramContentPage: React.VFC = () => {
                       programContentId={programContentId}
                       issueEnabled={program.isIssuesOpen}
                       editors={program.editors}
+                      ebookLocation={ebookLocation}
+                      onEbookLocationChange={setEbookLocation}
                     />
                   </StyledLayoutContent>
                 </div>

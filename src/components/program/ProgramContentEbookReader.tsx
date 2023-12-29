@@ -1,11 +1,14 @@
 import axios from 'axios'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { ReactReader } from 'react-reader'
 import type { Contents, Rendition } from 'epubjs'
 
-const ProgramContentEbookReader: React.VFC<{ programContentId: string }> = () => {
+const ProgramContentEbookReader: React.VFC<{
+  programContentId: string
+  location: string | number
+  onLocationChange: (location: string | number) => void
+}> = ({ programContentId, location, onLocationChange }) => {
   const rendition = useRef<Rendition | undefined>(undefined)
-  const [location, setLocation] = useState<string | number>(0)
   const [source, setSource] = useState<ArrayBuffer | null>(null)
 
   const convertFileToArrayBuffer = (file: File): Promise<ArrayBuffer> => {
@@ -36,7 +39,9 @@ const ProgramContentEbookReader: React.VFC<{ programContentId: string }> = () =>
         url={`https://${process.env.REACT_APP_S3_BUCKET}/images/demo/ebook_test/7B_2048試閱本版本號3.0.epub`}
         showToc={false}
         location={location}
-        locationChanged={(loc: string) => setLocation(loc)}
+        locationChanged={(loc: string) => {
+          onLocationChange(loc)
+        }}
         getRendition={(_rendition: Rendition) => {
           rendition.current = _rendition
           _rendition.hooks.content.register((contents: Contents) => {
