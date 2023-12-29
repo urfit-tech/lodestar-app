@@ -82,7 +82,17 @@ const ProgramContentBlock: React.VFC<{
   programContentId: string
   issueEnabled?: boolean
   editors?: string[]
-}> = ({ programId, programContentId, programRoles, programContentSections, issueEnabled }) => {
+  ebookLocation: string | number
+  onEbookLocationChange: (location: string | number) => void
+}> = ({
+  programId,
+  programContentId,
+  programRoles,
+  programContentSections,
+  issueEnabled,
+  ebookLocation,
+  onEbookLocationChange,
+}) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { loading: loadingApp, enabledModules } = useApp()
@@ -228,7 +238,11 @@ const ProgramContentBlock: React.VFC<{
           />
         )
       ) : programContent.contentType === 'ebook' ? (
-        <ProgramContentEbookReader programContentId={programContent.id} />
+        <ProgramContentEbookReader
+          programContentId={programContent.id}
+          location={ebookLocation}
+          onLocationChange={onEbookLocationChange}
+        />
       ) : null}
       {moment().isBefore(moment(programContent.publishedAt)) &&
         hasProgramContentPermission &&
