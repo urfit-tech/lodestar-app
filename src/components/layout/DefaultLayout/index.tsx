@@ -321,7 +321,6 @@ const DefaultLayout: React.FC<{
         </StyledLayoutHeader>
 
         <StyledLayoutContent id="layout-content" className={`${noHeader ? 'full-height' : ''}`}>
-          {!isAuthenticated && !isAuthenticating && pathName.includes('/settings') && <AskLoginModal />}
           {settings['feature.email_verification.enabled'] === '1' && isUnVerifiedEmails && !noNotificationBar && (
             <StyledNotificationBar variant="warning">
               <p>
