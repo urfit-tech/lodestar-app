@@ -1,14 +1,14 @@
 import axios from 'axios'
 import { useCallback, useRef, useState } from 'react'
 import { ReactReader } from 'react-reader'
-import type { Contents, Rendition } from 'epubjs'
+import type { NavItem } from 'epubjs'
 
 const ProgramContentEbookReader: React.VFC<{
   programContentId: string
   location: string | number
   onLocationChange: (location: string | number) => void
 }> = ({ programContentId, location, onLocationChange }) => {
-  const rendition = useRef<Rendition | undefined>(undefined)
+  const toc = useRef<NavItem[]>([])
   const [source, setSource] = useState<ArrayBuffer | null>(null)
 
   const convertFileToArrayBuffer = (file: File): Promise<ArrayBuffer> => {
@@ -38,20 +38,10 @@ const ProgramContentEbookReader: React.VFC<{
       <ReactReader
         url={`https://${process.env.REACT_APP_S3_BUCKET}/images/demo/ebook_test/7B_2048試閱本版本號3.0.epub`}
         showToc={false}
+        tocChanged={_toc => (toc.current = _toc)}
         location={location}
         locationChanged={(loc: string) => {
           onLocationChange(loc)
-        }}
-        getRendition={(_rendition: Rendition) => {
-          rendition.current = _rendition
-          _rendition.hooks.content.register((contents: Contents) => {
-            const body = contents.window.document.querySelector('body')
-            if (body) {
-              body.oncontextmenu = () => {
-                return false
-              }
-            }
-          })
         }}
       />
     </div>

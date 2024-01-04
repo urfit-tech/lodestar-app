@@ -319,6 +319,22 @@ export const useProgram = (programId: string) => {
               program_content_audios {
                 data
               }
+              program_content_ebook {
+                id
+                data
+                program_content_ebook_tocs(where: { parent: { _is_null: true } }, order_by: { position: asc }) {
+                  id
+                  label
+                  href
+                  position
+                  subitems(order_by: { position: asc }) {
+                    id
+                    label
+                    href
+                    position
+                  }
+                }
+              }
             }
           }
         }
@@ -443,44 +459,51 @@ export const useProgram = (programId: string) => {
           id: programContentSection.id,
           title: programContentSection.title,
           description: programContentSection.description || '',
-          contents: programContentSection.program_contents
-            .map(programContent => {
-              const contentType =
-                programContent.program_content_videos.length > 0
-                  ? 'video'
-                  : programContent.program_content_type?.type || ''
-
-              return {
-                id: programContent.id,
-                title: programContent.title,
-                programId: data?.program_by_pk?.id,
-                contentSectionTitle: programContentSection.title,
-                abstract: programContent.abstract || '',
-                metadata: programContent.metadata,
-                duration: programContent.duration,
-                contentType:
-                  programContent.program_content_videos.length > 0
-                    ? 'video'
-                    : programContent.program_content_type?.type || '',
-                publishedAt: new Date(programContent.published_at),
-                displayMode: programContent.display_mode as DisplayMode,
-                listPrice: programContent.list_price,
-                salePrice: programContent.sale_price,
-                soldAt: programContent.sold_at && new Date(programContent.sold_at),
-                contentBodyId: programContent.content_body_id,
-                videos: programContent.program_content_videos.map(v => ({
-                  id: v.attachment.id,
-                  size: v.attachment.size,
-                  options: v.attachment.options,
-                  data: v.attachment.data,
-                })),
-                audios: programContent.program_content_audios.map(v => ({
-                  data: v.data,
-                })),
-                hasPermission: getModulePermission(contentType),
-              }
-            })
-            .filter(programContent => programContent.hasPermission),
+          contents: programContentSection.program_contents.map(programContent => ({
+            id: programContent.id,
+            title: programContent.title,
+            programId: data?.program_by_pk?.id,
+            contentSectionTitle: programContentSection.title,
+            abstract: programContent.abstract || '',
+            metadata: programContent.metadata,
+            duration: programContent.duration,
+            contentType:
+              programContent.program_content_videos.length > 0
+                ? 'video'
+                : programContent.program_content_type?.type || '',
+            publishedAt: new Date(programContent.published_at),
+            displayMode: programContent.display_mode as DisplayMode,
+            listPrice: programContent.list_price,
+            salePrice: programContent.sale_price,
+            soldAt: programContent.sold_at && new Date(programContent.sold_at),
+            contentBodyId: programContent.content_body_id,
+            videos: programContent.program_content_videos.map(v => ({
+              id: v.attachment.id,
+              size: v.attachment.size,
+              options: v.attachment.options,
+              data: v.attachment.data,
+            })),
+            audios: programContent.program_content_audios.map(v => ({
+              data: v.data,
+            })),
+            ebook: {
+              id: (programContent.program_content_ebook?.id as string) || '',
+              data: programContent.program_content_ebook?.data || {},
+              programContentEbookTocs:
+                programContent.program_content_ebook?.program_content_ebook_tocs.map(v => ({
+                  id: v.id as string,
+                  label: v.label,
+                  href: v.href,
+                  position: v.position || 0,
+                  subitems: v.subitems.map(u => ({
+                    id: u.id as string,
+                    label: u.label,
+                    href: u.href,
+                    position: u.position || 0,
+                  })),
+                })) || [],
+            },
+          })),
         })) || [],
     }
   }, [data, programPlans])
@@ -604,7 +627,7 @@ export const useProgramContent = (programContentId: string) => {
   )
 
   const programContent:
-    | (ProgramContent & {
+    | (Omit<ProgramContent, 'ebook'> & {
         programContentBody: ProgramContentBodyProps | null
         attachments: ProgramContentAttachmentProps[]
         contentSectionTitle: string
