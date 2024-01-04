@@ -141,7 +141,12 @@ const ProgramContentPage: React.VFC = () => {
                   editors={program.editors}
                 >
                   <>
-                    <ProgramContentMenu isScrollToTop program={program} />
+                    <ProgramContentMenu
+                      isScrollToTop
+                      program={program}
+                      ebookLocation={ebookLocation}
+                      onEbookLocationChange={setEbookLocation}
+                    />
 
                     <StyledLink to={`/programs/${programId}?moveToBlock=customer-review&visitIntro=1`}>
                       <Button isFullWidth className="mt-3" colorScheme="primary">
@@ -172,6 +177,8 @@ const ProgramContentPage: React.VFC = () => {
                     <ProgramContentMenu
                       program={program}
                       onSelect={() => window.innerWidth < BREAK_POINT && setMenuVisible(false)}
+                      ebookLocation={ebookLocation}
+                      onEbookLocationChange={setEbookLocation}
                     />
                   </StyledSideBar>
                 </div>
