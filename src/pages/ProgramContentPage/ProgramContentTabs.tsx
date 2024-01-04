@@ -32,7 +32,7 @@ export const StyledTabPanel = styled(TabPanel)`
 const ProgramContentTabs: React.VFC<{
   programId: string
   programRoles: ProgramRole[]
-  programContent: ProgramContent & {
+  programContent: Omit<ProgramContent, 'ebook'> & {
     programContentBody: ProgramContentBodyProps | null
     attachments: ProgramContentAttachmentProps[]
   }

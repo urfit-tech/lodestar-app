@@ -1,6 +1,7 @@
 import { AttachmentIcon, CheckIcon, Icon } from '@chakra-ui/icons'
-import { Select } from '@chakra-ui/react'
+import { Box, Flex, Select } from '@chakra-ui/react'
 import { Card } from 'antd'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment-timezone'
 import { flatten, sum } from 'ramda'
@@ -131,8 +132,10 @@ const ProgramContentMenu: React.VFC<{
       contents: ProgramContent[]
     })[]
   }
+  ebookLocation: string | number
+  onEbookLocationChange: (location: string | number) => void
   onSelect?: (programContentId: string) => void
-}> = ({ program, onSelect, isScrollToTop }) => {
+}> = ({ program, onSelect, isScrollToTop, ebookLocation, onEbookLocationChange }) => {
   const { formatMessage } = useIntl()
   const [sortBy, setSortBy] = useState<'section' | 'date'>('section')
   const { search } = useLocation()
@@ -166,9 +169,17 @@ const ProgramContentMenu: React.VFC<{
           isLoading={enrolledProgramIdsLoading}
           isEnrolled={isEnrolled}
           onSelect={onSelect}
+          ebookLocation={ebookLocation}
+          onEbookLocationChange={onEbookLocationChange}
         />
       ) : sortBy === 'date' ? (
-        <ProgramContentDateMenu program={program} programPackageId={programPackageId} onSelect={onSelect} />
+        <ProgramContentDateMenu
+          program={program}
+          programPackageId={programPackageId}
+          onSelect={onSelect}
+          ebookLocation={ebookLocation}
+          onEbookLocationChange={onEbookLocationChange}
+        />
       ) : null}
     </StyledProgramContentMenu>
   )
@@ -185,7 +196,18 @@ const ProgramContentSectionMenu: React.VFC<{
   isLoading: boolean
   isScrollToTop?: boolean
   onSelect?: (programContentId: string) => void
-}> = ({ program, programPackageId, isEnrolled, isLoading, isScrollToTop, onSelect }) => {
+  ebookLocation: string | number
+  onEbookLocationChange: (location: string | number) => void
+}> = ({
+  program,
+  programPackageId,
+  isEnrolled,
+  isLoading,
+  isScrollToTop,
+  onSelect,
+  ebookLocation,
+  onEbookLocationChange,
+}) => {
   const { programContentId } = useParams<{ programContentId?: string }>()
 
   return (
@@ -200,6 +222,8 @@ const ProgramContentSectionMenu: React.VFC<{
           isLoading={isLoading}
           isEnrolled={isEnrolled}
           onSelect={onSelect}
+          ebookLocation={ebookLocation}
+          onEbookLocationChange={onEbookLocationChange}
         />
       ))}
     </>
@@ -216,7 +240,19 @@ const ContentSection: React.VFC<{
   isScrollToTop?: boolean
   defaultCollapse?: boolean
   onSelect?: (programContentId: string) => void
-}> = ({ programContentSection, programPackageId, isEnrolled, isLoading, defaultCollapse, isScrollToTop, onSelect }) => {
+  ebookLocation: string | number
+  onEbookLocationChange: (location: string | number) => void
+}> = ({
+  programContentSection,
+  programPackageId,
+  isEnrolled,
+  isLoading,
+  defaultCollapse,
+  isScrollToTop,
+  onSelect,
+  ebookLocation,
+  onEbookLocationChange,
+}) => {
   const programContentProgress = useProgramContentProgress()
   const [isCollapse, setIsCollapse] = useState(defaultCollapse)
   const [passExam, setPassExam] = useState<string[]>([])
@@ -244,18 +280,27 @@ const ContentSection: React.VFC<{
 
       <StyledContentSectionBody active={isCollapse}>
         {programContentSection.contents?.map(programContent => (
-          <SortBySectionItem
-            isScrollToTop={isScrollToTop}
-            key={programContent.id}
-            programContent={programContent}
-            contentCurrentProgress={contentProgress.find(item => item.programContentId === programContent.id)}
-            onSetIsCollapse={setIsCollapse}
-            isEnrolled={isEnrolled}
-            isLoading={isLoading}
-            passExam={passExam}
-            setPassExam={setPassExam}
-            onClick={() => onSelect?.(programContent.id)}
-          />
+          <>
+            <SortBySectionItem
+              isScrollToTop={isScrollToTop}
+              key={programContent.id}
+              programContent={programContent}
+              contentCurrentProgress={contentProgress.find(item => item.programContentId === programContent.id)}
+              onSetIsCollapse={setIsCollapse}
+              isEnrolled={isEnrolled}
+              isLoading={isLoading}
+              passExam={passExam}
+              setPassExam={setPassExam}
+              onClick={() => onSelect?.(programContent.id)}
+            />
+            {programContent.contentType === 'ebook' ? (
+              <EbookSecondaryMenu
+                tocs={programContent.ebook.programContentEbookTocs}
+                ebookLocation={ebookLocation}
+                onEbookLocationChange={onEbookLocationChange}
+              />
+            ) : null}
+          </>
         ))}
       </StyledContentSectionBody>
     </StyledContentSection>
@@ -290,6 +335,7 @@ const SortBySectionItem: React.VFC<{
   const { programId, programContentId } = useParams<{
     programId: string
     programContentId?: string
+    ebookHref?: string
   }>()
   const [previousPage] = useQueryParam('back', StringParam)
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
@@ -429,17 +475,22 @@ const ProgramContentDateMenu: React.VFC<{
   }
   programPackageId: string | null
   onSelect?: (programContentId: string) => void
+  ebookLocation: string | number
+  onEbookLocationChange: (location: string | number) => void
 }> = ({ program, programPackageId, onSelect }) => {
   const programContents = flatten(program.contentSections.map(programContentSection => programContentSection.contents))
 
   return (
     <div>
       {programContents.map(programContent => (
-        <SortByDateItem
-          key={programContent.id}
-          programContent={programContent}
-          onClick={() => onSelect && onSelect(programContent.id)}
-        />
+        <>
+          <SortByDateItem
+            key={programContent.id}
+            programContent={programContent}
+            onClick={() => onSelect && onSelect(programContent.id)}
+          />
+          {programContent.contentType === 'ebook' ? <>ebook</> : null}
+        </>
       ))}
     </div>
   )
@@ -555,6 +606,108 @@ const ExerciseQuestionCount: React.VFC<{ contentBodyId: string; programContent: 
         </div>
       )}
     </>
+  )
+}
+
+const CheckIconButton: React.VFC<{ status: 'unread' | 'done' }> = ({ status }) => {
+  const theme = useAppTheme()
+
+  return (
+    <Box position="relative">
+      <Box
+        position="absolute"
+        w="20px"
+        h="20px"
+        border="1px solid transparent"
+        borderRadius="50%"
+        textAlign="center"
+        fontSize="10px"
+        lineHeight="20px"
+        {...(status === 'unread'
+          ? {
+              borderColor: '#cdcdcd',
+              color: 'transparent',
+            }
+          : status === 'done'
+          ? { bg: `${theme.colors.primary[500]}`, color: 'primary.500' }
+          : null)}
+      >
+        <Icon as={CheckIcon} />
+      </Box>
+    </Box>
+  )
+}
+
+const EbookSecondaryMenu: React.VFC<{
+  tocs: {
+    id: string
+    label: string
+    href: string
+    position: number
+    subitems?: {
+      id: string
+      label: string
+      href: string
+      position: number
+      finishedAt?: Date
+    }[]
+    finishedAt?: Date
+  }[]
+  ebookLocation: string | number
+  onEbookLocationChange?: (loc: string) => void
+}> = ({ tocs, onEbookLocationChange }) => {
+  const [select, onSelect] = useState<string | null>(tocs[0].href)
+  const theme = useAppTheme()
+
+  useEffect(() => {
+    if (select) {
+      onEbookLocationChange?.(select)
+    }
+  }, [select, onEbookLocationChange])
+
+  return (
+    <Box>
+      {tocs.map(toc => (
+        <Box>
+          <Flex
+            justifyContent="space-between"
+            p="0.75rem 2rem 0.75rem 2rem"
+            cursor="pointer"
+            _active={{ color: 'primary.500', bg: `${rgba(theme.colors.primary[500], 0.1)}` }}
+            onClick={() => {
+              onSelect(toc.href)
+              onEbookLocationChange?.(toc.href)
+            }}
+          >
+            <Box fontSize="14px" color="#585858" letterSpacing="0.18px" fontWeight="500">
+              {toc.label}
+            </Box>
+
+            <CheckIconButton status={toc.finishedAt ? 'done' : 'unread'} />
+          </Flex>
+          {toc.subitems?.map(subitem => (
+            <Flex
+              justifyContent="space-between"
+              p="0.75rem 2rem 0.75rem 4rem"
+              letterSpacing="0.4px"
+              fontWeight="500"
+              cursor="pointer"
+              _active={{ color: 'primary.500', bg: `${rgba(theme.colors.primary[500], 0.1)}` }}
+              onClick={() => {
+                onSelect(toc.href)
+                onEbookLocationChange?.(subitem.href)
+              }}
+            >
+              <Box fontSize="14px" color="#585858" letterSpacing="0.18px" fontWeight="500">
+                {subitem.label}
+              </Box>
+
+              <CheckIconButton status={toc.finishedAt ? 'done' : 'unread'} />
+            </Flex>
+          ))}
+        </Box>
+      ))}
+    </Box>
   )
 }
 

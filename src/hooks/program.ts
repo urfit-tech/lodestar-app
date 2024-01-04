@@ -318,6 +318,22 @@ export const useProgram = (programId: string) => {
               program_content_audios {
                 data
               }
+              program_content_ebook {
+                id
+                data
+                program_content_ebook_tocs(where: { parent: { _is_null: true } }, order_by: { position: asc }) {
+                  id
+                  label
+                  href
+                  position
+                  subitems(order_by: { position: asc }) {
+                    id
+                    label
+                    href
+                    position
+                  }
+                }
+              }
             }
           }
         }
@@ -458,6 +474,23 @@ export const useProgram = (programId: string) => {
             audios: programContent.program_content_audios.map(v => ({
               data: v.data,
             })),
+            ebook: {
+              id: (programContent.program_content_ebook?.id as string) || '',
+              data: programContent.program_content_ebook?.data || {},
+              programContentEbookTocs:
+                programContent.program_content_ebook?.program_content_ebook_tocs.map(v => ({
+                  id: v.id as string,
+                  label: v.label,
+                  href: v.href,
+                  position: v.position || 0,
+                  subitems: v.subitems.map(u => ({
+                    id: u.id as string,
+                    label: u.label,
+                    href: u.href,
+                    position: u.position || 0,
+                  })),
+                })) || [],
+            },
           })),
         })) || [],
     }
@@ -582,7 +615,7 @@ export const useProgramContent = (programContentId: string) => {
   )
 
   const programContent:
-    | (ProgramContent & {
+    | (Omit<ProgramContent, 'ebook'> & {
         programContentBody: ProgramContentBodyProps | null
         attachments: ProgramContentAttachmentProps[]
         contentSectionTitle: string
