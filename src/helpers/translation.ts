@@ -1573,6 +1573,68 @@ export const reviewMessages = {
   }),
 }
 
+export const termsPrivacy = {
+  title: defineMessages({
+    termsPrivacy: { id: 'termsPrivacy.title', defaultMessage: '隱私權政策' },
+  }),
+  clause: defineMessages({
+    one: { id: 'clause.one', defaultMessage: '一、總則' },
+    two: { id: 'clause.two', defaultMessage: '二、資訊的收集' },
+    three: { id: 'clause.three', defaultMessage: '三、資訊的使用與處理' },
+    four: { id: 'clause.four', defaultMessage: '四、資訊的分享與披露' },
+    five: { id: 'clause.five', defaultMessage: '五、資訊的安全' },
+    six: { id: 'clause.six', defaultMessage: '六、Cookie 和相似技術' },
+    seven: { id: 'clause.seven', defaultMessage: '七、隱私權政策的修改' },
+    eight: { id: 'clause.eight', defaultMessage: '八、個人資料權利' },
+    nine: { id: 'clause.nine', defaultMessage: '九、聯絡我們' },
+  }),
+}
+
+export const termsPrivacyMessages = {
+  paragraph: defineMessages({
+    one: {
+      id: 'paragraph.one',
+      defaultMessage: `歡迎使用本服務。本隱私權政策旨在告知您我們如何收集、使用、保護及處理您的個人資訊，並遵循相關法規與Facebook平臺的隱私政策。
+    本隱私權政策適用於使用我們服務的所有用戶，包括透過Facebook登入的用戶。`,
+    },
+    two: {
+      id: 'paragraph.two',
+      defaultMessage: `註冊資訊： 當您註冊成為我們的會員時，我們可能會收集您的姓名、電子郵件地址、居住地址、電話號碼等必要的註冊資訊。
+    Facebook 登入資訊： 若您透過Facebook登入，我們可能會取得您在Facebook上的公開資訊，包括但不限於個人檔案資訊、朋友清單、聯絡資訊。
+    使用資訊： 我們可能會自動收集使用資訊，包括IP地址、訪問時間、使用的瀏覽器類型等，以優化使用者體驗。`,
+    },
+    three: {
+      id: 'paragraph.three',
+      defaultMessage: `提供服務： 收集的資訊將用於提供、維護、改進我們的服務，確保您有安全、高效的使用體驗。
+    個別化服務： 我們可能使用您的資訊提供個別化的內容、推薦或廣告，並提高服務品質。
+    Facebook 登入資訊的使用： 我們僅在必要時使用Facebook登入資訊，不會未經您同意而發布在您Facebook帳戶的資訊。`,
+    },
+    four: {
+      id: 'paragraph.four',
+      defaultMessage: `第三方分享： 我們不會出售、交換或轉讓您的個人資訊給第三方，除非經您同意或法律要求。
+    合規披露： 我們將依法披露必要的資訊，以回應法律程序、法院命令或保護我們和其他用戶的權利。`,
+    },
+    five: {
+      id: 'paragraph.five',
+      defaultMessage: `安全措施： 我們實施合理的安全措施，以保護您的個人資訊免受未經授權的存取、使用或披露。
+    數據存儲： 您的資訊可能會存儲於我們的伺服器或合作夥伴的安全伺服器上。`,
+    },
+    six: {
+      id: 'paragraph.six',
+      defaultMessage: `Cookie的使用： 我們可能使用Cookie和相似技術以提升使用者體驗，但您可在瀏覽器中進行相應設定。`,
+    },
+    seven: {
+      id: 'paragraph.seven',
+      defaultMessage: `政策修改： 我們保留修改本隱私權政策的權利，修改後的政策將在我們的網站上發佈。`,
+    },
+    eight: {
+      id: 'paragraph.eight',
+      defaultMessage: `個人資料權利： 您有權查詢、更正、刪除您的個人資訊，以及反對或限制其處理。如欲行使上述權利，請聯繫我們。`,
+    },
+    nine: { id: 'paragraph.nine', defaultMessage: `若您對本隱私權政策有任何疑問或疑慮，請聯絡我們。` },
+  }),
+}
+
 export const codeMessages = defineMessages({
   SUCCESS: {
     id: 'code.SUCCESS',
