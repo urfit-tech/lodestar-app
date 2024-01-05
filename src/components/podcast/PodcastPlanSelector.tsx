@@ -1,7 +1,7 @@
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import PeriodTypeLabel from '../common/PeriodTypeLabel'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 const StyledPodcastPlanLabel = styled.div<{ active?: boolean }>`
   && {
@@ -66,7 +66,11 @@ const PodcastPlanSelector: React.VFC<{
                 <PriceLabel
                   variant="inline"
                   listPrice={podcastPlan.listPrice}
-                  salePrice={(podcastPlan.soldAt?.getTime() || 0) > Date.now() ? podcastPlan.salePrice : undefined}
+                  salePrice={
+                    podcastPlan.soldAt && new Date(podcastPlan.soldAt).getTime() > Date.now()
+                      ? podcastPlan.salePrice
+                      : undefined
+                  }
                   render={({ listPrice, salePrice, formatCurrency }) => (
                     <StyledPodcastPlanPrice active={isActive}>
                       {salePrice && <span>{formatCurrency(salePrice)}</span>}
