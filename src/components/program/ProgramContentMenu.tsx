@@ -295,6 +295,7 @@ const ContentSection: React.VFC<{
             />
             {programContent.contentType === 'ebook' ? (
               <EbookSecondaryMenu
+                programContentId={programContent.id}
                 tocs={programContent.ebook.programContentEbookTocs}
                 ebookLocation={ebookLocation}
                 onEbookLocationChange={onEbookLocationChange}
@@ -335,7 +336,6 @@ const SortBySectionItem: React.VFC<{
   const { programId, programContentId } = useParams<{
     programId: string
     programContentId?: string
-    ebookHref?: string
   }>()
   const [previousPage] = useQueryParam('back', StringParam)
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
@@ -639,6 +639,7 @@ const CheckIconButton: React.VFC<{ status: 'unread' | 'done' }> = ({ status }) =
 }
 
 const EbookSecondaryMenu: React.VFC<{
+  programContentId: string
   tocs: {
     id: string
     label: string
@@ -655,10 +656,15 @@ const EbookSecondaryMenu: React.VFC<{
   }[]
   ebookLocation: string | number
   onEbookLocationChange?: (loc: string) => void
-}> = ({ tocs, onEbookLocationChange }) => {
-  const [select, onSelect] = useState<string | null>(tocs[0].href)
+}> = ({ programContentId, tocs, onEbookLocationChange }) => {
   const theme = useAppTheme()
+  const { programContentId: paramProgramContentId } = useParams<{
+    programContentId?: string
+    href?: string
+  }>()
 
+  const [select, onSelect] = useState<string | null>(tocs[0].href)
+  console.log(select)
   useEffect(() => {
     if (select) {
       onEbookLocationChange?.(select)
@@ -666,20 +672,38 @@ const EbookSecondaryMenu: React.VFC<{
   }, [select, onEbookLocationChange])
 
   return (
-    <Box>
+    <Box {...(paramProgramContentId === programContentId ? { bg: `${rgba(theme.colors.primary[500], 0.1)}` } : null)}>
       {tocs.map(toc => (
         <Box>
           <Flex
+            position="relative"
             justifyContent="space-between"
             p="0.75rem 2rem 0.75rem 2rem"
             cursor="pointer"
-            _active={{ color: 'primary.500', bg: `${rgba(theme.colors.primary[500], 0.1)}` }}
+            {...(select === toc.href
+              ? {
+                  _before: {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '4px',
+                    height: '100%',
+                    bg: `${theme.colors.primary[500]}`,
+                  },
+                }
+              : null)}
             onClick={() => {
               onSelect(toc.href)
               onEbookLocationChange?.(toc.href)
             }}
           >
-            <Box fontSize="14px" color="#585858" letterSpacing="0.18px" fontWeight="500">
+            <Box
+              fontSize="14px"
+              letterSpacing="0.18px"
+              fontWeight="500"
+              {...(toc.href === select ? { color: `${theme.colors.primary[500]}` } : '#585858')}
+            >
               {toc.label}
             </Box>
 
@@ -687,18 +711,36 @@ const EbookSecondaryMenu: React.VFC<{
           </Flex>
           {toc.subitems?.map(subitem => (
             <Flex
+              position="relative"
               justifyContent="space-between"
               p="0.75rem 2rem 0.75rem 4rem"
               letterSpacing="0.4px"
               fontWeight="500"
               cursor="pointer"
-              _active={{ color: 'primary.500', bg: `${rgba(theme.colors.primary[500], 0.1)}` }}
+              {...(select === subitem.href
+                ? {
+                    _before: {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '4px',
+                      height: '100%',
+                      bg: `${theme.colors.primary[500]}`,
+                    },
+                  }
+                : null)}
               onClick={() => {
-                onSelect(toc.href)
+                onSelect(subitem.href)
                 onEbookLocationChange?.(subitem.href)
               }}
             >
-              <Box fontSize="14px" color="#585858" letterSpacing="0.18px" fontWeight="500">
+              <Box
+                fontSize="14px"
+                letterSpacing="0.18px"
+                fontWeight="500"
+                {...(subitem.href === select ? { color: `${theme.colors.primary[500]}` } : '#585858')}
+              >
                 {subitem.label}
               </Box>
 
