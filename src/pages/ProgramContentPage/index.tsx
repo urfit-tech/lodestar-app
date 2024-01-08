@@ -47,7 +47,11 @@ const ProgramContentPage: React.VFC = () => {
   const { resourceCollection } = useResourceCollection([`${appId}:program_content:${programContentId}`])
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
   const [previousPage] = useQueryParam('back', StringParam)
-  const [ebookLocation, setEbookLocation] = useState<string | number>(0)
+  const [ebookCurrentToc, setEbookCurrentToc] = useState<string | null>(null)
+  const [ebookLocation, setEbookLocation] = useState<string | number>(
+    // last toc progress
+    0,
+  )
 
   if (isAuthenticating || loadingProgram) {
     return <LoadingPage />
@@ -144,6 +148,7 @@ const ProgramContentPage: React.VFC = () => {
                     <ProgramContentMenu
                       isScrollToTop
                       program={program}
+                      ebookCurrentToc={ebookCurrentToc}
                       ebookLocation={ebookLocation}
                       onEbookLocationChange={setEbookLocation}
                     />
@@ -167,6 +172,8 @@ const ProgramContentPage: React.VFC = () => {
                       programContentId={programContentId}
                       issueEnabled={program.isIssuesOpen}
                       editors={program.editors}
+                      ebookCurrentToc={ebookCurrentToc}
+                      onEbookCurrentTocChange={setEbookCurrentToc}
                       ebookLocation={ebookLocation}
                       onEbookLocationChange={setEbookLocation}
                     />
@@ -177,6 +184,7 @@ const ProgramContentPage: React.VFC = () => {
                     <ProgramContentMenu
                       program={program}
                       onSelect={() => window.innerWidth < BREAK_POINT && setMenuVisible(false)}
+                      ebookCurrentToc={ebookCurrentToc}
                       ebookLocation={ebookLocation}
                       onEbookLocationChange={setEbookLocation}
                     />
