@@ -1,3 +1,4 @@
+import { gql, useQuery } from '@apollo/client'
 import { AttachmentIcon, CheckIcon, Icon } from '@chakra-ui/icons'
 import { Box, Flex, Select } from '@chakra-ui/react'
 import { Card } from 'antd'
@@ -26,6 +27,7 @@ import { useHasProgramContentPermission } from '../../pages/ProgramContentPage/P
 import { programContentProgress } from '../../types/exam'
 import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
 import programMessages from './translation'
+import hasura from '../../hasura'
 
 const StyledIcon = styled(Icon)`
   font-size: 16px;
@@ -132,10 +134,11 @@ const ProgramContentMenu: React.VFC<{
       contents: ProgramContent[]
     })[]
   }
+  ebookCurrentToc: string | null
   ebookLocation: string | number
   onEbookLocationChange: (location: string | number) => void
   onSelect?: (programContentId: string) => void
-}> = ({ program, onSelect, isScrollToTop, ebookLocation, onEbookLocationChange }) => {
+}> = ({ program, onSelect, isScrollToTop, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
   const { formatMessage } = useIntl()
   const [sortBy, setSortBy] = useState<'section' | 'date'>('section')
   const { search } = useLocation()
@@ -169,6 +172,7 @@ const ProgramContentMenu: React.VFC<{
           isLoading={enrolledProgramIdsLoading}
           isEnrolled={isEnrolled}
           onSelect={onSelect}
+          ebookCurrentToc={ebookCurrentToc}
           ebookLocation={ebookLocation}
           onEbookLocationChange={onEbookLocationChange}
         />
@@ -177,6 +181,7 @@ const ProgramContentMenu: React.VFC<{
           program={program}
           programPackageId={programPackageId}
           onSelect={onSelect}
+          ebookCurrentToc={ebookCurrentToc}
           ebookLocation={ebookLocation}
           onEbookLocationChange={onEbookLocationChange}
         />
@@ -196,6 +201,7 @@ const ProgramContentSectionMenu: React.VFC<{
   isLoading: boolean
   isScrollToTop?: boolean
   onSelect?: (programContentId: string) => void
+  ebookCurrentToc: string | null
   ebookLocation: string | number
   onEbookLocationChange: (location: string | number) => void
 }> = ({
@@ -205,6 +211,7 @@ const ProgramContentSectionMenu: React.VFC<{
   isLoading,
   isScrollToTop,
   onSelect,
+  ebookCurrentToc,
   ebookLocation,
   onEbookLocationChange,
 }) => {
@@ -222,6 +229,7 @@ const ProgramContentSectionMenu: React.VFC<{
           isLoading={isLoading}
           isEnrolled={isEnrolled}
           onSelect={onSelect}
+          ebookCurrentToc={ebookCurrentToc}
           ebookLocation={ebookLocation}
           onEbookLocationChange={onEbookLocationChange}
         />
@@ -240,6 +248,7 @@ const ContentSection: React.VFC<{
   isScrollToTop?: boolean
   defaultCollapse?: boolean
   onSelect?: (programContentId: string) => void
+  ebookCurrentToc: string | null
   ebookLocation: string | number
   onEbookLocationChange: (location: string | number) => void
 }> = ({
@@ -250,6 +259,7 @@ const ContentSection: React.VFC<{
   defaultCollapse,
   isScrollToTop,
   onSelect,
+  ebookCurrentToc,
   ebookLocation,
   onEbookLocationChange,
 }) => {
@@ -291,12 +301,15 @@ const ContentSection: React.VFC<{
               isLoading={isLoading}
               passExam={passExam}
               setPassExam={setPassExam}
-              onClick={() => onSelect?.(programContent.id)}
+              onClick={() => {
+                onSelect?.(programContent.id)
+              }}
             />
             {programContent.contentType === 'ebook' ? (
               <EbookSecondaryMenu
                 programContentId={programContent.id}
                 tocs={programContent.ebook.programContentEbookTocs}
+                ebookCurrentToc={ebookCurrentToc}
                 ebookLocation={ebookLocation}
                 onEbookLocationChange={onEbookLocationChange}
               />
@@ -475,9 +488,10 @@ const ProgramContentDateMenu: React.VFC<{
   }
   programPackageId: string | null
   onSelect?: (programContentId: string) => void
+  ebookCurrentToc: string | null
   ebookLocation: string | number
   onEbookLocationChange: (location: string | number) => void
-}> = ({ program, programPackageId, onSelect }) => {
+}> = ({ program, programPackageId, onSelect, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
   const programContents = flatten(program.contentSections.map(programContentSection => programContentSection.contents))
 
   return (
@@ -489,7 +503,15 @@ const ProgramContentDateMenu: React.VFC<{
             programContent={programContent}
             onClick={() => onSelect && onSelect(programContent.id)}
           />
-          {programContent.contentType === 'ebook' ? <>ebook</> : null}
+          {programContent.contentType === 'ebook' ? (
+            <EbookSecondaryMenu
+              programContentId={programContent.id}
+              tocs={programContent.ebook.programContentEbookTocs}
+              ebookCurrentToc={ebookCurrentToc}
+              ebookLocation={ebookLocation}
+              onEbookLocationChange={onEbookLocationChange}
+            />
+          ) : null}
         </>
       ))}
     </div>
@@ -629,7 +651,7 @@ const CheckIconButton: React.VFC<{ status: 'unread' | 'done' }> = ({ status }) =
               color: 'transparent',
             }
           : status === 'done'
-          ? { bg: `${theme.colors.primary[500]}`, color: 'primary.500' }
+          ? { bg: `${theme.colors.primary[500]}`, color: '#fff' }
           : null)}
       >
         <Icon as={CheckIcon} />
@@ -650,74 +672,34 @@ const EbookSecondaryMenu: React.VFC<{
       label: string
       href: string
       position: number
-      finishedAt?: Date
     }[]
-    finishedAt?: Date
   }[]
+  ebookCurrentToc: string | null
   ebookLocation: string | number
-  onEbookLocationChange?: (loc: string) => void
-}> = ({ programContentId, tocs, onEbookLocationChange }) => {
+  onEbookLocationChange?: (loc: string | number) => void
+}> = ({ programContentId, tocs, ebookCurrentToc, onEbookLocationChange }) => {
   const theme = useAppTheme()
   const { programContentId: paramProgramContentId } = useParams<{
     programContentId?: string
-    href?: string
   }>()
+  const { tocProgress, refetch: refetchTocProgress } = useCurrentMemberEbookTocProgress(programContentId)
 
-  const [select, onSelect] = useState<string | null>(tocs[0].href)
-  console.log(select)
   useEffect(() => {
-    if (select) {
-      onEbookLocationChange?.(select)
-    }
-  }, [select, onEbookLocationChange])
+    refetchTocProgress()
+  }, [ebookCurrentToc, refetchTocProgress])
 
   return (
     <Box {...(paramProgramContentId === programContentId ? { bg: `${rgba(theme.colors.primary[500], 0.1)}` } : null)}>
-      {tocs.map(toc => (
-        <Box>
-          <Flex
-            position="relative"
-            justifyContent="space-between"
-            p="0.75rem 2rem 0.75rem 2rem"
-            cursor="pointer"
-            {...(select === toc.href
-              ? {
-                  _before: {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '4px',
-                    height: '100%',
-                    bg: `${theme.colors.primary[500]}`,
-                  },
-                }
-              : null)}
-            onClick={() => {
-              onSelect(toc.href)
-              onEbookLocationChange?.(toc.href)
-            }}
-          >
-            <Box
-              fontSize="14px"
-              letterSpacing="0.18px"
-              fontWeight="500"
-              {...(toc.href === select ? { color: `${theme.colors.primary[500]}` } : '#585858')}
-            >
-              {toc.label}
-            </Box>
-
-            <CheckIconButton status={toc.finishedAt ? 'done' : 'unread'} />
-          </Flex>
-          {toc.subitems?.map(subitem => (
+      {tocs.map(toc => {
+        const RegexHrefToc = /#(.+)/
+        return (
+          <Box>
             <Flex
               position="relative"
               justifyContent="space-between"
-              p="0.75rem 2rem 0.75rem 4rem"
-              letterSpacing="0.4px"
-              fontWeight="500"
+              p="0.75rem 2rem 0.75rem 2rem"
               cursor="pointer"
-              {...(select === subitem.href
+              {...(toc.href.match(RegexHrefToc)?.[1] === ebookCurrentToc
                 ? {
                     _before: {
                       content: '""',
@@ -731,24 +713,66 @@ const EbookSecondaryMenu: React.VFC<{
                   }
                 : null)}
               onClick={() => {
-                onSelect(subitem.href)
-                onEbookLocationChange?.(subitem.href)
+                onEbookLocationChange?.(toc.href)
+                refetchTocProgress()
               }}
             >
               <Box
                 fontSize="14px"
                 letterSpacing="0.18px"
                 fontWeight="500"
-                {...(subitem.href === select ? { color: `${theme.colors.primary[500]}` } : '#585858')}
+                {...(toc.href === ebookCurrentToc ? { color: `${theme.colors.primary[500]}` } : '#585858')}
               >
-                {subitem.label}
+                {toc.label}
               </Box>
 
-              <CheckIconButton status={toc.finishedAt ? 'done' : 'unread'} />
+              <CheckIconButton
+                status={tocProgress.find(v => v.programContentTocId === toc.id)?.finishedAt ? 'done' : 'unread'}
+              />
             </Flex>
-          ))}
-        </Box>
-      ))}
+            {toc.subitems?.map(subitem => (
+              <Flex
+                position="relative"
+                justifyContent="space-between"
+                p="0.75rem 2rem 0.75rem 4rem"
+                letterSpacing="0.4px"
+                fontWeight="500"
+                cursor="pointer"
+                {...(subitem.href.match(RegexHrefToc)?.[1] === ebookCurrentToc
+                  ? {
+                      _before: {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '4px',
+                        height: '100%',
+                        bg: `${theme.colors.primary[500]}`,
+                      },
+                    }
+                  : null)}
+                onClick={() => {
+                  onEbookLocationChange?.(subitem.href)
+                  refetchTocProgress()
+                }}
+              >
+                <Box
+                  fontSize="14px"
+                  letterSpacing="0.18px"
+                  fontWeight="500"
+                  {...(subitem.href === ebookCurrentToc ? { color: `${theme.colors.primary[500]}` } : '#585858')}
+                >
+                  {subitem.label}
+                </Box>
+
+                <CheckIconButton
+                  status={tocProgress.find(v => v.programContentTocId === subitem.id)?.finishedAt ? 'done' : 'unread'}
+                />
+              </Flex>
+            ))}
+          </Box>
+        )
+      })}
     </Box>
   )
 }
@@ -762,6 +786,40 @@ const useProgramContentProgress = () => {
   }, [programContentId, refetchProgress])
 
   return programContentProgress
+}
+
+const useCurrentMemberEbookTocProgress = (programContentId: string) => {
+  const { currentMemberId } = useAuth()
+  const { data, refetch } = useQuery<
+    hasura.GetCurrentMemberEbookTocProgress,
+    hasura.GetCurrentMemberEbookTocProgressVariables
+  >(
+    gql`
+      query GetCurrentMemberEbookTocProgress($programContentId: uuid!, $currentMemberId: String!) {
+        program_content_ebook_toc_progress(
+          where: {
+            member_id: { _eq: $currentMemberId }
+            program_content_ebook_toc: { program_content_id: { _eq: $programContentId } }
+          }
+        ) {
+          program_content_ebook_toc_id
+          latest_progress
+          finished_at
+        }
+      }
+    `,
+    { variables: { programContentId, currentMemberId: currentMemberId || '' } },
+  )
+  const tocProgress =
+    data?.program_content_ebook_toc_progress.map(v => ({
+      programContentTocId: v.program_content_ebook_toc_id,
+      latestProgress: v.latest_progress,
+      finishedAt: v.finished_at ? new Date(v.finished_at) : null,
+    })) || []
+  return {
+    tocProgress,
+    refetch,
+  }
 }
 
 export default ProgramContentMenu
