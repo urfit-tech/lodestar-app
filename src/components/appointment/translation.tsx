@@ -64,6 +64,7 @@ const appointmentMessages = {
       defaultMessage: '取消預約後將會寄送通知給諮詢老師，並重新開放此時段，若需退費請主動聯繫平台。',
     },
     canceledReason: { id: 'appointment.AppointmentCard.canceledReason', defaultMessage: '取消原因' },
+    downloadMeetingRecord: { id: 'appointment.AppointmentCard.downloadMeetingRecord', defaultMessage: '下載錄影' },
   }),
   AppointmentCollectionTabs: defineMessages({
     timezone: {
