@@ -48,7 +48,7 @@ const InAppBrowserWarningModal = () => {
   const lineOpenExternalBrowserUrl = addOpenExternalBrowserParam(`${window.location.href}`)
   if (isLineInAppBrowser) window.location.assign(lineOpenExternalBrowserUrl)
 
-  const isRemind = sessionStorage.getItem('InAppBrowserWarning.isRemind')
+  const isRemind = sessionStorage.getItem('kolable.InAppBrowserWarning.isRemind')
   if (isInAppBrowser && !isRemind) {
     toast({
       title: formatMessage(commonMessages.InAppBrowserWarningModal.warning),
@@ -56,7 +56,7 @@ const InAppBrowserWarningModal = () => {
       isClosable: true,
       position: 'bottom',
     })
-    sessionStorage.setItem('InAppBrowserWarning.isRemind', 'true')
+    sessionStorage.setItem('kolable.InAppBrowserWarning.isRemind', 'true')
   }
 
   return isInAppBrowser && isLineInAppBrowser ? (
