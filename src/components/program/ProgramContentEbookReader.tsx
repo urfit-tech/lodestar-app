@@ -70,7 +70,7 @@ const ProgramContentEbookReader: React.VFC<{
                       variables: {
                         memberId: currentMemberId,
                         programContentEbookTocId,
-                        latestProgress: currentEndPage / totalPage > 1 ? 1 : currentEndPage / totalPage,
+                        latestProgress: currentEndPage / totalPage > 1 ? 1 : (currentEndPage / totalPage).toFixed(5),
                         // for currentEndPage + 1, The last page may be blank or not fully filled
                         finishedAt: (currentEndPage + 1) / totalPage >= 1 ? new Date() : null,
                       },
