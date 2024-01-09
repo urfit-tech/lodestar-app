@@ -426,7 +426,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
               return downloadFile(
                 `${appointmentPlan.title}_${dayjs(orderProduct.startedAt).format('YYYY-MM-DD-HHmm')}_${dayjs(
                   orderProduct.endedAt,
-                ).format('YYYY-MM-DD-HHmm')}`,
+                ).format('YYYY-MM-DD-HHmm')}.mp4`,
                 {
                   url: link,
                 },
