@@ -3,7 +3,7 @@ import { LayoutProps, SpaceProps } from '@chakra-ui/styled-system'
 import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { ProgramCover } from '../../components/common/Image'
 import EmptyCover from '../../images/empty-cover.png'
@@ -83,9 +83,17 @@ const PackageCard: React.VFC<
   programDateEnabled: datetimeEnabled,
   deliveredAt,
 }) => {
+  const location = useLocation()
+  const pathname = location.pathname
   return (
     <>
-      <Link to={isExpired ? `/program-packages/${id}` : `/program-packages/${id}/contents?memberId=${memberId}`}>
+      <Link
+        to={
+          !isExpired && pathname.includes('members')
+            ? `/program-packages/${id}/contents?memberId=${memberId}`
+            : `/program-packages/${id}`
+        }
+      >
         <StyledCard>
           {view !== 'List' ? (
             <>

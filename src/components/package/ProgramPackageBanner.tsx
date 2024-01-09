@@ -1,4 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
+import { Box } from '@chakra-ui/react'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -82,10 +83,7 @@ const StyledTitle = styled.h1`
   }
 `
 
-const StyledEntrolledLink = styled.div`
-  position: absolute;
-  top: 24px;
-  right: 24px;
+const StyledEntrolledLink = styled(Box)`
   a {
     font-size: 14px;
     font-weight: normal;
@@ -113,14 +111,13 @@ const ProgramPackageBanner: React.VFC<ProgramPackageBannerProps> = ({
   return (
     <BlurredBanner coverUrl={{ desktopUrl: coverUrl || undefined }}>
       {isEnrolled && (
-        <StyledEntrolledLink>
+        <StyledEntrolledLink display={{ base: 'none', md: 'block' }} position="absolute" top="24px" right="24px">
           <Link to={`/program-packages/${programPackageId}`}>
             <Icon as={ListOIcon} className="mr-2" />
             <span>{formatMessage(messages.introduction)}</span>
           </Link>
         </StyledEntrolledLink>
       )}
-
       <StyledWrapper>
         <StyledCenterBox>
           <StyledDecoration>
@@ -133,6 +130,14 @@ const ProgramPackageBanner: React.VFC<ProgramPackageBannerProps> = ({
             />
           </StyledDecoration>
           <StyledTitle className="mb-3">{title}</StyledTitle>
+          {isEnrolled && (
+            <StyledEntrolledLink display={{ base: 'block', md: 'none' }}>
+              <Link to={`/program-packages/${programPackageId}`}>
+                <Icon as={ListOIcon} className="mr-2" />
+                <span>{formatMessage(messages.introduction)}</span>
+              </Link>
+            </StyledEntrolledLink>
+          )}
         </StyledCenterBox>
       </StyledWrapper>
     </BlurredBanner>
