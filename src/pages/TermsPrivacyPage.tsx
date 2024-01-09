@@ -4,7 +4,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import { termMessages, termsPrivacy, termsPrivacyMessages } from '../helpers/translation'
+import { termPrivacyMessages } from './translation'
 
 const StyledTitle = styled(Typography.Title)`
   && {
@@ -65,38 +65,38 @@ const TermsPage: React.VFC = () => {
   return (
     <DefaultLayout>
       <StyledSection>
-        <StyledTitle level={1}>{formatMessage(termMessages.defaults.term)}</StyledTitle>
+        <StyledTitle level={1}>{formatMessage(termPrivacyMessages.Defaults.term)}</StyledTitle>
 
         <div className="container">
           <StyledCard>
-            <StyledTitle level={2}>{formatMessage(termsPrivacy.title.termsPrivacy)}</StyledTitle>
+            <StyledTitle level={2}>{formatMessage(termPrivacyMessages.TermPrivacyTitlePage.title)}</StyledTitle>
 
-            <StyledSubTitle level={3}>{formatMessage(termsPrivacy.clause.one)}</StyledSubTitle>
-            <p>{formatMessage(termsPrivacyMessages.paragraph.one, { name: appName })}</p>
+            <StyledSubTitle level={3}>{formatMessage(termPrivacyMessages.TermPrivacyClausePage.item1)}</StyledSubTitle>
+            <p>{formatMessage(termPrivacyMessages.TermPrivacyParagraphPage.item1, { name: appName })}</p>
 
-            <StyledSubTitle level={3}>{formatMessage(termsPrivacy.clause.two)}</StyledSubTitle>
-            <p>{formatMessage(termsPrivacyMessages.paragraph.two, { name: appName })}</p>
+            <StyledSubTitle level={3}>{formatMessage(termPrivacyMessages.TermPrivacyClausePage.item2)}</StyledSubTitle>
+            <p>{formatMessage(termPrivacyMessages.TermPrivacyParagraphPage.item2, { name: appName })}</p>
 
-            <StyledSubTitle level={3}>{formatMessage(termsPrivacy.clause.three)}</StyledSubTitle>
-            <p>{formatMessage(termsPrivacyMessages.paragraph.three, { name: appName })}</p>
+            <StyledSubTitle level={3}>{formatMessage(termPrivacyMessages.TermPrivacyClausePage.item3)}</StyledSubTitle>
+            <p>{formatMessage(termPrivacyMessages.TermPrivacyParagraphPage.item3, { name: appName })}</p>
 
-            <StyledSubTitle level={3}>{formatMessage(termsPrivacy.clause.four)}</StyledSubTitle>
-            <p>{formatMessage(termsPrivacyMessages.paragraph.four, { name: appName })}</p>
+            <StyledSubTitle level={3}>{formatMessage(termPrivacyMessages.TermPrivacyClausePage.item4)}</StyledSubTitle>
+            <p>{formatMessage(termPrivacyMessages.TermPrivacyParagraphPage.item4, { name: appName })}</p>
 
-            <StyledSubTitle level={3}>{formatMessage(termsPrivacy.clause.five)}</StyledSubTitle>
-            <p>{formatMessage(termsPrivacyMessages.paragraph.five, { name: appName })}</p>
+            <StyledSubTitle level={3}>{formatMessage(termPrivacyMessages.TermPrivacyClausePage.item5)}</StyledSubTitle>
+            <p>{formatMessage(termPrivacyMessages.TermPrivacyParagraphPage.item5, { name: appName })}</p>
 
-            <StyledSubTitle level={3}>{formatMessage(termsPrivacy.clause.six)}</StyledSubTitle>
-            <p>{formatMessage(termsPrivacyMessages.paragraph.six, { name: appName })}</p>
+            <StyledSubTitle level={3}>{formatMessage(termPrivacyMessages.TermPrivacyClausePage.item6)}</StyledSubTitle>
+            <p>{formatMessage(termPrivacyMessages.TermPrivacyParagraphPage.item6, { name: appName })}</p>
 
-            <StyledSubTitle level={3}>{formatMessage(termsPrivacy.clause.seven)}</StyledSubTitle>
-            <p>{formatMessage(termsPrivacyMessages.paragraph.seven, { name: appName })}</p>
+            <StyledSubTitle level={3}>{formatMessage(termPrivacyMessages.TermPrivacyClausePage.item7)}</StyledSubTitle>
+            <p>{formatMessage(termPrivacyMessages.TermPrivacyParagraphPage.item7, { name: appName })}</p>
 
-            <StyledSubTitle level={3}>{formatMessage(termsPrivacy.clause.eight)}</StyledSubTitle>
-            <p>{formatMessage(termsPrivacyMessages.paragraph.eight, { name: appName })}</p>
+            <StyledSubTitle level={3}>{formatMessage(termPrivacyMessages.TermPrivacyClausePage.item8)}</StyledSubTitle>
+            <p>{formatMessage(termPrivacyMessages.TermPrivacyParagraphPage.item8, { name: appName })}</p>
 
-            <StyledSubTitle level={3}>{formatMessage(termsPrivacy.clause.nine)}</StyledSubTitle>
-            <p>{formatMessage(termsPrivacyMessages.paragraph.nine, { name: appName })}</p>
+            <StyledSubTitle level={3}>{formatMessage(termPrivacyMessages.TermPrivacyClausePage.item9)}</StyledSubTitle>
+            <p>{formatMessage(termPrivacyMessages.TermPrivacyParagraphPage.item9, { name: appName })}</p>
           </StyledCard>
         </div>
       </StyledSection>
