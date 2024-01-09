@@ -48,7 +48,7 @@ const InAppBrowserWarningModal = () => {
   const lineOpenExternalBrowserUrl = addOpenExternalBrowserParam(`${window.location.href}`)
   if (isLineInAppBrowser) window.location.assign(lineOpenExternalBrowserUrl)
 
-  const isRemind = localStorage.getItem('InAppBrowserWarning.isRemind')
+  const isRemind = sessionStorage.getItem('InAppBrowserWarning.isRemind')
   if (isInAppBrowser && !isRemind) {
     toast({
       title: formatMessage(commonMessages.InAppBrowserWarningModal.warning),
@@ -56,9 +56,7 @@ const InAppBrowserWarningModal = () => {
       isClosable: true,
       position: 'bottom',
     })
-    localStorage.setItem('InAppBrowserWarning.isRemind', 'true')
-  } else if (!isInAppBrowser && isRemind && isRemind === 'true') {
-    localStorage.removeItem('InAppBrowserWarning.isRemind')
+    sessionStorage.setItem('InAppBrowserWarning.isRemind', 'true')
   }
 
   return isInAppBrowser && isLineInAppBrowser ? (
