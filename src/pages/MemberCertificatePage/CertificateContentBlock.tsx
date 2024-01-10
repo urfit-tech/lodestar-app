@@ -1,6 +1,6 @@
 import { Button } from '@chakra-ui/react'
 import DOMPurify from 'dompurify'
-import * as htmlToImage from 'html-to-image'
+import html2canvas from 'html2canvas'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
@@ -59,7 +59,7 @@ const StyledContentBlockFooter = styled.div`
   justify-content: space-between;
   padding: 1.25rem 1.25rem 1.25rem 2rem;
 `
-const StyledButton = styled.button`
+const StyledButton = styled(Button)`
   width: 105px;
   height: 44px;
   border-radius: 4px;
@@ -97,23 +97,25 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
   }
   const certificateRef = useRef<HTMLDivElement | null>(null)
 
+  const CERTIFICATE_IMAGE_SIZE = 2400
+
   const onDownLoad = async () => {
     if (!certificateRef.current) {
       return null
     }
-
-    try {
-      const dataUri = await htmlToImage.toPng(certificateRef.current)
-
-      const img = dataUri
-
+    const scale = CERTIFICATE_IMAGE_SIZE / (certificateRef as RefObject<HTMLDivElement>).current!.offsetWidth
+    html2canvas(certificateRef.current, {
+      // NOTE: Cannot get background image without allowTaint and useCORS
+      allowTaint: true,
+      useCORS: true,
+      scale,
+    }).then((canvas: { toDataURL: (arg0: string, arg1: number) => any }) => {
+      const img = canvas.toDataURL('image/png', 0)
       const link = document.createElement('a')
       link.download = `${certificate.title}.png`
       link.href = img
       link.click()
-    } catch (error) {
-      console.log(error)
-    }
+    })
   }
 
   return (
