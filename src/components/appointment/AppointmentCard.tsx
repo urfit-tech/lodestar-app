@@ -413,7 +413,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                   target: appointmentPlanId,
                   startedAt: orderProduct.startedAt,
                   endedAt: orderProduct.endedAt,
-                  memberId: currentMemberId,
+                  memberId,
                 },
               })
               if (!data) return message.error('無法獲取會議資訊')
