@@ -5,6 +5,7 @@ import { Divider, Dropdown, Form, Icon as AntdIcon, Menu, message, Modal } from 
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
+import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import StyledBraftEditor, { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -14,7 +15,7 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import hasura from '../../hasura'
-import { dateRangeFormatter, handleError } from '../../helpers'
+import { dateRangeFormatter, downloadFile, getFileDownloadableLink, handleError } from '../../helpers'
 import { useAppointmentPlan, useCancelAppointment, useUpdateAppointmentIssue } from '../../hooks/appointment'
 import { GetMeetByTargetAndPeriodAndSpecifyMember } from '../../hooks/meet'
 import { useService } from '../../hooks/service'
@@ -392,6 +393,50 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
       </StyledInfo>
 
       <StyledStatusBar className="d-flex align-items-center">
+        {enabledModules.meet_service && appointmentPlan?.defaultMeetGateway === 'zoom' ? (
+          <Button
+            variant="link"
+            color="black"
+            fontSize="14px"
+            marginRight="16px"
+            loading={!appointmentPlan}
+            onClick={async () => {
+              if (!appointmentPlan) return message.error('無法獲取當前預約方案資訊')
+              if (!currentMemberId) return message.error('無法獲取當前使用者 id')
+              const { data } = await apolloClient.query<
+                hasura.GetMeetByTargetAndPeriodAndSpecifyMember,
+                hasura.GetMeetByTargetAndPeriodAndSpecifyMemberVariables
+              >({
+                query: GetMeetByTargetAndPeriodAndSpecifyMember,
+                variables: {
+                  appId,
+                  target: appointmentPlanId,
+                  startedAt: orderProduct.startedAt,
+                  endedAt: orderProduct.endedAt,
+                  memberId,
+                },
+              })
+              if (!data) return message.error('無法獲取會議資訊')
+              const link = await getFileDownloadableLink(
+                data.meet[0].recording_url
+                  ? data.meet[0].recording_url
+                  : `meets/${data.meet[0].id}.${data.meet[0].recording_type}`,
+                authToken,
+              )
+              return downloadFile(
+                `${appointmentPlan.title}_${dayjs(orderProduct.startedAt).format('YYYY-MM-DD-HHmm')}_${dayjs(
+                  orderProduct.endedAt,
+                ).format('YYYY-MM-DD-HHmm')}.mp4`,
+                {
+                  url: link,
+                },
+              )
+            }}
+          >
+            {formatMessage(appointmentMessages.AppointmentCard.downloadMeetingRecord)}
+          </Button>
+        ) : null}
+
         <Button
           variant="link"
           color="black"
