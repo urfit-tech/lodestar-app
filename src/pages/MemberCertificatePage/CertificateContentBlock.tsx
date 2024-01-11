@@ -12,6 +12,7 @@ import { StyledCode, StyledDate } from '../../components/common/CertificateCard'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
 import { MemberCertificate } from '../../types/certificate'
 import pageMessages from '../translation'
+import { VirtualCredentials } from './CreateVirtualCredentials'
 
 const StyledContainer = styled.div`
   margin: 40px;
@@ -96,15 +97,16 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
     deliveredAt,
   }
   const certificateRef = useRef<HTMLDivElement | null>(null)
+  const virCertificateRef = useRef<HTMLDivElement | null>(null)
 
   const CERTIFICATE_IMAGE_SIZE = 2400
 
   const onDownLoad = async () => {
-    if (!certificateRef.current) {
+    if (!virCertificateRef.current) {
       return null
     }
-    const scale = CERTIFICATE_IMAGE_SIZE / (certificateRef as RefObject<HTMLDivElement>).current!.offsetWidth
-    html2canvas(certificateRef.current, {
+    const scale = CERTIFICATE_IMAGE_SIZE / (virCertificateRef as RefObject<HTMLDivElement>).current!.offsetWidth
+    html2canvas(virCertificateRef.current, {
       // NOTE: Cannot get background image without allowTaint and useCORS
       allowTaint: true,
       useCORS: true,
@@ -151,11 +153,11 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
         </StyledAbstract>
       </StyledContentBlock>
       {/* TEMPLATE */}
-      {/* <Certificate template={certificate.template || ''} templateVars={templateVars} ref={certificateRef} /> */}
       <CertificateImpl
         template={certificate.template || ''}
         templateVars={templateVars}
         certificateRef={certificateRef}
+        virCertificateRef={virCertificateRef}
       />
       {/* TEMPLATE */}
       <StyledContentBlockFooter>
@@ -191,11 +193,13 @@ const StyledCertificateCard = styled.div<{ scale: number }>`
   transform: scale(${props => props.scale});
   transform-origin: top left;
 `
+
 const CertificateImpl: React.VFC<{
   template: string
   templateVars?: any
   certificateRef?: React.Ref<HTMLDivElement>
-}> = ({ template, templateVars, certificateRef }) => {
+  virCertificateRef?: React.Ref<HTMLDivElement>
+}> = ({ template, templateVars, certificateRef, virCertificateRef }) => {
   const [scale, setScale] = useState(0)
   const cardRef = useRef<HTMLDivElement | null>(null)
 
@@ -215,6 +219,12 @@ const CertificateImpl: React.VFC<{
 
   return (
     <StyledCertificateContainer ref={certificateRef}>
+      <VirtualCredentials
+        html={sanitizedTemplate}
+        templateVars={templateVars}
+        certificateRef={virCertificateRef}
+        scale={scale}
+      />
       <StyledCertificateCard
         ref={cardRef}
         scale={scale}
@@ -223,15 +233,5 @@ const CertificateImpl: React.VFC<{
     </StyledCertificateContainer>
   )
 }
-
-// const Certificate = forwardRef(
-//   (
-//     props: {
-//       template: string
-//       templateVars?: any
-//     },
-//     ref?: React.Ref<HTMLDivElement>,
-//   ) => <CertificateImpl {...props} certificateRef={ref} />,
-// )
 
 export default CertificateContentBlock
