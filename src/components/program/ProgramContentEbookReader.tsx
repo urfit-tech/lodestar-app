@@ -1,10 +1,12 @@
+import { gql, useApolloClient } from '@apollo/client'
 import axios from 'axios'
+import CryptoJS from 'crypto-js'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { handleError } from 'lodestar-app-element/src/helpers'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ReactReader } from 'react-reader'
 import type { NavItem, Rendition } from 'epubjs'
-import { gql, useApolloClient } from '@apollo/client'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import JSZip from 'jszip'
 
 const ProgramContentEbookReader: React.VFC<{
   programContentId: string
@@ -18,6 +20,7 @@ const ProgramContentEbookReader: React.VFC<{
   const apolloClient = useApolloClient()
   const rendition = useRef<Rendition | undefined>(undefined)
   const toc = useRef<NavItem[]>([])
+  const { id: appId } = useApp()
 
   const convertFileToArrayBuffer = (file: File): Promise<ArrayBuffer> => {
     return new Promise((resolve, reject) => {
@@ -34,20 +37,58 @@ const ProgramContentEbookReader: React.VFC<{
     })
   }
 
-  const getFileFromS3 = useCallback(async (programContentId: string, authToken: string) => {
-    const { data } = await axios.get(
-      `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/ebook/${programContentId}.epub`,
-      {
-        responseType: 'blob',
-        headers: { authorization: `Bearer ${authToken}` },
-      },
-    )
+  const decryptData = (encryptedDataWithIv: any, hashKey: string) => {
+    const iv = CryptoJS.lib.WordArray.create(encryptedDataWithIv.slice(0, 16))
+    const encryptedData = CryptoJS.lib.WordArray.create(encryptedDataWithIv.slice(16))
+
+    const salt = CryptoJS.enc.Utf8.parse('salt')
+    const key = CryptoJS.PBKDF2(hashKey, salt, {
+      keySize: 32 / 4, // 256-bit key
+      iterations: 1000,
+    })
+
+    const encryptedBase64 = CryptoJS.enc.Base64.stringify(encryptedData)
+
+    const decrypted = CryptoJS.AES.decrypt(encryptedBase64, key, {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    })
+
+    const decryptedBytes = decrypted.toString(CryptoJS.enc.Latin1)
+    console.log('解密後的數據長度:', decryptedBytes.length)
+    const buffer = new ArrayBuffer(decryptedBytes.length)
+    const bufferView = new Uint8Array(buffer)
+    for (let i = 0; i < decryptedBytes.length; i++) {
+      bufferView[i] = decryptedBytes.charCodeAt(i)
+    }
+
+    return buffer
+  }
+
+  const getFileFromS3 = useCallback(async (programContentId, authToken) => {
     try {
-      const zip = new JSZip()
-      await zip.loadAsync(data).then(async zip => {
-        setSource(await zip.generateAsync({ type: 'arraybuffer' }))
-      })
+      const response = await axios.get(
+        `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/ebook/${programContentId}.epub`,
+        {
+          responseType: 'arraybuffer',
+          headers: { authorization: `Bearer ${authToken}` },
+        },
+      )
+
+      let hashKey = ''
+      const parts = authToken.split('.')
+      if (parts.length === 3) {
+        hashKey = parts[2]
+      }
+
+      const decryptedData = decryptData(response.data, hashKey)
+
+      const blob = new Blob([decryptedData], { type: 'application/epub+zip' })
+      const arrayBuffer = await blob.arrayBuffer()
+      setSource(arrayBuffer)
     } catch (error) {
+      console.log(error)
       handleError(error)
     }
   }, [])
