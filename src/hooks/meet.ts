@@ -119,6 +119,8 @@ export const GetMeetByTargetAndPeriodAndSpecifyMember = gql`
       }
     ) {
       id
+      recording_url
+      recording_type
       options
     }
   }
