@@ -1,10 +1,10 @@
 import axios from 'axios'
-import { useCallback, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ReactReader } from 'react-reader'
 import type { NavItem, Rendition } from 'epubjs'
 import { gql, useApolloClient } from '@apollo/client'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { handleError } from 'lodestar-app-element/src/helpers'
+import JSZip from 'jszip'
 
 const ProgramContentEbookReader: React.VFC<{
   programContentId: string
@@ -13,10 +13,11 @@ const ProgramContentEbookReader: React.VFC<{
   location: string | number
   onLocationChange: (location: string | number) => void
 }> = ({ programContentId, ebookCurrentToc, onEbookCurrentTocChange, location, onLocationChange }) => {
+  const { currentMemberId, authToken } = useAuth()
+  const [source, setSource] = useState<ArrayBuffer | null>(null)
   const apolloClient = useApolloClient()
   const rendition = useRef<Rendition | undefined>(undefined)
   const toc = useRef<NavItem[]>([])
-  const { currentMemberId } = useAuth()
 
   const convertFileToArrayBuffer = (file: File): Promise<ArrayBuffer> => {
     return new Promise((resolve, reject) => {
@@ -33,60 +34,75 @@ const ProgramContentEbookReader: React.VFC<{
     })
   }
 
-  const getFileFromS3 = useCallback(async (key: string): Promise<ArrayBuffer> => {
-    const response = await axios.get(`https://${process.env.REACT_APP_S3_BUCKET}/${key}`, {
-      responseType: 'blob',
+  const getFileFromS3 = useCallback(async (programContentId: string, authToken: string) => {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/ebook/${programContentId}.epub`,
+      {
+        responseType: 'blob',
+        headers: { authorization: `Bearer ${authToken}` },
+      },
+    )
+    const zip = new JSZip()
+    await zip.loadAsync(data).then(async zip => {
+      setSource(await zip.generateAsync({ type: 'arraybuffer' }))
     })
-    return convertFileToArrayBuffer(response.data)
   }, [])
+
+  useEffect(() => {
+    if (authToken) {
+      getFileFromS3(programContentId, authToken)
+    }
+  }, [authToken, programContentId, getFileFromS3])
 
   return (
     <div style={{ height: '100vh' }}>
-      <ReactReader
-        url={`https://${process.env.REACT_APP_S3_BUCKET}/images/demo/ebook_test/7B_2048試閱本版本號3.0.epub`}
-        showToc={false}
-        tocChanged={_toc => (toc.current = _toc)}
-        location={location}
-        locationChanged={async (loc: string) => {
-          const RegexToc = /\[([^\]]+)\]/
-          const tocMatch = loc.match(RegexToc)
-          if (rendition.current && toc.current && tocMatch && tocMatch[1]) {
-            const { href } = rendition.current.location.start
-            const { displayed: displayedEnd } = rendition.current.location.end
-            const totalPage = displayedEnd.total
-            const currentEndPage = displayedEnd.page
-            onEbookCurrentTocChange(tocMatch[1])
-            try {
-              await apolloClient
-                .query({
-                  query: GetProgramContentEbookToc,
-                  variables: { programContentId, href: `${href}#${tocMatch[1]}` },
-                })
-                .then(async ({ data }) => {
-                  if (data.program_content_ebook_toc.length > 0) {
-                    const programContentEbookTocId = data.program_content_ebook_toc[0].id
-                    await apolloClient.mutate({
-                      mutation: UpsertEbookTocProgress,
-                      variables: {
-                        memberId: currentMemberId,
-                        programContentEbookTocId,
-                        latestProgress: currentEndPage / totalPage > 1 ? 1 : (currentEndPage / totalPage).toFixed(5),
-                        // for currentEndPage + 1, The last page may be blank or not fully filled
-                        finishedAt: (currentEndPage + 1) / totalPage >= 1 ? new Date() : null,
-                      },
-                    })
-                  }
-                })
-            } catch (error) {
-              process.env.NODE_ENV === 'development' ?? console.error(error)
+      {source ? (
+        <ReactReader
+          url={source}
+          showToc={false}
+          tocChanged={_toc => (toc.current = _toc)}
+          location={location}
+          locationChanged={async (loc: string) => {
+            const RegexToc = /\[([^\]]+)\]/
+            const tocMatch = loc.match(RegexToc)
+            if (rendition.current && toc.current && tocMatch && tocMatch[1]) {
+              const { href } = rendition.current.location.start
+              const { displayed: displayedEnd } = rendition.current.location.end
+              const totalPage = displayedEnd.total
+              const currentEndPage = displayedEnd.page
+              onEbookCurrentTocChange(tocMatch[1])
+              try {
+                await apolloClient
+                  .query({
+                    query: GetProgramContentEbookToc,
+                    variables: { programContentId, href: `${href}#${tocMatch[1]}` },
+                  })
+                  .then(async ({ data }) => {
+                    if (data.program_content_ebook_toc.length > 0) {
+                      const programContentEbookTocId = data.program_content_ebook_toc[0].id
+                      await apolloClient.mutate({
+                        mutation: UpsertEbookTocProgress,
+                        variables: {
+                          memberId: currentMemberId,
+                          programContentEbookTocId,
+                          latestProgress: currentEndPage / totalPage > 1 ? 1 : (currentEndPage / totalPage).toFixed(5),
+                          // for currentEndPage + 1, The last page may be blank or not fully filled
+                          finishedAt: (currentEndPage + 1) / totalPage >= 1 ? new Date() : null,
+                        },
+                      })
+                    }
+                  })
+              } catch (error) {
+                process.env.NODE_ENV === 'development' ?? console.error(error)
+              }
             }
-          }
-          onLocationChange(loc)
-        }}
-        getRendition={(_rendition: Rendition) => {
-          rendition.current = _rendition
-        }}
-      />
+            onLocationChange(loc)
+          }}
+          getRendition={(_rendition: Rendition) => {
+            rendition.current = _rendition
+          }}
+        />
+      ) : null}
     </div>
   )
 }
