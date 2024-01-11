@@ -8,7 +8,7 @@ import {
   ModalOverlay,
   useToast,
 } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { WarningIcon } from '../../images'
@@ -48,16 +48,16 @@ const InAppBrowserWarningModal = () => {
   const lineOpenExternalBrowserUrl = addOpenExternalBrowserParam(`${window.location.href}`)
   if (isLineInAppBrowser) window.location.assign(lineOpenExternalBrowserUrl)
 
-  useEffect(() => {
-    if (isInAppBrowser) {
-      toast({
-        title: formatMessage(commonMessages.InAppBrowserWarningModal.warning),
-        status: 'warning',
-        isClosable: true,
-        position: 'bottom',
-      })
-    }
-  }, [isInAppBrowser])
+  const isRemind = sessionStorage.getItem('kolable.InAppBrowserWarning.isRemind')
+  if (isInAppBrowser && !isRemind) {
+    toast({
+      title: formatMessage(commonMessages.InAppBrowserWarningModal.warning),
+      status: 'warning',
+      isClosable: true,
+      position: 'bottom',
+    })
+    sessionStorage.setItem('kolable.InAppBrowserWarning.isRemind', 'true')
+  }
 
   return isInAppBrowser && isLineInAppBrowser ? (
     <Modal
