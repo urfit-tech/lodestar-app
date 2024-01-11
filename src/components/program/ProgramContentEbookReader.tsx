@@ -42,10 +42,14 @@ const ProgramContentEbookReader: React.VFC<{
         headers: { authorization: `Bearer ${authToken}` },
       },
     )
-    const zip = new JSZip()
-    await zip.loadAsync(data).then(async zip => {
-      setSource(await zip.generateAsync({ type: 'arraybuffer' }))
-    })
+    try {
+      const zip = new JSZip()
+      await zip.loadAsync(data).then(async zip => {
+        setSource(await zip.generateAsync({ type: 'arraybuffer' }))
+      })
+    } catch (error) {
+      handleError(error)
+    }
   }, [])
 
   useEffect(() => {
