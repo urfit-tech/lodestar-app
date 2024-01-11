@@ -511,7 +511,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
             ) : (
               <span>
                 {formatMessage(authMessages.RegisterSection.registration)}
-                <a href="/terms" target="_blank" rel="noopener noreferrer" className="ml-1">
+                <a href="/terms-privacy" target="_blank" rel="noopener noreferrer" className="ml-1">
                   {formatMessage(authMessages.RegisterSection.term)}
                 </a>
               </span>

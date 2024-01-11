@@ -85,6 +85,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/terms',
     pageName: 'TermsPage',
   },
+  termsPrivacy: {
+    path: '/terms-privacy',
+    pageName: 'TermsPrivacyPage',
+  },
   creator_collection: {
     path: '/creators',
     pageName: 'CreatorCollectionPage',
