@@ -3,7 +3,7 @@ import { LayoutProps, SpaceProps } from '@chakra-ui/styled-system'
 import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { ProgramCover } from '../../components/common/Image'
 import EmptyCover from '../../images/empty-cover.png'
@@ -62,38 +62,18 @@ const PackageDatetime: React.FC<{
 }
 
 const PackageCard: React.VFC<
-  Pick<ProgramPackageProps, 'id' | 'coverUrl' | 'title'> & {
-    onClick?: () => void
-    isExpired?: boolean
+  Pick<ProgramPackageProps, 'coverUrl' | 'title'> & {
     memberId?: string
     view?: string
     programDateEnabled?: boolean
     lastViewedAt?: Date | null
     deliveredAt?: Date | null
+    link: string
   }
-> = ({
-  onClick,
-  id,
-  coverUrl,
-  title,
-  isExpired,
-  memberId,
-  view,
-  lastViewedAt,
-  programDateEnabled: datetimeEnabled,
-  deliveredAt,
-}) => {
-  const location = useLocation()
-  const pathname = location.pathname
+> = ({ coverUrl, title, memberId, view, lastViewedAt, programDateEnabled: datetimeEnabled, deliveredAt, link }) => {
   return (
     <>
-      <Link
-        to={
-          !isExpired && pathname.includes('members')
-            ? `/program-packages/${id}/contents?memberId=${memberId}`
-            : `/program-packages/${id}`
-        }
-      >
+      <Link to={link}>
         <StyledCard>
           {view !== 'List' ? (
             <>
