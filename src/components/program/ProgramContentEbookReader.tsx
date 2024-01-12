@@ -36,18 +36,23 @@ const ProgramContentEbookReader: React.VFC<{
       reader.readAsArrayBuffer(file)
     })
   }
-
-  const decryptData = (encryptedDataWithIv: any, hashKey: string) => {
-    const iv = CryptoJS.lib.WordArray.create(encryptedDataWithIv.slice(0, 16))
-    const encryptedData = CryptoJS.lib.WordArray.create(encryptedDataWithIv.slice(16))
+  const decryptData = (encryptedData: ArrayBuffer, keyHex: string, ivHex: string): ArrayBuffer => {
+    const encryptedWordArray = CryptoJS.lib.WordArray.create(encryptedData as unknown as number[])
+    const hashKey = keyHex.length < 64 ? keyHex.padEnd(64, '0') : keyHex
+    const hashIv = ivHex.length < 32 ? ivHex.padEnd(32, '0') : ivHex
 
     const salt = CryptoJS.enc.Utf8.parse('salt')
+    const iterations = 10000
     const key = CryptoJS.PBKDF2(hashKey, salt, {
-      keySize: 32 / 4, // 256-bit key
-      iterations: 1000,
+      keySize: 256 / 32,
+      iterations: iterations,
+    })
+    const iv = CryptoJS.PBKDF2(hashIv, salt, {
+      keySize: 128 / 32,
+      iterations: iterations,
     })
 
-    const encryptedBase64 = CryptoJS.enc.Base64.stringify(encryptedData)
+    const encryptedBase64 = CryptoJS.enc.Base64.stringify(encryptedWordArray)
 
     const decrypted = CryptoJS.AES.decrypt(encryptedBase64, key, {
       iv: iv,
@@ -55,15 +60,16 @@ const ProgramContentEbookReader: React.VFC<{
       padding: CryptoJS.pad.Pkcs7,
     })
 
-    const decryptedBytes = decrypted.toString(CryptoJS.enc.Latin1)
-    console.log('解密後的數據長度:', decryptedBytes.length)
-    const buffer = new ArrayBuffer(decryptedBytes.length)
-    const bufferView = new Uint8Array(buffer)
-    for (let i = 0; i < decryptedBytes.length; i++) {
-      bufferView[i] = decryptedBytes.charCodeAt(i)
+    const decryptedWords = decrypted.words
+    const decryptedBytes = new Uint8Array(decryptedWords.length * 4)
+    for (let i = 0; i < decryptedWords.length; i++) {
+      decryptedBytes[i * 4] = (decryptedWords[i] >> 24) & 0xff
+      decryptedBytes[i * 4 + 1] = (decryptedWords[i] >> 16) & 0xff
+      decryptedBytes[i * 4 + 2] = (decryptedWords[i] >> 8) & 0xff
+      decryptedBytes[i * 4 + 3] = decryptedWords[i] & 0xff
     }
 
-    return buffer
+    return decryptedBytes.buffer
   }
 
   const getFileFromS3 = useCallback(async (programContentId, authToken) => {
@@ -82,11 +88,11 @@ const ProgramContentEbookReader: React.VFC<{
         hashKey = parts[2]
       }
 
-      const decryptedData = decryptData(response.data, hashKey)
+      const decryptedData = decryptData(response.data, hashKey, 'demo')
 
-      const blob = new Blob([decryptedData], { type: 'application/epub+zip' })
-      const arrayBuffer = await blob.arrayBuffer()
-      setSource(arrayBuffer)
+      console.log(decryptedData)
+
+      setSource(decryptedData)
     } catch (error) {
       console.log(error)
       handleError(error)
