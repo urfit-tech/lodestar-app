@@ -65,12 +65,10 @@ const TermsPage: React.VFC = () => {
   return (
     <DefaultLayout>
       <StyledSection>
-        <StyledTitle level={1}>{formatMessage(termPrivacyMessages.Defaults.term)}</StyledTitle>
+        <StyledTitle level={1}>{formatMessage(termPrivacyMessages.TermPrivacyTitlePage.title)}</StyledTitle>
 
         <div className="container">
           <StyledCard>
-            <StyledTitle level={2}>{formatMessage(termPrivacyMessages.TermPrivacyTitlePage.title)}</StyledTitle>
-
             <StyledSubTitle level={3}>{formatMessage(termPrivacyMessages.TermPrivacyClausePage.item1)}</StyledSubTitle>
             <p>{formatMessage(termPrivacyMessages.TermPrivacyParagraphPage.item1, { name: appName })}</p>
 
