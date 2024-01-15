@@ -1,5 +1,6 @@
-import { Flex, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Text } from '@chakra-ui/react'
+import { Flex, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Text, Box } from '@chakra-ui/react'
 import { EbookBookmarkModal } from './EbookBookmarkModal'
+import EbookStyledModal from './EbookStyledModal'
 
 export const EbookReaderControlBar: React.VFC<{
   totalPage: number
@@ -7,9 +8,14 @@ export const EbookReaderControlBar: React.VFC<{
   chapter: string
   isCountingTotal: boolean
   programContentBookmark: Array<any>
+  fontSize: number
+  lineHeight: number
   refetchBookmark: () => void
   sliderOnChange: (value: number) => void
   onLocationChange: (loc: number | string) => void
+  onFontSizeChange: React.Dispatch<React.SetStateAction<number>>
+  onLineHeightChange: React.Dispatch<React.SetStateAction<number>>
+  onThemeChange: (theme: 'light' | 'dark') => void
 }> = ({
   refetchBookmark,
   currentPage,
@@ -17,8 +23,13 @@ export const EbookReaderControlBar: React.VFC<{
   chapter,
   isCountingTotal,
   programContentBookmark,
+  fontSize,
+  lineHeight,
   sliderOnChange,
   onLocationChange,
+  onFontSizeChange,
+  onLineHeightChange,
+  onThemeChange,
 }) => {
   return (
     <Flex w="100%" backgroundColor="white" align="center" direction="column">
@@ -34,7 +45,19 @@ export const EbookReaderControlBar: React.VFC<{
           </Slider>
         </Flex>
         <Flex w="25%" alignItems="center" className="ml-3">
-          <Text>{`${currentPage}/${totalPage}`}</Text>
+          <Text ml="8px">{`${currentPage}/${totalPage}`}</Text>
+          <EbookStyledModal
+            fontSize={fontSize}
+            lineHeight={lineHeight}
+            onFontSizeChange={onFontSizeChange}
+            onLineHeightChange={onLineHeightChange}
+            onThemeChange={onThemeChange}
+            renderTrigger={({ onOpen }) => (
+              <Box as="u" cursor="pointer" ml="8px" fontSize="20px" onClick={() => onOpen()}>
+                A
+              </Box>
+            )}
+          />
           <EbookBookmarkModal
             programContentBookmark={programContentBookmark}
             onLocationChange={onLocationChange}

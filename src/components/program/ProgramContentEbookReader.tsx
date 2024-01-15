@@ -40,6 +40,19 @@ const ProgramContentEbookReader: React.VFC<{
   const [totalPage, setTotalPage] = useState(0)
   const [chapter, setChapter] = useState('')
 
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [ebookFontSize, setEbookFontSize] = useState(20)
+  const [ebookLineHeight, setEbookLineHeight] = useState(1)
+
+  const lightTheme = {
+    color: '#585858',
+    backgroundColor: '#ffffff',
+  }
+  const darkTheme = {
+    color: '#ffffff',
+    backgroundColor: '#424242',
+  }
+
   const getFileFromS3 = useCallback(async (programContentId: string, authToken: string) => {
     const { data } = await axios.get(
       `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/ebook/${programContentId}.epub`,
@@ -63,6 +76,19 @@ const ProgramContentEbookReader: React.VFC<{
       getFileFromS3(programContentId, authToken)
     }
   }, [authToken, programContentId, getFileFromS3])
+
+  useEffect(() => {
+    rendition.current?.themes.override(
+      'color',
+      theme === 'light' ? lightTheme.color : theme === 'dark' ? darkTheme.color : '',
+    )
+    rendition.current?.themes.override(
+      'background-color',
+      theme === 'light' ? lightTheme.backgroundColor : theme === 'dark' ? darkTheme.backgroundColor : '',
+    )
+    rendition.current?.themes.override('font-size', `${ebookFontSize}px`)
+    rendition.current?.themes.override('line-height', ebookLineHeight.toString())
+  }, [theme, ebookFontSize, ebookLineHeight, JSON.stringify(lightTheme), JSON.stringify(darkTheme)])
 
   const sliderOnChange = (value: number) => {
     setChapter(getChapter(allLocations[value - 1]))
@@ -140,6 +166,11 @@ const ProgramContentEbookReader: React.VFC<{
             }}
             getRendition={(_rendition: Rendition) => {
               rendition.current = _rendition
+              // initial theme
+              rendition.current.themes.override('color', '585858')
+              rendition.current.themes.override('background-color', '#ffffff')
+              rendition.current.themes.override('font-size', `20px`)
+              rendition.current.themes.override('line-height', '1')
             }}
           />
         </div>
@@ -152,8 +183,13 @@ const ProgramContentEbookReader: React.VFC<{
         currentPage={currentPage}
         chapter={chapter}
         programContentBookmark={programContentBookmark}
+        fontSize={ebookFontSize}
+        lineHeight={ebookLineHeight}
         refetchBookmark={refetchBookmark}
         onLocationChange={onLocationChange}
+        onFontSizeChange={setEbookFontSize}
+        onLineHeightChange={setEbookLineHeight}
+        onThemeChange={setTheme}
       />
 
       <EbookReaderBookmarkIcon
