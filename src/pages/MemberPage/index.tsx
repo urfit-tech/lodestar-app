@@ -144,11 +144,9 @@ const MemberPage: React.VFC = () => {
   const { member } = usePublicMember(memberId)
   const {
     loadingProjectPlanEnrollments,
-    loadingActivityTicketEnrollments,
     loadingAppointmentEnrollments,
     loadingMerchandiseOrderEnrollments,
     projectPlanEnrollments,
-    activityTicketEnrollments,
     appointmentEnrollments,
     merchandiseOrderEnrollments,
   } = useMemberPageEnrollmentsCounts(memberId)
@@ -180,6 +178,11 @@ const MemberPage: React.VFC = () => {
     loading: podcastEnrollmentLoading,
     error: podcastEnrollmentError,
   } = useProductEnrollment('podcast', memberId)
+  const {
+    data: activityEnrollment,
+    loading: activityEnrollmentLoading,
+    error: activityEnrollmentError,
+  } = useProductEnrollment('activity', memberId)
   const totalProgramCounts = programEnrollment.length + expiredProgramEnrollment.length
   const totalProgramPackageCounts = programPackageEnrollment.length + expiredProgramPackageEnrollment.length
   let content = null
@@ -246,8 +249,10 @@ const MemberPage: React.VFC = () => {
       name: formatMessage(commonMessages.tab.activity),
       isVisible:
         (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_ACTIVITY_INFO)) &&
-        activityTicketEnrollments > 0,
-      content: <ActivityTicketCollectionBlock memberId={memberId} />,
+        activityEnrollment.length > 0,
+      content: (
+        <ActivityTicketCollectionBlock activityEnrollment={activityEnrollment} isError={activityEnrollmentError} />
+      ),
     },
     {
       key: 'podcast',
@@ -299,7 +304,7 @@ const MemberPage: React.VFC = () => {
               {programEnrollmentLoading ||
               programPackageEnrollmentLoading ||
               loadingProjectPlanEnrollments ||
-              loadingActivityTicketEnrollments ||
+              activityEnrollmentLoading ||
               podcastEnrollmentLoading ||
               loadingAppointmentEnrollments ||
               loadingMerchandiseOrderEnrollments ? (

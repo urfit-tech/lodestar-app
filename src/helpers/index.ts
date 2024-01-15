@@ -490,6 +490,8 @@ const getLodestarRoute = (product: MemberPageProductType) => {
       return '/podcasts'
     case 'podcast-plan':
       return '/podcast-plans'
+    case 'activity':
+      return '/activity'
   }
 }
 

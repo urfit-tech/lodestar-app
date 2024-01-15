@@ -4,7 +4,13 @@ import { flatten, prop, sum, uniqBy } from 'ramda'
 import { useCallback, useEffect, useState } from 'react'
 import { DeepPick } from 'ts-deep-pick/lib'
 import hasura from '../hasura'
-import { Activity, ActivityFromLodestarAPI, ActivitySession, ActivityTicket } from '../types/activity'
+import {
+  Activity,
+  ActivityFromLodestarAPI,
+  ActivitySession,
+  ActivitySessionTicketEnrollment,
+  ActivityTicket,
+} from '../types/activity'
 
 export const usePublishedActivityCollection = (options?: { organizerId?: string; categoryId?: string }) => {
   const { loading, error, data, refetch } = useQuery<
@@ -183,6 +189,42 @@ export const useEnrolledActivityTickets = (memberId: string) => {
     refetchTickets: refetch,
     enrolledActivityTickets,
     enrolledActivitySessions,
+  }
+}
+
+export const useEnrolledActivityTicket = (memberId: string) => {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<any>()
+  const [data, setData] = useState<ActivitySessionTicketEnrollment[]>([])
+
+  const fetch = useCallback(async () => {
+    if (memberId) {
+      const route = `/activity/`
+      try {
+        setLoading(true)
+        const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+          params: { memberId },
+        })
+
+        setData(data)
+      } catch (err) {
+        console.log(err)
+        setError(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+  }, [memberId])
+
+  useEffect(() => {
+    fetch()
+  }, [fetch])
+
+  return {
+    loading,
+    error,
+    data,
+    fetch,
   }
 }
 

@@ -700,20 +700,6 @@ export const useMemberPageEnrollmentsCounts = (memberId: string) => {
     { variables: { memberId } },
   )
 
-  const { loading: loadingActivityTicketEnrollments, data: activityTicketEnrollments } = useQuery<
-    hasura.GetActivityTicketEnrollments,
-    hasura.GetActivityTicketEnrollmentsVariables
-  >(
-    gql`
-      query GetActivityTicketEnrollments($memberId: String!) {
-        activity_ticket_enrollment(where: { member_id: { _eq: $memberId } }) {
-          order_log_id
-        }
-      }
-    `,
-    { variables: { memberId } },
-  )
-
   const { loading: loadingAppointmentEnrollments, data: appointmentEnrollments } = useQuery<
     hasura.GetAppointmentEnrollments,
     hasura.GetAppointmentEnrollmentsVariables
@@ -749,11 +735,9 @@ export const useMemberPageEnrollmentsCounts = (memberId: string) => {
 
   return {
     loadingProjectPlanEnrollments,
-    loadingActivityTicketEnrollments,
     loadingAppointmentEnrollments,
     loadingMerchandiseOrderEnrollments,
     projectPlanEnrollments: projectPlanEnrollments?.product_enrollment.length || 0,
-    activityTicketEnrollments: activityTicketEnrollments?.activity_ticket_enrollment.length || 0,
     appointmentEnrollments: appointmentEnrollments?.appointment_enrollment.length || 0,
     merchandiseOrderEnrollments: merchandiseOrderEnrollments?.order_log.length || 0,
   }

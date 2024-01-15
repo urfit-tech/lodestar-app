@@ -1,8 +1,7 @@
 import { Icon } from '@chakra-ui/react'
-import { Skeleton } from 'antd'
+import dayjs from 'dayjs'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import React from 'react'
 import { AiOutlineCalendar } from 'react-icons/ai'
@@ -10,7 +9,6 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { dateRangeFormatter } from '../../helpers'
 import { activityMessages, commonMessages } from '../../helpers/translation'
-import { useActivitySession } from '../../hooks/activity'
 import EmptyCover from '../../images/empty-cover.png'
 import { BREAK_POINT } from '../common/Responsive'
 
@@ -81,22 +79,21 @@ const StyledBadge = styled.span`
 `
 
 const ActivitySessionCard: React.VFC<{
-  sessionId: string
-}> = ({ sessionId }) => {
+  session: {
+    id: string
+    location: string
+    onlineLink: string
+    activityTitle: string
+    endedAt: string | null
+    startedAt: string | null
+    title: string
+    coverUrl: string | null
+  }
+}> = ({ session }) => {
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
-  const { currentMemberId } = useAuth()
-  const { loadingSession, errorSession, session } = useActivitySession(sessionId, currentMemberId || '')
 
-  if (loadingSession) {
-    return (
-      <StyledWrapper>
-        <Skeleton active avatar />
-      </StyledWrapper>
-    )
-  }
-
-  if (errorSession || !session) {
+  if (!session) {
     return <StyledWrapper>{formatMessage(commonMessages.status.loadingError)}</StyledWrapper>
   }
 
@@ -114,8 +111,8 @@ const ActivitySessionCard: React.VFC<{
   return (
     <StyledWrapper>
       <StyledDescription className="flex-grow-1">
-        <StyledTitle className="mb-3">{session.activity.title}</StyledTitle>
-        <StyledMeta key={session.id} active={Date.now() < session.endedAt.getTime()}>
+        <StyledTitle className="mb-3">{session.activityTitle}</StyledTitle>
+        <StyledMeta key={session.id} active={dayjs(session.endedAt).isAfter(dayjs())}>
           <div>
             <Icon as={AiOutlineCalendar} />
             <span className="ml-2 mr-2">
@@ -134,7 +131,10 @@ const ActivitySessionCard: React.VFC<{
           </div>
           <div>
             <span className="mr-2">
-              {dateRangeFormatter({ startedAt: session.startedAt, endedAt: session.endedAt })}
+              {dateRangeFormatter({
+                startedAt: dayjs(session.startedAt).toDate(),
+                endedAt: dayjs(session.endedAt).toDate(),
+              })}
             </span>
 
             {now.isBefore(session.startedAt) && now.diff(session.startedAt, 'days', true) > -7 && (
@@ -148,7 +148,7 @@ const ActivitySessionCard: React.VFC<{
         </StyledMeta>
       </StyledDescription>
 
-      <StyledCover className="flex-shrink-0" src={session.activity.coverUrl || EmptyCover} />
+      <StyledCover className="flex-shrink-0" src={session.coverUrl || EmptyCover} />
     </StyledWrapper>
   )
 }
