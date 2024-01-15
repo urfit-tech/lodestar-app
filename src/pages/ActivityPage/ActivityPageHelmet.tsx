@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { DeepPick } from 'ts-deep-pick/lib'
 import PageHelmet from '../../components/common/PageHelmet'
@@ -29,9 +30,6 @@ type ActivityPageHelmetProps = DeepPick<
   | 'sessions.[].onlineLink'
   | 'sessions.[].startedAt'
   | 'sessions.[].endedAt'
-  | 'ticketSessions.[].session.id'
-  | 'ticketSessions.[].session.title'
-  | 'ticketSessions.[].session.type'
 >
 const ActivityPageHelmet: React.VFC<{ activity: ActivityPageHelmetProps }> = ({ activity }) => {
   const app = useApp()
@@ -79,11 +77,11 @@ const ActivityPageHelmet: React.VFC<{ activity: ActivityPageHelmetProps }> = ({ 
 
   const activityStartedAt =
     activity.sessions.length > 0
-      ? new Date(Math.min(...activity.sessions.map(session => session.startedAt.getTime())))
+      ? new Date(Math.min(...activity.sessions.map(session => dayjs(session.startedAt).valueOf())))
       : null
   const activityEndedAt =
     activity.sessions.length > 0
-      ? new Date(Math.max(...activity.sessions.map(session => session.endedAt.getTime())))
+      ? new Date(Math.max(...activity.sessions.map(session => dayjs(session.endedAt).valueOf())))
       : null
 
   return (

@@ -58,3 +58,57 @@ export type ActivityTicket = BaseActivityTicket & {
   activity: BaseActivity
   sessions: BaseActivitySession[]
 }
+
+export type ActivityFromLodestarAPI = {
+  id: string
+  title: string
+  organizerId: string
+  description: string | null
+  isParticipantsVisible: boolean
+  coverUrl: string | null
+  publishedAt: string | null
+  supportLocales: Array<string> | null
+  activityTags: ActivityTag[]
+  activityCategories: ActivityCategory[]
+  activityTickets: {
+    id: string
+    title: string
+    startedAt: Date
+    endedAt: Date
+    currencyId: string
+    price: number
+    count: number
+    description: string | null
+    isPublished: boolean
+    orderId: string | null
+    orderProductId: string | null
+    participants: number
+    activitySessionTickets: ActivitySessionTicket[]
+  }[]
+}
+
+export type ActivitySessionTicket = {
+  id: string
+  activitySessionType: 'offline' | 'online'
+  activitySession: {
+    id: string
+    startedAt: string
+    endedAt: string
+    location: string | null
+    description: string | null
+    threshold: string | null
+    onlinelink: string | null
+    attended: boolean
+    title: string
+  }
+}
+
+export type ActivityTag = {
+  id: string
+  activityTagName: string
+}
+
+export type ActivityCategory = {
+  id: string
+  category: { name: string; id: string }
+}
