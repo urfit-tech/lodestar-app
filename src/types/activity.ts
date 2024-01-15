@@ -126,5 +126,5 @@ export type ActivitySessionTicketEnrollment = {
     onlineLink: string | null
     activityTitle: string
     activityCoverUrl: string | null
-  }
+  }[]
 }
