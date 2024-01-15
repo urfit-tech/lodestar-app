@@ -48,7 +48,7 @@ const StyledModalBody = styled(ModalBody)`
   }
 `
 
-const ActivitySessionItem: React.VFC<{
+const ActivitySessionItemRefactor: React.VFC<{
   session: {
     id: string
     location: string | null
@@ -195,4 +195,4 @@ const ActivitySessionItem: React.VFC<{
   )
 }
 
-export default ActivitySessionItem
+export default ActivitySessionItemRefactor

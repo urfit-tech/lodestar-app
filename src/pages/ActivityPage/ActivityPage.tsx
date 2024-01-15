@@ -12,7 +12,7 @@ import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import ActivityBanner from '../../components/activity/ActivityBanner'
-import ActivitySessionItem from '../../components/activity/ActivitySessionItemRefactor'
+import ActivitySessionItemRefactor from '../../components/activity/ActivitySessionItemRefactor'
 import ActivityTicketCard from '../../components/activity/ActivityTicketCard'
 import ActivityTicketPaymentButton from '../../components/activity/ActivityTicketPaymentButton'
 import { AuthModalContext } from '../../components/auth/AuthModal'
@@ -53,7 +53,6 @@ const ActivityPage: React.VFC = () => {
   const { isAuthenticated, currentMemberId } = useAuth()
   const { id: appId } = useApp()
   const { resourceCollection } = useResourceCollection([`${appId}:activity:${activityId}`], true)
-  // const { loading, error, activity } = useActivity({ activityId, memberId: currentMemberId || '' })
   const { loading, data: activityData, error } = useEnrolledActivity(activityId, currentMemberId || '')
   const [isPlanListSticky, setIsPlanListSticky] = useState(false)
   const planListHeightRef = useRef<HTMLDivElement>(null)
@@ -141,7 +140,7 @@ const ActivityPage: React.VFC = () => {
                 const isEnrolled = sessionIds.filter(s => s.sessionId.includes(session.id)).length > 0
                 return (
                   <div key={session.id} className="mb-4">
-                    <ActivitySessionItem
+                    <ActivitySessionItemRefactor
                       session={{
                         id: session.id,
                         location: session.location,
