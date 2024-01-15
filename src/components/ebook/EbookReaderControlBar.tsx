@@ -1,4 +1,4 @@
-import { Flex, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Text, Box } from '@chakra-ui/react'
+import { Flex, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Text, Box, Tooltip } from '@chakra-ui/react'
 import { EbookBookmarkModal } from './EbookBookmarkModal'
 import EbookStyledModal from './EbookStyledModal'
 
@@ -53,9 +53,11 @@ export const EbookReaderControlBar: React.VFC<{
             onLineHeightChange={onLineHeightChange}
             onThemeChange={onThemeChange}
             renderTrigger={({ onOpen }) => (
-              <Box as="u" cursor="pointer" ml="8px" fontSize="20px" onClick={() => onOpen()}>
-                A
-              </Box>
+              <Tooltip label="基本設定" aria-label="基本設定" placement="top">
+                <Box as="u" cursor="pointer" ml="8px" fontSize="20px" onClick={() => onOpen()}>
+                  A
+                </Box>
+              </Tooltip>
             )}
           />
           <EbookBookmarkModal
