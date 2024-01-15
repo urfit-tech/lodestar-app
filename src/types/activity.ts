@@ -112,3 +112,19 @@ export type ActivityCategory = {
   id: string
   category: { name: string; id: string }
 }
+
+export type ActivitySessionTicketEnrollment = {
+  activityTicketId: string
+  orderId: string | null
+  orderProductId: string | null
+  activitySession: {
+    id: string
+    title: string
+    endedAt: string
+    startedAt: string
+    location: string | null
+    onlineLink: string | null
+    activityTitle: string
+    activityCoverUrl: string | null
+  }
+}
