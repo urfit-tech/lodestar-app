@@ -15,6 +15,7 @@ import {
   Tabs,
   Text,
   useDisclosure,
+  Tooltip,
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { ReactComponent as DeleteIcon } from '../../images/delete-o.svg'
@@ -30,7 +31,9 @@ export const EbookBookmarkModal: React.VFC<{
 
   return (
     <>
-      <BookmarkIcon className="ml-2" cursor="pointer" onClick={onOpen} />
+      <Tooltip label="書籤" aria-label="書籤" placement="top">
+        <BookmarkIcon className="ml-2" cursor="pointer" onClick={onOpen} />
+      </Tooltip>
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
