@@ -1,5 +1,6 @@
-import { Button } from '@chakra-ui/react'
-import { Icon, Layout } from 'antd'
+import { SearchIcon } from '@chakra-ui/icons'
+import { Button, Icon } from '@chakra-ui/react'
+import { Layout } from 'antd'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -47,6 +48,7 @@ const ProgramContentPage: React.VFC = () => {
   const { resourceCollection } = useResourceCollection([`${appId}:program_content:${programContentId}`])
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
   const [previousPage] = useQueryParam('back', StringParam)
+  const [menuStatus, setMenuStatus] = useState<'search' | null>(null)
   const [ebookCurrentToc, setEbookCurrentToc] = useState<string | null>(null)
   const [ebookLocation, setEbookLocation] = useState<string | number>(
     // last toc progress
@@ -80,6 +82,16 @@ const ProgramContentPage: React.VFC = () => {
         title={program?.title || programId}
         extra={
           <div>
+            {program.contentSections.some(
+              contentSection =>
+                contentSection.contents.find(content => content.id === programContentId)?.contentType === 'ebook',
+            ) ? (
+              <Button colorScheme="primary" variant="ghost" size="sm" onClick={() => setMenuStatus('search')}>
+                <Icon as={SearchIcon} mr="0.5rem" />
+                搜尋
+              </Button>
+            ) : null}
+
             {enabledModules.customer_review && (
               <Button
                 colorScheme="primary"
@@ -87,7 +99,7 @@ const ProgramContentPage: React.VFC = () => {
                 size="sm"
                 onClick={() => window.open(`/programs/${programId}?visitIntro=1&moveToBlock=customer-review`)}
               >
-                <Icon component={BsStar} className="mr-2" />
+                <Icon as={BsStar} mr="0.5rem" />
                 {formatMessage(commonMessages.button.review)}
               </Button>
             )}
@@ -97,12 +109,12 @@ const ProgramContentPage: React.VFC = () => {
               variant="ghost"
               onClick={() => window.open(`/programs/${programId}?visitIntro=1`)}
             >
-              <Icon component={AiOutlineProfile} className="mr-2" />
+              <Icon as={AiOutlineProfile} mr="0.5rem" />
               {formatMessage(commonMessages.button.intro)}
             </Button>
             {!settings['layout.program_content'] && (
               <Button size="sm" colorScheme="primary" variant="ghost" onClick={() => setMenuVisible(!menuVisible)}>
-                <Icon component={AiOutlineUnorderedList} className="mr-2" />
+                <Icon as={AiOutlineUnorderedList} mr="0.5rem" />
                 {formatMessage(commonMessages.button.list)}
               </Button>
             )}
@@ -148,6 +160,7 @@ const ProgramContentPage: React.VFC = () => {
                     <ProgramContentMenu
                       isScrollToTop
                       program={program}
+                      menuStatus={menuStatus}
                       ebookCurrentToc={ebookCurrentToc}
                       ebookLocation={ebookLocation}
                       onEbookLocationChange={setEbookLocation}
@@ -184,6 +197,7 @@ const ProgramContentPage: React.VFC = () => {
                     <ProgramContentMenu
                       program={program}
                       onSelect={() => window.innerWidth < BREAK_POINT && setMenuVisible(false)}
+                      menuStatus={menuStatus}
                       ebookCurrentToc={ebookCurrentToc}
                       ebookLocation={ebookLocation}
                       onEbookLocationChange={setEbookLocation}

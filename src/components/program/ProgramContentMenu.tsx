@@ -1,6 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
-import { AttachmentIcon, CheckIcon, Icon } from '@chakra-ui/icons'
-import { Box, Flex, Select } from '@chakra-ui/react'
+import { AttachmentIcon, CheckIcon, Icon, SearchIcon } from '@chakra-ui/icons'
+import { Box, Flex, InputGroup, InputRightElement, Select, Input } from '@chakra-ui/react'
 import { Card } from 'antd'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -134,11 +134,12 @@ const ProgramContentMenu: React.VFC<{
       contents: ProgramContent[]
     })[]
   }
+  menuStatus: 'search' | null
   ebookCurrentToc: string | null
   ebookLocation: string | number
   onEbookLocationChange: (location: string | number) => void
   onSelect?: (programContentId: string) => void
-}> = ({ program, onSelect, isScrollToTop, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
+}> = ({ program, onSelect, isScrollToTop, menuStatus, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
   const { formatMessage } = useIntl()
   const [sortBy, setSortBy] = useState<'section' | 'date'>('section')
   const { search } = useLocation()
@@ -150,42 +151,81 @@ const ProgramContentMenu: React.VFC<{
   const isEnrolled = enrolledProgramIds.includes(program.id)
   const programContents = program.contentSections.map(v => v.contents).flat()
 
+  // dev code, fake data
+  const searchResults = [
+    { toc: '單元一', result: '馬斯克傳：唯一不設限、全公開傳記' },
+    { tox: '這是一本書', result: '備受讚譽的權威傳記作家，蘋果創辦人賈伯斯生前指定的唯一立傳人。' },
+    {
+      tox: '這是一本書',
+      result:
+        '，主修歷史和文學，後以羅德學者身分在牛津大學進修，並取得哲學及政經碩士學位。不僅是傑出記者，更是天才傳記作家，寫作功力一流。',
+    },
+  ]
+
   return (
     <StyledProgramContentMenu visible={visible}>
-      <StyledHead className="d-flex justify-content-between align-items-center">
-        <span>{formatMessage(programMessages.ProgramContentMenu.programList)}</span>
-        <StyledSelectBlock>
-          <Select size="default" value={sortBy} onChange={e => setSortBy(e.target.value as 'section' | 'date')}>
-            <option value="section">{formatMessage(programMessages.ProgramContentMenu.unit)}</option>
-            <option value="date">{formatMessage(programMessages.ProgramContentMenu.time)}</option>
-          </Select>
-        </StyledSelectBlock>
-      </StyledHead>
+      {
+        // menuStatus === 'search'
+        true ? (
+          <Box p="1rem" borderTop="1px solid #ececec">
+            <Flex justifyContent="center" mb="1rem">
+              <InputGroup w="80%">
+                <Input type="text" borderRadius="22px" placeholder="請輸入關鍵字..." />
+                <InputRightElement>
+                  <Icon as={SearchIcon} />
+                </InputRightElement>
+              </InputGroup>
+            </Flex>
+            <Flex mb="1rem">
+              <Box>搜尋：傳記</Box>
+              <Box>共 3 筆搜尋結果</Box>
+            </Flex>
 
-      {programContents.length === 0 ? (
-        <EmptyMenu />
-      ) : sortBy === 'section' ? (
-        <ProgramContentSectionMenu
-          isScrollToTop={isScrollToTop}
-          program={program}
-          programPackageId={programPackageId}
-          isLoading={enrolledProgramIdsLoading}
-          isEnrolled={isEnrolled}
-          onSelect={onSelect}
-          ebookCurrentToc={ebookCurrentToc}
-          ebookLocation={ebookLocation}
-          onEbookLocationChange={onEbookLocationChange}
-        />
-      ) : sortBy === 'date' ? (
-        <ProgramContentDateMenu
-          program={program}
-          programPackageId={programPackageId}
-          onSelect={onSelect}
-          ebookCurrentToc={ebookCurrentToc}
-          ebookLocation={ebookLocation}
-          onEbookLocationChange={onEbookLocationChange}
-        />
-      ) : null}
+            <Box>
+              {searchResults.map(searchResult => (
+                <Box></Box>
+              ))}
+            </Box>
+          </Box>
+        ) : (
+          <>
+            <StyledHead className="d-flex justify-content-between align-items-center">
+              <span>{formatMessage(programMessages.ProgramContentMenu.programList)}</span>
+              <StyledSelectBlock>
+                <Select size="default" value={sortBy} onChange={e => setSortBy(e.target.value as 'section' | 'date')}>
+                  <option value="section">{formatMessage(programMessages.ProgramContentMenu.unit)}</option>
+                  <option value="date">{formatMessage(programMessages.ProgramContentMenu.time)}</option>
+                </Select>
+              </StyledSelectBlock>
+            </StyledHead>
+
+            {programContents.length === 0 ? (
+              <EmptyMenu />
+            ) : sortBy === 'section' ? (
+              <ProgramContentSectionMenu
+                isScrollToTop={isScrollToTop}
+                program={program}
+                programPackageId={programPackageId}
+                isLoading={enrolledProgramIdsLoading}
+                isEnrolled={isEnrolled}
+                onSelect={onSelect}
+                ebookCurrentToc={ebookCurrentToc}
+                ebookLocation={ebookLocation}
+                onEbookLocationChange={onEbookLocationChange}
+              />
+            ) : sortBy === 'date' ? (
+              <ProgramContentDateMenu
+                program={program}
+                programPackageId={programPackageId}
+                onSelect={onSelect}
+                ebookCurrentToc={ebookCurrentToc}
+                ebookLocation={ebookLocation}
+                onEbookLocationChange={onEbookLocationChange}
+              />
+            ) : null}
+          </>
+        )
+      }
     </StyledProgramContentMenu>
   )
 }
