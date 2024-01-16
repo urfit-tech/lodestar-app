@@ -1,5 +1,5 @@
 import { gql, useApolloClient, useQuery } from '@apollo/client'
-import { Flex } from '@chakra-ui/react'
+import { Flex, Spinner } from '@chakra-ui/react'
 import axios from 'axios'
 import JSZip from 'jszip'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -48,11 +48,6 @@ const ProgramContentEbookReader: React.VFC<{
   const rendition = useRef<Rendition | undefined>(undefined)
   const toc = useRef<NavItem[]>([])
   const { programContentBookmark, refetch: refetchBookmark } = useEbookBookmark(programContentId, currentMemberId)
-
-  const fakeRendition = useRef<Rendition | undefined>(undefined)
-  const [allLocations, setAllLocations] = useState<string[]>([])
-  const [isCountingTotal, setCountingTotal] = useState<boolean>(true)
-  const [fakeLocation, setFakeLocation] = useState<string | number>(0)
 
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [isCurrentPageBookmark, setCurrentPageBookmarked] = useState<boolean>(false)
@@ -108,37 +103,20 @@ const ProgramContentEbookReader: React.VFC<{
     )
     rendition.current?.themes.override('font-size', `${ebookFontSize}px`)
     rendition.current?.themes.override('line-height', ebookLineHeight.toString())
-  }, [theme, ebookFontSize, ebookLineHeight, JSON.stringify(lightTheme), JSON.stringify(darkTheme)])
 
-  const sliderOnChange = async (value: number) => {
-    const offset = value - currentPage
-    // const index = allLocations.findIndex(loc => location === loc)
-    // rendition.current?.display(allLocations[offset + index])
-    setCurrentPage(value)
-  }
+    rendition.current?.reportLocation()
+  }, [
+    theme,
+    ebookFontSize,
+    ebookLineHeight,
+    lightTheme.color,
+    lightTheme.backgroundColor,
+    darkTheme.color,
+    darkTheme.backgroundColor,
+  ])
 
   return (
     <div>
-      {source ? (
-        <div style={{ marginTop: '-85vh', height: '85vh', position: 'relative', zIndex: '-1' }}>
-          <ReactReader
-            url={source}
-            location={fakeLocation}
-            locationChanged={async (loc: string) => {
-              await fakeRendition.current?.next()
-              setFakeLocation(loc)
-              setAllLocations(prev => [...prev, loc])
-              if (fakeRendition.current?.location.atEnd) {
-                setCountingTotal(false)
-              }
-            }}
-            getRendition={async (_rendition: Rendition) => {
-              fakeRendition.current = _rendition
-            }}
-          />
-        </div>
-      ) : null}
-
       {source ? (
         <div style={{ height: '85vh' }}>
           <ReactReader
@@ -220,34 +198,42 @@ const ProgramContentEbookReader: React.VFC<{
             }}
           />
         </div>
+      ) : (
+        <Flex height="85vh" justifyContent="center" alignItems="center" backgroundColor="whiteF">
+          <Spinner />
+        </Flex>
+      )}
+
+      {source ? (
+        <EbookReaderControlBar
+          rendition={rendition}
+          totalPage={totalPage}
+          currentPage={currentPage}
+          chapter={chapter}
+          programContentBookmark={programContentBookmark}
+          fontSize={ebookFontSize}
+          lineHeight={ebookLineHeight}
+          refetchBookmark={refetchBookmark}
+          onLocationChange={(loc: undefined | string) => rendition.current?.display(loc)}
+          onFontSizeChange={setEbookFontSize}
+          onLineHeightChange={setEbookLineHeight}
+          onThemeChange={setTheme}
+        />
       ) : null}
 
-      <EbookReaderControlBar
-        sliderOnChange={sliderOnChange}
-        totalPage={totalPage}
-        currentPage={currentPage}
-        chapter={chapter}
-        programContentBookmark={programContentBookmark}
-        fontSize={ebookFontSize}
-        lineHeight={ebookLineHeight}
-        refetchBookmark={refetchBookmark}
-        onLocationChange={(loc: undefined | string) => rendition.current?.display(loc)}
-        onFontSizeChange={setEbookFontSize}
-        onLineHeightChange={setEbookLineHeight}
-        onThemeChange={setTheme}
-      />
-
-      <EbookReaderBookmarkIcon
-        location={location}
-        refetchBookmark={refetchBookmark}
-        programContentId={programContentId}
-        memberId={currentMemberId}
-        highlightContent={bookmarkHighlightContent}
-        chapter={chapter}
-        bookmarkId={bookmarkId}
-        isCurrentPageBookmark={isCurrentPageBookmark}
-        setCurrentPageBookmarked={setCurrentPageBookmarked}
-      />
+      {source ? (
+        <EbookReaderBookmarkIcon
+          location={location}
+          refetchBookmark={refetchBookmark}
+          programContentId={programContentId}
+          memberId={currentMemberId}
+          highlightContent={bookmarkHighlightContent}
+          chapter={chapter}
+          bookmarkId={bookmarkId}
+          isCurrentPageBookmark={isCurrentPageBookmark}
+          setCurrentPageBookmarked={setCurrentPageBookmarked}
+        />
+      ) : null}
     </div>
   )
 }
