@@ -1,4 +1,4 @@
-import { Flex, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Text, Box, Tooltip } from '@chakra-ui/react'
+import { Box, Flex, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Text, Tooltip } from '@chakra-ui/react'
 import { EbookBookmarkModal } from './EbookBookmarkModal'
 import EbookStyledModal from './EbookStyledModal'
 
@@ -6,13 +6,12 @@ export const EbookReaderControlBar: React.VFC<{
   totalPage: number
   currentPage: number
   chapter: string
-  isCountingTotal: boolean
   programContentBookmark: Array<any>
   fontSize: number
   lineHeight: number
   refetchBookmark: () => void
   sliderOnChange: (value: number) => void
-  onLocationChange: (loc: number | string) => void
+  onLocationChange: (loc: undefined | string) => void
   onFontSizeChange: React.Dispatch<React.SetStateAction<number>>
   onLineHeightChange: React.Dispatch<React.SetStateAction<number>>
   onThemeChange: (theme: 'light' | 'dark') => void
@@ -21,7 +20,6 @@ export const EbookReaderControlBar: React.VFC<{
   currentPage,
   totalPage,
   chapter,
-  isCountingTotal,
   programContentBookmark,
   fontSize,
   lineHeight,

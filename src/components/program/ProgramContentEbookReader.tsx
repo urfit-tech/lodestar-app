@@ -1,14 +1,14 @@
 import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { Flex } from '@chakra-ui/react'
 import axios from 'axios'
-import {} from 'epubjs'
 import JSZip from 'jszip'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ReactReader } from 'react-reader'
+import styled from 'styled-components'
 import hasura from '../../hasura'
-import { ReactComponent as MarkIcon } from '../../images/mark.svg'
+import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
 import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
 import type { NavItem, Rendition } from 'epubjs'
 
@@ -16,6 +16,24 @@ const getChapter = (loc: string) => {
   const chapter = loc.match(/\[(.*?)\]/g)?.map((match: string) => match.slice(1, -1))[0] || ''
   return chapter
 }
+
+const ReaderBookmark = styled.div`
+  position: relative;
+  width: 20px;
+  height: 40px;
+  background-color: ${props => (props.color ? props.color : '#E2E2E2')};
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 40px;
+    right: 0;
+    border-right: 10px solid ${props => (props.color ? props.color : '#E2E2E2')};
+    border-left: 10px solid ${props => (props.color ? props.color : '#E2E2E2')};
+    border-top: 10px solid rgba(0, 0, 0, 0);
+    transform: rotate(180deg);
+  }
+`
 
 const ProgramContentEbookReader: React.VFC<{
   programContentId: string
@@ -32,12 +50,13 @@ const ProgramContentEbookReader: React.VFC<{
   const { programContentBookmark, refetch: refetchBookmark } = useEbookBookmark(programContentId, currentMemberId)
 
   const fakeRendition = useRef<Rendition | undefined>(undefined)
-  const [currentPage, setCurrentPage] = useState<number>(0)
-
   const [allLocations, setAllLocations] = useState<string[]>([])
+  const [isCountingTotal, setCountingTotal] = useState<boolean>(true)
   const [fakeLocation, setFakeLocation] = useState<string | number>(0)
 
-  const [isCountingTotal, setCountingTotal] = useState<boolean>(true)
+  const [currentPage, setCurrentPage] = useState<number>(0)
+  const [isCurrentPageBookmark, setCurrentPageBookmarked] = useState<boolean>(false)
+  const [bookmarkId, setBookmarkId] = useState<string | undefined>(undefined)
   const [totalPage, setTotalPage] = useState(0)
   const [chapter, setChapter] = useState('')
 
@@ -54,7 +73,6 @@ const ProgramContentEbookReader: React.VFC<{
     backgroundColor: '#424242',
   }
   const [bookmarkHighlightContent, setBookmarkHighlightContent] = useState('')
-
   const getFileFromS3 = useCallback(async (programContentId: string, authToken: string) => {
     const { data } = await axios.get(
       `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/ebook/${programContentId}.epub`,
@@ -92,23 +110,23 @@ const ProgramContentEbookReader: React.VFC<{
     rendition.current?.themes.override('line-height', ebookLineHeight.toString())
   }, [theme, ebookFontSize, ebookLineHeight, JSON.stringify(lightTheme), JSON.stringify(darkTheme)])
 
-  const sliderOnChange = (value: number) => {
-    rendition.current?.book.rendition.display(allLocations[value - 1])
-    setChapter(getChapter(allLocations[value - 1]))
+  const sliderOnChange = async (value: number) => {
+    const offset = value - currentPage
+    // const index = allLocations.findIndex(loc => location === loc)
+    // rendition.current?.display(allLocations[offset + index])
     setCurrentPage(value)
   }
 
   return (
     <div>
-      {!source ? (
+      {source ? (
         <div style={{ marginTop: '-85vh', height: '85vh', position: 'relative', zIndex: '-1' }}>
           <ReactReader
-            url={`https://${process.env.REACT_APP_S3_BUCKET}/images/demo/ebook_test/7B_2048試閱本版本號3.0.epub`}
+            url={source}
             location={fakeLocation}
             locationChanged={async (loc: string) => {
               await fakeRendition.current?.next()
               setFakeLocation(loc)
-              setTotalPage(t => t + 1)
               setAllLocations(prev => [...prev, loc])
               if (fakeRendition.current?.location.atEnd) {
                 setCountingTotal(false)
@@ -120,19 +138,42 @@ const ProgramContentEbookReader: React.VFC<{
           />
         </div>
       ) : null}
-      {!source ? (
+
+      {source ? (
         <div style={{ height: '85vh' }}>
           <ReactReader
-            url={`https://${process.env.REACT_APP_S3_BUCKET}/images/demo/ebook_test/7B_2048試閱本版本號3.0.epub`}
+            url={source}
             showToc={false}
             tocChanged={_toc => (toc.current = _toc)}
             location={location}
-            locationChanged={async (loc: string) => {
-              const currentLocationIndex = allLocations.findIndex(l => l === loc) + 1
-              setCurrentPage(currentLocationIndex)
-              setChapter(getChapter(loc))
-              onLocationChange(loc)
+            locationChanged={(loc: string) => {
+              console.log(loc)
+              const { start, end } = rendition.current?.location || {}
+              if (start && end) {
+                // set page and chapter
+                onLocationChange(loc)
+                setCurrentPage(end.displayed.page)
+                setTotalPage(end.displayed.total)
+                setChapter(getChapter(loc))
 
+                // get current showing text
+                const splitCfi = start.cfi.split('/')
+                const baseCfi = splitCfi[0] + '/' + splitCfi[1] + '/' + splitCfi[2] + '/' + splitCfi[3]
+                const startCfi = start.cfi.replace(baseCfi, '')
+                const endCfi = end.cfi.replace(baseCfi, '')
+                const rangeCfi = [baseCfi, startCfi, endCfi].join(',')
+                rendition.current?.book.getRange(rangeCfi).then(range => {
+                  const text = range?.toString()
+                  const currentPageBookmark = programContentBookmark.find(
+                    bookmark => text.includes(bookmark.highlightContent) && getChapter(loc) === bookmark.chapter,
+                  )
+                  setCurrentPageBookmarked(currentPageBookmark ? true : false)
+                  setBookmarkId(currentPageBookmark ? currentPageBookmark.id : undefined)
+                  setBookmarkHighlightContent(text.slice(0, 20))
+                })
+              }
+
+              // toc nav and save progress
               if (rendition.current && toc.current) {
                 const { href } = rendition.current.location.start
                 const { displayed: displayedEnd } = rendition.current.location.end
@@ -140,7 +181,7 @@ const ProgramContentEbookReader: React.VFC<{
                 const currentEndPage = displayedEnd.page
                 onEbookCurrentTocChange(getChapter(loc))
                 try {
-                  await apolloClient
+                  apolloClient
                     .query({
                       query: GetProgramContentEbookToc,
                       variables: { programContentId, href: `${href}#${getChapter(loc)}` },
@@ -166,28 +207,16 @@ const ProgramContentEbookReader: React.VFC<{
                 }
               }
             }}
-            getRendition={(_rendition: Rendition) => {
+            getRendition={async (_rendition: Rendition) => {
               rendition.current = _rendition
               // initial theme
               rendition.current.themes.override('color', '#585858')
               rendition.current.themes.override('background-color', '#ffffff')
               rendition.current.themes.override('font-size', `20px`)
               rendition.current.themes.override('line-height', '1')
-
-              // get current showing text
-              const { start, end } = rendition.current?.location || {}
-              if (start && end) {
-                const splitCfi = start.cfi.split('/')
-                const baseCfi = splitCfi[0] + '/' + splitCfi[1] + '/' + splitCfi[2] + '/' + splitCfi[3]
-                const startCfi = start.cfi.replace(baseCfi, '')
-                const endCfi = end.cfi.replace(baseCfi, '')
-                const rangeCfi = [baseCfi, startCfi, endCfi].join(',')
-
-                rendition.current?.book.getRange(rangeCfi).then(range => {
-                  const text = range?.toString()
-                  setBookmarkHighlightContent(text.slice(0, 20))
-                })
-              }
+              rendition.current.on('resized', (size: { width: number; height: number }) => {
+                console.log(`resized => width: ${size.width}, height: ${size.height}`)
+              })
             }}
           />
         </div>
@@ -195,7 +224,6 @@ const ProgramContentEbookReader: React.VFC<{
 
       <EbookReaderControlBar
         sliderOnChange={sliderOnChange}
-        isCountingTotal={isCountingTotal}
         totalPage={totalPage}
         currentPage={currentPage}
         chapter={chapter}
@@ -203,7 +231,7 @@ const ProgramContentEbookReader: React.VFC<{
         fontSize={ebookFontSize}
         lineHeight={ebookLineHeight}
         refetchBookmark={refetchBookmark}
-        onLocationChange={onLocationChange}
+        onLocationChange={(loc: undefined | string) => rendition.current?.display(loc)}
         onFontSizeChange={setEbookFontSize}
         onLineHeightChange={setEbookLineHeight}
         onThemeChange={setTheme}
@@ -216,6 +244,9 @@ const ProgramContentEbookReader: React.VFC<{
         memberId={currentMemberId}
         highlightContent={bookmarkHighlightContent}
         chapter={chapter}
+        bookmarkId={bookmarkId}
+        isCurrentPageBookmark={isCurrentPageBookmark}
+        setCurrentPageBookmarked={setCurrentPageBookmarked}
       />
     </div>
   )
@@ -227,34 +258,62 @@ const EbookReaderBookmarkIcon: React.VFC<{
   location: string | number
   highlightContent: string
   chapter: string
+  bookmarkId: string | undefined
+  isCurrentPageBookmark: boolean
+  setCurrentPageBookmarked: (isBookmark: boolean) => void
   refetchBookmark: () => void
-}> = ({ refetchBookmark, memberId, programContentId, location, highlightContent, chapter }) => {
+}> = ({
+  refetchBookmark,
+  memberId,
+  isCurrentPageBookmark,
+  programContentId,
+  location,
+  highlightContent,
+  chapter,
+  bookmarkId,
+  setCurrentPageBookmarked,
+}) => {
   const apolloClient = useApolloClient()
+
+  const insertBookmark = async () => {
+    await apolloClient.mutate({
+      mutation: insertProgramContentEbookBookmark,
+      variables: {
+        memberId,
+        programContentId,
+        epubCfi: location,
+        highlightContent: highlightContent,
+        chapter,
+      },
+    })
+    await refetchBookmark()
+    setCurrentPageBookmarked(true)
+  }
+
+  const deleteBookmark = async () => {
+    await apolloClient.mutate({
+      mutation: deleteProgramContentEbookBookmark,
+      variables: {
+        id: bookmarkId,
+      },
+    })
+    await refetchBookmark()
+    setCurrentPageBookmarked(false)
+  }
 
   return (
     <Flex
+      cursor="pointer"
       style={{
         marginTop: '-85vh',
-        marginLeft: '95%',
+        marginLeft: '93%',
         position: 'relative',
         width: 'fit-content',
         zIndex: '1',
       }}
-      onClick={async () => {
-        await apolloClient.mutate({
-          mutation: insertProgramContentEbookBookmark,
-          variables: {
-            memberId,
-            programContentId,
-            epubCfi: location,
-            highlightContent: highlightContent,
-            chapter,
-          },
-        })
-        await refetchBookmark()
-      }}
+      onClick={isCurrentPageBookmark ? () => deleteBookmark() : () => insertBookmark()}
     >
-      <MarkIcon fill="#E2E2E2" />
+      <ReaderBookmark color={isCurrentPageBookmark ? '#FF7D62' : undefined} />
     </Flex>
   )
 }
