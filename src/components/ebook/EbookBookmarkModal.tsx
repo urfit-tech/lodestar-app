@@ -28,13 +28,12 @@ export const EbookBookmarkModal: React.VFC<{
   programContentBookmark: Array<any>
 }> = ({ refetchBookmark, onLocationChange, programContentBookmark }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  console.log(programContentBookmark)
   return (
     <>
       <Tooltip label="書籤" aria-label="書籤" placement="top">
         <BookmarkIcon className="ml-2" cursor="pointer" onClick={onOpen} />
       </Tooltip>
-      <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose} isCentered>
+      <Modal scrollBehavior="inside" isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton />
@@ -105,7 +104,7 @@ const BookmarkRow: React.VFC<{
         }}
       >
         <Text size="sm" noOfLines={1}>
-          {chapter}:{highlightContent}
+          {chapter} | {highlightContent}
         </Text>
       </Flex>
       <Flex cursor="pointer" w="10%">
@@ -115,7 +114,7 @@ const BookmarkRow: React.VFC<{
   )
 }
 
-const deleteProgramContentEbookBookmark = gql`
+export const deleteProgramContentEbookBookmark = gql`
   mutation deleteEbookBookmark($id: uuid!) {
     delete_program_content_ebook_bookmark_by_pk(id: $id) {
       id
