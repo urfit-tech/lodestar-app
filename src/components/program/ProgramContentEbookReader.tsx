@@ -1,6 +1,7 @@
 import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { Flex } from '@chakra-ui/react'
 import axios from 'axios'
+import {} from 'epubjs'
 import JSZip from 'jszip'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
@@ -52,6 +53,7 @@ const ProgramContentEbookReader: React.VFC<{
     color: '#ffffff',
     backgroundColor: '#424242',
   }
+  const [bookmarkHighlightContent, setBookmarkHighlightContent] = useState('')
 
   const getFileFromS3 = useCallback(async (programContentId: string, authToken: string) => {
     const { data } = await axios.get(
@@ -91,17 +93,17 @@ const ProgramContentEbookReader: React.VFC<{
   }, [theme, ebookFontSize, ebookLineHeight, JSON.stringify(lightTheme), JSON.stringify(darkTheme)])
 
   const sliderOnChange = (value: number) => {
+    rendition.current?.book.rendition.display(allLocations[value - 1])
     setChapter(getChapter(allLocations[value - 1]))
-    onLocationChange(allLocations[value - 1])
     setCurrentPage(value)
   }
 
   return (
     <div>
-      {source ? (
+      {!source ? (
         <div style={{ marginTop: '-85vh', height: '85vh', position: 'relative', zIndex: '-1' }}>
           <ReactReader
-            url={source}
+            url={`https://${process.env.REACT_APP_S3_BUCKET}/images/demo/ebook_test/7B_2048試閱本版本號3.0.epub`}
             location={fakeLocation}
             locationChanged={async (loc: string) => {
               await fakeRendition.current?.next()
@@ -118,10 +120,10 @@ const ProgramContentEbookReader: React.VFC<{
           />
         </div>
       ) : null}
-      {source ? (
+      {!source ? (
         <div style={{ height: '85vh' }}>
           <ReactReader
-            url={source}
+            url={`https://${process.env.REACT_APP_S3_BUCKET}/images/demo/ebook_test/7B_2048試閱本版本號3.0.epub`}
             showToc={false}
             tocChanged={_toc => (toc.current = _toc)}
             location={location}
@@ -171,6 +173,21 @@ const ProgramContentEbookReader: React.VFC<{
               rendition.current.themes.override('background-color', '#ffffff')
               rendition.current.themes.override('font-size', `20px`)
               rendition.current.themes.override('line-height', '1')
+
+              // get current showing text
+              const { start, end } = rendition.current?.location || {}
+              if (start && end) {
+                const splitCfi = start.cfi.split('/')
+                const baseCfi = splitCfi[0] + '/' + splitCfi[1] + '/' + splitCfi[2] + '/' + splitCfi[3]
+                const startCfi = start.cfi.replace(baseCfi, '')
+                const endCfi = end.cfi.replace(baseCfi, '')
+                const rangeCfi = [baseCfi, startCfi, endCfi].join(',')
+
+                rendition.current?.book.getRange(rangeCfi).then(range => {
+                  const text = range?.toString()
+                  setBookmarkHighlightContent(text.slice(0, 20))
+                })
+              }
             }}
           />
         </div>
@@ -197,6 +214,8 @@ const ProgramContentEbookReader: React.VFC<{
         refetchBookmark={refetchBookmark}
         programContentId={programContentId}
         memberId={currentMemberId}
+        highlightContent={bookmarkHighlightContent}
+        chapter={chapter}
       />
     </div>
   )
@@ -206,8 +225,10 @@ const EbookReaderBookmarkIcon: React.VFC<{
   memberId: string | null
   programContentId: string
   location: string | number
+  highlightContent: string
+  chapter: string
   refetchBookmark: () => void
-}> = ({ refetchBookmark, memberId, programContentId, location }) => {
+}> = ({ refetchBookmark, memberId, programContentId, location, highlightContent, chapter }) => {
   const apolloClient = useApolloClient()
 
   return (
@@ -226,6 +247,8 @@ const EbookReaderBookmarkIcon: React.VFC<{
             memberId,
             programContentId,
             epubCfi: location,
+            highlightContent: highlightContent,
+            chapter,
           },
         })
         await refetchBookmark()
@@ -268,9 +291,21 @@ const UpsertEbookTocProgress = gql`
 `
 
 const insertProgramContentEbookBookmark = gql`
-  mutation InsertEbookBookmark($memberId: String!, $programContentId: uuid!, $epubCfi: String!) {
+  mutation InsertEbookBookmark(
+    $memberId: String!
+    $programContentId: uuid!
+    $epubCfi: String!
+    $highlightContent: String!
+    $chapter: String!
+  ) {
     insert_program_content_ebook_bookmark(
-      objects: { member_id: $memberId, program_content_id: $programContentId, epub_cfi: $epubCfi }
+      objects: {
+        member_id: $memberId
+        program_content_id: $programContentId
+        epub_cfi: $epubCfi
+        highlight_content: $highlightContent
+        chapter: $chapter
+      }
     ) {
       affected_rows
     }
@@ -291,6 +326,8 @@ const useEbookBookmark = (programContentId: string, memberId: string | null) => 
           id
           epub_cfi
           created_at
+          highlight_content
+          chapter
         }
       }
     `,
@@ -303,6 +340,8 @@ const useEbookBookmark = (programContentId: string, memberId: string | null) => 
         id: bookmark.id,
         epubCfi: bookmark.epub_cfi,
         createdAt: new Date(bookmark.created_at),
+        highlightContent: bookmark.highlight_content,
+        chapter: bookmark.chapter,
       }
     }) || []
   return {

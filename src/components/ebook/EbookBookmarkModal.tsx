@@ -14,8 +14,8 @@ import {
   TabPanels,
   Tabs,
   Text,
-  useDisclosure,
   Tooltip,
+  useDisclosure,
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { ReactComponent as DeleteIcon } from '../../images/delete-o.svg'
@@ -28,7 +28,7 @@ export const EbookBookmarkModal: React.VFC<{
   programContentBookmark: Array<any>
 }> = ({ refetchBookmark, onLocationChange, programContentBookmark }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-
+  console.log(programContentBookmark)
   return (
     <>
       <Tooltip label="書籤" aria-label="書籤" placement="top">
@@ -53,6 +53,8 @@ export const EbookBookmarkModal: React.VFC<{
                         onLocationChange={onLocationChange}
                         refetchBookmark={refetchBookmark}
                         id={bookmark.id}
+                        chapter={bookmark.chapter}
+                        highlightContent={bookmark.highlightContent}
                       />
                     ))}
                   </Grid>
@@ -70,9 +72,11 @@ const BookmarkRow: React.VFC<{
   onLocationChange: (loc: string) => void
   color?: string
   epubCfi: string
+  chapter: string
+  highlightContent: string
   id: string
   refetchBookmark: () => void
-}> = ({ id, epubCfi, refetchBookmark, onLocationChange }) => {
+}> = ({ id, epubCfi, highlightContent, chapter, refetchBookmark, onLocationChange }) => {
   const apolloClient = useApolloClient()
   const [isDeleting, setDeleting] = useState<boolean>(false)
 
@@ -101,7 +105,7 @@ const BookmarkRow: React.VFC<{
         }}
       >
         <Text size="sm" noOfLines={1}>
-          {epubCfi}
+          {chapter}:{highlightContent}
         </Text>
       </Flex>
       <Flex cursor="pointer" w="10%">
