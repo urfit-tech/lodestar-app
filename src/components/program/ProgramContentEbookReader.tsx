@@ -167,7 +167,7 @@ const ProgramContentEbookReader: React.VFC<{
             getRendition={(_rendition: Rendition) => {
               rendition.current = _rendition
               // initial theme
-              rendition.current.themes.override('color', '585858')
+              rendition.current.themes.override('color', '#585858')
               rendition.current.themes.override('background-color', '#ffffff')
               rendition.current.themes.override('font-size', `20px`)
               rendition.current.themes.override('line-height', '1')
