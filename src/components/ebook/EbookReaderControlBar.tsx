@@ -10,7 +10,7 @@ export const EbookReaderControlBar: React.VFC<{
   fontSize: number
   lineHeight: number
   refetchBookmark: () => void
-  sliderOnChange: (value: number) => void
+  rendition: any
   onLocationChange: (loc: undefined | string) => void
   onFontSizeChange: React.Dispatch<React.SetStateAction<number>>
   onLineHeightChange: React.Dispatch<React.SetStateAction<number>>
@@ -23,19 +23,22 @@ export const EbookReaderControlBar: React.VFC<{
   programContentBookmark,
   fontSize,
   lineHeight,
-  sliderOnChange,
+  rendition,
   onLocationChange,
   onFontSizeChange,
   onLineHeightChange,
   onThemeChange,
 }) => {
+  const sliderOnChange = async (targetPage: number) => {
+    console.log(targetPage)
+  }
   return (
     <Flex w="100%" backgroundColor="white" align="center" direction="column">
       <Text>{chapter}</Text>
       <Flex w="100%" direction="row">
         <Flex w="25%"></Flex>
         <Flex w="50%">
-          <Slider onChange={val => sliderOnChange(val)} value={currentPage} min={1} max={totalPage} step={1}>
+          <Slider onChangeEnd={val => sliderOnChange(val)} value={currentPage} min={1} max={totalPage} step={1}>
             <SliderTrack bg="gray.100">
               <SliderFilledTrack bg="gray.900" />
             </SliderTrack>
