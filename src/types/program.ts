@@ -117,6 +117,7 @@ export type ProgramContent = {
   videos: { id: string; size: number; options: { cloudflare?: object }; data: { source?: string } }[]
   audios: { data: object }[]
   contentBodyId: string
+  ebook: ProgramContentEbook
 }
 
 export type ProgramContentBodyProps = {
@@ -183,4 +184,18 @@ export type ProgramEnrollment = Pick<
   viewRate: number
   deliveredAt: Date | null
   lastViewedAt: Date | null
+}
+
+export type ProgramContentEbook = {
+  id: string
+  data: any
+  programContentEbookTocs: ProgramContentEbookToc[]
+}
+
+export type ProgramContentEbookToc = {
+  id: string
+  label: string
+  href: string
+  position: number
+  subitems?: ProgramContentEbookToc[]
 }
