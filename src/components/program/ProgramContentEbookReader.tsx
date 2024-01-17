@@ -41,8 +41,8 @@ const ProgramContentEbookReader: React.VFC<{
     const hashKey = keyHex.length < 64 ? keyHex.padEnd(64, '0') : keyHex
     const hashIv = ivHex.length < 32 ? ivHex.padEnd(32, '0') : ivHex
 
-    const salt = CryptoJS.enc.Utf8.parse('salt')
-    const iterations = 10000
+    const salt = CryptoJS.enc.Utf8.parse(process.env.REACT_APP_EBOOK_SALT as string)
+    const iterations = Number(process.env.REACT_APP_EBOOK_ITERATION)
     const key = CryptoJS.PBKDF2(hashKey, salt, {
       keySize: 256 / 32,
       iterations: iterations,
