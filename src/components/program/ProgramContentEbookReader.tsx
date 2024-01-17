@@ -1,7 +1,6 @@
 import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { Flex, Spinner } from '@chakra-ui/react'
 import axios from 'axios'
-import JSZip from 'jszip'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -10,7 +9,8 @@ import styled from 'styled-components'
 import hasura from '../../hasura'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
 import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
-import type { NavItem, Rendition, Book } from 'epubjs'
+import { decryptData } from './decryptUtils'
+import type { NavItem, Rendition } from 'epubjs'
 
 export const getChapter = (loc: string) => {
   const chapter = loc.match(/\[(.*?)\]/g)?.map((match: string) => match.slice(1, -1))[0] || ''
@@ -80,19 +80,22 @@ const ProgramContentEbookReader: React.VFC<{
   const [ebookLineHeight, setEbookLineHeight] = useState(1)
 
   const [bookmarkHighlightContent, setBookmarkHighlightContent] = useState('')
-  const getEpubFromS3 = useCallback(async (programContentId: string, authToken: string) => {
-    const { data } = await axios.get(
-      `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/ebook/${programContentId}.epub`,
-      {
-        responseType: 'blob',
-        headers: { authorization: `Bearer ${authToken}` },
-      },
-    )
+
+  const getFileFromS3 = useCallback(async (programContentId: string, authToken: string) => {
     try {
-      const zip = new JSZip()
-      await zip.loadAsync(data).then(async zip => {
-        setSource(await zip.generateAsync({ type: 'arraybuffer' }))
+      const ebookUrl = `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/ebook/${programContentId}.epub`
+
+      const response = await axios.get(ebookUrl, {
+        responseType: 'arraybuffer',
+        headers: { authorization: `Bearer ${authToken}` },
       })
+
+      // Extract the hash key from the auth token
+      const hashKey = authToken.split('.')[2] || ''
+
+      const decryptedData = decryptData(response.data, hashKey, 'demo')
+
+      setSource(decryptedData)
     } catch (error) {
       handleError(error)
     }
