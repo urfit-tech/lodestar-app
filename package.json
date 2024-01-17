@@ -76,6 +76,7 @@
     "babel-plugin-import": "^1.13.3",
     "babel-plugin-react-intl": "^7.5.28",
     "braft-editor": "^2.3.9",
+    "crypto-js": "^4.2.0",
     "customize-cra": "^1.0.0",
     "dashjs": "^4.3.0",
     "dayjs": "^1.11.5",
@@ -162,7 +163,8 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^3.3.0",
     "@graphql-codegen/client-preset": "^3.0.0",
-    "@oclif/core": "^1.0.11"
+    "@oclif/core": "^1.0.11",
+    "@types/crypto-js": "^4.2.1"
   },
   "resolutions": {
     "@craftjs/utils": "0.1.0-beta.20",
