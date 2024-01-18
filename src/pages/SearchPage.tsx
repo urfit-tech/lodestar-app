@@ -265,9 +265,9 @@ const SearchResultBlock: React.VFC<{
               {searchResults.programPackages.map(programPackage => (
                 <div key={programPackage.id} className="col-12 col-md-6 col-lg-4 mb-4">
                   <ProgramPackageCard
-                    id={programPackage.id}
                     coverUrl={programPackage.coverUrl}
                     title={programPackage.title}
+                    link={`/program-packages/${programPackage.id}`}
                   />
                 </div>
               ))}

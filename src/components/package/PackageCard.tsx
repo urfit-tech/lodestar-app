@@ -62,30 +62,18 @@ const PackageDatetime: React.FC<{
 }
 
 const PackageCard: React.VFC<
-  Pick<ProgramPackageProps, 'id' | 'coverUrl' | 'title'> & {
-    onClick?: () => void
-    isExpired?: boolean
+  Pick<ProgramPackageProps, 'coverUrl' | 'title'> & {
     memberId?: string
     view?: string
     programDateEnabled?: boolean
     lastViewedAt?: Date | null
     deliveredAt?: Date | null
+    link: string
   }
-> = ({
-  onClick,
-  id,
-  coverUrl,
-  title,
-  isExpired,
-  memberId,
-  view,
-  lastViewedAt,
-  programDateEnabled: datetimeEnabled,
-  deliveredAt,
-}) => {
+> = ({ coverUrl, title, memberId, view, lastViewedAt, programDateEnabled: datetimeEnabled, deliveredAt, link }) => {
   return (
     <>
-      <Link to={isExpired ? `/program-packages/${id}` : `/program-packages/${id}/contents?memberId=${memberId}`}>
+      <Link to={link}>
         <StyledCard>
           {view !== 'List' ? (
             <>

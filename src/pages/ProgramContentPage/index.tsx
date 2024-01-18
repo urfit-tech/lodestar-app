@@ -47,6 +47,11 @@ const ProgramContentPage: React.VFC = () => {
   const { resourceCollection } = useResourceCollection([`${appId}:program_content:${programContentId}`])
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
   const [previousPage] = useQueryParam('back', StringParam)
+  const [ebookCurrentToc, setEbookCurrentToc] = useState<string | null>(null)
+  const [ebookLocation, setEbookLocation] = useState<string | number>(
+    // last toc progress
+    0,
+  )
 
   if (isAuthenticating || loadingProgram) {
     return <LoadingPage />
@@ -139,7 +144,13 @@ const ProgramContentPage: React.VFC = () => {
                   programContentId={programContentId}
                 >
                   <>
-                    <ProgramContentMenu isScrollToTop program={program} />
+                    <ProgramContentMenu
+                      isScrollToTop
+                      program={program}
+                      ebookCurrentToc={ebookCurrentToc}
+                      ebookLocation={ebookLocation}
+                      onEbookLocationChange={setEbookLocation}
+                    />
 
                     <StyledLink to={`/programs/${programId}?moveToBlock=customer-review&visitIntro=1`}>
                       <Button isFullWidth className="mt-3" colorScheme="primary">
@@ -159,6 +170,11 @@ const ProgramContentPage: React.VFC = () => {
                       programContentSections={program.contentSections}
                       programContentId={programContentId}
                       issueEnabled={program.isIssuesOpen}
+                      editors={program.editors}
+                      ebookCurrentToc={ebookCurrentToc}
+                      onEbookCurrentTocChange={setEbookCurrentToc}
+                      ebookLocation={ebookLocation}
+                      onEbookLocationChange={setEbookLocation}
                     />
                   </StyledLayoutContent>
                 </div>
@@ -167,6 +183,9 @@ const ProgramContentPage: React.VFC = () => {
                     <ProgramContentMenu
                       program={program}
                       onSelect={() => window.innerWidth < BREAK_POINT && setMenuVisible(false)}
+                      ebookCurrentToc={ebookCurrentToc}
+                      ebookLocation={ebookLocation}
+                      onEbookLocationChange={setEbookLocation}
                     />
                   </StyledSideBar>
                 </div>

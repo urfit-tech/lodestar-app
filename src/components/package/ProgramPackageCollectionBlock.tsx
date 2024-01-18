@@ -193,45 +193,48 @@ const ProgramPackageCollectionBlock: React.VFC<{
             wrap={view === 'List' ? 'nowrap' : 'wrap'}
             alignItems="center"
           >
-            {programPackage.map(programPackage => (
-              <Fragment key={programPackage.id}>
-                {view === 'Grid' && (
-                  <Box
-                    marginBottom="1rem"
-                    flex={{ base: '0 0 100%', md: '0 0 48%', lg: '0 0 32%' }}
-                    maxWidth={{ base: '100%', md: '48%', lg: '32%' }}
-                    opacity={isExpired ? '50%' : '100%'}
-                  >
-                    <PackageCard
-                      isExpired={isExpired}
-                      memberId={memberId}
-                      coverUrl={programPackage.coverUrl}
-                      id={programPackage.id}
-                      title={programPackage.title}
-                      lastViewedAt={programPackage.lastViewedAt}
-                      deliveredAt={programPackage.deliveredAt}
-                      programDateEnabled={datetimeEnabled}
-                      view={view}
-                    />
-                  </Box>
-                )}
-                {view === 'List' && (
-                  <Box width="100%" opacity={isExpired ? '50%' : '100%'}>
-                    <PackageCard
-                      isExpired={isExpired}
-                      memberId={memberId}
-                      coverUrl={programPackage.coverUrl}
-                      id={programPackage.id}
-                      title={programPackage.title}
-                      lastViewedAt={programPackage.lastViewedAt}
-                      deliveredAt={programPackage.deliveredAt}
-                      programDateEnabled={datetimeEnabled}
-                      view={view}
-                    />
-                  </Box>
-                )}
-              </Fragment>
-            ))}
+            {programPackage.map(programPackage => {
+              const programPackageLink = !isExpired
+                ? `/program-packages/${programPackage.id}/contents?memberId=${memberId}`
+                : `/program-packages/${programPackage.id}`
+              return (
+                <Fragment key={programPackage.id}>
+                  {view === 'Grid' && (
+                    <Box
+                      marginBottom="1rem"
+                      flex={{ base: '0 0 100%', md: '0 0 48%', lg: '0 0 32%' }}
+                      maxWidth={{ base: '100%', md: '48%', lg: '32%' }}
+                      opacity={isExpired ? '50%' : '100%'}
+                    >
+                      <PackageCard
+                        memberId={memberId}
+                        coverUrl={programPackage.coverUrl}
+                        title={programPackage.title}
+                        lastViewedAt={programPackage.lastViewedAt}
+                        deliveredAt={programPackage.deliveredAt}
+                        programDateEnabled={datetimeEnabled}
+                        view={view}
+                        link={programPackageLink}
+                      />
+                    </Box>
+                  )}
+                  {view === 'List' && (
+                    <Box width="100%" opacity={isExpired ? '50%' : '100%'}>
+                      <PackageCard
+                        memberId={memberId}
+                        coverUrl={programPackage.coverUrl}
+                        title={programPackage.title}
+                        lastViewedAt={programPackage.lastViewedAt}
+                        deliveredAt={programPackage.deliveredAt}
+                        programDateEnabled={datetimeEnabled}
+                        view={view}
+                        link={programPackageLink}
+                      />
+                    </Box>
+                  )}
+                </Fragment>
+              )
+            })}
           </Flex>
         </>
       )}

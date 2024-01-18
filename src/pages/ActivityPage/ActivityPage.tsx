@@ -1,4 +1,5 @@
 import { Button, Divider, SkeletonText } from '@chakra-ui/react'
+import dayjs from 'dayjs'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -11,7 +12,7 @@ import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import ActivityBanner from '../../components/activity/ActivityBanner'
-import ActivitySessionItem from '../../components/activity/ActivitySessionItem'
+import ActivitySessionItemRefactor from '../../components/activity/ActivitySessionItemRefactor'
 import ActivityTicketCard from '../../components/activity/ActivityTicketCard'
 import ActivityTicketPaymentButton from '../../components/activity/ActivityTicketPaymentButton'
 import { AuthModalContext } from '../../components/auth/AuthModal'
@@ -19,7 +20,7 @@ import CreatorCard from '../../components/common/CreatorCard'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import { useActivity } from '../../hooks/activity'
+import { useEnrolledActivity } from '../../hooks/activity'
 import { usePublicMember } from '../../hooks/member'
 import NotFoundPage from '../NotFoundPage'
 import ActivityPageHelmet from './ActivityPageHelmet'
@@ -52,16 +53,16 @@ const ActivityPage: React.VFC = () => {
   const { isAuthenticated, currentMemberId } = useAuth()
   const { id: appId } = useApp()
   const { resourceCollection } = useResourceCollection([`${appId}:activity:${activityId}`], true)
-  const { loading, error, activity } = useActivity({ activityId, memberId: currentMemberId || '' })
+  const { loading, data: activityData, error } = useEnrolledActivity(activityId, currentMemberId || '')
   const [isPlanListSticky, setIsPlanListSticky] = useState(false)
   const planListHeightRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (activity) {
-      activity.tickets.forEach((activityTicket, index) => {
+    if (activityData) {
+      activityData.activityTickets.forEach((activityTicket, index) => {
         ReactGA.plugin.execute('ec', 'addProduct', {
           id: activityTicket.id,
-          name: `${activity.title} - ${activityTicket.title}`,
+          name: `${activityData.title} - ${activityTicket.title}`,
           category: 'ActivityTicket',
           price: `${activityTicket.price}`,
           quantity: '1',
@@ -69,19 +70,19 @@ const ActivityPage: React.VFC = () => {
         })
         ReactGA.plugin.execute('ec', 'addImpression', {
           id: activityTicket.id,
-          name: `${activity.title} - ${activityTicket.title}`,
+          name: `${activityData.title} - ${activityTicket.title}`,
           category: 'ActivityTicket',
           price: `${activityTicket.price}`,
           position: index + 1,
         })
       })
-      if (activity.tickets.length > 0) {
+      if (activityData.activityTickets.length > 0) {
         ReactGA.plugin.execute('ec', 'setAction', 'detail')
       }
       ReactGA.ga('send', 'pageview')
       setIsPlanListSticky(window.innerHeight > (planListHeightRef.current?.clientHeight || 0) + 110)
     }
-  }, [activity])
+  }, [activityData])
 
   if (loading) {
     return (
@@ -91,41 +92,78 @@ const ActivityPage: React.VFC = () => {
     )
   }
 
-  if (error || !activity) {
+  if (error || !activityData) {
     return <NotFoundPage />
   }
 
+  const sessionIds = activityData.activityTickets
+    .map(ticket => ({
+      isEnrolled: !!ticket.orderId,
+      sessionId: ticket.activitySessionTickets.map(st => st.activitySession.id),
+    }))
+    .filter(s => s.isEnrolled)
+
   return (
     <DefaultLayout white>
-      <ActivityPageHelmet activity={activity} />
+      <ActivityPageHelmet
+        activity={{
+          ...activityData,
+          sessions: activityData.activityTickets
+            .map(ticket => ticket.activitySessionTickets.map(st => st.activitySession))
+            .flat() as any,
+          tags: activityData.activityTags.map(tag => tag.activityTagName),
+          tickets: activityData.activityTickets,
+          publishedAt: activityData.publishedAt ? dayjs(activityData.publishedAt).toDate() : null,
+        }}
+      />
       {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       <ActivityBanner
-        coverImage={activity.coverUrl || ''}
-        activityTitle={activity.title}
-        activityCategories={activity.categories}
+        coverImage={activityData.coverUrl || ''}
+        activityTitle={activityData.title}
+        activityCategories={activityData.activityCategories.map(c => ({ id: c.id, name: c.category.name }))}
       />
       <ActivityContent>
         <Row>
           <Col xs={12} lg={8}>
             <div className="mb-5">
-              <BraftContent>{activity.description}</BraftContent>
+              <BraftContent>{activityData.description}</BraftContent>
             </div>
 
             <StyledTitle>{formatMessage(productMessages.activity.title.event)}</StyledTitle>
             <Divider className="mb-4" />
 
-            {activity.sessions.map(({ id }) => (
-              <div key={id} className="mb-4">
-                <ActivitySessionItem activitySessionId={id} />
-              </div>
-            ))}
+            {activityData.activityTickets
+              .map(ticket => ticket.activitySessionTickets.map(st => st.activitySession))
+              .flat()
+              .sort((a, b) => dayjs(a.startedAt).valueOf() - dayjs(b.startedAt).valueOf())
+              .map(session => {
+                const isEnrolled = sessionIds.filter(s => s.sessionId.includes(session.id)).length > 0
+                return (
+                  <div key={session.id} className="mb-4">
+                    <ActivitySessionItemRefactor
+                      session={{
+                        id: session.id,
+                        location: session.location,
+                        onlineLink: session.onlinelink,
+                        title: session.title,
+                        startedAt: session.startedAt,
+                        endedAt: session.endedAt,
+                        activityTitle: activityData.title,
+                        isEnrolled,
+                        threshold: session.threshold || '',
+                        isParticipantsVisible: activityData.isParticipantsVisible,
+                      }}
+                    />
+                  </div>
+                )
+              })}
           </Col>
 
           <Col xs={12} lg={4}>
             <div className={`${isPlanListSticky ? 'activityPlanSticky' : ''}`} ref={planListHeightRef}>
               <AuthModalContext.Consumer>
                 {({ setVisible: setAuthModalVisible }) =>
-                  activity.tickets.map(ticket => {
+                  activityData.activityTickets.map(ticket => {
                     return (
                       <div key={ticket.id} className="mb-4">
                         <ActivityTicketCard
@@ -133,34 +171,30 @@ const ActivityPage: React.VFC = () => {
                           description={ticket.description || undefined}
                           price={ticket.price}
                           count={ticket.count}
-                          startedAt={ticket.startedAt}
-                          endedAt={ticket.endedAt}
+                          startedAt={dayjs(ticket.startedAt).toDate()}
+                          endedAt={dayjs(ticket.endedAt).toDate()}
                           isPublished={ticket.isPublished}
-                          sessions={activity.ticketSessions
-                            .filter(ticketSession => ticketSession.ticket.id === ticket.id)
-                            .map(ticketSession => ({
-                              id: ticketSession.session.id,
-                              type: ticketSession.session.type,
-                              title: ticketSession.session.title,
-                            }))}
+                          sessions={ticket.activitySessionTickets.map(ticketSession => ({
+                            id: ticketSession.activitySession.id,
+                            type: ticketSession.activitySessionType,
+                            title: ticketSession.activitySession.title,
+                          }))}
                           participants={ticket.participants}
                           currencyId={ticket.currencyId}
                           extra={
-                            !activity ||
-                            !activity.publishedAt ||
-                            activity.publishedAt.getTime() > Date.now() ||
-                            ticket.startedAt.getTime() > Date.now() ? (
+                            !activityData ||
+                            !activityData.publishedAt ||
+                            dayjs(activityData.publishedAt).isAfter(dayjs()) ||
+                            dayjs(ticket.startedAt).isAfter(dayjs()) ? (
                               <Button isFullWidth isDisabled>
                                 {formatMessage(commonMessages.button.unreleased)}
                               </Button>
-                            ) : ticket.enrollments.length > 0 ? (
+                            ) : ticket.orderId ? (
                               <Button
                                 variant="outline"
                                 isFullWidth
                                 onClick={() =>
-                                  history.push(
-                                    `/orders/${ticket.enrollments[0].orderId}/products/${ticket.enrollments[0].orderProductId}`,
-                                  )
+                                  history.push(`/orders/${ticket.orderId}/products/${ticket.orderProductId}`)
                                 }
                               >
                                 {formatMessage(commonMessages.button.ticket)}
@@ -169,7 +203,7 @@ const ActivityPage: React.VFC = () => {
                               <Button isFullWidth isDisabled>
                                 {formatMessage(commonMessages.button.soldOut)}
                               </Button>
-                            ) : ticket.endedAt.getTime() < Date.now() ? (
+                            ) : dayjs(ticket.endedAt).isBefore(dayjs()) ? (
                               <Button isFullWidth isDisabled>
                                 {formatMessage(commonMessages.button.cutoff)}
                               </Button>
@@ -178,7 +212,7 @@ const ActivityPage: React.VFC = () => {
                                 ticketId={ticket.id}
                                 ticketPrice={ticket.price}
                                 ticketCurrencyId={ticket.currencyId}
-                                isPublished={Boolean(activity.publishedAt)}
+                                isPublished={Boolean(activityData.publishedAt)}
                               />
                             ) : (
                               <Button
@@ -205,7 +239,7 @@ const ActivityPage: React.VFC = () => {
             <StyledTitle className="mb-0">{formatMessage(productMessages.activity.title.organizer)}</StyledTitle>
             <Divider className="mb-4" />
 
-            <ActivityOrganizerIntro memberId={activity.organizerId} />
+            <ActivityOrganizerIntro memberId={activityData.organizerId} />
           </ActivityOrganizer>
         </Row>
       </ActivityContent>

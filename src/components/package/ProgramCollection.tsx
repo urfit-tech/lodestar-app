@@ -1,7 +1,7 @@
 import { Icon } from '@chakra-ui/react'
 import { Button } from 'antd'
 import { flatten, prop, sortBy, uniq } from 'ramda'
-import React, { useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import { AiOutlineRight, AiOutlineUnorderedList } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -93,7 +93,9 @@ const ProgramCollection: React.VFC<{
           .filter(
             program => !selectedCategory || program.categories.map(category => category.id).includes(selectedCategory),
           )
-          .map(program => renderItem && renderItem({ displayType, program }))}
+          .map(program => (
+            <Fragment key={program.id}>{renderItem && renderItem({ displayType, program })}</Fragment>
+          ))}
       </div>
     </div>
   )

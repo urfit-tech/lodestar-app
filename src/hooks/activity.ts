@@ -1,8 +1,16 @@
 import { gql, useMutation, useQuery } from '@apollo/client'
+import axios from 'axios'
 import { flatten, prop, sum, uniqBy } from 'ramda'
+import { useCallback, useEffect, useState } from 'react'
 import { DeepPick } from 'ts-deep-pick/lib'
 import hasura from '../hasura'
-import { Activity, ActivitySession, ActivityTicket } from '../types/activity'
+import {
+  Activity,
+  ActivityFromLodestarAPI,
+  ActivitySession,
+  ActivitySessionTicketEnrollment,
+  ActivityTicket,
+} from '../types/activity'
 
 export const usePublishedActivityCollection = (options?: { organizerId?: string; categoryId?: string }) => {
   const { loading, error, data, refetch } = useQuery<
@@ -181,6 +189,124 @@ export const useEnrolledActivityTickets = (memberId: string) => {
     refetchTickets: refetch,
     enrolledActivityTickets,
     enrolledActivitySessions,
+  }
+}
+
+export const useEnrolledActivityTicket = (memberId: string) => {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<any>()
+  const [data, setData] = useState<ActivitySessionTicketEnrollment[]>([])
+
+  const fetch = useCallback(async () => {
+    if (memberId) {
+      const route = `/activity/`
+      try {
+        setLoading(true)
+        const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+          params: { memberId },
+        })
+
+        setData(data)
+      } catch (err) {
+        console.log(err)
+        setError(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+  }, [memberId])
+
+  useEffect(() => {
+    fetch()
+  }, [fetch])
+
+  return {
+    loading,
+    error,
+    data,
+    fetch,
+  }
+}
+
+export const useEnrolledActivity = (activityId: string, memberId: string) => {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<any>()
+  const [data, setData] = useState<ActivityFromLodestarAPI>()
+
+  const fetch = useCallback(async () => {
+    if (activityId) {
+      const route = `/activity/${activityId}`
+      try {
+        setLoading(true)
+        const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+          params: { memberId },
+        })
+
+        setData(data)
+      } catch (err) {
+        console.log(err)
+        setError(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+  }, [activityId, memberId])
+
+  useEffect(() => {
+    fetch()
+  }, [fetch])
+
+  return {
+    loading,
+    error,
+    data,
+    fetch,
+  }
+}
+
+export const useActivitySessionEnrollment = (sessionId: string, memberId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_ACTIVITY_SESSIONEnrollment,
+    hasura.GET_ACTIVITY_SESSIONEnrollmentVariables
+  >(
+    gql`
+      query GET_ACTIVITY_SESSIONEnrollment($sessionId: uuid!, $memberId: String!) {
+        activity_session_by_pk(id: $sessionId) {
+          id
+          ticket_enrollment_count {
+            activity_offline_session_ticket_count
+            activity_online_session_ticket_count
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        sessionId,
+        memberId,
+      },
+    },
+  )
+
+  const session: {
+    id: string
+    enrollmentAmount: { online: number; offline: number }
+  } | null =
+    loading || error || !data || !data.activity_session_by_pk
+      ? null
+      : {
+          id: data.activity_session_by_pk.id,
+          enrollmentAmount: {
+            offline: data.activity_session_by_pk.ticket_enrollment_count?.activity_offline_session_ticket_count || 0,
+            online: data.activity_session_by_pk.ticket_enrollment_count?.activity_online_session_ticket_count || 0,
+          },
+        }
+
+  return {
+    loadingSession: loading,
+    errorSession: error,
+    session,
+    refetchSession: refetch,
   }
 }
 
