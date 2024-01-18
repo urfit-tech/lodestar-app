@@ -177,8 +177,10 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
                 {
                   event: 'insertCustomMemberProperty',
                   memberId: currentMemberId,
-                  utmQuery,
-                  landing,
+                  options: {
+                    utmQuery,
+                    landing,
+                  },
                 },
                 { headers: { Authorization: `Bearer ${authToken}` } },
               )
