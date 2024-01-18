@@ -1,6 +1,6 @@
 import { Button } from '@chakra-ui/react'
 import DOMPurify from 'dompurify'
-import * as htmlToImage from 'html-to-image'
+import html2canvas from 'html2canvas'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
@@ -12,6 +12,7 @@ import { StyledCode, StyledDate } from '../../components/common/CertificateCard'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
 import { MemberCertificate } from '../../types/certificate'
 import pageMessages from '../translation'
+import { VirtualCredentials } from './CreateVirtualCredentials'
 
 const StyledContainer = styled.div`
   margin: 40px;
@@ -59,7 +60,7 @@ const StyledContentBlockFooter = styled.div`
   justify-content: space-between;
   padding: 1.25rem 1.25rem 1.25rem 2rem;
 `
-const StyledButton = styled.button`
+const StyledButton = styled(Button)`
   width: 105px;
   height: 44px;
   border-radius: 4px;
@@ -96,24 +97,27 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
     deliveredAt,
   }
   const certificateRef = useRef<HTMLDivElement | null>(null)
+  const virCertificateRef = useRef<HTMLDivElement | null>(null)
+
+  const CERTIFICATE_IMAGE_SIZE = 2400
 
   const onDownLoad = async () => {
-    if (!certificateRef.current) {
+    if (!virCertificateRef.current) {
       return null
     }
-
-    try {
-      const dataUri = await htmlToImage.toPng(certificateRef.current)
-
-      const img = dataUri
-
+    const scale = CERTIFICATE_IMAGE_SIZE / (virCertificateRef as RefObject<HTMLDivElement>).current!.offsetWidth
+    html2canvas(virCertificateRef.current, {
+      // NOTE: Cannot get background image without allowTaint and useCORS
+      allowTaint: true,
+      useCORS: true,
+      scale,
+    }).then((canvas: { toDataURL: (arg0: string, arg1: number) => any }) => {
+      const img = canvas.toDataURL('image/png', 0)
       const link = document.createElement('a')
       link.download = `${certificate.title}.png`
       link.href = img
       link.click()
-    } catch (error) {
-      console.log(error)
-    }
+    })
   }
 
   return (
@@ -149,11 +153,11 @@ const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate 
         </StyledAbstract>
       </StyledContentBlock>
       {/* TEMPLATE */}
-      {/* <Certificate template={certificate.template || ''} templateVars={templateVars} ref={certificateRef} /> */}
       <CertificateImpl
         template={certificate.template || ''}
         templateVars={templateVars}
         certificateRef={certificateRef}
+        virCertificateRef={virCertificateRef}
       />
       {/* TEMPLATE */}
       <StyledContentBlockFooter>
@@ -189,11 +193,13 @@ const StyledCertificateCard = styled.div<{ scale: number }>`
   transform: scale(${props => props.scale});
   transform-origin: top left;
 `
+
 const CertificateImpl: React.VFC<{
   template: string
   templateVars?: any
   certificateRef?: React.Ref<HTMLDivElement>
-}> = ({ template, templateVars, certificateRef }) => {
+  virCertificateRef?: React.Ref<HTMLDivElement>
+}> = ({ template, templateVars, certificateRef, virCertificateRef }) => {
   const [scale, setScale] = useState(0)
   const cardRef = useRef<HTMLDivElement | null>(null)
 
@@ -213,6 +219,12 @@ const CertificateImpl: React.VFC<{
 
   return (
     <StyledCertificateContainer ref={certificateRef}>
+      <VirtualCredentials
+        html={sanitizedTemplate}
+        templateVars={templateVars}
+        certificateRef={virCertificateRef}
+        scale={scale}
+      />
       <StyledCertificateCard
         ref={cardRef}
         scale={scale}
@@ -221,15 +233,5 @@ const CertificateImpl: React.VFC<{
     </StyledCertificateContainer>
   )
 }
-
-// const Certificate = forwardRef(
-//   (
-//     props: {
-//       template: string
-//       templateVars?: any
-//     },
-//     ref?: React.Ref<HTMLDivElement>,
-//   ) => <CertificateImpl {...props} certificateRef={ref} />,
-// )
 
 export default CertificateContentBlock

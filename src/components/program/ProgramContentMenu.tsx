@@ -1,6 +1,8 @@
+import { gql, useQuery } from '@apollo/client'
 import { AttachmentIcon, CheckIcon, Icon } from '@chakra-ui/icons'
-import { Select } from '@chakra-ui/react'
+import { Box, Flex, Select } from '@chakra-ui/react'
 import { Card } from 'antd'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment-timezone'
 import { flatten, sum } from 'ramda'
@@ -12,6 +14,7 @@ import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import AudioPlayerContext from '../../contexts/AudioPlayerContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
+import hasura from '../../hasura'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useExamExercise } from '../../hooks/exam'
@@ -131,8 +134,11 @@ const ProgramContentMenu: React.VFC<{
       contents: ProgramContent[]
     })[]
   }
+  ebookCurrentToc: string | null
+  ebookLocation: string | number
+  onEbookLocationChange: (location: string | number) => void
   onSelect?: (programContentId: string) => void
-}> = ({ program, onSelect, isScrollToTop }) => {
+}> = ({ program, onSelect, isScrollToTop, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
   const { formatMessage } = useIntl()
   const [sortBy, setSortBy] = useState<'section' | 'date'>('section')
   const { search } = useLocation()
@@ -166,9 +172,19 @@ const ProgramContentMenu: React.VFC<{
           isLoading={enrolledProgramIdsLoading}
           isEnrolled={isEnrolled}
           onSelect={onSelect}
+          ebookCurrentToc={ebookCurrentToc}
+          ebookLocation={ebookLocation}
+          onEbookLocationChange={onEbookLocationChange}
         />
       ) : sortBy === 'date' ? (
-        <ProgramContentDateMenu program={program} programPackageId={programPackageId} onSelect={onSelect} />
+        <ProgramContentDateMenu
+          program={program}
+          programPackageId={programPackageId}
+          onSelect={onSelect}
+          ebookCurrentToc={ebookCurrentToc}
+          ebookLocation={ebookLocation}
+          onEbookLocationChange={onEbookLocationChange}
+        />
       ) : null}
     </StyledProgramContentMenu>
   )
@@ -185,7 +201,20 @@ const ProgramContentSectionMenu: React.VFC<{
   isLoading: boolean
   isScrollToTop?: boolean
   onSelect?: (programContentId: string) => void
-}> = ({ program, programPackageId, isEnrolled, isLoading, isScrollToTop, onSelect }) => {
+  ebookCurrentToc: string | null
+  ebookLocation: string | number
+  onEbookLocationChange: (location: string | number) => void
+}> = ({
+  program,
+  programPackageId,
+  isEnrolled,
+  isLoading,
+  isScrollToTop,
+  onSelect,
+  ebookCurrentToc,
+  ebookLocation,
+  onEbookLocationChange,
+}) => {
   const { programContentId } = useParams<{ programContentId?: string }>()
 
   return (
@@ -200,6 +229,9 @@ const ProgramContentSectionMenu: React.VFC<{
           isLoading={isLoading}
           isEnrolled={isEnrolled}
           onSelect={onSelect}
+          ebookCurrentToc={ebookCurrentToc}
+          ebookLocation={ebookLocation}
+          onEbookLocationChange={onEbookLocationChange}
         />
       ))}
     </>
@@ -216,7 +248,21 @@ const ContentSection: React.VFC<{
   isScrollToTop?: boolean
   defaultCollapse?: boolean
   onSelect?: (programContentId: string) => void
-}> = ({ programContentSection, programPackageId, isEnrolled, isLoading, defaultCollapse, isScrollToTop, onSelect }) => {
+  ebookCurrentToc: string | null
+  ebookLocation: string | number
+  onEbookLocationChange: (location: string | number) => void
+}> = ({
+  programContentSection,
+  programPackageId,
+  isEnrolled,
+  isLoading,
+  defaultCollapse,
+  isScrollToTop,
+  onSelect,
+  ebookCurrentToc,
+  ebookLocation,
+  onEbookLocationChange,
+}) => {
   const programContentProgress = useProgramContentProgress()
   const [isCollapse, setIsCollapse] = useState(defaultCollapse)
   const [passExam, setPassExam] = useState<string[]>([])
@@ -244,18 +290,31 @@ const ContentSection: React.VFC<{
 
       <StyledContentSectionBody active={isCollapse}>
         {programContentSection.contents?.map(programContent => (
-          <SortBySectionItem
-            isScrollToTop={isScrollToTop}
-            key={programContent.id}
-            programContent={programContent}
-            contentCurrentProgress={contentProgress.find(item => item.programContentId === programContent.id)}
-            onSetIsCollapse={setIsCollapse}
-            isEnrolled={isEnrolled}
-            isLoading={isLoading}
-            passExam={passExam}
-            setPassExam={setPassExam}
-            onClick={() => onSelect?.(programContent.id)}
-          />
+          <>
+            <SortBySectionItem
+              isScrollToTop={isScrollToTop}
+              key={programContent.id}
+              programContent={programContent}
+              contentCurrentProgress={contentProgress.find(item => item.programContentId === programContent.id)}
+              onSetIsCollapse={setIsCollapse}
+              isEnrolled={isEnrolled}
+              isLoading={isLoading}
+              passExam={passExam}
+              setPassExam={setPassExam}
+              onClick={() => {
+                onSelect?.(programContent.id)
+              }}
+            />
+            {programContent.contentType === 'ebook' ? (
+              <EbookSecondaryMenu
+                programContentId={programContent.id}
+                tocs={programContent.ebook.programContentEbookTocs}
+                ebookCurrentToc={ebookCurrentToc}
+                ebookLocation={ebookLocation}
+                onEbookLocationChange={onEbookLocationChange}
+              />
+            ) : null}
+          </>
         ))}
       </StyledContentSectionBody>
     </StyledContentSection>
@@ -429,17 +488,31 @@ const ProgramContentDateMenu: React.VFC<{
   }
   programPackageId: string | null
   onSelect?: (programContentId: string) => void
-}> = ({ program, programPackageId, onSelect }) => {
+  ebookCurrentToc: string | null
+  ebookLocation: string | number
+  onEbookLocationChange: (location: string | number) => void
+}> = ({ program, programPackageId, onSelect, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
   const programContents = flatten(program.contentSections.map(programContentSection => programContentSection.contents))
 
   return (
     <div>
       {programContents.map(programContent => (
-        <SortByDateItem
-          key={programContent.id}
-          programContent={programContent}
-          onClick={() => onSelect && onSelect(programContent.id)}
-        />
+        <>
+          <SortByDateItem
+            key={programContent.id}
+            programContent={programContent}
+            onClick={() => onSelect && onSelect(programContent.id)}
+          />
+          {programContent.contentType === 'ebook' ? (
+            <EbookSecondaryMenu
+              programContentId={programContent.id}
+              tocs={programContent.ebook.programContentEbookTocs}
+              ebookCurrentToc={ebookCurrentToc}
+              ebookLocation={ebookLocation}
+              onEbookLocationChange={onEbookLocationChange}
+            />
+          ) : null}
+        </>
       ))}
     </div>
   )
@@ -558,6 +631,152 @@ const ExerciseQuestionCount: React.VFC<{ contentBodyId: string; programContent: 
   )
 }
 
+const CheckIconButton: React.VFC<{ status: 'unread' | 'done' }> = ({ status }) => {
+  const theme = useAppTheme()
+
+  return (
+    <Box position="relative">
+      <Box
+        position="absolute"
+        w="20px"
+        h="20px"
+        border="1px solid transparent"
+        borderRadius="50%"
+        textAlign="center"
+        fontSize="10px"
+        lineHeight="20px"
+        {...(status === 'unread'
+          ? {
+              borderColor: '#cdcdcd',
+              color: 'transparent',
+            }
+          : status === 'done'
+          ? { bg: `${theme.colors.primary[500]}`, color: '#fff' }
+          : null)}
+      >
+        <Icon as={CheckIcon} />
+      </Box>
+    </Box>
+  )
+}
+
+const EbookSecondaryMenu: React.VFC<{
+  programContentId: string
+  tocs: {
+    id: string
+    label: string
+    href: string
+    position: number
+    subitems?: {
+      id: string
+      label: string
+      href: string
+      position: number
+    }[]
+  }[]
+  ebookCurrentToc: string | null
+  ebookLocation: string | number
+  onEbookLocationChange?: (loc: string | number) => void
+}> = ({ programContentId, tocs, ebookCurrentToc, onEbookLocationChange }) => {
+  const theme = useAppTheme()
+  const { programContentId: paramProgramContentId } = useParams<{
+    programContentId?: string
+  }>()
+  const { tocProgress, refetch: refetchTocProgress } = useCurrentMemberEbookTocProgress(programContentId)
+
+  useEffect(() => {
+    refetchTocProgress()
+  }, [ebookCurrentToc, refetchTocProgress])
+
+  return (
+    <Box {...(paramProgramContentId === programContentId ? { bg: `${rgba(theme.colors.primary[500], 0.1)}` } : null)}>
+      {tocs.map(toc => {
+        const RegexHrefToc = /#(.+)/
+        return (
+          <Box>
+            <Flex
+              position="relative"
+              justifyContent="space-between"
+              p="0.75rem 2rem 0.75rem 2rem"
+              cursor="pointer"
+              {...(toc.href.match(RegexHrefToc)?.[1] === ebookCurrentToc
+                ? {
+                    _before: {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '4px',
+                      height: '100%',
+                      bg: `${theme.colors.primary[500]}`,
+                    },
+                  }
+                : null)}
+              onClick={() => {
+                onEbookLocationChange?.(toc.href)
+                refetchTocProgress()
+              }}
+            >
+              <Box
+                fontSize="14px"
+                letterSpacing="0.18px"
+                fontWeight="500"
+                {...(toc.href === ebookCurrentToc ? { color: `${theme.colors.primary[500]}` } : '#585858')}
+              >
+                {toc.label}
+              </Box>
+
+              <CheckIconButton
+                status={tocProgress.find(v => v.programContentTocId === toc.id)?.finishedAt ? 'done' : 'unread'}
+              />
+            </Flex>
+            {toc.subitems?.map(subitem => (
+              <Flex
+                position="relative"
+                justifyContent="space-between"
+                p="0.75rem 2rem 0.75rem 4rem"
+                letterSpacing="0.4px"
+                fontWeight="500"
+                cursor="pointer"
+                {...(subitem.href.match(RegexHrefToc)?.[1] === ebookCurrentToc
+                  ? {
+                      _before: {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '4px',
+                        height: '100%',
+                        bg: `${theme.colors.primary[500]}`,
+                      },
+                    }
+                  : null)}
+                onClick={() => {
+                  onEbookLocationChange?.(subitem.href)
+                  refetchTocProgress()
+                }}
+              >
+                <Box
+                  fontSize="14px"
+                  letterSpacing="0.18px"
+                  fontWeight="500"
+                  {...(subitem.href === ebookCurrentToc ? { color: `${theme.colors.primary[500]}` } : '#585858')}
+                >
+                  {subitem.label}
+                </Box>
+
+                <CheckIconButton
+                  status={tocProgress.find(v => v.programContentTocId === subitem.id)?.finishedAt ? 'done' : 'unread'}
+                />
+              </Flex>
+            ))}
+          </Box>
+        )
+      })}
+    </Box>
+  )
+}
+
 const useProgramContentProgress = () => {
   const { programContentId } = useParams<{ programContentId: string }>()
   const { programContentProgress, refetchProgress } = useContext(ProgressContext)
@@ -567,6 +786,40 @@ const useProgramContentProgress = () => {
   }, [programContentId, refetchProgress])
 
   return programContentProgress
+}
+
+const useCurrentMemberEbookTocProgress = (programContentId: string) => {
+  const { currentMemberId } = useAuth()
+  const { data, refetch } = useQuery<
+    hasura.GetCurrentMemberEbookTocProgress,
+    hasura.GetCurrentMemberEbookTocProgressVariables
+  >(
+    gql`
+      query GetCurrentMemberEbookTocProgress($programContentId: uuid!, $currentMemberId: String!) {
+        program_content_ebook_toc_progress(
+          where: {
+            member_id: { _eq: $currentMemberId }
+            program_content_ebook_toc: { program_content_id: { _eq: $programContentId } }
+          }
+        ) {
+          program_content_ebook_toc_id
+          latest_progress
+          finished_at
+        }
+      }
+    `,
+    { variables: { programContentId, currentMemberId: currentMemberId || '' } },
+  )
+  const tocProgress =
+    data?.program_content_ebook_toc_progress.map(v => ({
+      programContentTocId: v.program_content_ebook_toc_id,
+      latestProgress: v.latest_progress,
+      finishedAt: v.finished_at ? new Date(v.finished_at) : null,
+    })) || []
+  return {
+    tocProgress,
+    refetch,
+  }
 }
 
 export default ProgramContentMenu

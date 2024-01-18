@@ -18,13 +18,13 @@ import { ProductType } from '../../types/product'
 import { AuthModalContext } from '../auth/AuthModal'
 import CoinCheckoutModal from '../checkout/CoinCheckoutModal'
 
-const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
+const StyleButton = styled(Button)<{ line?: 'multiline' }>`
   span {
     display: none;
   }
 
   ${props =>
-    props.isMultiline &&
+    props.line === 'multiline' &&
     css`
       order: 1;
       margin-top: 0.75rem;
@@ -98,7 +98,7 @@ const PaymentButton: React.VFC<{
               variant="outline"
               colorScheme="primary"
               isFullWidth
-              isMultiline
+              line="multiline"
               isDisabled={!isPublished}
               onClick={() => {
                 resourceCollection[0] && tracking.addToCart(resourceCollection[0])

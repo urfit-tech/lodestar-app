@@ -15,6 +15,7 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
+import ProgramContentEbookReader from '../../components/program/ProgramContentEbookReader'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import AudioPlayerContext from '../../contexts/AudioPlayerContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
@@ -81,7 +82,21 @@ const ProgramContentBlock: React.VFC<{
   programContentId: string
   issueEnabled?: boolean
   editors?: string[]
-}> = ({ programId, programContentId, programRoles, programContentSections, issueEnabled }) => {
+  ebookCurrentToc: string | null
+  onEbookCurrentTocChange: (toc: string | null) => void
+  ebookLocation: string | number
+  onEbookLocationChange: (location: string | number) => void
+}> = ({
+  programId,
+  programContentId,
+  programRoles,
+  programContentSections,
+  issueEnabled,
+  ebookCurrentToc,
+  onEbookCurrentTocChange,
+  ebookLocation,
+  onEbookLocationChange,
+}) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { loading: loadingApp, enabledModules } = useApp()
@@ -167,7 +182,10 @@ const ProgramContentBlock: React.VFC<{
   }
 
   return (
-    <div id="program_content_block" className="pt-4 p-sm-4">
+    <div
+      id="program_content_block"
+      className={programContent.programContentBody?.type !== 'ebook' ? 'pt-4 p-sm-4' : ''}
+    >
       {((programContent.contentType === 'video' && !hasProgramContentPermission) ||
         (programContent.contentType !== 'video' && !programContent.programContentBody)) && (
         <div className="d-flex justify-content-center">
@@ -195,7 +213,6 @@ const ProgramContentBlock: React.VFC<{
           )}
         </div>
       )}
-
       {isBackgroundMode &&
         programContent.videos[0]?.data?.source !== 'youtube' &&
         programContent.contentType === 'video' && (
@@ -205,9 +222,8 @@ const ProgramContentBlock: React.VFC<{
             <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundModeDescription)}</p>
           </StyledBackgroundModeDescriptionBlock>
         )}
-
-      {((programContent.contentType === 'video' && !isBackgroundMode) ||
-        programContent.videos[0]?.data?.source === 'youtube') &&
+      {programContent.contentType === 'video' ? (
+        (!isBackgroundMode || programContent.videos[0]?.data?.source === 'youtube') &&
         ((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
           currentUserRole === 'app-owner') && (
           <ProgramContentPlayer
@@ -227,8 +243,16 @@ const ProgramContentBlock: React.VFC<{
               }
             }}
           />
-        )}
-
+        )
+      ) : programContent.contentType === 'ebook' ? (
+        <ProgramContentEbookReader
+          programContentId={programContent.id}
+          ebookCurrentToc={ebookCurrentToc}
+          onEbookCurrentTocChange={onEbookCurrentTocChange}
+          location={ebookLocation}
+          onLocationChange={onEbookLocationChange}
+        />
+      ) : null}
       {moment().isBefore(moment(programContent.publishedAt)) &&
         hasProgramContentPermission &&
         currentUserRole !== 'app-owner' && (
@@ -242,8 +266,7 @@ const ProgramContentBlock: React.VFC<{
             </p>
           </StyledUnpublishedBlock>
         )}
-
-      {!includes(programContent.programContentBody?.type, ['practice', 'exercise', 'exam']) &&
+      {!includes(programContent.programContentBody?.type, ['ebook', 'practice', 'exercise', 'exam']) &&
         programContent.videos[0]?.data?.source !== 'youtube' && (
           <StyledContentBlock className="mb-3">
             {isMobile &&
@@ -297,7 +320,6 @@ const ProgramContentBlock: React.VFC<{
               )}
           </StyledContentBlock>
         )}
-
       {enabledModules.practice &&
         programContent.programContentBody?.type === 'practice' &&
         (moment().isAfter(moment(programContent.publishedAt)) || currentUserRole === 'app-owner') && (
@@ -320,18 +342,17 @@ const ProgramContentBlock: React.VFC<{
         (moment().isAfter(moment(programContent.publishedAt)) || currentUserRole === 'app-owner') && (
           <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
         )}
-
-      {((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
-        currentUserRole === 'app-owner') && (
-        <ProgramContentTabs
-          programId={programId}
-          programRoles={programRoles}
-          programContent={programContent}
-          issueEnabled={issueEnabled}
-        />
-      )}
-
-      {programContent.programContentBody?.type !== 'practice' && instructor && (
+      {!includes(programContent.programContentBody?.type, ['ebook']) &&
+        ((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
+          currentUserRole === 'app-owner') && (
+          <ProgramContentTabs
+            programId={programId}
+            programRoles={programRoles}
+            programContent={programContent}
+            issueEnabled={issueEnabled}
+          />
+        )}
+      {!includes(programContent.programContentBody?.type, ['practice', 'ebook']) && instructor && (
         <ProgramContentCreatorBlock memberId={instructor.memberId} />
       )}
     </div>
