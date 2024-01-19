@@ -19,18 +19,18 @@ const getChapter = (loc: string) => {
 
 const ReaderBookmark = styled.div`
   position: relative;
-  width: 20px;
-  height: 40px;
+  width: 26px;
+  height: 27px;
   background-color: ${props => (props.color ? props.color : '#E2E2E2')};
 
   &:after {
     content: '';
     position: absolute;
-    top: 40px;
+    top: 27px;
     right: 0;
-    border-right: 10px solid ${props => (props.color ? props.color : '#E2E2E2')};
-    border-left: 10px solid ${props => (props.color ? props.color : '#E2E2E2')};
-    border-top: 10px solid rgba(0, 0, 0, 0);
+    border-right: 13px solid ${props => (props.color ? props.color : '#E2E2E2')};
+    border-left: 13px solid ${props => (props.color ? props.color : '#E2E2E2')};
+    border-top: 13px solid rgba(0, 0, 0, 0);
     transform: rotate(180deg);
   }
 `
@@ -49,10 +49,10 @@ const ProgramContentEbookReader: React.VFC<{
   const toc = useRef<NavItem[]>([])
   const { programContentBookmark, refetch: refetchBookmark } = useEbookBookmark(programContentId, currentMemberId)
 
-  const [currentPage, setCurrentPage] = useState<number>(0)
-  const [isCurrentPageBookmark, setCurrentPageBookmarked] = useState<boolean>(false)
+  const [isCurrentPageBookmark, setCurrentPageBookmark] = useState<boolean>(false)
+  const [sliderValue, setSliderValue] = useState<number>(0)
+  const [isLocationGenerated, setIsLocationGenerated] = useState<boolean>(false)
   const [bookmarkId, setBookmarkId] = useState<string | undefined>(undefined)
-  const [totalPage, setTotalPage] = useState(0)
   const [chapter, setChapter] = useState('')
 
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
@@ -128,15 +128,13 @@ const ProgramContentEbookReader: React.VFC<{
             tocChanged={_toc => (toc.current = _toc)}
             location={location}
             locationChanged={(loc: string) => {
-              console.log(loc)
               const { start, end } = rendition.current?.location || {}
-              if (start && end) {
+              if (start && end && rendition.current) {
                 // set page and chapter
+                const percentage = rendition.current.book.locations.percentageFromCfi(loc)
                 onLocationChange(loc)
-                setCurrentPage(end.displayed.page)
-                setTotalPage(end.displayed.total)
                 setChapter(getChapter(loc))
-
+                setSliderValue(percentage * 100)
                 // get current showing text
                 const splitCfi = start.cfi.split('/')
                 const baseCfi = splitCfi[0] + '/' + splitCfi[1] + '/' + splitCfi[2] + '/' + splitCfi[3]
@@ -148,7 +146,7 @@ const ProgramContentEbookReader: React.VFC<{
                   const currentPageBookmark = programContentBookmark.find(
                     bookmark => text.includes(bookmark.highlightContent) && getChapter(loc) === bookmark.chapter,
                   )
-                  setCurrentPageBookmarked(currentPageBookmark ? true : false)
+                  setCurrentPageBookmark(currentPageBookmark ? true : false)
                   setBookmarkId(currentPageBookmark ? currentPageBookmark.id : undefined)
                   setBookmarkHighlightContent(text.slice(0, 20))
                 })
@@ -198,6 +196,9 @@ const ProgramContentEbookReader: React.VFC<{
               rendition.current.on('resized', (size: { width: number; height: number }) => {
                 console.log(`resized => width: ${size.width}, height: ${size.height}`)
               })
+              rendition.current?.book.locations.generate(150).then(() => {
+                setIsLocationGenerated(true)
+              })
             }}
           />
         </Box>
@@ -209,9 +210,10 @@ const ProgramContentEbookReader: React.VFC<{
 
       {source ? (
         <EbookReaderControlBar
+          isLocationGenerated={isLocationGenerated}
+          sliderValue={sliderValue}
+          onSliderValueChange={setSliderValue}
           rendition={rendition}
-          totalPage={totalPage}
-          currentPage={currentPage}
           chapter={chapter}
           programContentBookmark={programContentBookmark}
           fontSize={ebookFontSize}
@@ -234,7 +236,7 @@ const ProgramContentEbookReader: React.VFC<{
           chapter={chapter}
           bookmarkId={bookmarkId}
           isCurrentPageBookmark={isCurrentPageBookmark}
-          setCurrentPageBookmarked={setCurrentPageBookmarked}
+          setCurrentPageBookmarked={setCurrentPageBookmark}
         />
       ) : null}
     </div>
