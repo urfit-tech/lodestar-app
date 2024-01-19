@@ -28,6 +28,7 @@ export const EbookReaderControlBar: React.VFC<{
   onSliderValueChange: React.Dispatch<React.SetStateAction<number>>
   sliderValue: number
   onThemeChange: (theme: 'light' | 'dark') => void
+  currentThemeData: { color: string; backgroundColor: string }
 }> = ({
   isLocationGenerated,
   chapter,
@@ -42,7 +43,9 @@ export const EbookReaderControlBar: React.VFC<{
   onFontSizeChange,
   onLineHeightChange,
   onThemeChange,
+  currentThemeData,
 }) => {
+  console.log(currentThemeData)
   const [showTooltip, setShowTooltip] = useState(false)
   const [isFocus, setFocus] = useState(false)
 
@@ -66,7 +69,13 @@ export const EbookReaderControlBar: React.VFC<{
   }
 
   return (
-    <Flex w="100%" backgroundColor="white" align="center" direction="column">
+    <Flex
+      w="100%"
+      backgroundColor={currentThemeData.backgroundColor}
+      color={currentThemeData.color}
+      align="center"
+      direction="column"
+    >
       <Text>{chapter}</Text>
       <Flex w="100%" direction="row">
         <Flex w="25%"></Flex>
@@ -115,6 +124,7 @@ export const EbookReaderControlBar: React.VFC<{
             )}
           />
           <EbookBookmarkModal
+            currentThemeData={currentThemeData}
             programContentBookmark={programContentBookmark}
             onLocationChange={onLocationChange}
             refetchBookmark={refetchBookmark}

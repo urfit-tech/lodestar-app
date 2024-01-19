@@ -34,6 +34,25 @@ const ReaderBookmark = styled.div`
     transform: rotate(180deg);
   }
 `
+const getReaderTheme = (theme: string): { color: string; backgroundColor: string } => {
+  switch (theme) {
+    case 'light':
+      return {
+        color: '#424242',
+        backgroundColor: '#ffffff',
+      }
+    case 'dark':
+      return {
+        color: '#ffffff',
+        backgroundColor: '#424242',
+      }
+    default:
+      return {
+        color: '',
+        backgroundColor: '',
+      }
+  }
+}
 
 const ProgramContentEbookReader: React.VFC<{
   programContentId: string
@@ -58,15 +77,6 @@ const ProgramContentEbookReader: React.VFC<{
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [ebookFontSize, setEbookFontSize] = useState(20)
   const [ebookLineHeight, setEbookLineHeight] = useState(1)
-
-  const lightTheme = {
-    color: '#585858',
-    backgroundColor: '#ffffff',
-  }
-  const darkTheme = {
-    color: '#ffffff',
-    backgroundColor: '#424242',
-  }
 
   const [bookmarkHighlightContent, setBookmarkHighlightContent] = useState('')
   const getFileFromS3 = useCallback(async (programContentId: string, authToken: string) => {
@@ -94,35 +104,26 @@ const ProgramContentEbookReader: React.VFC<{
   }, [authToken, programContentId, getFileFromS3])
 
   useEffect(() => {
-    rendition.current?.themes.override(
-      'color',
-      theme === 'light' ? lightTheme.color : theme === 'dark' ? darkTheme.color : '',
-    )
-    rendition.current?.themes.override(
-      'background-color',
-      theme === 'light' ? lightTheme.backgroundColor : theme === 'dark' ? darkTheme.backgroundColor : '',
-    )
+    rendition.current?.themes.override('color', getReaderTheme(theme).color)
+    rendition.current?.themes.override('background-color', getReaderTheme(theme).backgroundColor)
     rendition.current?.themes.override('font-size', `${ebookFontSize}px`)
     rendition.current?.themes.override('line-height', ebookLineHeight.toString())
-
     rendition.current?.reportLocation()
-  }, [
-    theme,
-    ebookFontSize,
-    ebookLineHeight,
-    lightTheme.color,
-    lightTheme.backgroundColor,
-    darkTheme.color,
-    darkTheme.backgroundColor,
-  ])
+  }, [theme, ebookFontSize, ebookLineHeight])
 
   return (
     <div>
       {source ? (
-        <Box h="85vh" {...(theme === 'light' ? lightTheme : darkTheme)}>
+        <div style={{ backgroundColor: 'red', height: '85vh' }}>
           <ReactReader
-            // for setting reader background color
-            readerStyles={{ ...ReactReaderStyle, readerArea: { backgroundColor: '' } }}
+            readerStyles={{
+              ...ReactReaderStyle,
+              readerArea: {
+                ...ReactReaderStyle.readerArea,
+                backgroundColor: getReaderTheme(theme).backgroundColor,
+                transition: 'none',
+              },
+            }}
             url={source}
             showToc={false}
             tocChanged={_toc => (toc.current = _toc)}
@@ -189,7 +190,7 @@ const ProgramContentEbookReader: React.VFC<{
             getRendition={async (_rendition: Rendition) => {
               rendition.current = _rendition
               // initial theme
-              rendition.current.themes.override('color', '#585858')
+              rendition.current.themes.override('color', '#424242')
               rendition.current.themes.override('background-color', '#ffffff')
               rendition.current.themes.override('font-size', `18px`)
               rendition.current.themes.override('line-height', '1.5')
@@ -223,6 +224,7 @@ const ProgramContentEbookReader: React.VFC<{
           onFontSizeChange={setEbookFontSize}
           onLineHeightChange={setEbookLineHeight}
           onThemeChange={setTheme}
+          currentThemeData={getReaderTheme(theme)}
         />
       ) : null}
 
