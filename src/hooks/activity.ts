@@ -264,13 +264,13 @@ export const useEnrolledActivity = (activityId: string, memberId: string) => {
   }
 }
 
-export const useActivitySessionEnrollment = (sessionId: string, memberId: string) => {
+export const useActivitySessionEnrollment = (sessionId: string) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_ACTIVITY_SESSIONEnrollment,
     hasura.GET_ACTIVITY_SESSIONEnrollmentVariables
   >(
     gql`
-      query GET_ACTIVITY_SESSIONEnrollment($sessionId: uuid!, $memberId: String!) {
+      query GET_ACTIVITY_SESSIONEnrollment($sessionId: uuid!) {
         activity_session_by_pk(id: $sessionId) {
           id
           ticket_enrollment_count {
@@ -283,7 +283,6 @@ export const useActivitySessionEnrollment = (sessionId: string, memberId: string
     {
       variables: {
         sessionId,
-        memberId,
       },
     },
   )

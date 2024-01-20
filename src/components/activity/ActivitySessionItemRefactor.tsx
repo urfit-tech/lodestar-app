@@ -2,7 +2,6 @@ import { Icon } from '@chakra-ui/icons'
 import { Button, IconButton, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { HiExternalLink } from 'react-icons/hi'
 import { defineMessages, useIntl } from 'react-intl'
@@ -10,7 +9,7 @@ import styled from 'styled-components'
 import { dateRangeFormatter } from '../../helpers'
 import { activityMessages, commonMessages, productMessages } from '../../helpers/translation'
 import { useActivitySessionEnrollment } from '../../hooks/activity'
-import { CalendarOIcon, MapOIcon, TimesIcon, VideoIcon } from '../../images'
+import { CalendarOIcon, MapOIcon, TimesIcon, UserOIcon, VideoIcon } from '../../images'
 
 const messages = defineMessages({
   attended: { id: 'activity.ui.attended', defaultMessage: '已簽到' },
@@ -60,7 +59,7 @@ const ActivitySessionItemRefactor: React.VFC<{
     isEnrolled: boolean
     threshold: string
     isParticipantsVisible: boolean
-    // maxAmount: { online: number; offline: number }
+    maxAmount: { online: number; offline: number }
   }
   renderSessionType?: string
   renderLocation?: React.ReactNode
@@ -68,9 +67,8 @@ const ActivitySessionItemRefactor: React.VFC<{
 }> = ({ session, renderSessionType, renderLocation, renderAttend }) => {
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
-  const { currentMemberId } = useAuth()
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const { session: sessionEnrollmentAmount } = useActivitySessionEnrollment(session.id, currentMemberId || '')
+  const { session: sessionEnrollmentAmount } = useActivitySessionEnrollment(session.id)
 
   if (!session) {
     return <StyledWrapper>{formatMessage(commonMessages.status.loadingError)}</StyledWrapper>
@@ -154,7 +152,7 @@ const ActivitySessionItemRefactor: React.VFC<{
         )}
 
         <div>
-          {/* {session.isParticipantsVisible && (
+          {session.isParticipantsVisible && (
             <>
               <Icon as={UserOIcon} className="mr-2" />
               {sessionType === 'offline' && (
@@ -180,7 +178,7 @@ const ActivitySessionItemRefactor: React.VFC<{
                 </>
               )}
             </>
-          )} */}
+          )}
           {session.threshold && (
             <span>
               {formatMessage(productMessages.activity.content.least)}

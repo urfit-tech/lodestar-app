@@ -97,7 +97,7 @@ export type ActivitySessionTicket = {
     location: string | null
     description: string | null
     threshold: string | null
-    onlinelink: string | null
+    onlineLink: string | null
     attended: boolean
     title: string
   }
