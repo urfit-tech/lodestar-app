@@ -12,7 +12,7 @@ import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import ActivityBanner from '../../components/activity/ActivityBanner'
-import ActivitySessionItemRefactor from '../../components/activity/ActivitySessionItemRefactor'
+import ActivitySessionItem from '../../components/activity/ActivitySessionItem'
 import ActivityTicketCard from '../../components/activity/ActivityTicketCard'
 import ActivityTicketPaymentButton from '../../components/activity/ActivityTicketPaymentButton'
 import { AuthModalContext } from '../../components/auth/AuthModal'
@@ -165,7 +165,7 @@ const ActivityPage: React.VFC = () => {
             {Object.values(mergedSessions).map(session => {
               return (
                 <div key={session.id} className="mb-4">
-                  <ActivitySessionItemRefactor
+                  <ActivitySessionItem
                     session={{
                       id: session.id,
                       location: session.location,

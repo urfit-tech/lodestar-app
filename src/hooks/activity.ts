@@ -229,15 +229,15 @@ export const useEnrolledActivityTicket = (memberId: string) => {
 }
 
 export const useEnrolledActivity = (activityId: string, memberId: string) => {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<any>()
   const [data, setData] = useState<ActivityFromLodestarAPI>()
 
   const fetch = useCallback(async () => {
     if (activityId) {
       const route = `/activity/${activityId}`
+      setLoading(true)
       try {
-        setLoading(true)
         const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
           params: { memberId },
         })
