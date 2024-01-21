@@ -10,6 +10,7 @@ import {
   SkeletonText,
   useDisclosure,
 } from '@chakra-ui/react'
+import dayjs from 'dayjs'
 import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -25,7 +26,7 @@ import ActivitySessionItem from '../components/activity/ActivitySessionItem'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { handleError } from '../helpers'
 import { activityMessages, commonMessages, productMessages } from '../helpers/translation'
-import { useActivityAttendance, useActivityTicket, useAttendSession } from '../hooks/activity'
+import { useActivityAttendance, useActivityTicket, useAttendSession, useEnrolledActivity } from '../hooks/activity'
 import { MapOIcon, TimesIcon, VideoIcon } from '../images'
 
 const StyledContainer = styled.div`
@@ -78,11 +79,16 @@ const ActivityTicketPage: React.VFC<{
   const { enabledModules } = useApp()
   const { isOpen, onClose, onOpen } = useDisclosure()
   const { loadingTicket, errorTicket, ticket } = useActivityTicket(activityTicketId)
+  const {
+    loading: loadingEnrolledActivity,
+    data: activityData,
+    error: errorEnrolledActivity,
+  } = useEnrolledActivity(ticket?.activity.id || '', currentMemberId || '')
   const { loadingAttendance, attendance, refetchAttendance } = useActivityAttendance(memberId, activityTicketId)
   const { attendActivitySession, leaveActivitySession } = useAttendSession()
   const [loading, setLoading] = useState(false)
 
-  if (loadingTicket) {
+  if (loadingTicket || loadingEnrolledActivity) {
     return (
       <DefaultLayout noFooter white>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -90,10 +96,49 @@ const ActivityTicketPage: React.VFC<{
     )
   }
 
-  if (errorTicket || !ticket) {
+  if (errorTicket || errorEnrolledActivity || !activityData || !ticket) {
     return <Redirect to={`/members/${currentMemberId}`} />
   }
 
+  const flatSessions = activityData.activityTickets
+    .flatMap(ticket =>
+      ticket.activitySessionTickets.map(session => ({
+        ...session.activitySession,
+        type: session.activitySessionType,
+        ticket: { count: ticket.count, isEnrolled: !!ticket.orderId },
+      })),
+    )
+    .sort((a, b) => dayjs(a.startedAt).valueOf() - dayjs(b.startedAt).valueOf())
+
+  const mergedSessions: {
+    [key: string]: {
+      id: string
+      startedAt: string
+      endedAt: string
+      location: string | null
+      description: string | null
+      threshold: string | null
+      onlineLink: string | null
+      attended: boolean
+      title: string
+      maxAmount: { online: number; offline: number }
+      isEnrolled: boolean
+      type: 'both' | 'offline' | 'online'
+    }
+  } = {}
+  flatSessions.forEach(item => {
+    const sessionId = item.id
+
+    if (!mergedSessions[sessionId]) {
+      mergedSessions[sessionId] = { ...item, isEnrolled: false, maxAmount: { online: 0, offline: 0 } }
+    }
+    item.type === 'online' && (mergedSessions[sessionId].maxAmount.online += item.ticket.count)
+    item.type === 'offline' && (mergedSessions[sessionId].maxAmount.offline += item.ticket.count)
+    mergedSessions[sessionId].isEnrolled =
+      mergedSessions[sessionId].isEnrolled || (!mergedSessions[sessionId].isEnrolled && !!item.ticket.isEnrolled)
+  })
+  console.log(ticket?.sessions[0])
+  console.log(Object.values(mergedSessions)[0])
   return (
     <DefaultLayout noFooter white>
       <ActivityBanner
@@ -137,35 +182,47 @@ const ActivityTicketPage: React.VFC<{
         <div className="row justify-content-center">
           <div className="col-12 col-lg-8">
             <div className="mb-5">
-              {ticket.sessions
-                .filter(ticketSession => enabledModules.activity_online || ticketSession.type === 'offline')
-                .map(ticketSession => (
-                  <div key={ticketSession.id} className="mb-4">
+              {Object.values(mergedSessions)
+                .filter(session => enabledModules.activity_online || session.type === 'offline')
+                .map(session => (
+                  <div key={session.id} className="mb-4">
                     <ActivitySessionItem
-                      activitySessionId={ticketSession.id}
-                      renderSessionType={` - ${formatMessage(activityMessages.label[ticketSession.type])}`}
+                      session={{
+                        id: session.id,
+                        location: session.location,
+                        onlineLink: session.onlineLink,
+                        title: session.title,
+                        startedAt: session.startedAt,
+                        endedAt: session.endedAt,
+                        activityTitle: activityData.title,
+                        isEnrolled: session.isEnrolled,
+                        threshold: session.threshold || '',
+                        isParticipantsVisible: activityData.isParticipantsVisible,
+                        maxAmount: session.maxAmount,
+                      }}
+                      renderSessionType={` - ${formatMessage(activityMessages.label[session.type])}`}
                       renderLocation={
                         <>
-                          {ticketSession.type === 'offline' && (
+                          {session.type === 'offline' && (
                             <div>
                               <Icon as={MapOIcon} className="mr-2" />
-                              <span>{ticketSession.location}</span>
+                              <span>{session.location}</span>
                             </div>
                           )}
-                          {ticketSession.type === 'online' && ticketSession.onlineLink && (
+                          {session.type === 'online' && session.onlineLink && (
                             <div className="d-flex align-items-center">
                               <Icon as={VideoIcon} className="mr-2" />
                               <span>
-                                {ticketSession.onlineLink.startsWith('https') ? (
+                                {session.onlineLink.startsWith('https') ? (
                                   <div className="d-flex align-items-center" style={{ lineHeight: 1.5 }}>
-                                    <a href={ticketSession.onlineLink} target="_blank" rel="noopener noreferrer">
+                                    <a href={session.onlineLink} target="_blank" rel="noopener noreferrer">
                                       <div className="d-flex align-items-center">
                                         <div className="mr-1">{formatMessage(activityMessages.text.liveLink)}</div>
                                         <HiExternalLink />
                                       </div>
                                     </a>
                                   </div>
-                                ) : ticketSession.onlineLink.startsWith('<iframe') ? (
+                                ) : session.onlineLink.startsWith('<iframe') ? (
                                   <div className="d-flex align-items-center">
                                     <Modal onClose={onClose} size="full" isOpen={isOpen}>
                                       <ModalContent style={{ margin: 0 }}>
@@ -180,9 +237,7 @@ const ActivityTicketPage: React.VFC<{
                                             {ticket.activity.title}
                                           </ModalHeader>
                                         </div>
-                                        <StyledModalBody
-                                          dangerouslySetInnerHTML={{ __html: ticketSession.onlineLink }}
-                                        />
+                                        <StyledModalBody dangerouslySetInnerHTML={{ __html: session.onlineLink }} />
                                       </ModalContent>
                                     </Modal>
                                     <Button variant="link" onClick={onOpen} style={{ lineHeight: 1.5 }}>
@@ -190,7 +245,7 @@ const ActivityTicketPage: React.VFC<{
                                     </Button>
                                   </div>
                                 ) : (
-                                  ticketSession.onlineLink
+                                  session.onlineLink
                                 )}
                               </span>
                             </div>
@@ -201,7 +256,7 @@ const ActivityTicketPage: React.VFC<{
                         enabledModules.qrcode &&
                         currentUserRole === 'app-owner' &&
                         !loadingAttendance &&
-                        (attendance[ticketSession.id] ? (
+                        (attendance[session.id] ? (
                           <Button
                             isFullWidth
                             isLoading={loading}
@@ -210,7 +265,7 @@ const ActivityTicketPage: React.VFC<{
                               leaveActivitySession({
                                 variables: {
                                   orderProductId,
-                                  activitySessionId: ticketSession.id,
+                                  activitySessionId: session.id,
                                 },
                               })
                                 .then(() => refetchAttendance())
@@ -230,7 +285,7 @@ const ActivityTicketPage: React.VFC<{
                               attendActivitySession({
                                 variables: {
                                   orderProductId,
-                                  activitySessionId: ticketSession.id,
+                                  activitySessionId: session.id,
                                 },
                               })
                                 .then(() => refetchAttendance())
