@@ -229,15 +229,15 @@ export const useEnrolledActivityTicket = (memberId: string) => {
 }
 
 export const useEnrolledActivity = (activityId: string, memberId: string) => {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<any>()
   const [data, setData] = useState<ActivityFromLodestarAPI>()
 
   const fetch = useCallback(async () => {
     if (activityId) {
       const route = `/activity/${activityId}`
+      setLoading(true)
       try {
-        setLoading(true)
         const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
           params: { memberId },
         })
@@ -264,13 +264,13 @@ export const useEnrolledActivity = (activityId: string, memberId: string) => {
   }
 }
 
-export const useActivitySessionEnrollment = (sessionId: string, memberId: string) => {
+export const useActivitySessionEnrollment = (sessionId: string) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_ACTIVITY_SESSIONEnrollment,
     hasura.GET_ACTIVITY_SESSIONEnrollmentVariables
   >(
     gql`
-      query GET_ACTIVITY_SESSIONEnrollment($sessionId: uuid!, $memberId: String!) {
+      query GET_ACTIVITY_SESSIONEnrollment($sessionId: uuid!) {
         activity_session_by_pk(id: $sessionId) {
           id
           ticket_enrollment_count {
@@ -283,7 +283,6 @@ export const useActivitySessionEnrollment = (sessionId: string, memberId: string
     {
       variables: {
         sessionId,
-        memberId,
       },
     },
   )
