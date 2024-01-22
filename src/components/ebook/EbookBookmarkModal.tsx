@@ -25,13 +25,14 @@ import { ReactComponent as MarkIcon } from '../../images/mark.svg'
 export const EbookBookmarkModal: React.VFC<{
   refetchBookmark: () => void
   onLocationChange: (loc: string) => void
+  currentThemeData: { color: string; backgroundColor: string }
   programContentBookmark: Array<any>
-}> = ({ refetchBookmark, onLocationChange, programContentBookmark }) => {
+}> = ({ refetchBookmark, onLocationChange, currentThemeData, programContentBookmark }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
-    <>
+    <Flex>
       <Tooltip label="書籤" aria-label="書籤" placement="top">
-        <BookmarkIcon className="ml-2" cursor="pointer" onClick={onOpen} />
+        <BookmarkIcon fill={currentThemeData.color} className="ml-2" cursor="pointer" onClick={onOpen} />
       </Tooltip>
       <Modal scrollBehavior="inside" isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
@@ -63,7 +64,7 @@ export const EbookBookmarkModal: React.VFC<{
           </ModalBody>
         </ModalContent>
       </Modal>
-    </>
+    </Flex>
   )
 }
 
