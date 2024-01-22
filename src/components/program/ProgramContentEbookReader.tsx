@@ -1,11 +1,11 @@
 import { gql, useApolloClient, useQuery } from '@apollo/client'
-import { Flex, Spinner } from '@chakra-ui/react'
+import { Box, Flex, Spinner } from '@chakra-ui/react'
 import axios from 'axios'
 import JSZip from 'jszip'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ReactReader } from 'react-reader'
+import { ReactReader, ReactReaderStyle } from 'react-reader'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
@@ -67,6 +67,7 @@ const ProgramContentEbookReader: React.VFC<{
     color: '#ffffff',
     backgroundColor: '#424242',
   }
+
   const [bookmarkHighlightContent, setBookmarkHighlightContent] = useState('')
   const getFileFromS3 = useCallback(async (programContentId: string, authToken: string) => {
     const { data } = await axios.get(
@@ -118,8 +119,10 @@ const ProgramContentEbookReader: React.VFC<{
   return (
     <div>
       {source ? (
-        <div style={{ height: '85vh' }}>
+        <Box h="85vh" {...(theme === 'light' ? lightTheme : darkTheme)}>
           <ReactReader
+            // for setting reader background color
+            readerStyles={{ ...ReactReaderStyle, readerArea: { backgroundColor: '' } }}
             url={source}
             showToc={false}
             tocChanged={_toc => (toc.current = _toc)}
@@ -190,14 +193,14 @@ const ProgramContentEbookReader: React.VFC<{
               // initial theme
               rendition.current.themes.override('color', '#585858')
               rendition.current.themes.override('background-color', '#ffffff')
-              rendition.current.themes.override('font-size', `20px`)
-              rendition.current.themes.override('line-height', '1')
+              rendition.current.themes.override('font-size', `18px`)
+              rendition.current.themes.override('line-height', '1.5')
               rendition.current.on('resized', (size: { width: number; height: number }) => {
                 console.log(`resized => width: ${size.width}, height: ${size.height}`)
               })
             }}
           />
-        </div>
+        </Box>
       ) : (
         <Flex height="85vh" justifyContent="center" alignItems="center" backgroundColor="whiteF">
           <Spinner />

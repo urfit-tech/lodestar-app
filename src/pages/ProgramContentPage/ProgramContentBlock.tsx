@@ -244,7 +244,7 @@ const ProgramContentBlock: React.VFC<{
             }}
           />
         )
-      ) : programContent.contentType === 'ebook' ? (
+      ) : hasProgramContentPermission && programContent.contentType === 'ebook' ? (
         <ProgramContentEbookReader
           programContentId={programContent.id}
           ebookCurrentToc={ebookCurrentToc}
