@@ -8,7 +8,6 @@ import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { dateRangeFormatter } from '../../helpers'
 import { activityMessages, commonMessages, productMessages } from '../../helpers/translation'
-import { useActivitySessionEnrollment } from '../../hooks/activity'
 import { CalendarOIcon, MapOIcon, TimesIcon, UserOIcon, VideoIcon } from '../../images'
 
 const messages = defineMessages({
@@ -47,7 +46,7 @@ const StyledModalBody = styled(ModalBody)`
   }
 `
 
-const ActivitySessionItemRefactor: React.VFC<{
+const ActivitySessionItem: React.VFC<{
   session: {
     id: string
     location: string | null
@@ -60,6 +59,7 @@ const ActivitySessionItemRefactor: React.VFC<{
     threshold: string
     isParticipantsVisible: boolean
     maxAmount: { online: number; offline: number }
+    participants: { online: number; offline: number }
   }
   renderSessionType?: string
   renderLocation?: React.ReactNode
@@ -68,7 +68,6 @@ const ActivitySessionItemRefactor: React.VFC<{
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const { session: sessionEnrollmentAmount } = useActivitySessionEnrollment(session.id)
 
   if (!session) {
     return <StyledWrapper>{formatMessage(commonMessages.status.loadingError)}</StyledWrapper>
@@ -157,23 +156,23 @@ const ActivitySessionItemRefactor: React.VFC<{
               <Icon as={UserOIcon} className="mr-2" />
               {sessionType === 'offline' && (
                 <span className="mr-3">
-                  {sessionEnrollmentAmount?.enrollmentAmount['offline'] || 0} / {session.maxAmount['offline']}
+                  {session.participants['offline'] || 0} / {session.maxAmount['offline']}
                 </span>
               )}
               {enabledModules.activity_online && sessionType === 'online' && (
                 <span className="mr-3">
-                  {sessionEnrollmentAmount?.enrollmentAmount['online'] || 0} / {session.maxAmount['online']}
+                  {session.participants['online'] || 0} / {session.maxAmount['online']}
                 </span>
               )}
               {enabledModules.activity_online && sessionType === 'both' && (
                 <>
                   <span className="mr-2">
                     {`${formatMessage(activityMessages.label['offline'])} `}
-                    {sessionEnrollmentAmount?.enrollmentAmount['offline'] || 0} / {session.maxAmount['offline']}
+                    {session.participants['offline'] || 0} / {session.maxAmount['offline']}
                   </span>
                   <span className="mr-2">
                     {`${formatMessage(activityMessages.label['online'])} `}
-                    {sessionEnrollmentAmount?.enrollmentAmount['online'] || 0} / {session.maxAmount['online']}
+                    {session.participants['online'] || 0} / {session.maxAmount['online']}
                   </span>
                 </>
               )}
@@ -193,4 +192,4 @@ const ActivitySessionItemRefactor: React.VFC<{
   )
 }
 
-export default ActivitySessionItemRefactor
+export default ActivitySessionItem
