@@ -105,7 +105,7 @@ const ActivityTicketPage: React.VFC<{
       ticket.activitySessionTickets.map(session => ({
         ...session.activitySession,
         type: session.activitySessionType,
-        ticket: { count: ticket.count, isEnrolled: !!ticket.orderId },
+        ticket: { count: ticket.count, isEnrolled: !!ticket.orderId, participants: Number(ticket.participants) },
       })),
     )
     .sort((a, b) => dayjs(a.startedAt).valueOf() - dayjs(b.startedAt).valueOf())
@@ -122,6 +122,7 @@ const ActivityTicketPage: React.VFC<{
       attended: boolean
       title: string
       maxAmount: { online: number; offline: number }
+      participants: { online: number; offline: number }
       isEnrolled: boolean
       type: 'both' | 'offline' | 'online'
     }
@@ -130,15 +131,25 @@ const ActivityTicketPage: React.VFC<{
     const sessionId = item.id
 
     if (!mergedSessions[sessionId]) {
-      mergedSessions[sessionId] = { ...item, isEnrolled: false, maxAmount: { online: 0, offline: 0 } }
+      mergedSessions[sessionId] = {
+        ...item,
+        isEnrolled: false,
+        maxAmount: { online: 0, offline: 0 },
+        participants: { online: 0, offline: 0 },
+      }
     }
-    item.type === 'online' && (mergedSessions[sessionId].maxAmount.online += item.ticket.count)
-    item.type === 'offline' && (mergedSessions[sessionId].maxAmount.offline += item.ticket.count)
+    if (item.type === 'online') {
+      mergedSessions[sessionId].maxAmount.online += item.ticket.count
+      mergedSessions[sessionId].participants.online += item.ticket.participants
+    }
+    if (item.type === 'offline') {
+      mergedSessions[sessionId].maxAmount.offline += item.ticket.count
+      mergedSessions[sessionId].participants.offline += item.ticket.participants
+    }
     mergedSessions[sessionId].isEnrolled =
       mergedSessions[sessionId].isEnrolled || (!mergedSessions[sessionId].isEnrolled && !!item.ticket.isEnrolled)
   })
-  console.log(ticket?.sessions[0])
-  console.log(Object.values(mergedSessions)[0])
+
   return (
     <DefaultLayout noFooter white>
       <ActivityBanner
@@ -199,6 +210,7 @@ const ActivityTicketPage: React.VFC<{
                         threshold: session.threshold || '',
                         isParticipantsVisible: activityData.isParticipantsVisible,
                         maxAmount: session.maxAmount,
+                        participants: session.participants,
                       }}
                       renderSessionType={` - ${formatMessage(activityMessages.label[session.type])}`}
                       renderLocation={
