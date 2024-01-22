@@ -171,21 +171,23 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
               pictureUrl = `https://${process.env.REACT_APP_S3_BUCKET}/${path}`
               await uploadFile(path, companyPictureFile, authToken)
             }
-            try {
-              await Axios.post(
-                `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/${appId}/custom`,
-                {
-                  event: 'insertCustomMemberProperty',
-                  memberId: currentMemberId,
-                  options: {
-                    utmQuery,
-                    landing,
+
+            if (settings['custom_api.insertCustomMemberProperty.enabled']) {
+              try {
+                await Axios.post(
+                  `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/${appId}/custom/insertCustomMemberProperty`,
+                  {
+                    memberId: currentMemberId,
+                    options: {
+                      utmQuery,
+                      landing,
+                    },
                   },
-                },
-                { headers: { Authorization: `Bearer ${authToken}` } },
-              )
-            } catch (error) {
-              console.log(error)
+                  { headers: { Authorization: `Bearer ${authToken}` } },
+                )
+              } catch (error) {
+                console.log(error)
+              }
             }
 
             process.env.REACT_APP_GRAPHQL_PH_ENDPOINT &&
