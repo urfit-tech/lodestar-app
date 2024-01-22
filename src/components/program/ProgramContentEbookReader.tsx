@@ -1,5 +1,5 @@
 import { gql, useApolloClient, useQuery } from '@apollo/client'
-import { Box, Flex, Spinner } from '@chakra-ui/react'
+import { Flex, Spinner } from '@chakra-ui/react'
 import axios from 'axios'
 import JSZip from 'jszip'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -114,7 +114,21 @@ const ProgramContentEbookReader: React.VFC<{
   return (
     <div>
       {source ? (
-        <div style={{ backgroundColor: 'red', height: '85vh' }}>
+        <EbookReaderBookmarkIcon
+          location={location}
+          refetchBookmark={refetchBookmark}
+          programContentId={programContentId}
+          memberId={currentMemberId}
+          highlightContent={bookmarkHighlightContent}
+          chapter={chapter}
+          bookmarkId={bookmarkId}
+          isCurrentPageBookmark={isCurrentPageBookmark}
+          setCurrentPageBookmarked={setCurrentPageBookmark}
+        />
+      ) : null}
+
+      {source ? (
+        <div style={{ height: '85vh' }}>
           <ReactReader
             readerStyles={{
               ...ReactReaderStyle,
@@ -202,7 +216,7 @@ const ProgramContentEbookReader: React.VFC<{
               })
             }}
           />
-        </Box>
+        </div>
       ) : (
         <Flex height="85vh" justifyContent="center" alignItems="center" backgroundColor="whiteF">
           <Spinner />
@@ -225,20 +239,6 @@ const ProgramContentEbookReader: React.VFC<{
           onLineHeightChange={setEbookLineHeight}
           onThemeChange={setTheme}
           currentThemeData={getReaderTheme(theme)}
-        />
-      ) : null}
-
-      {source ? (
-        <EbookReaderBookmarkIcon
-          location={location}
-          refetchBookmark={refetchBookmark}
-          programContentId={programContentId}
-          memberId={currentMemberId}
-          highlightContent={bookmarkHighlightContent}
-          chapter={chapter}
-          bookmarkId={bookmarkId}
-          isCurrentPageBookmark={isCurrentPageBookmark}
-          setCurrentPageBookmarked={setCurrentPageBookmark}
         />
       ) : null}
     </div>
@@ -298,11 +298,10 @@ const EbookReaderBookmarkIcon: React.VFC<{
     <Flex
       cursor="pointer"
       style={{
-        marginTop: '-85vh',
-        marginLeft: '93%',
-        position: 'relative',
         width: 'fit-content',
-        zIndex: '1',
+        position: 'absolute',
+        zIndex: 2,
+        right: '20px',
       }}
       onClick={isCurrentPageBookmark ? () => deleteBookmark() : () => insertBookmark()}
     >

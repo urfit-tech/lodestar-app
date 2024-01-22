@@ -9,10 +9,19 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react'
+import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
 import { useState } from 'react'
+import styled from 'styled-components'
 import { EbookBookmarkModal } from './EbookBookmarkModal'
 import EbookStyledModal from './EbookStyledModal'
 import type { Rendition } from 'epubjs'
+
+const Spacer = styled(Flex)`
+  width: 0%;
+  @media (min-width: ${BREAK_POINT}px) {
+    width: 25%;
+  }
+`
 
 export const EbookReaderControlBar: React.VFC<{
   isLocationGenerated: boolean
@@ -71,14 +80,15 @@ export const EbookReaderControlBar: React.VFC<{
   return (
     <Flex
       w="100%"
+      paddingBottom="16px"
       backgroundColor={currentThemeData.backgroundColor}
       color={currentThemeData.color}
       align="center"
       direction="column"
     >
       <Text>{chapter}</Text>
-      <Flex w="100%" direction="row">
-        <Flex w="25%"></Flex>
+      <Flex w="100%" direction="row" justifyContent="center">
+        <Spacer />
         <Flex w="50%">
           <Slider
             onFocus={() => setFocus(true)}
@@ -107,7 +117,7 @@ export const EbookReaderControlBar: React.VFC<{
             </Tooltip>
           </Slider>
         </Flex>
-        <Flex w="25%" alignItems="center" className="ml-3">
+        <Flex w="25%" alignItems="center" className="ml-3" marginRight="8px">
           {isLocationGenerated ? <Text ml="8px">{`${(sliderValue || 0).toFixed(1)}%/${100}%`}</Text> : <Spinner />}
           <EbookStyledModal
             fontSize={fontSize}
