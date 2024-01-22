@@ -1,5 +1,5 @@
 import { gql, useApolloClient, useQuery } from '@apollo/client'
-import { Box, Flex, Spinner } from '@chakra-ui/react'
+import { Flex, Spinner } from '@chakra-ui/react'
 import axios from 'axios'
 import JSZip from 'jszip'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -19,21 +19,40 @@ const getChapter = (loc: string) => {
 
 const ReaderBookmark = styled.div`
   position: relative;
-  width: 20px;
-  height: 40px;
+  width: 26px;
+  height: 27px;
   background-color: ${props => (props.color ? props.color : '#E2E2E2')};
 
   &:after {
     content: '';
     position: absolute;
-    top: 40px;
+    top: 27px;
     right: 0;
-    border-right: 10px solid ${props => (props.color ? props.color : '#E2E2E2')};
-    border-left: 10px solid ${props => (props.color ? props.color : '#E2E2E2')};
-    border-top: 10px solid rgba(0, 0, 0, 0);
+    border-right: 13px solid ${props => (props.color ? props.color : '#E2E2E2')};
+    border-left: 13px solid ${props => (props.color ? props.color : '#E2E2E2')};
+    border-top: 13px solid rgba(0, 0, 0, 0);
     transform: rotate(180deg);
   }
 `
+const getReaderTheme = (theme: string): { color: string; backgroundColor: string } => {
+  switch (theme) {
+    case 'light':
+      return {
+        color: '#424242',
+        backgroundColor: '#ffffff',
+      }
+    case 'dark':
+      return {
+        color: '#ffffff',
+        backgroundColor: '#424242',
+      }
+    default:
+      return {
+        color: '',
+        backgroundColor: '',
+      }
+  }
+}
 
 const ProgramContentEbookReader: React.VFC<{
   programContentId: string
@@ -49,24 +68,15 @@ const ProgramContentEbookReader: React.VFC<{
   const toc = useRef<NavItem[]>([])
   const { programContentBookmark, refetch: refetchBookmark } = useEbookBookmark(programContentId, currentMemberId)
 
-  const [currentPage, setCurrentPage] = useState<number>(0)
-  const [isCurrentPageBookmark, setCurrentPageBookmarked] = useState<boolean>(false)
+  const [isCurrentPageBookmark, setCurrentPageBookmark] = useState<boolean>(false)
+  const [sliderValue, setSliderValue] = useState<number>(0)
+  const [isLocationGenerated, setIsLocationGenerated] = useState<boolean>(false)
   const [bookmarkId, setBookmarkId] = useState<string | undefined>(undefined)
-  const [totalPage, setTotalPage] = useState(0)
   const [chapter, setChapter] = useState('')
 
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [ebookFontSize, setEbookFontSize] = useState(20)
   const [ebookLineHeight, setEbookLineHeight] = useState(1)
-
-  const lightTheme = {
-    color: '#585858',
-    backgroundColor: '#ffffff',
-  }
-  const darkTheme = {
-    color: '#ffffff',
-    backgroundColor: '#424242',
-  }
 
   const [bookmarkHighlightContent, setBookmarkHighlightContent] = useState('')
   const getFileFromS3 = useCallback(async (programContentId: string, authToken: string) => {
@@ -94,49 +104,52 @@ const ProgramContentEbookReader: React.VFC<{
   }, [authToken, programContentId, getFileFromS3])
 
   useEffect(() => {
-    rendition.current?.themes.override(
-      'color',
-      theme === 'light' ? lightTheme.color : theme === 'dark' ? darkTheme.color : '',
-    )
-    rendition.current?.themes.override(
-      'background-color',
-      theme === 'light' ? lightTheme.backgroundColor : theme === 'dark' ? darkTheme.backgroundColor : '',
-    )
+    rendition.current?.themes.override('color', getReaderTheme(theme).color)
+    rendition.current?.themes.override('background-color', getReaderTheme(theme).backgroundColor)
     rendition.current?.themes.override('font-size', `${ebookFontSize}px`)
     rendition.current?.themes.override('line-height', ebookLineHeight.toString())
-
     rendition.current?.reportLocation()
-  }, [
-    theme,
-    ebookFontSize,
-    ebookLineHeight,
-    lightTheme.color,
-    lightTheme.backgroundColor,
-    darkTheme.color,
-    darkTheme.backgroundColor,
-  ])
+  }, [theme, ebookFontSize, ebookLineHeight])
 
   return (
     <div>
       {source ? (
-        <Box h="85vh" {...(theme === 'light' ? lightTheme : darkTheme)}>
+        <EbookReaderBookmarkIcon
+          location={location}
+          refetchBookmark={refetchBookmark}
+          programContentId={programContentId}
+          memberId={currentMemberId}
+          highlightContent={bookmarkHighlightContent}
+          chapter={chapter}
+          bookmarkId={bookmarkId}
+          isCurrentPageBookmark={isCurrentPageBookmark}
+          setCurrentPageBookmarked={setCurrentPageBookmark}
+        />
+      ) : null}
+
+      {source ? (
+        <div style={{ height: '85vh' }}>
           <ReactReader
-            // for setting reader background color
-            readerStyles={{ ...ReactReaderStyle, readerArea: { backgroundColor: '' } }}
+            readerStyles={{
+              ...ReactReaderStyle,
+              readerArea: {
+                ...ReactReaderStyle.readerArea,
+                backgroundColor: getReaderTheme(theme).backgroundColor,
+                transition: 'none',
+              },
+            }}
             url={source}
             showToc={false}
             tocChanged={_toc => (toc.current = _toc)}
             location={location}
             locationChanged={(loc: string) => {
-              console.log(loc)
               const { start, end } = rendition.current?.location || {}
-              if (start && end) {
+              if (start && end && rendition.current) {
                 // set page and chapter
+                const percentage = rendition.current.book.locations.percentageFromCfi(loc)
                 onLocationChange(loc)
-                setCurrentPage(end.displayed.page)
-                setTotalPage(end.displayed.total)
                 setChapter(getChapter(loc))
-
+                setSliderValue(percentage * 100)
                 // get current showing text
                 const splitCfi = start.cfi.split('/')
                 const baseCfi = splitCfi[0] + '/' + splitCfi[1] + '/' + splitCfi[2] + '/' + splitCfi[3]
@@ -148,7 +161,7 @@ const ProgramContentEbookReader: React.VFC<{
                   const currentPageBookmark = programContentBookmark.find(
                     bookmark => text.includes(bookmark.highlightContent) && getChapter(loc) === bookmark.chapter,
                   )
-                  setCurrentPageBookmarked(currentPageBookmark ? true : false)
+                  setCurrentPageBookmark(currentPageBookmark ? true : false)
                   setBookmarkId(currentPageBookmark ? currentPageBookmark.id : undefined)
                   setBookmarkHighlightContent(text.slice(0, 20))
                 })
@@ -191,16 +204,19 @@ const ProgramContentEbookReader: React.VFC<{
             getRendition={async (_rendition: Rendition) => {
               rendition.current = _rendition
               // initial theme
-              rendition.current.themes.override('color', '#585858')
+              rendition.current.themes.override('color', '#424242')
               rendition.current.themes.override('background-color', '#ffffff')
               rendition.current.themes.override('font-size', `18px`)
               rendition.current.themes.override('line-height', '1.5')
               rendition.current.on('resized', (size: { width: number; height: number }) => {
                 console.log(`resized => width: ${size.width}, height: ${size.height}`)
               })
+              rendition.current?.book.locations.generate(150).then(() => {
+                setIsLocationGenerated(true)
+              })
             }}
           />
-        </Box>
+        </div>
       ) : (
         <Flex height="85vh" justifyContent="center" alignItems="center" backgroundColor="whiteF">
           <Spinner />
@@ -209,9 +225,10 @@ const ProgramContentEbookReader: React.VFC<{
 
       {source ? (
         <EbookReaderControlBar
+          isLocationGenerated={isLocationGenerated}
+          sliderValue={sliderValue}
+          onSliderValueChange={setSliderValue}
           rendition={rendition}
-          totalPage={totalPage}
-          currentPage={currentPage}
           chapter={chapter}
           programContentBookmark={programContentBookmark}
           fontSize={ebookFontSize}
@@ -221,20 +238,7 @@ const ProgramContentEbookReader: React.VFC<{
           onFontSizeChange={setEbookFontSize}
           onLineHeightChange={setEbookLineHeight}
           onThemeChange={setTheme}
-        />
-      ) : null}
-
-      {source ? (
-        <EbookReaderBookmarkIcon
-          location={location}
-          refetchBookmark={refetchBookmark}
-          programContentId={programContentId}
-          memberId={currentMemberId}
-          highlightContent={bookmarkHighlightContent}
-          chapter={chapter}
-          bookmarkId={bookmarkId}
-          isCurrentPageBookmark={isCurrentPageBookmark}
-          setCurrentPageBookmarked={setCurrentPageBookmarked}
+          currentThemeData={getReaderTheme(theme)}
         />
       ) : null}
     </div>
@@ -294,11 +298,10 @@ const EbookReaderBookmarkIcon: React.VFC<{
     <Flex
       cursor="pointer"
       style={{
-        marginTop: '-85vh',
-        marginLeft: '93%',
-        position: 'relative',
         width: 'fit-content',
-        zIndex: '1',
+        position: 'absolute',
+        zIndex: 2,
+        right: '20px',
       }}
       onClick={isCurrentPageBookmark ? () => deleteBookmark() : () => insertBookmark()}
     >
