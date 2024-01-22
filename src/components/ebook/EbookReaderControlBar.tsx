@@ -54,7 +54,6 @@ export const EbookReaderControlBar: React.VFC<{
   onThemeChange,
   currentThemeData,
 }) => {
-  console.log(currentThemeData)
   const [showTooltip, setShowTooltip] = useState(false)
   const [isFocus, setFocus] = useState(false)
 

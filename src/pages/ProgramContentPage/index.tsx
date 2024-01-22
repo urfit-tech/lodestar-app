@@ -26,6 +26,7 @@ import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
 import ProgramContentPageHelmet from './ProgramContentPageHelmet'
 import ProgramCustomContentBlock from './ProgramCustomContentBlock'
+import type { Book } from 'epubjs'
 
 const StyledLink = styled(Link)`
   && {
@@ -48,8 +49,9 @@ const ProgramContentPage: React.VFC = () => {
   const { resourceCollection } = useResourceCollection([`${appId}:program_content:${programContentId}`])
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
   const [previousPage] = useQueryParam('back', StringParam)
-  const [menuStatus, setMenuStatus] = useState<'search' | null>(null)
+  const [menuStatus, setMenuStatus] = useState<'search' | 'list' | null>('list')
   const [ebookCurrentToc, setEbookCurrentToc] = useState<string | null>(null)
+  const [ebook, setEbook] = useState<Book | null>(null)
   const [ebookLocation, setEbookLocation] = useState<string | number>(
     // last toc progress
     0,
@@ -86,7 +88,20 @@ const ProgramContentPage: React.VFC = () => {
               contentSection =>
                 contentSection.contents.find(content => content.id === programContentId)?.contentType === 'ebook',
             ) ? (
-              <Button colorScheme="primary" variant="ghost" size="sm" onClick={() => setMenuStatus('search')}>
+              <Button
+                colorScheme="primary"
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (menuStatus === 'search') {
+                    setMenuVisible(false)
+                    setMenuStatus(null)
+                  } else {
+                    setMenuStatus('search')
+                    setMenuVisible(true)
+                  }
+                }}
+              >
                 <Icon as={SearchIcon} mr="0.5rem" />
                 搜尋
               </Button>
@@ -113,7 +128,20 @@ const ProgramContentPage: React.VFC = () => {
               {formatMessage(commonMessages.button.intro)}
             </Button>
             {!settings['layout.program_content'] && (
-              <Button size="sm" colorScheme="primary" variant="ghost" onClick={() => setMenuVisible(!menuVisible)}>
+              <Button
+                size="sm"
+                colorScheme="primary"
+                variant="ghost"
+                onClick={() => {
+                  if (menuStatus === 'list') {
+                    setMenuStatus(null)
+                    setMenuVisible(false)
+                  } else {
+                    setMenuStatus('list')
+                    setMenuVisible(true)
+                  }
+                }}
+              >
                 <Icon as={AiOutlineUnorderedList} mr="0.5rem" />
                 {formatMessage(commonMessages.button.list)}
               </Button>
@@ -164,6 +192,7 @@ const ProgramContentPage: React.VFC = () => {
                       ebookCurrentToc={ebookCurrentToc}
                       ebookLocation={ebookLocation}
                       onEbookLocationChange={setEbookLocation}
+                      ebook={ebook}
                     />
 
                     <StyledLink to={`/programs/${programId}?moveToBlock=customer-review&visitIntro=1`}>
@@ -189,6 +218,7 @@ const ProgramContentPage: React.VFC = () => {
                       onEbookCurrentTocChange={setEbookCurrentToc}
                       ebookLocation={ebookLocation}
                       onEbookLocationChange={setEbookLocation}
+                      setEbook={setEbook}
                     />
                   </StyledLayoutContent>
                 </div>
@@ -201,6 +231,7 @@ const ProgramContentPage: React.VFC = () => {
                       ebookCurrentToc={ebookCurrentToc}
                       ebookLocation={ebookLocation}
                       onEbookLocationChange={setEbookLocation}
+                      ebook={ebook}
                     />
                   </StyledSideBar>
                 </div>

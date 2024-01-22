@@ -27,7 +27,9 @@ import { ReactComponent as QuizIcon } from '../../images/quiz.svg'
 import { useHasProgramContentPermission } from '../../pages/ProgramContentPage/ProgramContentBlock'
 import { programContentProgress } from '../../types/exam'
 import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
+import { getChapter } from './ProgramContentEbookReader'
 import programMessages from './translation'
+import type { Book } from 'epubjs'
 
 const StyledIcon = styled(Icon)`
   font-size: 16px;
@@ -127,6 +129,17 @@ const StyledItem = styled.div`
   }
 `
 
+const doEbookSearch = async (q: string, book: Book | null) => {
+  if (!book) return []
+  const allPromise: any[] = []
+
+  book.spine.each(async (item: any) => {
+    allPromise.push(item.load(book.load.bind(book)).then(item.find.bind(item, q)).finally(item.unload.bind(item)))
+  })
+
+  return Promise.all(allPromise).then(results => Promise.resolve(([] as any).concat.apply([], results)))
+}
+
 const ProgramContentMenu: React.VFC<{
   isScrollToTop?: boolean
   program: Program & {
@@ -134,19 +147,26 @@ const ProgramContentMenu: React.VFC<{
       contents: ProgramContent[]
     })[]
   }
-  menuStatus: 'search' | null
+  menuStatus: 'search' | 'list' | null
   ebookCurrentToc: string | null
   ebookLocation: string | number
+  ebook: Book | null
   onEbookLocationChange: (location: string | number) => void
   onSelect?: (programContentId: string) => void
-}> = ({ program, onSelect, isScrollToTop, menuStatus, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
+}> = ({
+  program,
+  onSelect,
+  isScrollToTop,
+  menuStatus,
+  ebookCurrentToc,
+  ebookLocation,
+  onEbookLocationChange,
+  ebook,
+}) => {
   const { formatMessage } = useIntl()
   const [sortBy, setSortBy] = useState<'section' | 'date'>('section')
-  const [searchText, setSearchText] = useState<string>(
-    //TODO: remove this, just for dev
-    '傳記',
-    // ''
-  )
+  const [searchText, setSearchText] = useState<string>('')
+  const [ebookSearchResults, setEbookSearchResults] = useState<{ toc: string; cfi: string; excerpt: string }[]>([])
   const { search } = useLocation()
   const { currentMemberId } = useAuth()
   const { visible } = useContext(AudioPlayerContext)
@@ -155,21 +175,13 @@ const ProgramContentMenu: React.VFC<{
   const { enrolledProgramIds, loading: enrolledProgramIdsLoading } = useEnrolledProgramIds(currentMemberId || '')
   const isEnrolled = enrolledProgramIds.includes(program.id)
   const programContents = program.contentSections.map(v => v.contents).flat()
-
-  //TODO: remove this, just for dev
-  const searchResults = [
-    { toc: '單元一', result: '馬斯克傳：唯一不設限、全公開傳記' },
-    { toc: '這是一本書', result: '備受讚譽的權威傳記作家，蘋果創辦人賈伯斯生前指定的唯一立傳人。' },
-    {
-      toc: '這是一本書',
-      result:
-        '，主修歷史和文學，後以羅德學者身分在牛津大學進修，並取得哲學及政經碩士學位。不僅是傑出記者，更是天才傳記作家，寫作功力一流。',
-    },
-  ]
-
-  const handleSearch = (searchText: string) => {
-    //TODO: remove this, just for dev
-    console.log('searchText', searchText)
+  const handleSearch = async (searchText: string) => {
+    if (!searchText) return
+    const res = (await doEbookSearch(searchText, ebook)) as { cfi: string; excerpt: string }[]
+    const resWithToc = res?.map(r => {
+      return { ...r, toc: getChapter(r.cfi) }
+    })
+    setEbookSearchResults(resWithToc)
   }
 
   const HightLightText: React.VFC<{ text: string; highlight: string }> = ({ text, highlight }) => {
@@ -201,7 +213,10 @@ const ProgramContentMenu: React.VFC<{
                 borderRadius="22px"
                 placeholder={formatMessage(programMessages.ProgramContentMenu.searchInputPlaceholder)}
                 value={searchText || ''}
-                onChange={e => setSearchText(e.target.value)}
+                onChange={e => {
+                  setSearchText(e.target.value)
+                  setEbookSearchResults([])
+                }}
                 onKeyPress={e => e.key === 'Enter' && handleSearch(searchText)}
               />
               <InputRightElement>
@@ -212,16 +227,25 @@ const ProgramContentMenu: React.VFC<{
           <Flex color="#9b9b9b" fontSize="14px">
             <Box mr="0.75rem">{formatMessage(programMessages.ProgramContentMenu.searchText, { searchText })}</Box>
             <Box>
-              {formatMessage(programMessages.ProgramContentMenu.searchResultCount, { count: searchResults.length })}
+              {formatMessage(programMessages.ProgramContentMenu.searchResultCount, {
+                count: ebookSearchResults.length,
+              })}
             </Box>
           </Flex>
 
           <Box>
             {searchText &&
-              searchResults.map(searchResult => (
-                <Box borderBottom="1px solid #ececec" p="1.5rem 0 1rem 0">
+              ebookSearchResults.map(searchResult => (
+                <Box
+                  borderBottom="1px solid #ececec"
+                  p="1.5rem 0 1rem 0"
+                  cursor="pointer"
+                  onClick={() => {
+                    ebook?.rendition.display(searchResult.cfi)
+                  }}
+                >
                   <Box mb="0.5rem" fontSize="16px" lineHeight="24px" color="#585858" fontWeight="500">
-                    <HightLightText text={searchResult.result} highlight={searchText} />
+                    <HightLightText text={searchResult.excerpt} highlight={searchText} />
                   </Box>
                   <Box fontSize="14px" color="#9b9b9b" fontWeight="500">
                     {searchResult.toc}
