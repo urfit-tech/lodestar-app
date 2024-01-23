@@ -15,7 +15,6 @@ import styled from 'styled-components'
 import { EbookBookmarkModal } from './EbookBookmarkModal'
 import EbookStyledModal from './EbookStyledModal'
 import type { Rendition } from 'epubjs'
-import Responsive from '../common/Responsive'
 
 const Spacer = styled(Flex)`
   width: 0%;
@@ -121,7 +120,11 @@ export const EbookReaderControlBar: React.VFC<{
           </Slider>
         </Flex>
         <Flex w="25%" alignItems="center" marginRight="8px" ml="12px">
-          {isLocationGenerated ? <Text>{`${(sliderValue || 0).toFixed(1)}%/${100}%`}</Text> : <Spinner />}
+          {isLocationGenerated ? (
+            <Text fontSize="14px">{`${(sliderValue || 0).toFixed(1)}%/${100}%`}</Text>
+          ) : (
+            <Spinner />
+          )}
           <EbookStyledModal
             fontSize={fontSize}
             lineHeight={lineHeight}
