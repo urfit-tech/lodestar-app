@@ -15,6 +15,7 @@ import styled from 'styled-components'
 import { EbookBookmarkModal } from './EbookBookmarkModal'
 import EbookStyledModal from './EbookStyledModal'
 import type { Rendition } from 'epubjs'
+import Responsive from '../common/Responsive'
 
 const Spacer = styled(Flex)`
   width: 0%;
@@ -83,13 +84,16 @@ export const EbookReaderControlBar: React.VFC<{
       paddingBottom="16px"
       backgroundColor={currentThemeData.backgroundColor}
       color={currentThemeData.color}
-      align="center"
       direction="column"
+      align="center"
     >
-      <Text>{chapter}</Text>
-      <Flex w="100%" direction="row" justifyContent="center">
+      <Text color="#9b9b9b" fontSize="14px">
+        {chapter}
+      </Text>
+
+      <Flex w="100%" direction="row" justifyContent="center" px={{ base: '3rem', md: '0rem' }}>
         <Spacer />
-        <Flex w="50%">
+        <Flex w={{ base: '75%', md: '50%' }}>
           <Slider
             onFocus={() => setFocus(true)}
             onBlur={() => setFocus(false)}
@@ -117,8 +121,8 @@ export const EbookReaderControlBar: React.VFC<{
             </Tooltip>
           </Slider>
         </Flex>
-        <Flex w="25%" alignItems="center" className="ml-3" marginRight="8px">
-          {isLocationGenerated ? <Text ml="8px">{`${(sliderValue || 0).toFixed(1)}%/${100}%`}</Text> : <Spinner />}
+        <Flex w="25%" alignItems="center" marginRight="8px" ml="12px">
+          {isLocationGenerated ? <Text>{`${(sliderValue || 0).toFixed(1)}%/${100}%`}</Text> : <Spinner />}
           <EbookStyledModal
             fontSize={fontSize}
             lineHeight={lineHeight}
@@ -127,7 +131,7 @@ export const EbookReaderControlBar: React.VFC<{
             onThemeChange={onThemeChange}
             renderTrigger={({ onOpen }) => (
               <Tooltip label="基本設定" aria-label="基本設定" placement="top">
-                <Box as="u" cursor="pointer" ml="8px" fontSize="20px" onClick={() => onOpen()}>
+                <Box as="u" cursor="pointer" ml={{ base: '20px', md: '16px' }} fontSize="20px" onClick={() => onOpen()}>
                   A
                 </Box>
               </Tooltip>
