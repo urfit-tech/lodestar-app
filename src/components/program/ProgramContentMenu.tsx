@@ -1,6 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
-import { AttachmentIcon, CheckIcon, Icon } from '@chakra-ui/icons'
-import { Box, Flex, Select } from '@chakra-ui/react'
+import { AttachmentIcon, CheckIcon, Icon, SearchIcon } from '@chakra-ui/icons'
+import { Box, Flex, Input, InputGroup, InputRightElement, Select } from '@chakra-ui/react'
 import { Card } from 'antd'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -14,6 +14,7 @@ import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import AudioPlayerContext from '../../contexts/AudioPlayerContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
+import hasura from '../../hasura'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useExamExercise } from '../../hooks/exam'
@@ -26,8 +27,9 @@ import { ReactComponent as QuizIcon } from '../../images/quiz.svg'
 import { useHasProgramContentPermission } from '../../pages/ProgramContentPage/ProgramContentBlock'
 import { programContentProgress } from '../../types/exam'
 import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
+import { getChapter } from './ProgramContentEbookReader'
 import programMessages from './translation'
-import hasura from '../../hasura'
+import type { Book } from 'epubjs'
 
 const StyledIcon = styled(Icon)`
   font-size: 16px;
@@ -127,6 +129,17 @@ const StyledItem = styled.div`
   }
 `
 
+const doEbookSearch = async (q: string, book: Book | null) => {
+  if (!book) return []
+  const allPromise: any[] = []
+
+  book.spine.each(async (item: any) => {
+    allPromise.push(item.load(book.load.bind(book)).then(item.find.bind(item, q)).finally(item.unload.bind(item)))
+  })
+
+  return Promise.all(allPromise).then(results => Promise.resolve(([] as any).concat.apply([], results)))
+}
+
 const ProgramContentMenu: React.VFC<{
   isScrollToTop?: boolean
   program: Program & {
@@ -134,13 +147,26 @@ const ProgramContentMenu: React.VFC<{
       contents: ProgramContent[]
     })[]
   }
+  menuStatus: 'search' | 'list' | null
   ebookCurrentToc: string | null
   ebookLocation: string | number
+  ebook: Book | null
   onEbookLocationChange: (location: string | number) => void
   onSelect?: (programContentId: string) => void
-}> = ({ program, onSelect, isScrollToTop, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
+}> = ({
+  program,
+  onSelect,
+  isScrollToTop,
+  menuStatus,
+  ebookCurrentToc,
+  ebookLocation,
+  onEbookLocationChange,
+  ebook,
+}) => {
   const { formatMessage } = useIntl()
   const [sortBy, setSortBy] = useState<'section' | 'date'>('section')
+  const [searchText, setSearchText] = useState<string>('')
+  const [ebookSearchResults, setEbookSearchResults] = useState<{ toc: string; cfi: string; excerpt: string }[]>([])
   const { search } = useLocation()
   const { currentMemberId } = useAuth()
   const { visible } = useContext(AudioPlayerContext)
@@ -149,43 +175,123 @@ const ProgramContentMenu: React.VFC<{
   const { enrolledProgramIds, loading: enrolledProgramIdsLoading } = useEnrolledProgramIds(currentMemberId || '')
   const isEnrolled = enrolledProgramIds.includes(program.id)
   const programContents = program.contentSections.map(v => v.contents).flat()
+  const handleSearch = async (searchText: string) => {
+    if (!searchText) return
+    const res = (await doEbookSearch(searchText, ebook)) as { cfi: string; excerpt: string }[]
+    const resWithToc = res?.map(r => {
+      return { ...r, toc: getChapter(r.cfi) }
+    })
+    setEbookSearchResults(resWithToc)
+  }
+
+  const HightLightText: React.VFC<{ text: string; highlight: string }> = ({ text, highlight }) => {
+    const theme = useAppTheme()
+    const parts = text.split(new RegExp(`(${highlight})`, 'gi'))
+    return (
+      <Box>
+        {parts.map((part, i) =>
+          part.toLowerCase() === highlight.toLowerCase() ? (
+            <Box as="span" key={i} color={theme.colors.primary[500]}>
+              {part}
+            </Box>
+          ) : (
+            part
+          ),
+        )}
+      </Box>
+    )
+  }
 
   return (
     <StyledProgramContentMenu visible={visible}>
-      <StyledHead className="d-flex justify-content-between align-items-center">
-        <span>{formatMessage(programMessages.ProgramContentMenu.programList)}</span>
-        <StyledSelectBlock>
-          <Select size="default" value={sortBy} onChange={e => setSortBy(e.target.value as 'section' | 'date')}>
-            <option value="section">{formatMessage(programMessages.ProgramContentMenu.unit)}</option>
-            <option value="date">{formatMessage(programMessages.ProgramContentMenu.time)}</option>
-          </Select>
-        </StyledSelectBlock>
-      </StyledHead>
+      {menuStatus === 'search' ? (
+        <Box p="1rem 1.5rem" borderTop="1px solid #ececec">
+          <Flex justifyContent="center" mb="1rem">
+            <InputGroup>
+              <Input
+                type="text"
+                borderRadius="22px"
+                placeholder={formatMessage(programMessages.ProgramContentMenu.searchInputPlaceholder)}
+                value={searchText || ''}
+                onChange={e => {
+                  setSearchText(e.target.value)
+                  setEbookSearchResults([])
+                }}
+                onKeyPress={e => e.key === 'Enter' && handleSearch(searchText)}
+              />
+              <InputRightElement>
+                <Icon as={SearchIcon} onClick={() => handleSearch(searchText)} />
+              </InputRightElement>
+            </InputGroup>
+          </Flex>
+          <Flex color="#9b9b9b" fontSize="14px">
+            <Box mr="0.75rem">{formatMessage(programMessages.ProgramContentMenu.searchText, { searchText })}</Box>
+            <Box>
+              {formatMessage(programMessages.ProgramContentMenu.searchResultCount, {
+                count: ebookSearchResults.length,
+              })}
+            </Box>
+          </Flex>
 
-      {programContents.length === 0 ? (
-        <EmptyMenu />
-      ) : sortBy === 'section' ? (
-        <ProgramContentSectionMenu
-          isScrollToTop={isScrollToTop}
-          program={program}
-          programPackageId={programPackageId}
-          isLoading={enrolledProgramIdsLoading}
-          isEnrolled={isEnrolled}
-          onSelect={onSelect}
-          ebookCurrentToc={ebookCurrentToc}
-          ebookLocation={ebookLocation}
-          onEbookLocationChange={onEbookLocationChange}
-        />
-      ) : sortBy === 'date' ? (
-        <ProgramContentDateMenu
-          program={program}
-          programPackageId={programPackageId}
-          onSelect={onSelect}
-          ebookCurrentToc={ebookCurrentToc}
-          ebookLocation={ebookLocation}
-          onEbookLocationChange={onEbookLocationChange}
-        />
-      ) : null}
+          <Box>
+            {searchText &&
+              ebookSearchResults.map(searchResult => (
+                <Box
+                  borderBottom="1px solid #ececec"
+                  p="1.5rem 0 1rem 0"
+                  cursor="pointer"
+                  onClick={() => {
+                    ebook?.rendition.display(searchResult.cfi)
+                  }}
+                >
+                  <Box mb="0.5rem" fontSize="16px" lineHeight="24px" color="#585858" fontWeight="500">
+                    <HightLightText text={searchResult.excerpt} highlight={searchText} />
+                  </Box>
+                  <Box fontSize="14px" color="#9b9b9b" fontWeight="500">
+                    {searchResult.toc}
+                  </Box>
+                </Box>
+              ))}
+          </Box>
+        </Box>
+      ) : (
+        <>
+          <StyledHead className="d-flex justify-content-between align-items-center">
+            <span>{formatMessage(programMessages.ProgramContentMenu.programList)}</span>
+            <StyledSelectBlock>
+              <Select size="default" value={sortBy} onChange={e => setSortBy(e.target.value as 'section' | 'date')}>
+                <option value="section">{formatMessage(programMessages.ProgramContentMenu.unit)}</option>
+                <option value="date">{formatMessage(programMessages.ProgramContentMenu.time)}</option>
+              </Select>
+            </StyledSelectBlock>
+          </StyledHead>
+
+          {programContents.length === 0 ? (
+            <EmptyMenu />
+          ) : sortBy === 'section' ? (
+            <ProgramContentSectionMenu
+              isScrollToTop={isScrollToTop}
+              program={program}
+              programPackageId={programPackageId}
+              isLoading={enrolledProgramIdsLoading}
+              isEnrolled={isEnrolled}
+              onSelect={onSelect}
+              ebookCurrentToc={ebookCurrentToc}
+              ebookLocation={ebookLocation}
+              onEbookLocationChange={onEbookLocationChange}
+            />
+          ) : sortBy === 'date' ? (
+            <ProgramContentDateMenu
+              program={program}
+              programPackageId={programPackageId}
+              onSelect={onSelect}
+              ebookCurrentToc={ebookCurrentToc}
+              ebookLocation={ebookLocation}
+              onEbookLocationChange={onEbookLocationChange}
+            />
+          ) : null}
+        </>
+      )}
     </StyledProgramContentMenu>
   )
 }

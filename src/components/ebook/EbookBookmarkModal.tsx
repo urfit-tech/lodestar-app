@@ -2,6 +2,7 @@ import { gql, useApolloClient } from '@apollo/client'
 import {
   Flex,
   Grid,
+  Icon,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -32,7 +33,13 @@ export const EbookBookmarkModal: React.VFC<{
   return (
     <Flex>
       <Tooltip label="書籤" aria-label="書籤" placement="top">
-        <BookmarkIcon fill={currentThemeData.color} className="ml-2" cursor="pointer" onClick={onOpen} />
+        <Icon
+          ml={{ base: '20px', md: '16px' }}
+          as={BookmarkIcon}
+          fill={currentThemeData.color}
+          cursor="pointer"
+          onClick={onOpen}
+        />
       </Tooltip>
       <Modal scrollBehavior="inside" isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
