@@ -81,7 +81,7 @@ const ProgramContentEbookReader: React.VFC<{
 
   const [bookmarkHighlightContent, setBookmarkHighlightContent] = useState('')
 
-  const getFileFromS3 = useCallback(async (programContentId: string, authToken: string) => {
+  const getEpubFromS3 = useCallback(async (programContentId: string, authToken: string) => {
     try {
       const ebookUrl = `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/ebook/${programContentId}.epub`
 
