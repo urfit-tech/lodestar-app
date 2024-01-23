@@ -372,6 +372,9 @@ const ContentSection: React.VFC<{
   const programContentProgress = useProgramContentProgress()
   const [isCollapse, setIsCollapse] = useState(defaultCollapse)
   const [passExam, setPassExam] = useState<string[]>([])
+  const { programContentId: currentProgramContentId } = useParams<{
+    programContentId?: string
+  }>()
 
   const contentProgress =
     programContentProgress?.filter(progress => progress.programContentSectionId === programContentSection.id) || []
@@ -411,7 +414,7 @@ const ContentSection: React.VFC<{
                 onSelect?.(programContent.id)
               }}
             />
-            {programContent.contentType === 'ebook' ? (
+            {programContent.contentType === 'ebook' && programContent.id === currentProgramContentId ? (
               <EbookSecondaryMenu
                 programContentId={programContent.id}
                 tocs={programContent.ebook.programContentEbookTocs}
@@ -785,7 +788,7 @@ const EbookSecondaryMenu: React.VFC<{
   onEbookLocationChange?: (loc: string | number) => void
 }> = ({ programContentId, tocs, ebookCurrentToc, onEbookLocationChange }) => {
   const theme = useAppTheme()
-  const { programContentId: paramProgramContentId } = useParams<{
+  const { programContentId: currentProgramContentId } = useParams<{
     programContentId?: string
   }>()
   const { tocProgress, refetch: refetchTocProgress } = useCurrentMemberEbookTocProgress(programContentId)
@@ -795,7 +798,7 @@ const EbookSecondaryMenu: React.VFC<{
   }, [ebookCurrentToc, refetchTocProgress])
 
   return (
-    <Box {...(paramProgramContentId === programContentId ? { bg: `${rgba(theme.colors.primary[500], 0.1)}` } : null)}>
+    <Box {...(currentProgramContentId === programContentId ? { bg: `${rgba(theme.colors.primary[500], 0.1)}` } : null)}>
       {tocs.map(toc => {
         const RegexHrefToc = /#(.+)/
         return (
