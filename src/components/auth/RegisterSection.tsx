@@ -175,7 +175,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
             if (settings['custom_api.insertCustomMemberProperty.enabled']) {
               try {
                 await Axios.post(
-                  `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/${appId}/custom/insertCustomMemberProperty`,
+                  `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/${appId}/marketing/insertCustomMemberProperty`,
                   {
                     memberId: currentMemberId,
                     options: {
