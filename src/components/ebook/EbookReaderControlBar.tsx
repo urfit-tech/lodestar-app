@@ -23,6 +23,13 @@ const Spacer = styled(Flex)`
   }
 `
 
+const SliderContainer = styled(Flex)`
+  width: 50%;
+  @media (min-width: ${BREAK_POINT}px) {
+    width: 75%;
+  }
+`
+
 export const EbookReaderControlBar: React.VFC<{
   isLocationGenerated: boolean
   chapter: string
@@ -89,9 +96,9 @@ export const EbookReaderControlBar: React.VFC<{
         {chapter}
       </Text>
 
-      <Flex w="100%" direction="row" justifyContent="center" px={{ base: '3rem', md: '0rem' }}>
+      <Flex w="100%" direction="row" justifyContent="center" paddingRight="3rem">
         <Spacer />
-        <Flex w={{ base: '75%', md: '50%' }}>
+        <SliderContainer>
           <Slider
             onFocus={() => setFocus(true)}
             onBlur={() => setFocus(false)}
@@ -118,7 +125,7 @@ export const EbookReaderControlBar: React.VFC<{
               <SliderThumb boxSize={4} />
             </Tooltip>
           </Slider>
-        </Flex>
+        </SliderContainer>
         <Flex w="25%" alignItems="center" marginRight="8px" ml="12px">
           {isLocationGenerated ? (
             <Text fontSize="14px">{`${(sliderValue || 0).toFixed(1)}%/${100}%`}</Text>
