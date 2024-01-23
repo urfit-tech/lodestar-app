@@ -89,6 +89,7 @@ const ProgramContentPage: React.VFC = () => {
                 contentSection.contents.find(content => content.id === programContentId)?.contentType === 'ebook',
             ) ? (
               <Button
+                paddingX="0.5rem"
                 colorScheme="primary"
                 variant="ghost"
                 size="sm"
@@ -109,6 +110,7 @@ const ProgramContentPage: React.VFC = () => {
 
             {enabledModules.customer_review && (
               <Button
+                paddingX="0.5rem"
                 colorScheme="primary"
                 variant="ghost"
                 size="sm"
@@ -119,6 +121,7 @@ const ProgramContentPage: React.VFC = () => {
               </Button>
             )}
             <Button
+              paddingX="0.5rem"
               size="sm"
               colorScheme="primary"
               variant="ghost"
@@ -129,6 +132,7 @@ const ProgramContentPage: React.VFC = () => {
             </Button>
             {!settings['layout.program_content'] && (
               <Button
+                paddingX="0.5rem"
                 size="sm"
                 colorScheme="primary"
                 variant="ghost"
