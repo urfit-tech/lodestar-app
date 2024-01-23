@@ -10,9 +10,9 @@ import styled from 'styled-components'
 import hasura from '../../hasura'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
 import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
-import type { NavItem, Rendition } from 'epubjs'
+import type { NavItem, Rendition, Book } from 'epubjs'
 
-const getChapter = (loc: string) => {
+export const getChapter = (loc: string) => {
   const chapter = loc.match(/\[(.*?)\]/g)?.map((match: string) => match.slice(1, -1))[0] || ''
   return chapter
 }
@@ -56,11 +56,12 @@ const getReaderTheme = (theme: string): { color: string; backgroundColor: string
 
 const ProgramContentEbookReader: React.VFC<{
   programContentId: string
+  setEbook: React.Dispatch<React.SetStateAction<Book | null>>
   ebookCurrentToc: string | null
   onEbookCurrentTocChange: (toc: string | null) => void
   location: string | number
   onLocationChange: (location: string | number) => void
-}> = ({ programContentId, ebookCurrentToc, onEbookCurrentTocChange, location, onLocationChange }) => {
+}> = ({ programContentId, ebookCurrentToc, onEbookCurrentTocChange, location, onLocationChange, setEbook }) => {
   const { currentMemberId, authToken } = useAuth()
   const [source, setSource] = useState<ArrayBuffer | null>(null)
   const apolloClient = useApolloClient()
@@ -79,7 +80,7 @@ const ProgramContentEbookReader: React.VFC<{
   const [ebookLineHeight, setEbookLineHeight] = useState(1)
 
   const [bookmarkHighlightContent, setBookmarkHighlightContent] = useState('')
-  const getFileFromS3 = useCallback(async (programContentId: string, authToken: string) => {
+  const getEpubFromS3 = useCallback(async (programContentId: string, authToken: string) => {
     const { data } = await axios.get(
       `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/ebook/${programContentId}.epub`,
       {
@@ -99,9 +100,9 @@ const ProgramContentEbookReader: React.VFC<{
 
   useEffect(() => {
     if (authToken) {
-      getFileFromS3(programContentId, authToken)
+      getEpubFromS3(programContentId, authToken)
     }
-  }, [authToken, programContentId, getFileFromS3])
+  }, [authToken, programContentId, getEpubFromS3])
 
   useEffect(() => {
     rendition.current?.themes.override('color', getReaderTheme(theme).color)
@@ -211,8 +212,9 @@ const ProgramContentEbookReader: React.VFC<{
               rendition.current.on('resized', (size: { width: number; height: number }) => {
                 console.log(`resized => width: ${size.width}, height: ${size.height}`)
               })
-              rendition.current?.book.locations.generate(150).then(() => {
+              await rendition.current?.book.locations.generate(150).then(() => {
                 setIsLocationGenerated(true)
+                setEbook(rendition.current?.book || null)
               })
             }}
           />

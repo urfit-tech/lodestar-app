@@ -31,6 +31,7 @@ import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
 import ProgramContentExerciseBlock from './ProgramContentExerciseBlock'
 import ProgramContentTabs from './ProgramContentTabs'
 import ProgramContentPageMessages from './translation'
+import type { Book } from 'epubjs'
 
 const StyledTitleBlock = styled.div`
   padding-bottom: 1.25rem;
@@ -86,6 +87,7 @@ const ProgramContentBlock: React.VFC<{
   onEbookCurrentTocChange: (toc: string | null) => void
   ebookLocation: string | number
   onEbookLocationChange: (location: string | number) => void
+  setEbook: React.Dispatch<React.SetStateAction<Book | null>>
 }> = ({
   programId,
   programContentId,
@@ -96,6 +98,7 @@ const ProgramContentBlock: React.VFC<{
   onEbookCurrentTocChange,
   ebookLocation,
   onEbookLocationChange,
+  setEbook,
 }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -246,6 +249,7 @@ const ProgramContentBlock: React.VFC<{
         )
       ) : hasProgramContentPermission && programContent.contentType === 'ebook' ? (
         <ProgramContentEbookReader
+          setEbook={setEbook}
           programContentId={programContent.id}
           ebookCurrentToc={ebookCurrentToc}
           onEbookCurrentTocChange={onEbookCurrentTocChange}
