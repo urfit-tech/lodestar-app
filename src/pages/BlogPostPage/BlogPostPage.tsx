@@ -31,7 +31,7 @@ const messages = defineMessages({
   blogSuggestion: { id: 'blog.label.blogSuggestion', defaultMessage: '回應' },
 })
 
-const StyledTitle = styled.div`
+const StyledTitle = styled.h1`
   margin-bottom: 1.5rem;
   color: var(--gray-darker);
   font-size: 28px;

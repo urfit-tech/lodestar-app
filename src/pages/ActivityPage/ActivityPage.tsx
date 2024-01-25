@@ -12,7 +12,7 @@ import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import ActivityBanner from '../../components/activity/ActivityBanner'
-import ActivitySessionItemRefactor from '../../components/activity/ActivitySessionItemRefactor'
+import ActivitySessionItem from '../../components/activity/ActivitySessionItem'
 import ActivityTicketCard from '../../components/activity/ActivityTicketCard'
 import ActivityTicketPaymentButton from '../../components/activity/ActivityTicketPaymentButton'
 import { AuthModalContext } from '../../components/auth/AuthModal'
@@ -96,12 +96,54 @@ const ActivityPage: React.VFC = () => {
     return <NotFoundPage />
   }
 
-  const sessionIds = activityData.activityTickets
-    .map(ticket => ({
-      isEnrolled: !!ticket.orderId,
-      sessionId: ticket.activitySessionTickets.map(st => st.activitySession.id),
-    }))
-    .filter(s => s.isEnrolled)
+  const flatSessions = activityData.activityTickets
+    .flatMap(ticket =>
+      ticket.activitySessionTickets.map(session => ({
+        ...session.activitySession,
+        type: session.activitySessionType,
+        ticket: { count: ticket.count, isEnrolled: !!ticket.orderId, participants: Number(ticket.participants) },
+      })),
+    )
+    .sort((a, b) => dayjs(a.startedAt).valueOf() - dayjs(b.startedAt).valueOf())
+
+  const mergedSessions: {
+    [key: string]: {
+      id: string
+      startedAt: string
+      endedAt: string
+      location: string | null
+      description: string | null
+      threshold: string | null
+      onlineLink: string | null
+      attended: boolean
+      title: string
+      maxAmount: { online: number; offline: number }
+      participants: { online: number; offline: number }
+      isEnrolled: boolean
+    }
+  } = {}
+  flatSessions.forEach(item => {
+    const sessionId = item.id
+
+    if (!mergedSessions[sessionId]) {
+      mergedSessions[sessionId] = {
+        ...item,
+        isEnrolled: false,
+        maxAmount: { online: 0, offline: 0 },
+        participants: { online: 0, offline: 0 },
+      }
+    }
+    if (item.type === 'online') {
+      mergedSessions[sessionId].maxAmount.online += item.ticket.count
+      mergedSessions[sessionId].participants.online += item.ticket.participants
+    }
+    if (item.type === 'offline') {
+      mergedSessions[sessionId].maxAmount.offline += item.ticket.count
+      mergedSessions[sessionId].participants.offline += item.ticket.participants
+    }
+    mergedSessions[sessionId].isEnrolled =
+      mergedSessions[sessionId].isEnrolled || (!mergedSessions[sessionId].isEnrolled && !!item.ticket.isEnrolled)
+  })
 
   return (
     <DefaultLayout white>
@@ -132,31 +174,28 @@ const ActivityPage: React.VFC = () => {
             <StyledTitle>{formatMessage(productMessages.activity.title.event)}</StyledTitle>
             <Divider className="mb-4" />
 
-            {activityData.activityTickets
-              .map(ticket => ticket.activitySessionTickets.map(st => st.activitySession))
-              .flat()
-              .sort((a, b) => dayjs(a.startedAt).valueOf() - dayjs(b.startedAt).valueOf())
-              .map(session => {
-                const isEnrolled = sessionIds.filter(s => s.sessionId.includes(session.id)).length > 0
-                return (
-                  <div key={session.id} className="mb-4">
-                    <ActivitySessionItemRefactor
-                      session={{
-                        id: session.id,
-                        location: session.location,
-                        onlineLink: session.onlinelink,
-                        title: session.title,
-                        startedAt: session.startedAt,
-                        endedAt: session.endedAt,
-                        activityTitle: activityData.title,
-                        isEnrolled,
-                        threshold: session.threshold || '',
-                        isParticipantsVisible: activityData.isParticipantsVisible,
-                      }}
-                    />
-                  </div>
-                )
-              })}
+            {Object.values(mergedSessions).map(session => {
+              return (
+                <div key={session.id} className="mb-4">
+                  <ActivitySessionItem
+                    session={{
+                      id: session.id,
+                      location: session.location,
+                      onlineLink: session.onlineLink,
+                      title: session.title,
+                      startedAt: session.startedAt,
+                      endedAt: session.endedAt,
+                      activityTitle: activityData.title,
+                      isEnrolled: session.isEnrolled,
+                      threshold: session.threshold || '',
+                      isParticipantsVisible: activityData.isParticipantsVisible,
+                      maxAmount: session.maxAmount,
+                      participants: session.participants,
+                    }}
+                  />
+                </div>
+              )
+            })}
           </Col>
 
           <Col xs={12} lg={4}>
