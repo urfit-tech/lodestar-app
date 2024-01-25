@@ -29,6 +29,15 @@ const programMessages = {
     unit: { id: 'program.ProgramContentMenu.unit', defaultMessage: '單元排序' },
     time: { id: 'program.ProgramContentMenu.time', defaultMessage: '時間排序' },
     expired: { id: 'program.ProgramContentMenu.expired', defaultMessage: '到期' },
+    searchText: { id: 'program.ProgramContentMenu.searchText', defaultMessage: 'search：{searchText}' },
+    searchResultCount: {
+      id: 'program.ProgramContentMenu.searchResultCount',
+      defaultMessage: '{count} search result in total',
+    },
+    searchInputPlaceholder: {
+      id: 'program.ProgramContentMenu.searchInputPlaceholder',
+      defaultMessage: 'Please enter the keyword...',
+    },
   }),
   ProgramContentPlayer: defineMessages({
     next: { id: 'program.ProgramContentPlayer.next', defaultMessage: '接下來' },
