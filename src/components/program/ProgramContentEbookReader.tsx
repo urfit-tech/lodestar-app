@@ -10,7 +10,7 @@ import hasura from '../../hasura'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
 import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
 import { decryptData } from './decryptUtils'
-import type { NavItem, Rendition } from 'epubjs'
+import type { NavItem, Rendition, Book } from 'epubjs'
 
 export const getChapter = (loc: string) => {
   const chapter = loc.match(/\[(.*?)\]/g)?.map((match: string) => match.slice(1, -1))[0] || ''
@@ -114,7 +114,6 @@ const ProgramContentEbookReader: React.VFC<{
     rendition.current?.themes.override('line-height', ebookLineHeight.toString())
     rendition.current?.reportLocation()
   }, [theme, ebookFontSize, ebookLineHeight])
-
   return (
     <div>
       {source ? (
@@ -215,6 +214,9 @@ const ProgramContentEbookReader: React.VFC<{
               rendition.current.on('resized', (size: { width: number; height: number }) => {
                 console.log(`resized => width: ${size.width}, height: ${size.height}`)
               })
+              rendition.current.on('relocated', async (data: any) => {
+                console.log(`relocated`)
+              })
               await rendition.current?.book.locations.generate(150).then(() => {
                 setIsLocationGenerated(true)
                 setEbook(rendition.current?.book || null)
@@ -223,7 +225,7 @@ const ProgramContentEbookReader: React.VFC<{
           />
         </div>
       ) : (
-        <Flex height="85vh" justifyContent="center" alignItems="center" backgroundColor="whiteF">
+        <Flex height="85vh" justifyContent="center" alignItems="center">
           <Spinner />
         </Flex>
       )}

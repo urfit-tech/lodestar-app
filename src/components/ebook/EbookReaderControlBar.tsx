@@ -86,7 +86,6 @@ export const EbookReaderControlBar: React.VFC<{
   return (
     <Flex
       w="100%"
-      paddingBottom="16px"
       backgroundColor={currentThemeData.backgroundColor}
       color={currentThemeData.color}
       direction="column"
