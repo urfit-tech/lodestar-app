@@ -37,11 +37,8 @@ import {
 import GlobalSearchModal from './GlobalSearchModal'
 
 const StyledLayoutWrapper = styled(StyledLayout)`
-  && {
-    .css-r6z5ec {
-      z-index: 20;
-    }
-  }
+  height: 100%;
+  overflow: auto;
 `
 const StyledNotificationBar = styled.div<{ variant?: string }>`
   position: sticky;
@@ -109,6 +106,7 @@ const DefaultLayout: React.FC<{
       )}
 
       <StyledLayoutWrapper
+        className="layout-wrapper"
         variant={white ? 'white' : undefined}
         header={noHeader ? 'noHeader' : '' /* for remove blank on the top */}
       >
