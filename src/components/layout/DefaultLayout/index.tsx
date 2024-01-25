@@ -43,7 +43,7 @@ const StyledLayoutWrapper = styled(StyledLayout)`
 const StyledNotificationBar = styled.div<{ variant?: string }>`
   position: sticky;
   z-index: 1000;
-  top: 0;
+  top: 4rem;
   left: 0;
   height: 40px;
   line-height: 40px;
@@ -266,16 +266,17 @@ const DefaultLayout: React.FC<{
             )}
           </div>
         </StyledLayoutHeader>
+        
+        {settings['feature.email_verification.enabled'] === '1' && isUnVerifiedEmails && !noNotificationBar && (
+          <StyledNotificationBar variant="warning">
+            <p>
+              {formatMessage(commonMessages.message.warning.emailVerification)}
+              <Link to={`/settings/profile#account`}>{formatMessage(commonMessages.defaults.check)}</Link>
+            </p>
+          </StyledNotificationBar>
+        )}
 
         <StyledLayoutContent id="layout-content" className={`${noHeader ? 'full-height' : ''}`}>
-          {settings['feature.email_verification.enabled'] === '1' && isUnVerifiedEmails && !noNotificationBar && (
-            <StyledNotificationBar variant="warning">
-              <p>
-                {formatMessage(commonMessages.message.warning.emailVerification)}
-                <Link to={`/settings/profile#account`}>{formatMessage(commonMessages.defaults.check)}</Link>
-              </p>
-            </StyledNotificationBar>
-          )}
           <LayoutContentWrapper
             footerHeight={noFooter ? 0 : settings['footer.type'] === 'multiline' ? 108 : 65}
             centeredBox={centeredBox}
