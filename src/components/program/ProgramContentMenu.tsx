@@ -241,7 +241,7 @@ const ProgramContentMenu: React.VFC<{
                   p="1.5rem 0 1rem 0"
                   cursor="pointer"
                   onClick={() => {
-                    ebook?.rendition.display(searchResult.cfi)
+                    onEbookLocationChange?.(searchResult.cfi)
                   }}
                 >
                   <Box mb="0.5rem" fontSize="16px" lineHeight="24px" color="#585858" fontWeight="500">
