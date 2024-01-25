@@ -158,7 +158,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
             const currentMemberId = decodedToken.sub
             let utmQuery: { [key: string]: string }
             try {
-              utmQuery = JSON.parse(Cookies.get('utm')) || {}
+              utmQuery = JSON.parse(Cookies.get('utm') || '{}')
             } catch (error) {
               utmQuery = {}
             }
