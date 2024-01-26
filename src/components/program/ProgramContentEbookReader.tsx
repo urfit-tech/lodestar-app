@@ -4,7 +4,7 @@ import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ReactReader, ReactReaderStyle } from 'react-reader'
+import { EpubView, ReactReader, ReactReaderStyle } from 'react-reader'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
@@ -112,8 +112,19 @@ const ProgramContentEbookReader: React.VFC<{
     rendition.current?.themes.override('background-color', getReaderTheme(theme).backgroundColor)
     rendition.current?.themes.override('font-size', `${ebookFontSize}px`)
     rendition.current?.themes.override('line-height', ebookLineHeight.toString())
-    rendition.current?.reportLocation()
+    const location = rendition.current?.currentLocation() as any
+    setSliderValue(location?.start?.percentage * 100 || 0)
   }, [theme, ebookFontSize, ebookLineHeight])
+
+  const readerStyles = {
+    ...ReactReaderStyle,
+    readerArea: {
+      ...ReactReaderStyle.readerArea,
+      backgroundColor: getReaderTheme(theme).backgroundColor,
+      transition: 'none',
+    },
+  }
+
   return (
     <div>
       {source ? (
@@ -132,97 +143,110 @@ const ProgramContentEbookReader: React.VFC<{
 
       {source ? (
         <div style={{ height: '85vh' }}>
-          <ReactReader
-            readerStyles={{
-              ...ReactReaderStyle,
-              readerArea: {
-                ...ReactReaderStyle.readerArea,
-                backgroundColor: getReaderTheme(theme).backgroundColor,
-                transition: 'none',
-              },
-            }}
-            url={source}
-            showToc={false}
-            tocChanged={_toc => (toc.current = _toc)}
-            location={location}
-            locationChanged={(loc: string) => {
-              const { start, end } = rendition.current?.location || {}
-              if (start && end && rendition.current) {
-                // set page and chapter
-                const percentage = rendition.current.book.locations.percentageFromCfi(loc)
-                onLocationChange(loc)
-                setChapter(getChapter(loc))
-                setSliderValue(percentage * 100)
-                // get current showing text
-                const splitCfi = start.cfi.split('/')
-                const baseCfi = splitCfi[0] + '/' + splitCfi[1] + '/' + splitCfi[2] + '/' + splitCfi[3]
-                const startCfi = start.cfi.replace(baseCfi, '')
-                const endCfi = end.cfi.replace(baseCfi, '')
-                const rangeCfi = [baseCfi, startCfi, endCfi].join(',')
-                rendition.current?.book.getRange(rangeCfi).then(range => {
-                  const text = range?.toString()
-                  const currentPageBookmark = programContentBookmark.find(
-                    bookmark => text.includes(bookmark.highlightContent) && getChapter(loc) === bookmark.chapter,
-                  )
-                  setCurrentPageBookmark(currentPageBookmark ? true : false)
-                  setBookmarkId(currentPageBookmark ? currentPageBookmark.id : undefined)
-                  setBookmarkHighlightContent(text.slice(0, 20))
-                })
-              }
+          <div style={readerStyles.container}>
+            <div style={readerStyles.readerArea}>
+              <div style={readerStyles.reader}>
+                <EpubView
+                  url={source}
+                  showToc={false}
+                  tocChanged={_toc => (toc.current = _toc)}
+                  location={location}
+                  locationChanged={(loc: string) => {
+                    const { start, end, atEnd } = rendition.current?.location || {}
+                    if (start && end && rendition.current) {
+                      // set chapter and check if current page is ended page
+                      setChapter(getChapter(loc))
+                      atEnd && setSliderValue(100)
+                      // get current showing text
+                      const splitCfi = start.cfi.split('/')
+                      const baseCfi = splitCfi[0] + '/' + splitCfi[1] + '/' + splitCfi[2] + '/' + splitCfi[3]
+                      const startCfi = start.cfi.replace(baseCfi, '')
+                      const endCfi = end.cfi.replace(baseCfi, '')
+                      const rangeCfi = [baseCfi, startCfi, endCfi].join(',')
+                      rendition.current?.book.getRange(rangeCfi).then(range => {
+                        const text = range?.toString()
+                        const currentPageBookmark = programContentBookmark.find(
+                          bookmark => text?.includes(bookmark.highlightContent) && getChapter(loc) === bookmark.chapter,
+                        )
+                        setCurrentPageBookmark(currentPageBookmark ? true : false)
+                        setBookmarkId(currentPageBookmark ? currentPageBookmark.id : undefined)
+                        setBookmarkHighlightContent(text?.slice(0, 20))
+                      })
+                    }
 
-              // toc nav and save progress
-              if (rendition.current && toc.current) {
-                const { href } = rendition.current.location.start
-                const { displayed: displayedEnd } = rendition.current.location.end
-                const totalPage = displayedEnd.total
-                const currentEndPage = displayedEnd.page
-                onEbookCurrentTocChange(getChapter(loc))
-                try {
-                  apolloClient
-                    .query({
-                      query: GetProgramContentEbookToc,
-                      variables: { programContentId, href: `${href}#${getChapter(loc)}` },
-                    })
-                    .then(async ({ data }) => {
-                      if (data.program_content_ebook_toc.length > 0) {
-                        const programContentEbookTocId = data.program_content_ebook_toc[0].id
-                        await apolloClient.mutate({
-                          mutation: UpsertEbookTocProgress,
-                          variables: {
-                            memberId: currentMemberId,
-                            programContentEbookTocId,
-                            latestProgress:
-                              currentEndPage / totalPage > 1 ? 1 : (currentEndPage / totalPage).toFixed(5),
-                            // for currentEndPage + 1, The last page may be blank or not fully filled
-                            finishedAt: (currentEndPage + 1) / totalPage >= 1 ? new Date() : null,
-                          },
-                        })
+                    // toc nav and save progress
+                    if (rendition.current && toc.current) {
+                      const { href } = rendition.current.location.start
+                      const { displayed: displayedEnd } = rendition.current.location.end
+                      const totalPage = displayedEnd.total
+                      const currentEndPage = displayedEnd.page
+                      onEbookCurrentTocChange(getChapter(loc))
+                      try {
+                        apolloClient
+                          .query({
+                            query: GetProgramContentEbookToc,
+                            variables: { programContentId, href: `${href}#${getChapter(loc)}` },
+                          })
+                          .then(async ({ data }) => {
+                            if (data.program_content_ebook_toc.length > 0) {
+                              const programContentEbookTocId = data.program_content_ebook_toc[0].id
+                              await apolloClient.mutate({
+                                mutation: UpsertEbookTocProgress,
+                                variables: {
+                                  memberId: currentMemberId,
+                                  programContentEbookTocId,
+                                  latestProgress:
+                                    currentEndPage / totalPage > 1 ? 1 : (currentEndPage / totalPage).toFixed(5),
+                                  // for currentEndPage + 1, The last page may be blank or not fully filled
+                                  finishedAt: (currentEndPage + 1) / totalPage >= 1 ? new Date() : null,
+                                },
+                              })
+                            }
+                          })
+                      } catch (error) {
+                        process.env.NODE_ENV === 'development' ?? console.error(error)
                       }
+                    }
+                  }}
+                  getRendition={async (_rendition: Rendition) => {
+                    rendition.current = _rendition
+                    // initial theme
+                    rendition.current.themes.override('color', '#424242')
+                    rendition.current.themes.override('background-color', '#ffffff')
+                    rendition.current.themes.override('font-size', `18px`)
+                    rendition.current.themes.override('line-height', '1.5')
+                    rendition.current.on('resized', (size: { width: number; height: number }) => {
+                      console.log(`resized => width: ${size.width}, height: ${size.height}`)
                     })
-                } catch (error) {
-                  process.env.NODE_ENV === 'development' ?? console.error(error)
-                }
-              }
-            }}
-            getRendition={async (_rendition: Rendition) => {
-              rendition.current = _rendition
-              // initial theme
-              rendition.current.themes.override('color', '#424242')
-              rendition.current.themes.override('background-color', '#ffffff')
-              rendition.current.themes.override('font-size', `18px`)
-              rendition.current.themes.override('line-height', '1.5')
-              rendition.current.on('resized', (size: { width: number; height: number }) => {
-                console.log(`resized => width: ${size.width}, height: ${size.height}`)
-              })
-              rendition.current.on('relocated', async (data: any) => {
-                console.log(`relocated`)
-              })
-              await rendition.current?.book.locations.generate(150).then(() => {
-                setIsLocationGenerated(true)
-                setEbook(rendition.current?.book || null)
-              })
-            }}
-          />
+                    await rendition.current?.book.locations.generate(150).then(() => {
+                      setIsLocationGenerated(true)
+                      setEbook(rendition.current?.book || null)
+                    })
+                  }}
+                />
+              </div>
+              <button
+                style={{ ...readerStyles.arrow, ...readerStyles.prev }}
+                onClick={async () => {
+                  await rendition.current?.prev()
+                  const percentage = (rendition.current?.currentLocation() as any)?.start?.percentage
+                  setSliderValue(percentage * 100)
+                }}
+              >
+                ‹
+              </button>
+              <button
+                style={{ ...readerStyles.arrow, ...readerStyles.next }}
+                onClick={async () => {
+                  await rendition.current?.next()
+                  const percentage = (rendition.current?.currentLocation() as any)?.start?.percentage
+                  setSliderValue(percentage * 100)
+                }}
+              >
+                ›
+              </button>
+            </div>
+          </div>
         </div>
       ) : (
         <Flex height="85vh" justifyContent="center" alignItems="center">

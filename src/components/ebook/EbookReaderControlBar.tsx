@@ -38,7 +38,7 @@ export const EbookReaderControlBar: React.VFC<{
   lineHeight: number
   refetchBookmark: () => void
   rendition: React.MutableRefObject<Rendition | undefined>
-  onLocationChange: (loc: undefined | string) => void
+  onLocationChange: (loc: string) => void
   onFontSizeChange: React.Dispatch<React.SetStateAction<number>>
   onLineHeightChange: React.Dispatch<React.SetStateAction<number>>
   onSliderValueChange: React.Dispatch<React.SetStateAction<number>>
@@ -68,11 +68,11 @@ export const EbookReaderControlBar: React.VFC<{
     if (!isFocus) {
       return
     }
-    if (sliderValue === undefined || sliderValue === 0) {
+    if (sliderValue === undefined || sliderValue === 0 || !rendition.current) {
       // go to cover page
       rendition.current?.display()
-    } else {
-      const cfi = rendition.current?.book.locations.cfiFromPercentage(sliderValue / 100)
+    } else { 
+      const cfi = rendition.current.book.locations.cfiFromPercentage(sliderValue / 100)
       onLocationChange(cfi)
     }
 
@@ -111,7 +111,11 @@ export const EbookReaderControlBar: React.VFC<{
             }}
             onTouchEnd={() => setShowTooltip(false)}
             onChangeEnd={() => sliderOnChangeEnd()}
-            onChange={v => onSliderValueChange(v)}
+            onChange={v => {
+              const cfi = rendition.current?.book.locations.cfiFromPercentage(v / 100) || ''
+              const value = rendition.current?.book.locations.percentageFromCfi(cfi) || 0
+              onSliderValueChange(value * 100)
+            }}
             focusThumbOnChange={false}
             step={0.00001}
             max={100}
