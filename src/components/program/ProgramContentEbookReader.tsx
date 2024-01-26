@@ -112,7 +112,8 @@ const ProgramContentEbookReader: React.VFC<{
     rendition.current?.themes.override('background-color', getReaderTheme(theme).backgroundColor)
     rendition.current?.themes.override('font-size', `${ebookFontSize}px`)
     rendition.current?.themes.override('line-height', ebookLineHeight.toString())
-    rendition.current?.reportLocation()
+    const location = rendition.current?.currentLocation() as any
+    setSliderValue(location?.start?.percentage * 100 || 0)
   }, [theme, ebookFontSize, ebookLineHeight])
 
   const readerStyles = {
