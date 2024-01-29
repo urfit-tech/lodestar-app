@@ -10,7 +10,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment-timezone'
 import { flatten, includes } from 'ramda'
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
@@ -106,7 +106,7 @@ const ProgramContentBlock: React.VFC<{
   const { authToken, currentMemberId, currentUserRole, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
-  const { hasProgramContentPermission, isLoginTrial } = useHasProgramContentPermission(programContentId)
+  const { hasProgramContentPermission, isLoginTrial } = useHasProgramContentPermission(programId, programContentId)
   const { changeGlobalPlayingState, setup, close, changeBackgroundMode, isBackgroundMode } =
     useContext(AudioPlayerContext)
   const endedAtRef = useRef(0)
@@ -363,27 +363,37 @@ const ProgramContentBlock: React.VFC<{
   )
 }
 
-const useHasProgramContentPermission: (id: string) => {
+const useHasProgramContentPermission: (
+  programId: string,
+  programContentId: string,
+) => {
   hasProgramContentPermission: boolean
   isTrial: boolean
   isLoginTrial: boolean
-} = id => {
-  const { currentMemberId, isAuthenticated } = useAuth()
-  const { data } = useQuery<hasura.GET_PROGRAM_CONTENT_PERMISSION, hasura.GET_PROGRAM_CONTENT_PERMISSIONVariables>(
-    gql`
-      query GET_PROGRAM_CONTENT_PERMISSION($id: uuid!, $currentMemberId: String!) {
-        program_content_enrollment(where: { program_content_id: { _eq: $id }, member_id: { _eq: $currentMemberId } }) {
-          program_content_id
-        }
+} = (programId, programContentId) => {
+  const { currentMemberId, isAuthenticated, authToken } = useAuth()
+  const [data, setData] = useState<{ programContentId: string } | {}>({})
+
+  const fetch = useCallback(async () => {
+    if (currentMemberId) {
+      const route = `/programs/${programId}/content/${programContentId}`
+      try {
+        const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+          params: { member: currentMemberId },
+          headers: { authorization: `Bearer ${authToken}` },
+        })
+
+        setData(data)
+      } catch (err) {
+        console.log(err)
       }
-    `,
-    {
-      variables: {
-        id,
-        currentMemberId: currentMemberId || '',
-      },
-    },
-  )
+    }
+  }, [currentMemberId])
+
+  useEffect(() => {
+    fetch()
+  }, [fetch])
+
   const { data: programContentData } = useQuery<
     hasura.GET_PROGRAM_CONTENT_DISPLAY_MODE,
     hasura.GET_PROGRAM_CONTENT_DISPLAY_MODEVariables
@@ -397,7 +407,7 @@ const useHasProgramContentPermission: (id: string) => {
     `,
     {
       variables: {
-        id,
+        id: programContentId,
       },
     },
   )
@@ -407,9 +417,7 @@ const useHasProgramContentPermission: (id: string) => {
 
   return {
     hasProgramContentPermission:
-      !!data?.program_content_enrollment?.length ||
-      isTrial ||
-      (isLoginTrial ? Boolean(currentMemberId && isAuthenticated) : false),
+      Object.keys(data).length > 0 || isTrial || (isLoginTrial ? Boolean(currentMemberId && isAuthenticated) : false),
     isTrial,
     isLoginTrial,
   }

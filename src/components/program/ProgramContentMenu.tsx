@@ -491,7 +491,7 @@ const SortBySectionItem: React.VFC<{
     progress = contentCurrentProgress?.progress || 0
   }
 
-  const { hasProgramContentPermission } = useHasProgramContentPermission(programContent.id)
+  const { hasProgramContentPermission } = useHasProgramContentPermission(programId, programContent.id)
 
   const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
 

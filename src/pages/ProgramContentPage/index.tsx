@@ -184,6 +184,7 @@ const ProgramContentPage: React.VFC = () => {
             {settings['layout.program_content'] ? (
               <div className="no-gutters">
                 <ProgramCustomContentBlock
+                  programId={program.id}
                   programContentSections={program.contentSections}
                   programContentId={programContentId}
                   editors={program.editors}

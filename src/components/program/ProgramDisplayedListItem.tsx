@@ -2,11 +2,9 @@ import { Icon } from '@chakra-ui/icons'
 import { Typography } from 'antd'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
 import moment from 'moment'
-import { sum } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { useProgramContentProgress } from '../../contexts/ProgressContext'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramPackageProgram } from '../../types/programPackage'
@@ -85,13 +83,6 @@ export const ProgramDisplayedListItem: React.VFC<{
   memberId?: string | null
 }> = ({ program, memberId }) => {
   const { formatMessage } = useIntl()
-  const { programContentProgress } = useProgramContentProgress(program.id, memberId || '')
-  const viewRate = programContentProgress?.length
-    ? Math.floor(
-        (sum(programContentProgress.map(contentProgress => contentProgress.progress)) / programContentProgress.length) *
-          100,
-      )
-    : 0
 
   return (
     <StyledProgramDisplayItem>
@@ -112,7 +103,7 @@ export const ProgramDisplayedListItem: React.VFC<{
           </div>
           {memberId && (
             <StyledProgressBar className="flex-shrink-0">
-              <ProgressBar percent={viewRate} />
+              <ProgressBar percent={program.viewRate ? program.viewRate * 100 : 0} />
             </StyledProgressBar>
           )}
         </StyledProgramInfo>

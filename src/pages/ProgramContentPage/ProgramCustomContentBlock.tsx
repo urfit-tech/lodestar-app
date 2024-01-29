@@ -47,17 +47,18 @@ const StyledProgramContentBlock = styled.div`
 `
 
 const ProgramCustomContentBlock: React.VFC<{
+  programId: string
   programContentSections: (ProgramContentSection & { contents: ProgramContent[] })[]
   programContentId: string
   editors?: string[]
   children?: ReactElement
-}> = ({ programContentSections, programContentId, editors, children }) => {
+}> = ({ programId, programContentSections, programContentId, editors, children }) => {
   const { formatMessage } = useIntl()
   const { loading: loadingApp } = useApp()
   const { authToken, permissions, currentMemberId } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
-  const { hasProgramContentPermission } = useHasProgramContentPermission(programContentId)
+  const { hasProgramContentPermission } = useHasProgramContentPermission(programId, programContentId)
   const endedAtRef = useRef(0)
 
   const programContentBodyType = programContent?.programContentBody?.type
