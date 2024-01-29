@@ -180,12 +180,12 @@ const ProgramContentEbookReader: React.VFC<{
                       const { displayed: displayedEnd } = rendition.current.location.end
                       const totalPage = displayedEnd.total
                       const currentEndPage = displayedEnd.page
-                      onEbookCurrentTocChange(getChapter(loc))
+                      onEbookCurrentTocChange(href?.split('/').pop() || '')
                       try {
                         apolloClient
                           .query({
                             query: GetProgramContentEbookToc,
-                            variables: { programContentId, href: `${href}#${getChapter(loc)}` },
+                            variables: { programContentId, href: `%${href}%` },
                           })
                           .then(async ({ data }) => {
                             if (data.program_content_ebook_toc.length > 0) {
@@ -338,7 +338,7 @@ const EbookReaderBookmarkIcon: React.VFC<{
 
 const GetProgramContentEbookToc = gql`
   query GetProgramContentEbookToc($programContentId: uuid!, $href: String!) {
-    program_content_ebook_toc(where: { program_content_id: { _eq: $programContentId }, href: { _eq: $href } }) {
+    program_content_ebook_toc(where: { program_content_id: { _eq: $programContentId }, href: { _ilike: $href } }) {
       id
     }
   }
