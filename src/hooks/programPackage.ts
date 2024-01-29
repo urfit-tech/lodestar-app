@@ -260,22 +260,23 @@ export const useProgramPackage = (programPackageId: string, memberId: string | n
   >()
 
   const fetch = useCallback(async () => {
-    if (authToken) {
-      try {
-        const route = `/program-packages/${programPackageId}`
-        setLoading(true)
-        const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
-          params: { memberId },
-          headers: { authorization: `Bearer ${authToken}` },
-        })
-        setData(data)
-      } catch (err) {
-        console.log(err)
-        setError(err)
-      } finally {
-        setLoading(false)
-      }
+    // if (authToken) {
+    try {
+      const route = `/program-packages/${programPackageId}`
+      setLoading(true)
+      const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+        params: { memberId },
+        headers: { authorization: `Bearer ${authToken}` },
+      })
+      setData(data)
+    } catch (err) {
+      console.log(err)
+      setError(err)
+      setLoading(false)
+    } finally {
+      setLoading(false)
     }
+    // }
   }, [authToken])
 
   useEffect(() => {
