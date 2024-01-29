@@ -240,9 +240,7 @@ const ProgramContentMenu: React.VFC<{
                   borderBottom="1px solid #ececec"
                   p="1.5rem 0 1rem 0"
                   cursor="pointer"
-                  onClick={() => {
-                    onEbookLocationChange?.(searchResult.cfi)
-                  }}
+                  onClick={() => ebook?.rendition.display(searchResult.cfi)}
                 >
                   <Box mb="0.5rem" fontSize="16px" lineHeight="24px" color="#585858" fontWeight="500">
                     <HightLightText text={searchResult.excerpt} highlight={searchText} />
@@ -410,9 +408,7 @@ const ContentSection: React.VFC<{
               isLoading={isLoading}
               passExam={passExam}
               setPassExam={setPassExam}
-              onClick={() => {
-                onSelect?.(programContent.id)
-              }}
+              onClick={() => onSelect?.(programContent.id)}
             />
             {programContent.contentType === 'ebook' && programContent.id === currentProgramContentId ? (
               <EbookSecondaryMenu
@@ -800,7 +796,6 @@ const EbookSecondaryMenu: React.VFC<{
   return (
     <Box {...(currentProgramContentId === programContentId ? { bg: `${rgba(theme.colors.primary[500], 0.1)}` } : null)}>
       {tocs.map(toc => {
-        const RegexHrefToc = /#(.+)/
         return (
           <Box>
             <Flex
@@ -808,7 +803,7 @@ const EbookSecondaryMenu: React.VFC<{
               justifyContent="space-between"
               p="0.75rem 2rem 0.75rem 2rem"
               cursor="pointer"
-              {...(toc.href.match(RegexHrefToc)?.[1] === ebookCurrentToc
+              {...(ebookCurrentToc && ebookCurrentToc !== '' && toc.href.includes(ebookCurrentToc)
                 ? {
                     _before: {
                       content: '""',
@@ -830,7 +825,9 @@ const EbookSecondaryMenu: React.VFC<{
                 fontSize="14px"
                 letterSpacing="0.18px"
                 fontWeight="500"
-                {...(toc.href === ebookCurrentToc ? { color: `${theme.colors.primary[500]}` } : '#585858')}
+                {...(ebookCurrentToc && ebookCurrentToc !== '' && toc.href.includes(ebookCurrentToc)
+                  ? { color: `${theme.colors.primary[500]}` }
+                  : '#585858')}
               >
                 {toc.label}
               </Box>
@@ -847,7 +844,7 @@ const EbookSecondaryMenu: React.VFC<{
                 letterSpacing="0.4px"
                 fontWeight="500"
                 cursor="pointer"
-                {...(subitem.href.match(RegexHrefToc)?.[1] === ebookCurrentToc
+                {...(ebookCurrentToc && ebookCurrentToc !== '' && subitem.href.includes(ebookCurrentToc)
                   ? {
                       _before: {
                         content: '""',
@@ -869,7 +866,9 @@ const EbookSecondaryMenu: React.VFC<{
                   fontSize="14px"
                   letterSpacing="0.18px"
                   fontWeight="500"
-                  {...(subitem.href === ebookCurrentToc ? { color: `${theme.colors.primary[500]}` } : '#585858')}
+                  {...(ebookCurrentToc && ebookCurrentToc !== '' && subitem.href.includes(ebookCurrentToc)
+                    ? { color: `${theme.colors.primary[500]}` }
+                    : '#585858')}
                 >
                   {subitem.label}
                 </Box>
