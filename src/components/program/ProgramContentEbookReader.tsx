@@ -4,7 +4,7 @@ import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { EpubView, ReactReader, ReactReaderStyle } from 'react-reader'
+import { EpubView, ReactReaderStyle } from 'react-reader'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
@@ -76,8 +76,8 @@ const ProgramContentEbookReader: React.VFC<{
   const [chapter, setChapter] = useState('')
 
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
-  const [ebookFontSize, setEbookFontSize] = useState(20)
-  const [ebookLineHeight, setEbookLineHeight] = useState(1)
+  const [ebookFontSize, setEbookFontSize] = useState(18)
+  const [ebookLineHeight, setEbookLineHeight] = useState(1.5)
 
   const [bookmarkHighlightContent, setBookmarkHighlightContent] = useState('')
 
@@ -210,11 +210,6 @@ const ProgramContentEbookReader: React.VFC<{
                   }}
                   getRendition={async (_rendition: Rendition) => {
                     rendition.current = _rendition
-                    // initial theme
-                    rendition.current.themes.override('color', '#424242')
-                    rendition.current.themes.override('background-color', '#ffffff')
-                    rendition.current.themes.override('font-size', `18px`)
-                    rendition.current.themes.override('line-height', '1.5')
                     rendition.current.on('resized', (size: { width: number; height: number }) => {
                       console.log(`resized => width: ${size.width}, height: ${size.height}`)
                     })
