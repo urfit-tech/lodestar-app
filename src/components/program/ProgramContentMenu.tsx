@@ -745,7 +745,7 @@ const CheckIconButton: React.VFC<{ status: 'unread' | 'done' }> = ({ status }) =
         position="absolute"
         w="20px"
         h="20px"
-        border="0px solid transparent"
+        border="1px solid transparent"
         borderRadius="50%"
         textAlign="center"
         fontSize="10px"
