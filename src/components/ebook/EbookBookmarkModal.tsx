@@ -106,19 +106,23 @@ const BookmarkRow: React.VFC<{
   }
 
   return (
-    <Flex w="100%" alignItems="center">
+    <Flex w="100%" alignItems="start">
       <Flex w="10%">
         <MarkIcon fill="#FF7D62" />
       </Flex>
       <Flex
         cursor="pointer"
         w="80%"
+        direction="column"
         onClick={() => {
           onLocationChange(epubCfi)
         }}
       >
-        <Text size="sm" noOfLines={1}>
-          {chapter} | {highlightContent}
+        <Text size="sm" color="#585858" noOfLines={1}>
+          {highlightContent}
+        </Text>
+        <Text fontSize="14px" color="#9b9b9b" fontWeight="500" noOfLines={1}>
+          {chapter}
         </Text>
       </Flex>
       <Flex cursor="pointer" w="10%">
