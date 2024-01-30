@@ -1,3 +1,8 @@
+html,
+body {
+  height: 100%;
+  overflow: auto;
+}
 :focus:not(:focus-visible) {
   outline: none;
 }
