@@ -817,7 +817,7 @@ const EbookSecondaryMenu: React.VFC<{
                   }
                 : null)}
               onClick={() => {
-                onEbookLocationChange?.(toc.href)
+                onEbookLocationChange?.(toc.href.replace('../', ''))
                 refetchTocProgress()
               }}
             >
@@ -858,7 +858,7 @@ const EbookSecondaryMenu: React.VFC<{
                     }
                   : null)}
                 onClick={() => {
-                  onEbookLocationChange?.(subitem.href)
+                  onEbookLocationChange?.(subitem.href.replace('../', ''))
                   refetchTocProgress()
                 }}
               >
