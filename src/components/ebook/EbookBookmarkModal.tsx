@@ -34,7 +34,8 @@ export const EbookBookmarkModal: React.VFC<{
     highlightContent: string
     chapter: string | null | undefined
   }>
-}> = ({ refetchBookmark, onLocationChange, currentThemeData, programContentBookmark }) => {
+  setBookmarkId: React.Dispatch<React.SetStateAction<string | undefined>>
+}> = ({ refetchBookmark, onLocationChange, currentThemeData, programContentBookmark, setBookmarkId }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <Flex>
@@ -62,12 +63,10 @@ export const EbookBookmarkModal: React.VFC<{
                     {programContentBookmark.map(bookmark => (
                       <BookmarkRow
                         key={bookmark.id}
-                        epubCfi={bookmark.epubCfi}
                         onLocationChange={onLocationChange}
                         refetchBookmark={refetchBookmark}
-                        id={bookmark.id}
-                        chapter={bookmark.chapter}
-                        highlightContent={bookmark.highlightContent}
+                        bookmark={bookmark}
+                        setBookmarkId={setBookmarkId}
                       />
                     ))}
                   </Grid>
@@ -84,12 +83,16 @@ export const EbookBookmarkModal: React.VFC<{
 const BookmarkRow: React.VFC<{
   onLocationChange: (loc: string) => void
   color?: string
-  epubCfi: string
-  chapter: string | null | undefined
-  highlightContent: string
-  id: string
+  bookmark: {
+    id: string
+    epubCfi: string
+    createdAt: Date
+    highlightContent: string
+    chapter: string | null | undefined
+  }
   refetchBookmark: () => void
-}> = ({ id, epubCfi, highlightContent, chapter, refetchBookmark, onLocationChange }) => {
+  setBookmarkId: React.Dispatch<React.SetStateAction<string | undefined>>
+}> = ({ bookmark, refetchBookmark, onLocationChange, setBookmarkId }) => {
   const apolloClient = useApolloClient()
   const [isDeleting, setDeleting] = useState<boolean>(false)
 
@@ -102,6 +105,7 @@ const BookmarkRow: React.VFC<{
       },
     })
     await refetchBookmark()
+    setBookmarkId(undefined)
     setDeleting(false)
   }
 
@@ -115,18 +119,18 @@ const BookmarkRow: React.VFC<{
         w="80%"
         direction="column"
         onClick={() => {
-          onLocationChange(epubCfi)
+          onLocationChange(bookmark.epubCfi)
         }}
       >
         <Text size="sm" color="#585858" noOfLines={1}>
-          {highlightContent}
+          {bookmark.highlightContent}
         </Text>
         <Text fontSize="14px" color="#9b9b9b" fontWeight="500" noOfLines={1}>
-          {chapter}
+          {bookmark.chapter}
         </Text>
       </Flex>
       <Flex cursor="pointer" w="10%">
-        {isDeleting ? <Spinner size="sm" /> : <DeleteIcon onClick={() => deleteBookmark(id)} />}
+        {isDeleting ? <Spinner size="sm" /> : <DeleteIcon onClick={() => deleteBookmark(bookmark.id)} />}
       </Flex>
     </Flex>
   )
