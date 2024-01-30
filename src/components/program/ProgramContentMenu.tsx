@@ -176,10 +176,11 @@ const ProgramContentMenu: React.VFC<{
   const isEnrolled = enrolledProgramIds.includes(program.id)
   const programContents = program.contentSections.map(v => v.contents).flat()
   const handleSearch = async (searchText: string) => {
-    if (!searchText) return
+    if (!searchText || !ebook) return
     const res = (await doEbookSearch(searchText, ebook)) as { cfi: string; excerpt: string }[]
     const resWithToc = res?.map(r => {
-      return { ...r, toc: getChapter(r.cfi) }
+      const section = ebook.spine.get(r.cfi)
+      return { ...r, toc: getChapter(ebook, section.href) }
     })
     setEbookSearchResults(resWithToc)
   }

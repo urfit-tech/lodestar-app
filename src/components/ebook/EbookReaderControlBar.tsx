@@ -33,7 +33,13 @@ const SliderContainer = styled(Flex)`
 export const EbookReaderControlBar: React.VFC<{
   isLocationGenerated: boolean
   chapter: string
-  programContentBookmark: Array<any>
+  programContentBookmark: Array<{
+    id: any
+    epubCfi: string
+    createdAt: Date
+    highlightContent: string
+    chapter: string | null | undefined
+  }>
   fontSize: number
   lineHeight: number
   refetchBookmark: () => void
@@ -71,7 +77,7 @@ export const EbookReaderControlBar: React.VFC<{
     if (sliderValue === undefined || sliderValue === 0 || !rendition.current) {
       // go to cover page
       rendition.current?.display()
-    } else { 
+    } else {
       const cfi = rendition.current.book.locations.cfiFromPercentage(sliderValue / 100)
       onLocationChange(cfi)
     }
@@ -111,11 +117,7 @@ export const EbookReaderControlBar: React.VFC<{
             }}
             onTouchEnd={() => setShowTooltip(false)}
             onChangeEnd={() => sliderOnChangeEnd()}
-            onChange={v => {
-              const cfi = rendition.current?.book.locations.cfiFromPercentage(v / 100) || ''
-              const value = rendition.current?.book.locations.percentageFromCfi(cfi) || 0
-              onSliderValueChange(value * 100)
-            }}
+            onChange={v => onSliderValueChange(v)}
             focusThumbOnChange={false}
             step={0.00001}
             max={100}
