@@ -783,7 +783,7 @@ const EbookSecondaryMenu: React.VFC<{
   ebookCurrentToc: string | null
   ebookLocation: string | number
   onEbookLocationChange?: (loc: string | number) => void
-}> = ({ programContentId, tocs, ebookCurrentToc, onEbookLocationChange }) => {
+}> = ({ programContentId, tocs, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
   const theme = useAppTheme()
   const { programContentId: currentProgramContentId } = useParams<{
     programContentId?: string
@@ -792,7 +792,7 @@ const EbookSecondaryMenu: React.VFC<{
 
   useEffect(() => {
     refetchTocProgress()
-  }, [ebookCurrentToc, refetchTocProgress])
+  }, [ebookCurrentToc, ebookLocation, refetchTocProgress])
 
   return (
     <Box {...(currentProgramContentId === programContentId ? { bg: `${rgba(theme.colors.primary[500], 0.1)}` } : null)}>
@@ -900,11 +900,11 @@ const useProgramContentProgress = () => {
 const useCurrentMemberEbookTocProgress = (programContentId: string) => {
   const { currentMemberId } = useAuth()
   const { data, refetch } = useQuery<
-    hasura.GetCurrentMemberEbookTocProgress,
-    hasura.GetCurrentMemberEbookTocProgressVariables
+    hasura.PhGetCurrentMemberEbookTocProgress,
+    hasura.PhGetCurrentMemberEbookTocProgressVariables
   >(
     gql`
-      query GetCurrentMemberEbookTocProgress($programContentId: uuid!, $currentMemberId: String!) {
+      query PhGetCurrentMemberEbookTocProgress($programContentId: uuid!, $currentMemberId: String!) {
         program_content_ebook_toc_progress(
           where: {
             member_id: { _eq: $currentMemberId }
