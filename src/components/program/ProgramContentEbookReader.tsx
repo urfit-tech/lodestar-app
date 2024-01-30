@@ -3,18 +3,57 @@ import { Flex, Spinner } from '@chakra-ui/react'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { EpubView, ReactReaderStyle } from 'react-reader'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
 import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
 import { decryptData } from './decryptUtils'
-import type { NavItem, Rendition, Book } from 'epubjs'
+import type { NavItem, Rendition, Book, Location } from 'epubjs'
 
-export const getChapter = (loc: string) => {
-  const chapter = loc.match(/\[(.*?)\]/g)?.map((match: string) => match.slice(1, -1))[0] || ''
-  return chapter
+export const getChapter = (book: Book, href: string) => {
+  const currentNavItem = getNavItem(book, href)
+  const parentNavItems = getParentNavItem(book, currentNavItem)
+  const chapterLabel = [...parentNavItems, currentNavItem].map(item => item?.label).join(' ') || ''
+  return chapterLabel
+}
+
+function flatten(chapters: any) {
+  return [].concat.apply(
+    [],
+    chapters.map((chapter: NavItem) => ([] as NavItem[]).concat.apply([chapter], flatten(chapter.subitems))),
+  ) as NavItem[]
+}
+
+const getNavItem = (book: Book, href: string) => {
+  let match = flatten(book.navigation.toc).find((chapter: NavItem) => {
+    return (
+      book.canonical(chapter.href).includes(book.canonical(href)) ||
+      book.canonical(href).includes(book.canonical(chapter.href))
+    )
+  }, null)
+
+  return match
+}
+
+const getParentNavItem = (book: Book, navItem: NavItem | undefined) => {
+  if (!navItem) {
+    return []
+  }
+
+  let parentId = navItem.parent
+  const allToc = flatten(book.navigation.toc)
+  const parentNavItems = []
+  while (parentId) {
+    for (const toc of allToc) {
+      if (parentId === toc.id) {
+        parentNavItems.push(toc)
+        parentId = toc.parent
+      }
+    }
+  }
+  return parentNavItems
 }
 
 const ReaderBookmark = styled.div`
@@ -101,21 +140,6 @@ const ProgramContentEbookReader: React.VFC<{
     }
   }, [])
 
-  useEffect(() => {
-    if (authToken) {
-      getEpubFromS3(programContentId, authToken)
-    }
-  }, [authToken, programContentId, getEpubFromS3])
-
-  useEffect(() => {
-    rendition.current?.themes.override('color', getReaderTheme(theme).color)
-    rendition.current?.themes.override('background-color', getReaderTheme(theme).backgroundColor)
-    rendition.current?.themes.override('font-size', `${ebookFontSize}px`)
-    rendition.current?.themes.override('line-height', ebookLineHeight.toString())
-    const location = rendition.current?.currentLocation() as any
-    setSliderValue(location?.start?.percentage * 100 || 0)
-  }, [theme, ebookFontSize, ebookLineHeight])
-
   const readerStyles = {
     ...ReactReaderStyle,
     readerArea: {
@@ -124,6 +148,22 @@ const ProgramContentEbookReader: React.VFC<{
       transition: 'none',
     },
   }
+
+  useLayoutEffect(() => {
+    if (authToken) {
+      getEpubFromS3(programContentId, authToken)
+    }
+  }, [authToken, programContentId, getEpubFromS3])
+
+  useLayoutEffect(() => {
+    rendition.current?.themes.override('color', getReaderTheme(theme).color)
+    rendition.current?.themes.override('background-color', getReaderTheme(theme).backgroundColor)
+    rendition.current?.themes.override('font-size', `${ebookFontSize}px`)
+    rendition.current?.themes.override('line-height', ebookLineHeight.toString())
+    const location = rendition.current?.currentLocation() as any as Location
+    setSliderValue(location?.start?.percentage * 100 || 0)
+  }, [theme, ebookFontSize, ebookLineHeight])
+
 
   return (
     <div>
@@ -152,21 +192,28 @@ const ProgramContentEbookReader: React.VFC<{
                   tocChanged={_toc => (toc.current = _toc)}
                   location={location}
                   locationChanged={(loc: string) => {
+                    onLocationChange(loc)
                     const { start, end, atEnd } = rendition.current?.location || {}
                     if (start && end && rendition.current) {
+                      setSliderValue(start.percentage * 100)
+                      // if this page is end page, set slider value to 100
+                      if (atEnd) {
+                        setSliderValue(100)
+                      }
                       // set chapter and check if current page is ended page
-                      setChapter(getChapter(loc))
-                      atEnd && setSliderValue(100)
+                      const chapterLabel = getChapter(rendition.current.book, rendition.current.location.start.href)
+                      setChapter(chapterLabel)
+
                       // get current showing text
                       const splitCfi = start.cfi.split('/')
                       const baseCfi = splitCfi[0] + '/' + splitCfi[1] + '/' + splitCfi[2] + '/' + splitCfi[3]
                       const startCfi = start.cfi.replace(baseCfi, '')
                       const endCfi = end.cfi.replace(baseCfi, '')
                       const rangeCfi = [baseCfi, startCfi, endCfi].join(',')
-                      rendition.current?.book.getRange(rangeCfi).then(range => {
+                      rendition.current.book.getRange(rangeCfi).then(range => {
                         const text = range?.toString()
                         const currentPageBookmark = programContentBookmark.find(
-                          bookmark => text?.includes(bookmark.highlightContent) && getChapter(loc) === bookmark.chapter,
+                          bookmark => text?.includes(bookmark.highlightContent) && chapterLabel === bookmark.chapter,
                         )
                         setCurrentPageBookmark(currentPageBookmark ? true : false)
                         setBookmarkId(currentPageBookmark ? currentPageBookmark.id : undefined)
@@ -224,8 +271,6 @@ const ProgramContentEbookReader: React.VFC<{
                 style={{ ...readerStyles.arrow, ...readerStyles.prev }}
                 onClick={async () => {
                   await rendition.current?.prev()
-                  const percentage = (rendition.current?.currentLocation() as any)?.start?.percentage
-                  setSliderValue(percentage * 100)
                 }}
               >
                 ‹
@@ -234,8 +279,6 @@ const ProgramContentEbookReader: React.VFC<{
                 style={{ ...readerStyles.arrow, ...readerStyles.next }}
                 onClick={async () => {
                   await rendition.current?.next()
-                  const percentage = (rendition.current?.currentLocation() as any)?.start?.percentage
-                  setSliderValue(percentage * 100)
                 }}
               >
                 ›
@@ -260,7 +303,7 @@ const ProgramContentEbookReader: React.VFC<{
           fontSize={ebookFontSize}
           lineHeight={ebookLineHeight}
           refetchBookmark={refetchBookmark}
-          onLocationChange={(loc: undefined | string) => rendition.current?.display(loc)}
+          onLocationChange={(cfi: string) => rendition.current?.display(cfi)}
           onFontSizeChange={setEbookFontSize}
           onLineHeightChange={setEbookLineHeight}
           onThemeChange={setTheme}
