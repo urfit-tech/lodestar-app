@@ -1,4 +1,4 @@
-import { gql, useApolloClient, useQuery } from '@apollo/client'
+import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
 import { Flex, Spinner } from '@chakra-ui/react'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -107,7 +107,8 @@ const ProgramContentEbookReader: React.VFC<{
   const rendition = useRef<Rendition | undefined>(undefined)
   const toc = useRef<NavItem[]>([])
   const { programContentBookmark, refetch: refetchBookmark } = useEbookBookmark(programContentId, currentMemberId)
-
+  const { deleteProgramContentEbookTocProgress, insertProgramContentEbookTocProgress } =
+    useMutationProgramContentEbookTocProgress()
   const [isCurrentPageBookmark, setCurrentPageBookmark] = useState<boolean>(false)
   const [sliderValue, setSliderValue] = useState<number>(0)
   const [isLocationGenerated, setIsLocationGenerated] = useState<boolean>(false)
@@ -232,21 +233,37 @@ const ProgramContentEbookReader: React.VFC<{
                         apolloClient
                           .query({
                             query: GetProgramContentEbookToc,
-                            variables: { programContentId, href: `%${href}%` },
+                            variables: { memberId: currentMemberId, programContentId, href: `%${href}%` },
+                            fetchPolicy: 'no-cache',
                           })
-                          .then(async ({ data }) => {
-                            if (data.program_content_ebook_toc.length > 0) {
+                          .then(({ data }) => {
+                            if (currentMemberId && data.program_content_ebook_toc.length > 0) {
+                              const finishedAt =
+                                data.program_content_ebook_toc[0]?.program_content_ebook_toc_progress_list[0]
+                                  ?.finished_at
                               const programContentEbookTocId = data.program_content_ebook_toc[0].id
-                              await apolloClient.mutate({
-                                mutation: UpsertEbookTocProgress,
+                              deleteProgramContentEbookTocProgress({
                                 variables: {
                                   memberId: currentMemberId,
                                   programContentEbookTocId,
-                                  latestProgress:
-                                    currentEndPage / totalPage > 1 ? 1 : (currentEndPage / totalPage).toFixed(5),
-                                  // for currentEndPage + 1, The last page may be blank or not fully filled
-                                  finishedAt: (currentEndPage + 1) / totalPage >= 1 ? new Date() : null,
                                 },
+                              }).then(({ data: deleteData }) => {
+                                if ((deleteData?.delete_program_content_ebook_toc_progress?.affected_rows || 0) > 0) {
+                                  insertProgramContentEbookTocProgress({
+                                    variables: {
+                                      memberId: currentMemberId,
+                                      programContentEbookTocId,
+                                      latestProgress:
+                                        currentEndPage / totalPage > 1 ? 1 : (currentEndPage / totalPage).toFixed(5),
+                                      // for currentEndPage + 1, The last page may be blank or not fully filled
+                                      finisherAt: finishedAt
+                                        ? finishedAt
+                                        : (currentEndPage + 1) / totalPage >= 1
+                                        ? new Date()
+                                        : null,
+                                    },
+                                  })
+                                }
                               })
                             }
                           })
@@ -380,35 +397,64 @@ const EbookReaderBookmarkIcon: React.VFC<{
 }
 
 const GetProgramContentEbookToc = gql`
-  query GetProgramContentEbookToc($programContentId: uuid!, $href: String!) {
+  query PhGetProgramContentEbookTocAndCurrentMemberProgress(
+    $programContentId: uuid!
+    $href: String!
+    $memberId: String!
+  ) {
     program_content_ebook_toc(where: { program_content_id: { _eq: $programContentId }, href: { _ilike: $href } }) {
       id
+      program_content_ebook_toc_progress_list(where: { member_id: { _eq: $memberId } }) {
+        id
+        finished_at
+      }
     }
   }
 `
-const UpsertEbookTocProgress = gql`
-  mutation UpsertEbookTocProgress(
-    $memberId: String!
-    $programContentEbookTocId: uuid!
-    $latestProgress: numeric!
-    $finishedAt: timestamptz
-  ) {
-    insert_program_content_ebook_toc_progress(
-      objects: {
-        member_id: $memberId
-        program_content_ebook_toc_id: $programContentEbookTocId
-        latest_progress: $latestProgress
-        finished_at: $finishedAt
+
+export const useMutationProgramContentEbookTocProgress = () => {
+  const [deleteProgramContentEbookTocProgress] = useMutation<
+    hasura.DeleteProgramContentEbookTocProgress,
+    hasura.DeleteProgramContentEbookTocProgressVariables
+  >(gql`
+    mutation DeleteProgramContentEbookTocProgress($memberId: String!, $programContentEbookTocId: uuid!) {
+      delete_program_content_ebook_toc_progress(
+        where: { member_id: { _eq: $memberId }, program_content_ebook_toc_id: { _eq: $programContentEbookTocId } }
+      ) {
+        affected_rows
       }
-      on_conflict: {
-        constraint: program_content_ebook_toc_pro_program_content_ebook_toc_id__key
-        update_columns: [latest_progress, finished_at]
-      }
-    ) {
-      affected_rows
     }
+  `)
+  const [insertProgramContentEbookTocProgress] = useMutation<
+    hasura.InsertProgramContentEbookTocProgress,
+    hasura.InsertProgramContentEbookTocProgressVariables
+  >(
+    gql`
+      mutation InsertProgramContentEbookTocProgress(
+        $memberId: String!
+        $programContentEbookTocId: uuid!
+        $latestProgress: numeric!
+        $finisherAt: timestamptz
+      ) {
+        insert_program_content_ebook_toc_progress_one(
+          object: {
+            member_id: $memberId
+            program_content_ebook_toc_id: $programContentEbookTocId
+            latest_progress: $latestProgress
+            finished_at: $finisherAt
+          }
+        ) {
+          id
+        }
+      }
+    `,
+  )
+
+  return {
+    deleteProgramContentEbookTocProgress,
+    insertProgramContentEbookTocProgress,
   }
-`
+}
 
 const insertProgramContentEbookBookmark = gql`
   mutation InsertEbookBookmark(
