@@ -146,9 +146,10 @@ const ProgramContentEbookReader: React.VFC<{
 
         const response = await axios.get(ebookUrl, config)
 
-        const hashKey = istrial ? 'trial' : authToken.split('.')[2] || ''
+        const hashKey = istrial ? `trial_key_${process.env.REACT_APP_EBOOK_SALT}` : authToken.split('.')[2] || ''
+        const iv = istrial ? `trial_key_${process.env.REACT_APP_EBOOK_SALT}` : appId
 
-        const decryptedData = decryptData(response.data, hashKey, appId)
+        const decryptedData = decryptData(response.data, hashKey, iv)
 
         setSource(decryptedData)
       } catch (error) {
