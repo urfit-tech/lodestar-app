@@ -167,7 +167,7 @@ const ProgramContentEbookReader: React.VFC<{
 
   return (
     <div>
-      {source ? (
+      {source && chapter ? (
         <EbookReaderBookmarkIcon
           location={location}
           refetchBookmark={refetchBookmark}
