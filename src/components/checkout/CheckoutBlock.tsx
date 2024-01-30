@@ -371,7 +371,11 @@ const CheckoutBlock: React.VFC<{
     }
 
     const { conversionApiData, conversionApi } = getConversionApiData(member, { contents, event })
-    if (settings['tracking.fb_pixel_id'] && settings['tracking.fb_access_token'] && enabledModules.fb_conversion_api) {
+    if (
+      settings['tracking.fb_conversion_api.pixel_id'] &&
+      settings['tracking.fb_conversion_api.access_token'] &&
+      enabledModules.fb_conversion_api
+    ) {
       if (authToken) await conversionApi(authToken, 'AddPaymentInfo').catch(error => console.log(error))
     }
 
