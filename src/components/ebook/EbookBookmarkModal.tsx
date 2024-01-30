@@ -27,7 +27,13 @@ export const EbookBookmarkModal: React.VFC<{
   refetchBookmark: () => void
   onLocationChange: (loc: string) => void
   currentThemeData: { color: string; backgroundColor: string }
-  programContentBookmark: Array<any>
+  programContentBookmark: Array<{
+    id: string
+    epubCfi: string
+    createdAt: Date
+    highlightContent: string
+    chapter: string | null | undefined
+  }>
 }> = ({ refetchBookmark, onLocationChange, currentThemeData, programContentBookmark }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
@@ -79,7 +85,7 @@ const BookmarkRow: React.VFC<{
   onLocationChange: (loc: string) => void
   color?: string
   epubCfi: string
-  chapter: string
+  chapter: string | null | undefined
   highlightContent: string
   id: string
   refetchBookmark: () => void
