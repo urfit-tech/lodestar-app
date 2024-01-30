@@ -1,15 +1,15 @@
 import { gql, useApolloClient, useMutation } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { ConversionApiContent, ConversionApiEvent } from 'lodestar-app-element/src/types/conversionApi'
 import { getConversionApiData } from 'lodestar-app-element/src/helpers/conversionApi'
+import { ConversionApiContent, ConversionApiEvent } from 'lodestar-app-element/src/types/conversionApi'
 import { uniqBy } from 'ramda'
 import React, { useCallback, useEffect, useState } from 'react'
 import hasura from '../hasura'
-import { CartProductProps } from '../types/checkout'
-import { ProductType } from '../types/product'
 import { getTrackingCookie } from '../helpers'
 import { useMember } from '../hooks/member'
+import { CartProductProps } from '../types/checkout'
+import { ProductType } from '../types/product'
 
 const CartContext = React.createContext<{
   cartProducts: CartProductProps[]
@@ -176,8 +176,8 @@ export const CartProvider: React.FC = ({ children }) => {
           }
           const { conversionApi, conversionApiData } = getConversionApiData(member, { contents, event })
           if (
-            settings['tracking.fb_pixel_id'] &&
-            settings['tracking.fb_access_token'] &&
+            settings['tracking.fb_conversion_api.pixel_id'] &&
+            settings['tracking.fb_conversion_api.access_token'] &&
             enabledModules.fb_conversion_api
           ) {
             if (authToken) await conversionApi(authToken, 'AddToCart').catch(error => console.log(error))
