@@ -15,13 +15,13 @@ const ProgramPackageContentPage: React.VFC = () => {
   const [specificMemberId] = useQueryParam('memberId', StringParam)
   const { currentMemberId, currentUserRole } = useAuth()
   const memberId = specificMemberId || currentMemberId
-  const { loading, error, programPackage, programs } = useProgramPackage(programPackageId, memberId)
+  const { loading, error, data: programPackage } = useProgramPackage(programPackageId, memberId)
 
-  if (loading || error || !currentUserRole || !programPackage) {
+  if (loading || !currentUserRole) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
 
-  if (currentUserRole === 'general-member' && !programPackage.isEnrolled) {
+  if (!programPackage) {
     return <Redirect to={`/program-packages/${programPackageId}`} />
   }
 
@@ -36,7 +36,7 @@ const ProgramPackageContentPage: React.VFC = () => {
         />
         <div className="py-5">
           <ProgramCollection
-            programs={programs}
+            programs={programPackage.programs}
             renderItem={({ program, displayType }) =>
               displayType === 'grid' ? (
                 <Link

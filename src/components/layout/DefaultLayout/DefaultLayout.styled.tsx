@@ -10,8 +10,11 @@ export const StyledLayout = styled(Layout)<{ variant?: 'white'; header?: string 
   ${props => (props.header === 'noHeader' ? ' .ant-layout-content { padding-top: 0px;}' : '')}
 `
 export const StyledLayoutHeader = styled(Layout.Header)`
-  overflow: hidden;
-  z-index: 4;
+  position: sticky;
+  position: -webkit-sticky;
+  height: 4rem;
+  top: 0;
+  z-index: 1000;
 
   &.hidden {
     height: 0;
@@ -119,7 +122,6 @@ export const StyledMenuItem = styled(MenuItem)`
 export const StyledLayoutContent = styled(Layout.Content)`
   position: relative;
   height: calc(100vh - 4rem);
-  overflow: hidden auto;
 
   &.full-height {
     padding-top: 4rem;

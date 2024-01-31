@@ -1075,6 +1075,7 @@ export const useProgramContentEnrollment = (programId: string) => {
       }
     `,
     {
+      skip: !programId,
       variables: {
         programId,
         currentMemberId: currentMemberId || '',
@@ -1096,6 +1097,7 @@ export const useProgramContentEnrollment = (programId: string) => {
       }
     `,
     {
+      skip: !contentIds || contentIds.length === 0,
       variables: {
         contentIds,
       },

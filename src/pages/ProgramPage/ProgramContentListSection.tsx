@@ -11,7 +11,7 @@ import ProgramContentTrialModal from '../../components/program/ProgramContentTri
 import { durationFormatter, isMobile } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useEnrolledProgramIds } from '../../hooks/program'
-import { MicrophoneIcon } from '../../images'
+import { BookIcon, MicrophoneIcon } from '../../images'
 import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
 
 const StyledTitle = styled.h2`
@@ -141,13 +141,17 @@ const ProgramContentListSection: React.VFC<{
                 onClick={() => {
                   if (isEnrolled) {
                     history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
-                  }
-                  if (programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
+                  } else if (programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
                     const url = new URL(window.location.href)
                     url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
                     url.searchParams.set('programContentId', programContent.id)
                     window.history.pushState({}, '', url.toString())
                     setAuthModalVisible?.(true)
+                  } else if (
+                    programContent.contentType === 'ebook' &&
+                    programContent.displayMode === DisplayModeEnum.trial
+                  ) {
+                    history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
                   }
                 }}
               >
@@ -159,21 +163,27 @@ const ProgramContentListSection: React.VFC<{
                   {(programContent.displayMode === DisplayModeEnum.trial ||
                     (programContent.displayMode === DisplayModeEnum.loginToTrial && isAuthenticated)) &&
                   !isEnrolled ? (
-                    <ProgramContentTrialModal
-                      programId={program.id}
-                      programContentId={programContent.id}
-                      render={({ setVisible }) => (
-                        <StyledObscure onClick={() => setVisible(true)}>
-                          <StyledTag color={theme.colors.primary[500]}>
-                            {formatMessage(
-                              programContent.contentType === 'audio'
-                                ? productMessages.program.content.audioTrial
-                                : productMessages.program.content.trial,
-                            )}
-                          </StyledTag>
-                        </StyledObscure>
-                      )}
-                    />
+                    programContent.contentType === 'ebook' ? (
+                      <StyledTag color={theme.colors.primary[500]}>
+                        {formatMessage(productMessages.program.content.trial)}
+                      </StyledTag>
+                    ) : (
+                      <ProgramContentTrialModal
+                        programId={program.id}
+                        programContentId={programContent.id}
+                        render={({ setVisible }) => (
+                          <StyledObscure onClick={() => setVisible(true)}>
+                            <StyledTag color={theme.colors.primary[500]}>
+                              {formatMessage(
+                                programContent.contentType === 'audio'
+                                  ? productMessages.program.content.audioTrial
+                                  : productMessages.program.content.trial,
+                              )}
+                            </StyledTag>
+                          </StyledObscure>
+                        )}
+                      />
+                    )
                   ) : programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated ? (
                     <StyledTag color={theme.colors.primary[500]}>
                       {formatMessage(
@@ -187,6 +197,8 @@ const ProgramContentListSection: React.VFC<{
                     <Icon type="video-camera" className="mr-2" />
                   ) : programContent.contentType === 'audio' ? (
                     <MicrophoneIcon className="mr-2" />
+                  ) : programContent.contentType === 'ebook' ? (
+                    <BookIcon className="mr-2" />
                   ) : (
                     <Icon type="file-text" className="mr-2" />
                   )}
@@ -206,13 +218,17 @@ const ProgramContentListSection: React.VFC<{
                 onClick={() => {
                   if (isEnrolled) {
                     history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
-                  }
-                  if (programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
+                  } else if (programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
                     const url = new URL(window.location.href)
                     url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
                     url.searchParams.set('programContentId', programContent.id)
                     window.history.pushState({}, '', url.toString())
                     setAuthModalVisible?.(true)
+                  } else if (
+                    programContent.contentType === 'ebook' &&
+                    programContent.displayMode === DisplayModeEnum.trial
+                  ) {
+                    history.push(`/programs/${program.id}/contents/${programContent.id}?back=programs_${program.id}`)
                   }
                 }}
               >
@@ -221,31 +237,38 @@ const ProgramContentListSection: React.VFC<{
                     <Icon type="video-camera" className="mr-2" />
                   ) : programContent.contentType === 'audio' ? (
                     <MicrophoneIcon className="mr-2" />
+                  ) : programContent.contentType === 'ebook' ? (
+                    <BookIcon className="mr-2" />
                   ) : (
                     <Icon type="file-text" className="mr-2" />
                   )}
                   <span>{programContent.title}</span>
                 </Typography.Text>
-
                 <StyledDuration>
                   {(programContent.displayMode === DisplayModeEnum.trial ||
                     (programContent.displayMode === DisplayModeEnum.loginToTrial && isAuthenticated)) &&
                   !isEnrolled ? (
-                    <ProgramContentTrialModal
-                      programId={program.id}
-                      programContentId={programContent.id}
-                      render={({ setVisible }) => (
-                        <StyledObscure onClick={() => setVisible(true)}>
-                          <StyledTag color={theme.colors.primary[500]}>
-                            {formatMessage(
-                              programContent.contentType === 'audio'
-                                ? productMessages.program.content.audioTrial
-                                : productMessages.program.content.trial,
-                            )}
-                          </StyledTag>
-                        </StyledObscure>
-                      )}
-                    />
+                    programContent.contentType === 'ebook' ? (
+                      <StyledTag color={theme.colors.primary[500]}>
+                        {formatMessage(productMessages.program.content.trial)}
+                      </StyledTag>
+                    ) : (
+                      <ProgramContentTrialModal
+                        programId={program.id}
+                        programContentId={programContent.id}
+                        render={({ setVisible }) => (
+                          <StyledObscure onClick={() => setVisible(true)}>
+                            <StyledTag color={theme.colors.primary[500]}>
+                              {formatMessage(
+                                programContent.contentType === 'audio'
+                                  ? productMessages.program.content.audioTrial
+                                  : productMessages.program.content.trial,
+                              )}
+                            </StyledTag>
+                          </StyledObscure>
+                        )}
+                      />
+                    )
                   ) : programContent.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated ? (
                     <StyledObscure>
                       <StyledTag color={theme.colors.primary[500]}>

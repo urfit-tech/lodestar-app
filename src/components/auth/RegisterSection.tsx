@@ -3,7 +3,6 @@ import { Button, Icon } from '@chakra-ui/react'
 import { Checkbox, Form, Input, message, Skeleton } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import Axios from 'axios'
-import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { parsePayload } from 'lodestar-app-element/src/hooks/util'
@@ -156,13 +155,6 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
               throw new Error('no auth token')
             }
             const currentMemberId = decodedToken.sub
-            let utmQuery: { [key: string]: string }
-            try {
-              utmQuery = JSON.parse(Cookies.get('utm')) || {}
-            } catch (error) {
-              utmQuery = {}
-            }
-            const landing = Cookies.get('landing') || ''
             let pictureUrl = null
 
             if (companyPictureFile) {
@@ -170,24 +162,6 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
               const path = `avatars/${decodedToken.appId}/${currentMemberId}/${avatarId}`
               pictureUrl = `https://${process.env.REACT_APP_S3_BUCKET}/${path}`
               await uploadFile(path, companyPictureFile, authToken)
-            }
-
-            if (settings['custom_api.insertCustomMemberProperty.enabled']) {
-              try {
-                await Axios.post(
-                  `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/${appId}/marketing/insertCustomMemberProperty`,
-                  {
-                    memberId: currentMemberId,
-                    options: {
-                      utmQuery,
-                      landing,
-                    },
-                  },
-                  { headers: { Authorization: `Bearer ${authToken}` } },
-                )
-              } catch (error) {
-                console.log(error)
-              }
             }
 
             process.env.REACT_APP_GRAPHQL_PH_ENDPOINT &&

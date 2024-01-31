@@ -1,5 +1,8 @@
 import { gql, useQuery } from '@apollo/client'
+import axios from 'axios'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum, uniqBy } from 'ramda'
+import { useCallback, useEffect, useState } from 'react'
 import hasura from '../hasura'
 import { PeriodType } from '../types/program'
 import { ProgramPackage, ProgramPackageProgram, ProgramPackageProps } from '../types/programPackage'
@@ -247,105 +250,38 @@ export const useEnrolledProgramPackage = (
 }
 
 export const useProgramPackage = (programPackageId: string, memberId: string | null) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GET_PROGRAM_PACKAGE_CONTENT,
-    hasura.GET_PROGRAM_PACKAGE_CONTENTVariables
-  >(
-    gql`
-      query GET_PROGRAM_PACKAGE_CONTENT($programPackageId: uuid!, $memberId: String) {
-        program_package_by_pk(id: $programPackageId) {
-          id
-          cover_url
-          title
-          published_at
-          program_package_programs(
-            where: { program: { published_at: { _is_null: false } } }
-            order_by: { position: asc }
-          ) {
-            id
-            program {
-              id
-              cover_url
-              title
-              program_categories {
-                id
-                category {
-                  id
-                  name
-                  position
-                }
-              }
-            }
-          }
-        }
-        program_package_plan_enrollment(
-          where: {
-            program_package_plan: { program_package_id: { _eq: $programPackageId } }
-            member_id: { _eq: $memberId }
-          }
-        ) {
-          program_package_plan {
-            is_tempo_delivery
-          }
-        }
-        program_tempo_delivery(
-          where: {
-            program_package_program: { program_package_id: { _eq: $programPackageId } }
-            member_id: { _eq: $memberId }
-          }
-        ) {
-          delivered_at
-          program_package_program_id
-        }
-      }
-    `,
-    { variables: { programPackageId, memberId } },
-  )
+  const { authToken } = useAuth()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<any>()
+  const [data, setData] = useState<
+    Pick<ProgramPackageProps, 'id' | 'coverUrl' | 'title'> & {
+      programs: ProgramPackageProgram[]
+    }
+  >()
 
-  const programPackage: ProgramPackageProps & {
-    isEnrolled: boolean
-  } = {
-    id: programPackageId,
-    title: data?.program_package_by_pk?.title || '',
-    coverUrl: data?.program_package_by_pk?.cover_url || null,
-    description: null,
-    isEnrolled: !!data?.program_package_plan_enrollment.length,
-    publishedAt: data?.program_package_by_pk?.published_at,
-  }
+  const fetch = useCallback(async () => {
+    // if (authToken) {
+    try {
+      const route = `/program-packages/${programPackageId}`
+      setLoading(true)
+      const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+        params: { memberId },
+        headers: { authorization: `Bearer ${authToken}` },
+      })
+      setData(data)
+    } catch (err) {
+      console.log(err)
+      setError(err)
+      setLoading(false)
+    } finally {
+      setLoading(false)
+    }
+    // }
+  }, [authToken])
 
-  const isTempoDelivery =
-    data?.program_package_plan_enrollment.some(
-      planEnrollment => planEnrollment.program_package_plan?.is_tempo_delivery,
-    ) || false
-  const programs: ProgramPackageProgram[] =
-    loading || error || !data || !data.program_package_by_pk
-      ? []
-      : data.program_package_by_pk.program_package_programs
-          .filter(
-            programPackageProgram =>
-              !isTempoDelivery ||
-              data.program_tempo_delivery.some(
-                programTempoDelivery =>
-                  programTempoDelivery.program_package_program_id === programPackageProgram.id &&
-                  new Date(programTempoDelivery.delivered_at).getTime() < Date.now(),
-              ),
-          )
-          .map(programPackageProgram => ({
-            id: programPackageProgram.program.id,
-            title: programPackageProgram.program.title,
-            coverUrl: programPackageProgram.program.cover_url || undefined,
-            categories: programPackageProgram.program.program_categories.map(programCategory => ({
-              id: programCategory.category.id,
-              name: programCategory.category.name,
-              position: programCategory.category.position,
-            })),
-          }))
+  useEffect(() => {
+    fetch()
+  }, [fetch])
 
-  return {
-    loading,
-    error,
-    programPackage,
-    programs,
-    refetch,
-  }
+  return { fetch, data, error, loading }
 }

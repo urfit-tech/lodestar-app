@@ -34,12 +34,17 @@ export const StyledPageHeader = styled(PageHeader)`
     }
   }
 `
-export const StyledSideBar = styled.div`
+
+export const StyledSideBar = styled.div<{ menuVisible?: boolean }>`
   height: calc(100vh - 64px);
   overflow-y: auto;
   background: white;
   box-shadow: rgba(0, 0, 0, 0.1) -3px 10px 10px 0px;
+  z-index: 2;
+  width: 100%;
+  position: absolute;
 `
+
 export const StyledContentBlock = styled.div`
   padding: 1.25rem;
   background-color: white;

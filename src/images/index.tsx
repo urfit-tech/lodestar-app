@@ -1,5 +1,6 @@
 export { ReactComponent as Backward15Icon } from './backward-15.svg'
 export { ReactComponent as Backward5Icon } from './backward-5.svg'
+export { ReactComponent as BookIcon } from './book.svg'
 export { ReactComponent as CalendarOIcon } from './calendar-alt-o.svg'
 export { ReactComponent as CarIcon } from './car.svg'
 export { ReactComponent as CompanyIcon } from './company.svg'

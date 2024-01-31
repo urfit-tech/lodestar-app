@@ -33,18 +33,25 @@ const SliderContainer = styled(Flex)`
 export const EbookReaderControlBar: React.VFC<{
   isLocationGenerated: boolean
   chapter: string
-  programContentBookmark: Array<any>
+  programContentBookmark: Array<{
+    id: any
+    epubCfi: string
+    createdAt: Date
+    highlightContent: string
+    chapter: string | null | undefined
+  }>
   fontSize: number
   lineHeight: number
   refetchBookmark: () => void
   rendition: React.MutableRefObject<Rendition | undefined>
-  onLocationChange: (loc: undefined | string) => void
+  onLocationChange: (loc: string) => void
   onFontSizeChange: React.Dispatch<React.SetStateAction<number>>
   onLineHeightChange: React.Dispatch<React.SetStateAction<number>>
   onSliderValueChange: React.Dispatch<React.SetStateAction<number>>
   sliderValue: number
   onThemeChange: (theme: 'light' | 'dark') => void
   currentThemeData: { color: string; backgroundColor: string }
+  setBookmarkId: React.Dispatch<React.SetStateAction<string | undefined>>
 }> = ({
   isLocationGenerated,
   chapter,
@@ -60,6 +67,7 @@ export const EbookReaderControlBar: React.VFC<{
   onLineHeightChange,
   onThemeChange,
   currentThemeData,
+  setBookmarkId,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
   const [isFocus, setFocus] = useState(false)
@@ -68,11 +76,11 @@ export const EbookReaderControlBar: React.VFC<{
     if (!isFocus) {
       return
     }
-    if (sliderValue === undefined || sliderValue === 0) {
+    if (sliderValue === undefined || sliderValue === 0 || !rendition.current) {
       // go to cover page
       rendition.current?.display()
     } else {
-      const cfi = rendition.current?.book.locations.cfiFromPercentage(sliderValue / 100)
+      const cfi = rendition.current.book.locations.cfiFromPercentage(sliderValue / 100)
       onLocationChange(cfi)
     }
 
@@ -86,7 +94,6 @@ export const EbookReaderControlBar: React.VFC<{
   return (
     <Flex
       w="100%"
-      paddingBottom="16px"
       backgroundColor={currentThemeData.backgroundColor}
       color={currentThemeData.color}
       direction="column"
@@ -147,6 +154,7 @@ export const EbookReaderControlBar: React.VFC<{
             )}
           />
           <EbookBookmarkModal
+            setBookmarkId={setBookmarkId}
             currentThemeData={currentThemeData}
             programContentBookmark={programContentBookmark}
             onLocationChange={onLocationChange}
