@@ -1,6 +1,7 @@
 import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
 import { Flex, Spinner } from '@chakra-ui/react'
 import axios from 'axios'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import { useCallback, useLayoutEffect, useRef, useState } from 'react'
@@ -95,12 +96,21 @@ const getReaderTheme = (theme: string): { color: string; backgroundColor: string
 
 const ProgramContentEbookReader: React.VFC<{
   programContentId: string
+  istrial: boolean
   setEbook: React.Dispatch<React.SetStateAction<Book | null>>
   ebookCurrentToc: string | null
   onEbookCurrentTocChange: (toc: string | null) => void
   location: string | number
   onLocationChange: (location: string | number) => void
-}> = ({ programContentId, ebookCurrentToc, onEbookCurrentTocChange, location, onLocationChange, setEbook }) => {
+}> = ({
+  programContentId,
+  ebookCurrentToc,
+  onEbookCurrentTocChange,
+  location,
+  onLocationChange,
+  setEbook,
+  istrial,
+}) => {
   const { currentMemberId, authToken } = useAuth()
   const [source, setSource] = useState<ArrayBuffer | null>(null)
   const apolloClient = useApolloClient()
@@ -120,26 +130,43 @@ const ProgramContentEbookReader: React.VFC<{
   const [ebookLineHeight, setEbookLineHeight] = useState(1.5)
 
   const [bookmarkHighlightContent, setBookmarkHighlightContent] = useState('')
+  const { id: appId } = useApp()
 
-  const getEpubFromS3 = useCallback(async (programContentId: string, authToken: string) => {
-    try {
-      const ebookUrl = `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/ebook/${programContentId}.epub`
+  const getEpubFromS3 = useCallback(
+    async (programContentId, authToken) => {
+      try {
+        const config = createRequestConfig(authToken)
+        const ebookUrl = `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/ebook/${programContentId}.epub`
+        const response = await axios.get(ebookUrl, config)
 
-      const response = await axios.get(ebookUrl, {
-        responseType: 'arraybuffer',
-        headers: { authorization: `Bearer ${authToken}` },
-      })
+        const hashKey = calculateHashKey(authToken)
+        const iv = appId
+        const decryptedData = decryptData(response.data, hashKey, iv)
 
-      // Extract the hash key from the auth token
-      const hashKey = authToken.split('.')[2] || ''
+        setSource(decryptedData)
+      } catch (error) {
+        handleError(error)
+      }
+    },
+    [istrial, appId],
+  )
 
-      const decryptedData = decryptData(response.data, hashKey, 'demo')
-
-      setSource(decryptedData)
-    } catch (error) {
-      handleError(error)
+  const createRequestConfig = (authToken: string) => {
+    if (authToken) {
+      return {
+        responseType: 'arraybuffer' as const,
+        headers: { Authorization: `Bearer ${authToken}` },
+      }
     }
-  }, [])
+    return { responseType: 'arraybuffer' as const }
+  }
+
+  const calculateHashKey = (authToken: string) => {
+    if (authToken) {
+      return authToken.split('.')[2] || ''
+    }
+    return istrial ? `trial_key_${process.env.REACT_APP_EBOOK_SALT}` : ''
+  }
 
   const readerStyles = {
     ...ReactReaderStyle,
@@ -151,9 +178,7 @@ const ProgramContentEbookReader: React.VFC<{
   }
 
   useLayoutEffect(() => {
-    if (authToken) {
-      getEpubFromS3(programContentId, authToken)
-    }
+    getEpubFromS3(programContentId, authToken)
   }, [authToken, programContentId, getEpubFromS3])
 
   useLayoutEffect(() => {
