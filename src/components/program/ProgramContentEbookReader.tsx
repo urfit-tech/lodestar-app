@@ -133,22 +133,13 @@ const ProgramContentEbookReader: React.VFC<{
 
   const getEpubFromS3 = useCallback(
     async (programContentId, authToken) => {
-      console.log({ programContentId, authToken })
       try {
+        const config = createRequestConfig(authToken)
         const ebookUrl = `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/ebook/${programContentId}.epub`
-
-        const config = istrial
-          ? { responseType: 'arraybuffer' as const }
-          : {
-              responseType: 'arraybuffer' as const,
-              headers: { authorization: `Bearer ${authToken}` },
-            }
-
         const response = await axios.get(ebookUrl, config)
 
-        const hashKey = istrial ? `trial_key_${process.env.REACT_APP_EBOOK_SALT}` : authToken.split('.')[2] || ''
-        const iv = istrial ? `trial_key_${process.env.REACT_APP_EBOOK_SALT}` : appId
-
+        const hashKey = calculateHashKey(authToken)
+        const iv = appId
         const decryptedData = decryptData(response.data, hashKey, iv)
 
         setSource(decryptedData)
@@ -158,6 +149,23 @@ const ProgramContentEbookReader: React.VFC<{
     },
     [istrial, appId],
   )
+
+  const createRequestConfig = (authToken: string) => {
+    if (authToken) {
+      return {
+        responseType: 'arraybuffer' as const,
+        headers: { Authorization: `Bearer ${authToken}` },
+      }
+    }
+    return { responseType: 'arraybuffer' as const }
+  }
+
+  const calculateHashKey = (authToken: string) => {
+    if (authToken) {
+      return authToken.split('.')[2] || ''
+    }
+    return istrial ? `trial_key_${process.env.REACT_APP_EBOOK_SALT}` : ''
+  }
 
   const readerStyles = {
     ...ReactReaderStyle,
@@ -169,9 +177,7 @@ const ProgramContentEbookReader: React.VFC<{
   }
 
   useLayoutEffect(() => {
-    if (authToken) {
-      getEpubFromS3(programContentId, authToken)
-    }
+    getEpubFromS3(programContentId, authToken)
   }, [authToken, programContentId, getEpubFromS3])
 
   useLayoutEffect(() => {
