@@ -96,7 +96,7 @@ const getReaderTheme = (theme: string): { color: string; backgroundColor: string
 
 const ProgramContentEbookReader: React.VFC<{
   programContentId: string
-  istrial: boolean
+  isTrial: boolean
   setEbook: React.Dispatch<React.SetStateAction<Book | null>>
   ebookCurrentToc: string | null
   onEbookCurrentTocChange: (toc: string | null) => void
@@ -109,7 +109,7 @@ const ProgramContentEbookReader: React.VFC<{
   location,
   onLocationChange,
   setEbook,
-  istrial,
+  isTrial,
 }) => {
   const { currentMemberId, authToken } = useAuth()
   const [source, setSource] = useState<ArrayBuffer | null>(null)
@@ -117,7 +117,7 @@ const ProgramContentEbookReader: React.VFC<{
   const rendition = useRef<Rendition | undefined>(undefined)
   const toc = useRef<NavItem[]>([])
   const { programContentBookmark, refetch: refetchBookmark } = useEbookBookmark(programContentId, currentMemberId)
-  const { deleteProgramContentEbookTocProgress, insertProgramContentEbookTocProgress } =
+  const { upsertProgramContentEbookTocProgress, updateProgramContentEbookTocProgressFinishedAt } =
     useMutationProgramContentEbookTocProgress()
 
   const [sliderValue, setSliderValue] = useState<number>(0)
@@ -148,7 +148,7 @@ const ProgramContentEbookReader: React.VFC<{
         handleError(error)
       }
     },
-    [istrial, appId],
+    [isTrial, appId],
   )
 
   const createRequestConfig = (authToken: string) => {
@@ -165,7 +165,7 @@ const ProgramContentEbookReader: React.VFC<{
     if (authToken) {
       return authToken.split('.')[2] || ''
     }
-    return istrial ? `trial_key_${process.env.REACT_APP_EBOOK_SALT}` : ''
+    return isTrial ? `trial_key_${process.env.REACT_APP_EBOOK_SALT}` : ''
   }
 
   const readerStyles = {
@@ -251,46 +251,41 @@ const ProgramContentEbookReader: React.VFC<{
                       const totalPage = displayedEnd.total
                       const currentEndPage = displayedEnd.page
                       onEbookCurrentTocChange(href?.split('/').pop() || '')
-                      try {
-                        apolloClient
-                          .query({
-                            query: GetProgramContentEbookToc,
-                            variables: { memberId: currentMemberId, programContentId, href: `%${href}%` },
-                            fetchPolicy: 'no-cache',
-                          })
-                          .then(({ data }) => {
-                            if (currentMemberId && data.program_content_ebook_toc.length > 0) {
-                              const finishedAt =
-                                data.program_content_ebook_toc[0]?.program_content_ebook_toc_progress_list[0]
-                                  ?.finished_at
-                              const programContentEbookTocId = data.program_content_ebook_toc[0].id
-                              deleteProgramContentEbookTocProgress({
-                                variables: {
-                                  memberId: currentMemberId,
-                                  programContentEbookTocId,
-                                },
-                              }).then(({ data: deleteData }) => {
-                                if ((deleteData?.delete_program_content_ebook_toc_progress?.affected_rows || 0) > 0) {
-                                  insertProgramContentEbookTocProgress({
-                                    variables: {
-                                      memberId: currentMemberId,
-                                      programContentEbookTocId,
-                                      latestProgress:
-                                        currentEndPage / totalPage > 1 ? 1 : (currentEndPage / totalPage).toFixed(5),
-                                      // for currentEndPage + 1, The last page may be blank or not fully filled
-                                      finisherAt: finishedAt
-                                        ? finishedAt
-                                        : (currentEndPage + 1) / totalPage >= 1
-                                        ? new Date()
-                                        : null,
-                                    },
-                                  })
-                                }
-                              })
-                            }
-                          })
-                      } catch (error) {
-                        process.env.NODE_ENV === 'development' ?? console.error(error)
+                      if (currentMemberId) {
+                        try {
+                          apolloClient
+                            .query({
+                              query: GetProgramContentEbookToc,
+                              variables: { memberId: currentMemberId, programContentId, href: `%${href}%` },
+                              fetchPolicy: 'no-cache',
+                            })
+                            .then(({ data }) => {
+                              if (currentMemberId && data.program_content_ebook_toc.length > 0) {
+                                const programContentEbookTocId = data.program_content_ebook_toc[0].id
+                                upsertProgramContentEbookTocProgress({
+                                  variables: {
+                                    memberId: currentMemberId,
+                                    programContentEbookTocId,
+                                    latestProgress:
+                                      currentEndPage / totalPage > 1 ? 1 : (currentEndPage / totalPage).toFixed(5),
+                                  },
+                                }).then(() => {
+                                  // for currentEndPage + 1, The last page may be blank or not fully filled
+                                  if ((currentEndPage + 1) / totalPage >= 1) {
+                                    updateProgramContentEbookTocProgressFinishedAt({
+                                      variables: {
+                                        memberId: currentMemberId,
+                                        programContentEbookTocId,
+                                        finishedAt: new Date(),
+                                      },
+                                    })
+                                  }
+                                })
+                              }
+                            })
+                        } catch (error) {
+                          process.env.NODE_ENV === 'development' ?? console.error(error)
+                        }
                       }
                     }
                   }}
@@ -435,46 +430,58 @@ const GetProgramContentEbookToc = gql`
 `
 
 export const useMutationProgramContentEbookTocProgress = () => {
-  const [deleteProgramContentEbookTocProgress] = useMutation<
-    hasura.DeleteProgramContentEbookTocProgress,
-    hasura.DeleteProgramContentEbookTocProgressVariables
+  const [upsertProgramContentEbookTocProgress] = useMutation<
+    hasura.UpsertProgramContentEbookTocProgress,
+    hasura.UpsertProgramContentEbookTocProgressVariables
   >(gql`
-    mutation DeleteProgramContentEbookTocProgress($memberId: String!, $programContentEbookTocId: uuid!) {
-      delete_program_content_ebook_toc_progress(
-        where: { member_id: { _eq: $memberId }, program_content_ebook_toc_id: { _eq: $programContentEbookTocId } }
+    mutation UpsertProgramContentEbookTocProgress(
+      $memberId: String!
+      $programContentEbookTocId: uuid!
+      $latestProgress: numeric!
+      $finishedAt: timestamptz
+    ) {
+      insert_program_content_ebook_toc_progress(
+        objects: {
+          member_id: $memberId
+          program_content_ebook_toc_id: $programContentEbookTocId
+          latest_progress: $latestProgress
+          finished_at: $finishedAt
+        }
+        on_conflict: {
+          constraint: program_content_ebook_toc_pro_program_content_ebook_toc_id__key
+          update_columns: [latest_progress]
+        }
       ) {
         affected_rows
       }
     }
   `)
-  const [insertProgramContentEbookTocProgress] = useMutation<
-    hasura.InsertProgramContentEbookTocProgress,
-    hasura.InsertProgramContentEbookTocProgressVariables
-  >(
-    gql`
-      mutation InsertProgramContentEbookTocProgress(
-        $memberId: String!
-        $programContentEbookTocId: uuid!
-        $latestProgress: numeric!
-        $finisherAt: timestamptz
-      ) {
-        insert_program_content_ebook_toc_progress_one(
-          object: {
-            member_id: $memberId
-            program_content_ebook_toc_id: $programContentEbookTocId
-            latest_progress: $latestProgress
-            finished_at: $finisherAt
-          }
-        ) {
-          id
+
+  const [updateProgramContentEbookTocProgressFinishedAt] = useMutation<
+    hasura.UpdateProgramContentEbookTocProgressFinishedAt,
+    hasura.UpdateProgramContentEbookTocProgressFinishedAtVariables
+  >(gql`
+    mutation UpdateProgramContentEbookTocProgressFinishedAt(
+      $memberId: String!
+      $programContentEbookTocId: uuid!
+      $finishedAt: timestamptz
+    ) {
+      update_program_content_ebook_toc_progress(
+        _set: { finished_at: $finishedAt }
+        where: {
+          member_id: { _eq: $memberId }
+          program_content_ebook_toc_id: { _eq: $programContentEbookTocId }
+          finished_at: { _is_null: true }
         }
+      ) {
+        affected_rows
       }
-    `,
-  )
+    }
+  `)
 
   return {
-    deleteProgramContentEbookTocProgress,
-    insertProgramContentEbookTocProgress,
+    upsertProgramContentEbookTocProgress,
+    updateProgramContentEbookTocProgressFinishedAt,
   }
 }
 
