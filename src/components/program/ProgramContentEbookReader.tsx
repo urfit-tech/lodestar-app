@@ -1,6 +1,7 @@
 import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
 import { Flex, Spinner } from '@chakra-ui/react'
 import axios from 'axios'
+import { inRange } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
@@ -12,6 +13,24 @@ import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
 import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
 import { decryptData } from './decryptUtils'
 import type { NavItem, Rendition, Book, Location } from 'epubjs'
+
+const ReaderBookmark = styled.div`
+  position: relative;
+  width: 26px;
+  height: 27px;
+  background-color: ${props => (props.color ? props.color : '#E2E2E2')};
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 27px;
+    right: 0;
+    border-right: 13px solid ${props => (props.color ? props.color : '#E2E2E2')};
+    border-left: 13px solid ${props => (props.color ? props.color : '#E2E2E2')};
+    border-top: 13px solid rgba(0, 0, 0, 0);
+    transform: rotate(180deg);
+  }
+`
 
 export const getChapter = (book: Book, href: string) => {
   const currentNavItem = getNavItem(book, href)
@@ -57,23 +76,6 @@ const getParentNavItem = (book: Book, navItem: NavItem | undefined) => {
   return parentNavItems
 }
 
-const ReaderBookmark = styled.div`
-  position: relative;
-  width: 26px;
-  height: 27px;
-  background-color: ${props => (props.color ? props.color : '#E2E2E2')};
-
-  &:after {
-    content: '';
-    position: absolute;
-    top: 27px;
-    right: 0;
-    border-right: 13px solid ${props => (props.color ? props.color : '#E2E2E2')};
-    border-left: 13px solid ${props => (props.color ? props.color : '#E2E2E2')};
-    border-top: 13px solid rgba(0, 0, 0, 0);
-    transform: rotate(180deg);
-  }
-`
 const getReaderTheme = (theme: string): { color: string; backgroundColor: string } => {
   switch (theme) {
     case 'light':
@@ -92,6 +94,26 @@ const getReaderTheme = (theme: string): { color: string; backgroundColor: string
         backgroundColor: '',
       }
   }
+}
+
+type BookmarkData = {
+  highlightContent: string
+  percentage: number
+  chapter: string
+  epubCfi: string
+  href: string
+  memberId: string
+  programContentId: string
+}
+
+export type Bookmark = {
+  id: any
+  epubCfi: string
+  createdAt: Date
+  highlightContent: string
+  chapter: string | null | undefined
+  href: string
+  percentage: any
 }
 
 const ProgramContentEbookReader: React.VFC<{
@@ -116,7 +138,7 @@ const ProgramContentEbookReader: React.VFC<{
   const apolloClient = useApolloClient()
   const rendition = useRef<Rendition | undefined>(undefined)
   const toc = useRef<NavItem[]>([])
-  const { programContentBookmark, refetch: refetchBookmark } = useEbookBookmark(programContentId, currentMemberId)
+  const { programContentBookmarks, refetch: refetchBookmark } = useEbookBookmark(programContentId, currentMemberId)
   const { upsertProgramContentEbookTocProgress, updateProgramContentEbookTocProgressFinishedAt } =
     useMutationProgramContentEbookTocProgress()
 
@@ -129,7 +151,8 @@ const ProgramContentEbookReader: React.VFC<{
   const [ebookFontSize, setEbookFontSize] = useState(18)
   const [ebookLineHeight, setEbookLineHeight] = useState(1.5)
 
-  const [bookmarkHighlightContent, setBookmarkHighlightContent] = useState('')
+  const [bookmarkData, setBookmarkData] = useState<BookmarkData>()
+
   const { id: appId } = useApp()
 
   const getEpubFromS3 = useCallback(
@@ -194,14 +217,10 @@ const ProgramContentEbookReader: React.VFC<{
     <div>
       {source && chapter ? (
         <EbookReaderBookmarkIcon
-          location={location}
-          refetchBookmark={refetchBookmark}
-          programContentId={programContentId}
-          memberId={currentMemberId}
-          highlightContent={bookmarkHighlightContent}
-          chapter={chapter}
+          bookmarkData={bookmarkData}
           bookmarkId={bookmarkId}
           setBookmarkId={setBookmarkId}
+          refetchBookmark={refetchBookmark}
         />
       ) : null}
 
@@ -215,9 +234,10 @@ const ProgramContentEbookReader: React.VFC<{
                   showToc={false}
                   tocChanged={_toc => (toc.current = _toc)}
                   location={location}
-                  locationChanged={(loc: string) => {
-                    onLocationChange(loc)
+                  locationChanged={async (epubCfi: string) => {
+                    onLocationChange(epubCfi)
                     const { start, end, atEnd } = rendition.current?.location || {}
+
                     if (start && end && rendition.current) {
                       setSliderValue(start.percentage * 100)
                       // if this page is end page, set slider value to 100
@@ -234,13 +254,24 @@ const ProgramContentEbookReader: React.VFC<{
                       const startCfi = start.cfi.replace(baseCfi, '')
                       const endCfi = end.cfi.replace(baseCfi, '')
                       const rangeCfi = [baseCfi, startCfi, endCfi].join(',')
-                      rendition.current.book.getRange(rangeCfi).then(range => {
-                        const text = range?.toString()
-                        const currentPageBookmark = programContentBookmark.find(
-                          bookmark => text?.includes(bookmark.highlightContent) && chapterLabel === bookmark.chapter,
-                        )
-                        setBookmarkId(currentPageBookmark ? currentPageBookmark.id : undefined)
-                        setBookmarkHighlightContent(text?.slice(0, 20))
+                      const range = await rendition.current.book.getRange(rangeCfi)
+                      const text = range?.toString()
+
+                      // set check is currentPage in bookmark and bookmark data
+                      const isPercentageInRange = (percentage: number) =>
+                        inRange(percentage, start.percentage, end.percentage)
+                      const currentPageBookmark = programContentBookmarks.find(bookmark =>
+                        isPercentageInRange(bookmark.percentage),
+                      )
+                      setBookmarkId(currentPageBookmark ? currentPageBookmark.id : undefined)
+                      setBookmarkData({
+                        percentage: start.percentage,
+                        chapter: chapterLabel,
+                        highlightContent: text?.slice(0, 20),
+                        epubCfi: epubCfi,
+                        href: start.href,
+                        memberId: currentMemberId || '',
+                        programContentId,
                       })
                     }
 
@@ -333,7 +364,7 @@ const ProgramContentEbookReader: React.VFC<{
           onSliderValueChange={setSliderValue}
           rendition={rendition}
           chapter={chapter}
-          programContentBookmark={programContentBookmark}
+          programContentBookmarks={programContentBookmarks}
           fontSize={ebookFontSize}
           lineHeight={ebookLineHeight}
           refetchBookmark={refetchBookmark}
@@ -350,37 +381,29 @@ const ProgramContentEbookReader: React.VFC<{
 }
 
 const EbookReaderBookmarkIcon: React.VFC<{
-  memberId: string | null
-  programContentId: string
-  location: string | number
-  highlightContent: string
-  chapter: string
+  bookmarkData: BookmarkData | undefined
   bookmarkId: string | undefined
   setBookmarkId: React.Dispatch<React.SetStateAction<string | undefined>>
   refetchBookmark: () => void
-}> = ({
-  refetchBookmark,
-  memberId,
-  programContentId,
-  location,
-  highlightContent,
-  chapter,
-  bookmarkId,
-  setBookmarkId,
-}) => {
+}> = ({ refetchBookmark, bookmarkData, bookmarkId, setBookmarkId }) => {
   const apolloClient = useApolloClient()
 
   const insertBookmark = async () => {
+    if (!bookmarkData) return
+
     const response = await apolloClient.mutate({
       mutation: insertProgramContentEbookBookmark,
       variables: {
-        memberId,
-        programContentId,
-        epubCfi: location,
-        highlightContent: highlightContent,
-        chapter,
+        memberId: bookmarkData.memberId,
+        programContentId: bookmarkData.programContentId,
+        epubCfi: bookmarkData.epubCfi,
+        highlightContent: bookmarkData.highlightContent,
+        chapter: bookmarkData.chapter,
+        href: bookmarkData.href,
+        percentage: bookmarkData.percentage,
       },
     })
+
     const bookmarkId = response.data.insert_program_content_ebook_bookmark.returning[0].id
     setBookmarkId(bookmarkId)
     await refetchBookmark()
@@ -492,6 +515,8 @@ const insertProgramContentEbookBookmark = gql`
     $epubCfi: String!
     $highlightContent: String!
     $chapter: String!
+    $percentage: numeric!
+    $href: String!
   ) {
     insert_program_content_ebook_bookmark(
       objects: {
@@ -500,6 +525,8 @@ const insertProgramContentEbookBookmark = gql`
         epub_cfi: $epubCfi
         highlight_content: $highlightContent
         chapter: $chapter
+        percentage: $percentage
+        href: $href
       }
     ) {
       affected_rows
@@ -526,13 +553,15 @@ const useEbookBookmark = (programContentId: string, memberId: string | null) => 
           created_at
           highlight_content
           chapter
+          percentage
+          href
         }
       }
     `,
     { variables: { programContentId, memberId: memberId || '' } },
   )
 
-  const programContentBookmark =
+  const programContentBookmarks =
     data?.program_content_ebook_bookmark.map(bookmark => {
       return {
         id: bookmark.id,
@@ -540,12 +569,14 @@ const useEbookBookmark = (programContentId: string, memberId: string | null) => 
         createdAt: new Date(bookmark.created_at),
         highlightContent: bookmark.highlight_content,
         chapter: bookmark.chapter,
+        href: bookmark.href,
+        percentage: bookmark.percentage,
       }
     }) || []
   return {
     loading,
     error,
-    programContentBookmark,
+    programContentBookmarks,
     refetch,
   }
 }
