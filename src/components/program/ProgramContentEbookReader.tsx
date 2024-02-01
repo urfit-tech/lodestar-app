@@ -96,7 +96,7 @@ const getReaderTheme = (theme: string): { color: string; backgroundColor: string
 
 const ProgramContentEbookReader: React.VFC<{
   programContentId: string
-  istrial: boolean
+  isTrial: boolean
   setEbook: React.Dispatch<React.SetStateAction<Book | null>>
   ebookCurrentToc: string | null
   onEbookCurrentTocChange: (toc: string | null) => void
@@ -109,7 +109,7 @@ const ProgramContentEbookReader: React.VFC<{
   location,
   onLocationChange,
   setEbook,
-  istrial,
+  isTrial,
 }) => {
   const { currentMemberId, authToken } = useAuth()
   const [source, setSource] = useState<ArrayBuffer | null>(null)
@@ -148,7 +148,7 @@ const ProgramContentEbookReader: React.VFC<{
         handleError(error)
       }
     },
-    [istrial, appId],
+    [isTrial, appId],
   )
 
   const createRequestConfig = (authToken: string) => {
@@ -165,7 +165,7 @@ const ProgramContentEbookReader: React.VFC<{
     if (authToken) {
       return authToken.split('.')[2] || ''
     }
-    return istrial ? `trial_key_${process.env.REACT_APP_EBOOK_SALT}` : ''
+    return isTrial ? `trial_key_${process.env.REACT_APP_EBOOK_SALT}` : ''
   }
 
   const readerStyles = {
