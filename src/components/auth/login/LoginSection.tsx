@@ -172,7 +172,7 @@ const LoginSection: React.VFC<{
         </div>
       )}
 
-      {!noGeneralLogin && !(settings['auth.email.disabled'] === 'true') && (
+      {!noGeneralLogin && !(settings['auth.email.disabled'] === '1') && (
         <>
           {!!settings['auth.facebook_app_id'] ||
             !!settings['auth.google_client_id'] ||

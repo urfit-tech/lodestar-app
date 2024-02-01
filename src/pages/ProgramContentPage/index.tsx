@@ -1,11 +1,11 @@
 import { SearchIcon } from '@chakra-ui/icons'
-import { Button, Icon } from '@chakra-ui/react'
+import { Box, Button, Icon } from '@chakra-ui/react'
 import { Layout } from 'antd'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import React, { useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { AiOutlineProfile, AiOutlineUnorderedList } from 'react-icons/ai'
 import { BsStar } from 'react-icons/bs'
@@ -49,13 +49,17 @@ const ProgramContentPage: React.VFC = () => {
   const { resourceCollection } = useResourceCollection([`${appId}:program_content:${programContentId}`])
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
   const [previousPage] = useQueryParam('back', StringParam)
-  const [menuStatus, setMenuStatus] = useState<'search' | 'list' | null>('list')
+  const [menuStatus, setMenuStatus] = useState<'search' | 'list'>('list')
   const [ebookCurrentToc, setEbookCurrentToc] = useState<string | null>(null)
   const [ebook, setEbook] = useState<Book | null>(null)
   const [ebookLocation, setEbookLocation] = useState<string | number>(
     // last toc progress
     0,
   )
+
+  useLayoutEffect(() => {
+    ebook && setMenuVisible(false)
+  }, [ebook])
 
   if (isAuthenticating || loadingProgram) {
     return <LoadingPage />
@@ -84,19 +88,15 @@ const ProgramContentPage: React.VFC = () => {
         title={program?.title || programId}
         extra={
           <div>
-            {program.contentSections.some(
-              contentSection =>
-                contentSection.contents.find(content => content.id === programContentId)?.contentType === 'ebook',
-            ) ? (
+            {ebook ? (
               <Button
                 paddingX="0.5rem"
                 colorScheme="primary"
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  if (menuStatus === 'search') {
+                  if (menuStatus === 'search' && menuVisible) {
                     setMenuVisible(false)
-                    setMenuStatus(null)
                   } else {
                     setMenuStatus('search')
                     setMenuVisible(true)
@@ -137,8 +137,7 @@ const ProgramContentPage: React.VFC = () => {
                 colorScheme="primary"
                 variant="ghost"
                 onClick={() => {
-                  if (menuStatus === 'list') {
-                    setMenuStatus(null)
+                  if (menuStatus === 'list' && menuVisible) {
                     setMenuVisible(false)
                   } else {
                     setMenuStatus('list')
@@ -209,8 +208,9 @@ const ProgramContentPage: React.VFC = () => {
                 </ProgramCustomContentBlock>
               </div>
             ) : (
-              <div className="row no-gutters">
-                <div className={menuVisible ? 'd-lg-block col-lg-9 d-none' : 'col-12'}>
+              <Box className="row no-gutters">
+                {/*ebook will stay full screen*/}
+                <Box className={menuVisible && !ebook ? 'd-lg-block col-lg-9 d-none' : 'col-12'}>
                   <StyledLayoutContent>
                     <ProgramContentBlock
                       programId={program.id}
@@ -226,8 +226,13 @@ const ProgramContentPage: React.VFC = () => {
                       setEbook={setEbook}
                     />
                   </StyledLayoutContent>
-                </div>
-                <div className={menuVisible ? 'col-12 col-lg-3' : 'd-none'}>
+                </Box>
+                <Box
+                  top="0px"
+                  right="0px"
+                  position={ebook ? 'absolute' : 'relative'}
+                  className={menuVisible ? 'col-12 col-lg-3' : 'd-none'}
+                >
                   <StyledSideBar>
                     <ProgramContentMenu
                       program={program}
@@ -235,13 +240,16 @@ const ProgramContentPage: React.VFC = () => {
                       menuStatus={menuStatus}
                       ebookCurrentToc={ebookCurrentToc}
                       ebookLocation={ebookLocation}
-                      onEbookLocationChange={setEbookLocation}
+                      onEbookLocationChange={loc => {
+                        setEbookLocation(loc)
+                        setMenuVisible(false)
+                      }}
                       ebook={ebook}
                     />
                   </StyledSideBar>
-                </div>
+                </Box>
                 <EmptyBlock height="64px" />
-              </div>
+              </Box>
             )}
           </ProgressProvider>
         ) : (

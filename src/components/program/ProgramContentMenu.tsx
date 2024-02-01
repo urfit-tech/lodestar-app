@@ -176,10 +176,11 @@ const ProgramContentMenu: React.VFC<{
   const isEnrolled = enrolledProgramIds.includes(program.id)
   const programContents = program.contentSections.map(v => v.contents).flat()
   const handleSearch = async (searchText: string) => {
-    if (!searchText) return
+    if (!searchText || !ebook) return
     const res = (await doEbookSearch(searchText, ebook)) as { cfi: string; excerpt: string }[]
     const resWithToc = res?.map(r => {
-      return { ...r, toc: getChapter(r.cfi) }
+      const section = ebook.spine.get(r.cfi)
+      return { ...r, toc: getChapter(ebook, section.href) }
     })
     setEbookSearchResults(resWithToc)
   }
@@ -240,9 +241,7 @@ const ProgramContentMenu: React.VFC<{
                   borderBottom="1px solid #ececec"
                   p="1.5rem 0 1rem 0"
                   cursor="pointer"
-                  onClick={() => {
-                    ebook?.rendition.display(searchResult.cfi)
-                  }}
+                  onClick={() => ebook?.rendition.display(searchResult.cfi)}
                 >
                   <Box mb="0.5rem" fontSize="16px" lineHeight="24px" color="#585858" fontWeight="500">
                     <HightLightText text={searchResult.excerpt} highlight={searchText} />
@@ -410,9 +409,7 @@ const ContentSection: React.VFC<{
               isLoading={isLoading}
               passExam={passExam}
               setPassExam={setPassExam}
-              onClick={() => {
-                onSelect?.(programContent.id)
-              }}
+              onClick={() => onSelect?.(programContent.id)}
             />
             {programContent.contentType === 'ebook' && programContent.id === currentProgramContentId ? (
               <EbookSecondaryMenu
@@ -749,7 +746,7 @@ const CheckIconButton: React.VFC<{ status: 'unread' | 'done' }> = ({ status }) =
         position="absolute"
         w="20px"
         h="20px"
-        border="0px solid transparent"
+        border="1px solid transparent"
         borderRadius="50%"
         textAlign="center"
         fontSize="10px"
@@ -786,7 +783,7 @@ const EbookSecondaryMenu: React.VFC<{
   ebookCurrentToc: string | null
   ebookLocation: string | number
   onEbookLocationChange?: (loc: string | number) => void
-}> = ({ programContentId, tocs, ebookCurrentToc, onEbookLocationChange }) => {
+}> = ({ programContentId, tocs, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
   const theme = useAppTheme()
   const { programContentId: currentProgramContentId } = useParams<{
     programContentId?: string
@@ -795,12 +792,11 @@ const EbookSecondaryMenu: React.VFC<{
 
   useEffect(() => {
     refetchTocProgress()
-  }, [ebookCurrentToc, refetchTocProgress])
+  }, [ebookCurrentToc, ebookLocation, refetchTocProgress])
 
   return (
     <Box {...(currentProgramContentId === programContentId ? { bg: `${rgba(theme.colors.primary[500], 0.1)}` } : null)}>
       {tocs.map(toc => {
-        const RegexHrefToc = /#(.+)/
         return (
           <Box>
             <Flex
@@ -808,7 +804,7 @@ const EbookSecondaryMenu: React.VFC<{
               justifyContent="space-between"
               p="0.75rem 2rem 0.75rem 2rem"
               cursor="pointer"
-              {...(toc.href.match(RegexHrefToc)?.[1] === ebookCurrentToc
+              {...(ebookCurrentToc && ebookCurrentToc !== '' && toc.href.includes(ebookCurrentToc)
                 ? {
                     _before: {
                       content: '""',
@@ -822,7 +818,7 @@ const EbookSecondaryMenu: React.VFC<{
                   }
                 : null)}
               onClick={() => {
-                onEbookLocationChange?.(toc.href)
+                onEbookLocationChange?.(toc.href.replace('../', ''))
                 refetchTocProgress()
               }}
             >
@@ -830,7 +826,9 @@ const EbookSecondaryMenu: React.VFC<{
                 fontSize="14px"
                 letterSpacing="0.18px"
                 fontWeight="500"
-                {...(toc.href === ebookCurrentToc ? { color: `${theme.colors.primary[500]}` } : '#585858')}
+                {...(ebookCurrentToc && ebookCurrentToc !== '' && toc.href.includes(ebookCurrentToc)
+                  ? { color: `${theme.colors.primary[500]}` }
+                  : '#585858')}
               >
                 {toc.label}
               </Box>
@@ -847,7 +845,7 @@ const EbookSecondaryMenu: React.VFC<{
                 letterSpacing="0.4px"
                 fontWeight="500"
                 cursor="pointer"
-                {...(subitem.href.match(RegexHrefToc)?.[1] === ebookCurrentToc
+                {...(ebookCurrentToc && ebookCurrentToc !== '' && subitem.href.includes(ebookCurrentToc)
                   ? {
                       _before: {
                         content: '""',
@@ -861,7 +859,7 @@ const EbookSecondaryMenu: React.VFC<{
                     }
                   : null)}
                 onClick={() => {
-                  onEbookLocationChange?.(subitem.href)
+                  onEbookLocationChange?.(subitem.href.replace('../', ''))
                   refetchTocProgress()
                 }}
               >
@@ -869,7 +867,9 @@ const EbookSecondaryMenu: React.VFC<{
                   fontSize="14px"
                   letterSpacing="0.18px"
                   fontWeight="500"
-                  {...(subitem.href === ebookCurrentToc ? { color: `${theme.colors.primary[500]}` } : '#585858')}
+                  {...(ebookCurrentToc && ebookCurrentToc !== '' && subitem.href.includes(ebookCurrentToc)
+                    ? { color: `${theme.colors.primary[500]}` }
+                    : '#585858')}
                 >
                   {subitem.label}
                 </Box>
@@ -900,11 +900,11 @@ const useProgramContentProgress = () => {
 const useCurrentMemberEbookTocProgress = (programContentId: string) => {
   const { currentMemberId } = useAuth()
   const { data, refetch } = useQuery<
-    hasura.GetCurrentMemberEbookTocProgress,
-    hasura.GetCurrentMemberEbookTocProgressVariables
+    hasura.PhGetCurrentMemberEbookTocProgress,
+    hasura.PhGetCurrentMemberEbookTocProgressVariables
   >(
     gql`
-      query GetCurrentMemberEbookTocProgress($programContentId: uuid!, $currentMemberId: String!) {
+      query PhGetCurrentMemberEbookTocProgress($programContentId: uuid!, $currentMemberId: String!) {
         program_content_ebook_toc_progress(
           where: {
             member_id: { _eq: $currentMemberId }
