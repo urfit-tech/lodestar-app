@@ -43,8 +43,6 @@ export const useAuthModal = () => {
         const oauthLink = `${endpoint}/oauth/v1.0/authorize?response_type=code&client_id=${settings['auth.cw.client_id']}&redirect_uri=${redirectUri}&state=${state}&scope=social`
         tracking.login()
         window.location.assign(oauthLink)
-      } else {
-        setAuthModalVisible?.(true)
       }
     },
   }
