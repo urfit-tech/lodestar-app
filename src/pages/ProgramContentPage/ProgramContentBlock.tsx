@@ -251,7 +251,7 @@ const ProgramContentBlock: React.VFC<{
         <ProgramContentEbookReader
           setEbook={setEbook}
           programContentId={programContent.id}
-          istrial={programContent.displayMode === 'trial'}
+          isTrial={programContent.displayMode === 'trial'}
           ebookCurrentToc={ebookCurrentToc}
           onEbookCurrentTocChange={onEbookCurrentTocChange}
           location={ebookLocation}
