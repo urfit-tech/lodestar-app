@@ -41,7 +41,6 @@ const InAppBrowserWarningModal = () => {
   const [isOpen, setIsOpen] = useState(true)
   const { formatMessage } = useIntl()
   const toast = useToast({ duration: 15000, isClosable: true })
-  const toastRef = React.useRef<string | number | undefined>(undefined)
 
   const userAgent = window.navigator.userAgent
   const isInAppBrowser = checkInAppBrowser(userAgent).isInAppBrowser
@@ -53,14 +52,13 @@ const InAppBrowserWarningModal = () => {
   const toastId = 'inAppBrowser'
 
   useEffect(() => {
-    if (isInAppBrowser && !toast.isActive(toastId) && toastRef.current == null && !isRemind) {
+    if (isInAppBrowser && !toast.isActive(toastId) && !isRemind) {
       sessionStorage.setItem('kolable.InAppBrowserWarning.isRemind', '1')
 
-      toastRef.current = toast({
+      toast({
         id: toastId,
         title: formatMessage(commonMessages.InAppBrowserWarningModal.warning),
         status: 'warning',
-        isClosable: true,
         position: 'bottom',
       })
     }
