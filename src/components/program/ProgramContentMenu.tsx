@@ -495,9 +495,12 @@ const SortBySectionItem: React.VFC<{
   const isActive = programContent.id === programContentId
   const isTrial = programContent?.displayMode === DisplayModeEnum.trial
   const isLoginTrial = programContent?.displayMode === DisplayModeEnum.loginToTrial
-  const isLock =
-    (!isEnrolled && !isTrial && !(isLoginTrial ? Boolean(currentMemberId && isAuthenticated) : false)) ||
-    !hasProgramContentPermission
+  const isLock = !(
+    isEnrolled ||
+    isTrial ||
+    (isLoginTrial && Boolean(currentMemberId && isAuthenticated)) ||
+    hasProgramContentPermission
+  )
 
   useEffect(() => {
     if (isActive) {

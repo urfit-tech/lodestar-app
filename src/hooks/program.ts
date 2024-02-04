@@ -1133,7 +1133,7 @@ export const useProgramProgress = (programContentIds: string[]) => {
         }
       }
     `,
-    { variables: { programContentIds } },
+    { skip: !programContentIds || programContentIds.length === 0, variables: { programContentIds } },
   )
   const programContentProgress = data?.program_content_progress.map(progress => ({
     contentId: progress.program_content_id,
