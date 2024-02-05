@@ -321,6 +321,7 @@ const ProgramContentSectionMenu: React.VFC<{
   onEbookLocationChange,
 }) => {
   const { programContentId } = useParams<{ programContentId?: string }>()
+  console.log(program.contentSections)
 
   return (
     <>
@@ -461,7 +462,7 @@ const SortBySectionItem: React.VFC<{
 
   const contentType = contentCurrentProgress?.programContentBodyType || ''
   const { currentExamExerciseData, loadingCurrentExamData, errorCurrentExamData, refetchCurrentExamData } =
-    useExamExercise(programContent.id, currentMemberId || '', exerciseId)
+    useExamExercise(programContent.id, currentMemberId || '', contentType, exerciseId)
   const { practiceIds } = usePracticeExist({ memberId: currentMemberId, programContentId: programContent.id })
   const { data: materials, loading: materailLoading } = useProgramContentMaterial(programContent.id)
 
@@ -642,18 +643,20 @@ const SortByDateItem: React.VFC<{
   const [previousPage] = useQueryParam('back', StringParam)
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
   const programContentProgress = useProgramContentProgress()
+  const contentType =
+    programContentProgress?.find(progress => progress.programContentId === programContent.id)?.programContentBodyType ||
+    ''
+
   const { currentExamExerciseData, loadingCurrentExamData, errorCurrentExamData } = useExamExercise(
     programContent.id,
     currentMemberId || '',
+    contentType,
     exerciseId,
   )
   const { practiceIds } = usePracticeExist({ memberId: currentMemberId, programContentId: programContent.id })
   const { data: materials, loading: materailLoading } = useProgramContentMaterial(programContent.id)
 
   let progress = 0
-  const contentType = programContentProgress?.find(
-    progress => progress.programContentId === programContent.id,
-  )?.programContentBodyType
 
   if (contentType === 'exercise' || contentType === 'exam') {
     if (currentExamExerciseData) {
