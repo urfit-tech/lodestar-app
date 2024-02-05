@@ -1,8 +1,9 @@
 import { gql, QueryHookOptions, useMutation, useQuery } from '@apollo/client'
+import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum, uniq } from 'ramda'
-import { useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import hasura from '../hasura'
 import { Category } from '../types/general'
 import {
@@ -1062,61 +1063,34 @@ export const useRecentProgramContent = (memberId: string) => {
 }
 
 export const useProgramContentEnrollment = (programId: string) => {
-  const { currentMemberId } = useAuth()
-  const { data: programContentEnrollmentData } = useQuery<
-    hasura.GetProgramContentEnrollmentIds,
-    hasura.GetProgramContentEnrollmentIdsVariables
-  >(
-    gql`
-      query GetProgramContentEnrollmentIds($programId: uuid!, $currentMemberId: String!) {
-        program_content_enrollment(where: { program_id: { _eq: $programId }, member_id: { _eq: $currentMemberId } }) {
-          program_content_id
-        }
+  const { currentMemberId, authToken } = useAuth()
+  const [data, setData] = useState<{ programContentId: string; displayMode: DisplayMode }[]>([])
+
+  const fetch = useCallback(async () => {
+    if (currentMemberId && programId) {
+      const route = `/programs/${programId}/contents`
+      try {
+        const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+          params: { memberId: currentMemberId },
+          headers: { authorization: `Bearer ${authToken}` },
+        })
+
+        setData(data)
+      } catch (err) {
+        console.log(err)
       }
-    `,
-    {
-      skip: !programId,
-      variables: {
-        programId,
-        currentMemberId: currentMemberId || '',
-      },
-    },
-  )
-  const contentIds = programContentEnrollmentData?.program_content_enrollment.map(content => content.program_content_id)
-
-  const { data: programContentData } = useQuery<
-    hasura.GetProgramContentDisplayMode,
-    hasura.GetProgramContentDisplayModeVariables
-  >(
-    gql`
-      query GetProgramContentDisplayMode($contentIds: [uuid!]) {
-        program_content(where: { id: { _in: $contentIds } }) {
-          id
-          display_mode
-        }
-      }
-    `,
-    {
-      skip: !contentIds || contentIds.length === 0,
-      variables: {
-        contentIds,
-      },
-    },
-  )
-
-  const programContentEnrollment = programContentEnrollmentData?.program_content_enrollment.map(enrollment => {
-    const displayMode = programContentData?.program_content.find(
-      content => enrollment.program_content_id === content.id,
-    )?.display_mode
-
-    return {
-      contentId: enrollment.program_content_id,
-      displayMode,
     }
-  })
+  }, [currentMemberId, programId])
+
+  useEffect(() => {
+    fetch()
+  }, [fetch])
 
   return {
-    programContentEnrollment,
+    programContentEnrollment: data.map(d => ({
+      contentId: d.programContentId,
+      displayMode: d.displayMode as DisplayMode,
+    })),
   }
 }
 
@@ -1133,7 +1107,7 @@ export const useProgramProgress = (programContentIds: string[]) => {
         }
       }
     `,
-    { variables: { programContentIds } },
+    { skip: !programContentIds || programContentIds.length === 0, variables: { programContentIds } },
   )
   const programContentProgress = data?.program_content_progress.map(progress => ({
     contentId: progress.program_content_id,
