@@ -201,7 +201,12 @@ export const useExamExaminableTimeLimit = (programContentId: string, memberId: s
   }
 }
 
-export const useExamExercise = (programContentId: string, memberId: string, exerciseId?: string | null) => {
+export const useExamExercise = (
+  programContentId: string,
+  memberId: string,
+  contentType: string,
+  exerciseId?: string | null,
+) => {
   const condition: hasura.GET_EXAM_EXERCISEVariables['condition'] = {
     id: exerciseId ? { _eq: exerciseId } : undefined,
     program_content_id: { _eq: programContentId },
@@ -227,7 +232,7 @@ export const useExamExercise = (programContentId: string, memberId: string, exer
         }
       }
     `,
-    { variables: { condition } },
+    { skip: contentType !== 'exercise' && contentType !== 'exam', variables: { condition } },
   )
 
   const latestExerciseData = data?.exercise?.[0]

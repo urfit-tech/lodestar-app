@@ -341,7 +341,7 @@ export const useProgram = (programId: string) => {
         }
       }
     `,
-    { variables: { programId } },
+    { skip: !programId, variables: { programId } },
   )
   const { loading: loadingProgramPlans, data: programPlans } = useQuery<
     hasura.GetProgramPlans,
@@ -377,7 +377,7 @@ export const useProgram = (programId: string) => {
         }
       }
     `,
-    { variables: { programId } },
+    { skip: !programId, variables: { programId } },
   )
 
   const { enabledModules } = useApp()
@@ -621,10 +621,7 @@ export const GetProgramContent = gql`
 export const useProgramContent = (programContentId: string) => {
   const { loading, error, data, refetch } = useQuery<hasura.GetProgramContent, hasura.GetProgramContentVariables>(
     GetProgramContent,
-    {
-      variables: { programContentId },
-      notifyOnNetworkStatusChange: true,
-    },
+    { skip: !programContentId, variables: { programContentId }, notifyOnNetworkStatusChange: true },
   )
 
   const programContent:
