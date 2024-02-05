@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { gql, useQuery } from '@apollo/client'
 import { Icon, LockIcon } from '@chakra-ui/icons'
 import { Button, SkeletonText, Switch } from '@chakra-ui/react'
 import axios from 'axios'
@@ -19,12 +18,11 @@ import ProgramContentEbookReader from '../../components/program/ProgramContentEb
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import AudioPlayerContext from '../../contexts/AudioPlayerContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
-import hasura from '../../hasura'
 import { isAndroid, isMobile } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
 import { CarIcon } from '../../images'
-import { DisplayModeEnum, ProgramContent, ProgramContentSection, ProgramRole } from '../../types/program'
+import { ProgramContent, ProgramContentSection, ProgramRole } from '../../types/program'
 import pageMessages from '../translation'
 import { StyledContentBlock } from './index.styled'
 import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
@@ -106,10 +104,15 @@ const ProgramContentBlock: React.VFC<{
   const { authToken, currentMemberId, currentUserRole, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
-  const { hasProgramContentPermission, isLoginTrial } = useHasProgramContentPermission(programId, programContentId)
+  const { hasProgramContentPermission } = useHasProgramContentPermission(programId, programContentId)
   const { changeGlobalPlayingState, setup, close, changeBackgroundMode, isBackgroundMode } =
     useContext(AudioPlayerContext)
   const endedAtRef = useRef(0)
+
+  const hasPermission =
+    hasProgramContentPermission ||
+    programContent?.displayMode === 'trial' ||
+    (programContent?.displayMode === 'loginToTrial' && Boolean(currentMemberId && isAuthenticated))
 
   const instructor = programRoles.filter(role => role.name === 'instructor')[0]
 
@@ -131,7 +134,7 @@ const ProgramContentBlock: React.VFC<{
       initialProgress === 1 ||
       !currentMemberId ||
       !isAuthenticated ||
-      !hasProgramContentPermission ||
+      !hasPermission ||
       (programContentBodyType &&
         ['text', 'practice', 'exam'].includes(programContentBodyType) &&
         moment().isBefore(moment(programContent?.publishedAt))) ||
@@ -189,10 +192,10 @@ const ProgramContentBlock: React.VFC<{
       id="program_content_block"
       className={programContent.programContentBody?.type !== 'ebook' ? 'pt-4 p-sm-4' : ''}
     >
-      {((programContent.contentType === 'video' && !hasProgramContentPermission) ||
+      {((programContent.contentType === 'video' && !hasPermission) ||
         (programContent.contentType !== 'video' && !programContent.programContentBody)) && (
         <div className="d-flex justify-content-center">
-          {!hasProgramContentPermission && isLoginTrial ? (
+          {!hasPermission && programContent.displayMode === 'loginToTrial' ? (
             <Button
               colorScheme="primary"
               className="mb-4"
@@ -227,7 +230,7 @@ const ProgramContentBlock: React.VFC<{
         )}
       {programContent.contentType === 'video' ? (
         (!isBackgroundMode || programContent.videos[0]?.data?.source === 'youtube') &&
-        ((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
+        ((hasPermission && moment().isAfter(moment(programContent.publishedAt))) ||
           currentUserRole === 'app-owner') && (
           <ProgramContentPlayer
             programContentId={programContentId}
@@ -247,7 +250,7 @@ const ProgramContentBlock: React.VFC<{
             }}
           />
         )
-      ) : hasProgramContentPermission && programContent.contentType === 'ebook' ? (
+      ) : hasPermission && programContent.contentType === 'ebook' ? (
         <ProgramContentEbookReader
           setEbook={setEbook}
           programContentId={programContent.id}
@@ -258,19 +261,17 @@ const ProgramContentBlock: React.VFC<{
           onLocationChange={onEbookLocationChange}
         />
       ) : null}
-      {moment().isBefore(moment(programContent.publishedAt)) &&
-        hasProgramContentPermission &&
-        currentUserRole !== 'app-owner' && (
-          <StyledUnpublishedBlock>
-            <StyledIcon as={LockIcon} className="mb-3" />
-            <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.theContentWillAt)}</p>
-            <p>
-              {`${moment(programContent.publishedAt).format('YYYY/MM/DD HH:mm')} ${formatMessage(
-                commonMessages.text.publish,
-              )}`}
-            </p>
-          </StyledUnpublishedBlock>
-        )}
+      {moment().isBefore(moment(programContent.publishedAt)) && hasPermission && currentUserRole !== 'app-owner' && (
+        <StyledUnpublishedBlock>
+          <StyledIcon as={LockIcon} className="mb-3" />
+          <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.theContentWillAt)}</p>
+          <p>
+            {`${moment(programContent.publishedAt).format('YYYY/MM/DD HH:mm')} ${formatMessage(
+              commonMessages.text.publish,
+            )}`}
+          </p>
+        </StyledUnpublishedBlock>
+      )}
       {!includes(programContent.programContentBody?.type, ['ebook', 'practice', 'exercise', 'exam']) &&
         programContent.videos[0]?.data?.source !== 'youtube' && (
           <StyledContentBlock className="mb-3">
@@ -318,7 +319,7 @@ const ProgramContentBlock: React.VFC<{
             )}
 
             {programContent.programContentBody &&
-              ((moment().isAfter(moment(programContent.publishedAt)) && hasProgramContentPermission) ||
+              ((moment().isAfter(moment(programContent.publishedAt)) && hasPermission) ||
                 currentUserRole === 'app-owner') &&
               !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
                 <BraftContent>{programContent.programContentBody.description}</BraftContent>
@@ -348,7 +349,7 @@ const ProgramContentBlock: React.VFC<{
           <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
         )}
       {!includes(programContent.programContentBody?.type, ['ebook']) &&
-        ((hasProgramContentPermission && moment().isAfter(moment(programContent.publishedAt))) ||
+        ((hasPermission && moment().isAfter(moment(programContent.publishedAt))) ||
           currentUserRole === 'app-owner') && (
           <ProgramContentTabs
             programId={programId}
@@ -369,18 +370,16 @@ const useHasProgramContentPermission: (
   programContentId: string,
 ) => {
   hasProgramContentPermission: boolean
-  isTrial: boolean
-  isLoginTrial: boolean
 } = (programId, programContentId) => {
-  const { currentMemberId, isAuthenticated, authToken } = useAuth()
+  const { currentMemberId, authToken } = useAuth()
   const [data, setData] = useState<{ programContentId: string } | {}>({})
 
   const fetch = useCallback(async () => {
-    if (currentMemberId) {
+    if (currentMemberId && programId && programContentId) {
       const route = `/programs/${programId}/content/${programContentId}`
       try {
         const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
-          params: { member: currentMemberId },
+          params: { memberId: currentMemberId },
           headers: { authorization: `Bearer ${authToken}` },
         })
 
@@ -389,38 +388,14 @@ const useHasProgramContentPermission: (
         console.log(err)
       }
     }
-  }, [currentMemberId])
+  }, [currentMemberId, programContentId, programId])
 
   useEffect(() => {
     fetch()
   }, [fetch])
 
-  const { data: programContentData } = useQuery<
-    hasura.GET_PROGRAM_CONTENT_DISPLAY_MODE,
-    hasura.GET_PROGRAM_CONTENT_DISPLAY_MODEVariables
-  >(
-    gql`
-      query GET_PROGRAM_CONTENT_DISPLAY_MODE($id: uuid!) {
-        program_content_by_pk(id: $id) {
-          display_mode
-        }
-      }
-    `,
-    {
-      variables: {
-        id: programContentId,
-      },
-    },
-  )
-  const displayMode = programContentData?.program_content_by_pk?.display_mode
-  const isTrial = displayMode === DisplayModeEnum.trial
-  const isLoginTrial = displayMode === DisplayModeEnum.loginToTrial
-
   return {
-    hasProgramContentPermission:
-      Object.keys(data).length > 0 || isTrial || (isLoginTrial ? Boolean(currentMemberId && isAuthenticated) : false),
-    isTrial,
-    isLoginTrial,
+    hasProgramContentPermission: Object.keys(data).length > 0,
   }
 }
 

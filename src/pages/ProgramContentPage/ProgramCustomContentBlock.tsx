@@ -55,11 +55,15 @@ const ProgramCustomContentBlock: React.VFC<{
 }> = ({ programId, programContentSections, programContentId, editors, children }) => {
   const { formatMessage } = useIntl()
   const { loading: loadingApp } = useApp()
-  const { authToken, permissions, currentMemberId } = useAuth()
+  const { authToken, permissions, currentMemberId, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
   const { hasProgramContentPermission } = useHasProgramContentPermission(programId, programContentId)
   const endedAtRef = useRef(0)
+  const hasPermission =
+    hasProgramContentPermission ||
+    programContent?.displayMode === 'trial' ||
+    (programContent?.displayMode === 'loginToTrial' && Boolean(currentMemberId && isAuthenticated))
 
   const programContentBodyType = programContent?.programContentBody?.type
   const initialProgress =
@@ -130,7 +134,7 @@ const ProgramCustomContentBlock: React.VFC<{
           ? false
           : currentMemberId && permissions.PROGRAM_NORMAL
           ? !editors?.includes(currentMemberId)
-          : !hasProgramContentPermission)) ||
+          : !hasPermission)) ||
         (programContent.contentType !== 'video' && !programContent.programContentBody)) && (
         <StyledUnPurchased className="p-2 text-center">
           <LockIcon className="mr-2" />
@@ -139,7 +143,7 @@ const ProgramCustomContentBlock: React.VFC<{
       )}
 
       {programContent.contentType === 'video' &&
-        (hasProgramContentPermission ||
+        (hasPermission ||
           permissions.PROGRAM_ADMIN ||
           (permissions.PROGRAM_NORMAL && currentMemberId && editors?.includes(currentMemberId))) && (
           <ProgramContentPlayer
