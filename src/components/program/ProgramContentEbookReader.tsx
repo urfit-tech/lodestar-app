@@ -209,10 +209,11 @@ const ProgramContentEbookReader: React.VFC<{
     rendition.current?.themes.override('background-color', getReaderTheme(theme).backgroundColor)
     rendition.current?.themes.override('font-size', `${ebookFontSize}px`)
     rendition.current?.themes.override('line-height', ebookLineHeight.toString())
+    rendition.current?.themes.default({ p: { 'font-size': `${ebookFontSize}px !important` } })
+    rendition.current?.themes.default({ p: { 'line-height': `${ebookLineHeight} !important` } })
     const location = rendition.current?.currentLocation() as any as Location
     setSliderValue(location?.start?.percentage * 100 || 0)
   }, [theme, ebookFontSize, ebookLineHeight])
-
   return (
     <div>
       {source && chapter ? (
@@ -322,6 +323,11 @@ const ProgramContentEbookReader: React.VFC<{
                   }}
                   getRendition={async (_rendition: Rendition) => {
                     rendition.current = _rendition
+                    // initial theme
+                    rendition.current.themes.override('color', '#424242')
+                    rendition.current.themes.override('background-color', '#ffffff')
+                    rendition.current?.themes.default({ p: { 'font-size': '18px!important' } })
+                    rendition.current?.themes.default({ p: { 'line-height': '1.5 !important' } })
                     rendition.current.on('resized', (size: { width: number; height: number }) => {
                       console.log(`resized => width: ${size.width}, height: ${size.height}`)
                     })
