@@ -25,6 +25,7 @@ export const usePracticeExist = (options: {
       }
     `,
     {
+      skip: !options.practiceId,
       variables: {
         practiceId: options.practiceId,
         memberId: options.memberId || '',
