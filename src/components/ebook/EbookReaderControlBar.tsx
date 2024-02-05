@@ -33,6 +33,7 @@ const SliderContainer = styled(Flex)`
 
 export const EbookReaderControlBar: React.VFC<{
   isLocationGenerated: boolean
+
   chapter: string
   programContentBookmarks: Array<Bookmark>
   fontSize: number
@@ -41,6 +42,7 @@ export const EbookReaderControlBar: React.VFC<{
   rendition: React.MutableRefObject<Rendition | undefined>
   onLocationChange: (loc: string) => void
   onFontSizeChange: React.Dispatch<React.SetStateAction<number>>
+  setSliderTrigger: React.Dispatch<React.SetStateAction<boolean>>
   onLineHeightChange: React.Dispatch<React.SetStateAction<number>>
   onSliderValueChange: React.Dispatch<React.SetStateAction<number>>
   sliderValue: number
@@ -56,6 +58,7 @@ export const EbookReaderControlBar: React.VFC<{
   rendition,
   sliderValue,
   onSliderValueChange,
+  setSliderTrigger,
   refetchBookmark,
   onLocationChange,
   onFontSizeChange,
@@ -65,27 +68,6 @@ export const EbookReaderControlBar: React.VFC<{
   setBookmarkId,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
-  const [isFocus, setFocus] = useState(false)
-
-  const sliderOnChangeEnd = async () => {
-    if (!isFocus) {
-      return
-    }
-    if (sliderValue === undefined || sliderValue === 0 || !rendition.current) {
-      // go to cover page
-      rendition.current?.display()
-    } else {
-      const cfi = rendition.current.book.locations.cfiFromPercentage(sliderValue / 100)
-      onLocationChange(cfi)
-    }
-
-    // can't setFocus in onTouchEnd,because onChangeEnd will be called after onTouchEnd
-    const isMobile: boolean = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      window.navigator.userAgent,
-    )
-    isMobile && setFocus(false)
-  }
-
   return (
     <Flex
       w="100%"
@@ -102,19 +84,16 @@ export const EbookReaderControlBar: React.VFC<{
         <Spacer />
         <SliderContainer>
           <Slider
-            onFocus={() => setFocus(true)}
-            onBlur={() => setFocus(false)}
             // for pc
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
             // for mobile devices
-            onTouchStart={() => {
-              setShowTooltip(true)
-              setFocus(true)
-            }}
+            onTouchStart={() => setShowTooltip(true)}
             onTouchEnd={() => setShowTooltip(false)}
-            onChangeEnd={() => sliderOnChangeEnd()}
-            onChange={v => onSliderValueChange(v)}
+            onChange={v => {
+              setSliderTrigger(true)
+              onSliderValueChange(v)
+            }}
             focusThumbOnChange={false}
             step={0.00001}
             max={100}

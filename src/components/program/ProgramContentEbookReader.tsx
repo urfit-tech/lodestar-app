@@ -141,8 +141,8 @@ const ProgramContentEbookReader: React.VFC<{
   const { programContentBookmarks, refetch: refetchBookmark } = useEbookBookmark(programContentId, currentMemberId)
   const { upsertProgramContentEbookTocProgress, updateProgramContentEbookTocProgressFinishedAt } =
     useMutationProgramContentEbookTocProgress()
-
   const [sliderValue, setSliderValue] = useState<number>(0)
+  const [sliderTrigger, setSliderTrigger] = useState<boolean>(false)
   const [isLocationGenerated, setIsLocationGenerated] = useState<boolean>(false)
   const [bookmarkId, setBookmarkId] = useState<string | undefined>(undefined)
   const [chapter, setChapter] = useState('')
@@ -154,7 +154,6 @@ const ProgramContentEbookReader: React.VFC<{
   const [bookmarkData, setBookmarkData] = useState<BookmarkData>()
 
   const { id: appId } = useApp()
-
   const getEpubFromS3 = useCallback(
     async (programContentId, authToken) => {
       try {
@@ -214,6 +213,20 @@ const ProgramContentEbookReader: React.VFC<{
     const location = rendition.current?.currentLocation() as any as Location
     setSliderValue(location?.start?.percentage * 100 || 0)
   }, [theme, ebookFontSize, ebookLineHeight])
+
+  useLayoutEffect(() => {
+    const { start, end } = rendition.current?.location || {}
+    console.log(sliderTrigger)
+    if (start && end && rendition.current) {
+      if (sliderTrigger) {
+        const cfi = rendition.current.book.locations.cfiFromPercentage(sliderValue / 100)
+        onLocationChange(cfi)
+      } else {
+        setSliderValue(start.percentage * 100)
+      }
+    }
+  }, [onLocationChange, sliderTrigger, sliderValue])
+
   return (
     <div>
       {source && chapter ? (
@@ -238,13 +251,8 @@ const ProgramContentEbookReader: React.VFC<{
                   locationChanged={async (epubCfi: string) => {
                     onLocationChange(epubCfi)
                     const { start, end, atEnd } = rendition.current?.location || {}
-
                     if (start && end && rendition.current) {
-                      setSliderValue(start.percentage * 100)
-                      // if this page is end page, set slider value to 100
-                      if (atEnd) {
-                        setSliderValue(100)
-                      }
+                      setSliderTrigger(false)
                       // set chapter and check if current page is ended page
                       const chapterLabel = getChapter(rendition.current.book, rendition.current.location.start.href)
                       setChapter(chapterLabel)
@@ -335,6 +343,34 @@ const ProgramContentEbookReader: React.VFC<{
                       setIsLocationGenerated(true)
                       setEbook(rendition.current?.book || null)
                     })
+
+                    let justResized: boolean = false
+                    let correcting: boolean = false
+                    let epubCfi: string
+
+                    // listen to resized event
+                    rendition.current.on('resized', (size: { width: number; height: number }) => {
+                      console.log(`resized => width: ${size.width}, height: ${size.height}`)
+                      justResized = true
+                    })
+
+                    // use rendition.display to trigger locationChanged in ReactReader
+                    // because we need to update percentage and bookmark status when user resize the window
+                    rendition.current.on('relocated', (location: Location) => {
+                      console.log(`relocated`)
+
+                      if (!justResized) {
+                        if (!correcting) {
+                          epubCfi = location.start.cfi
+                        } else {
+                          correcting = false
+                        }
+                      } else {
+                        justResized = false
+                        correcting = true
+                        onLocationChange(epubCfi)
+                      }
+                    })
                   }}
                 />
               </div>
@@ -368,6 +404,7 @@ const ProgramContentEbookReader: React.VFC<{
           isLocationGenerated={isLocationGenerated}
           sliderValue={sliderValue}
           onSliderValueChange={setSliderValue}
+          setSliderTrigger={setSliderTrigger}
           rendition={rendition}
           chapter={chapter}
           programContentBookmarks={programContentBookmarks}
