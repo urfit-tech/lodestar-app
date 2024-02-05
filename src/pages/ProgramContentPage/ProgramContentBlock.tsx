@@ -22,7 +22,7 @@ import { isAndroid, isMobile } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useProgramContent } from '../../hooks/program'
 import { CarIcon } from '../../images'
-import { DisplayMode, ProgramContent, ProgramContentSection, ProgramRole } from '../../types/program'
+import { ProgramContent, ProgramContentSection, ProgramRole } from '../../types/program'
 import pageMessages from '../translation'
 import { StyledContentBlock } from './index.styled'
 import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
@@ -372,10 +372,10 @@ const useHasProgramContentPermission: (
   hasProgramContentPermission: boolean
 } = (programId, programContentId) => {
   const { currentMemberId, authToken } = useAuth()
-  const [data, setData] = useState<{ programContentId: string; displayMode: DisplayMode } | {}>({})
+  const [data, setData] = useState<{ programContentId: string } | {}>({})
 
   const fetch = useCallback(async () => {
-    if (currentMemberId) {
+    if (currentMemberId && programId && programContentId) {
       const route = `/programs/${programId}/content/${programContentId}`
       try {
         const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
@@ -388,7 +388,7 @@ const useHasProgramContentPermission: (
         console.log(err)
       }
     }
-  }, [currentMemberId])
+  }, [currentMemberId, programContentId, programId])
 
   useEffect(() => {
     fetch()
