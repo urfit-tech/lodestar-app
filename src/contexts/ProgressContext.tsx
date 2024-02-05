@@ -111,7 +111,7 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
         }
       }
     `,
-    { variables: { programId, memberId } },
+    { skip: !programId || !memberId, variables: { programId, memberId } },
   )
 
   const programContentProgress: ProgressProps['programContentProgress'] = useMemo(
