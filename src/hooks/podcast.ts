@@ -419,7 +419,7 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
         }
       }
     `,
-    { variables: { podcastProgramId } },
+    { skip: !podcastProgramId, variables: { podcastProgramId } },
   )
 
   const contentType = data?.podcast_program_by_pk?.content_type

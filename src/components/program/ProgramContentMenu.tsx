@@ -321,6 +321,7 @@ const ProgramContentSectionMenu: React.VFC<{
   onEbookLocationChange,
 }) => {
   const { programContentId } = useParams<{ programContentId?: string }>()
+  console.log(program.contentSections)
 
   return (
     <>
