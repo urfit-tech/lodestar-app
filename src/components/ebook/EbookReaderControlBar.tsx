@@ -33,7 +33,6 @@ const SliderContainer = styled(Flex)`
 
 export const EbookReaderControlBar: React.VFC<{
   isLocationGenerated: boolean
-
   chapter: string
   programContentBookmarks: Array<Bookmark>
   fontSize: number
@@ -48,7 +47,7 @@ export const EbookReaderControlBar: React.VFC<{
   sliderValue: number
   onThemeChange: (theme: 'light' | 'dark') => void
   currentThemeData: { color: string; backgroundColor: string }
-  setBookmarkId: React.Dispatch<React.SetStateAction<string | undefined>>
+  setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
 }> = ({
   isLocationGenerated,
   chapter,
@@ -65,7 +64,7 @@ export const EbookReaderControlBar: React.VFC<{
   onLineHeightChange,
   onThemeChange,
   currentThemeData,
-  setBookmarkId,
+  setCurrentPageBookmarkIds,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
   return (
@@ -128,7 +127,7 @@ export const EbookReaderControlBar: React.VFC<{
             )}
           />
           <EbookBookmarkModal
-            setBookmarkId={setBookmarkId}
+            setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
             currentThemeData={currentThemeData}
             programContentBookmarks={programContentBookmarks}
             onLocationChange={onLocationChange}
