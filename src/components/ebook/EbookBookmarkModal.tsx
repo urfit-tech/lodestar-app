@@ -29,8 +29,8 @@ export const EbookBookmarkModal: React.VFC<{
   onLocationChange: (loc: string) => void
   currentThemeData: { color: string; backgroundColor: string }
   programContentBookmarks: Array<Bookmark>
-  setBookmarkId: React.Dispatch<React.SetStateAction<string | undefined>>
-}> = ({ refetchBookmark, onLocationChange, currentThemeData, programContentBookmarks, setBookmarkId }) => {
+  setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
+}> = ({ refetchBookmark, onLocationChange, currentThemeData, programContentBookmarks, setCurrentPageBookmarkIds }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <Flex>
@@ -61,7 +61,7 @@ export const EbookBookmarkModal: React.VFC<{
                         onLocationChange={onLocationChange}
                         refetchBookmark={refetchBookmark}
                         bookmark={bookmark}
-                        setBookmarkId={setBookmarkId}
+                        setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
                       />
                     ))}
                   </Grid>
@@ -80,8 +80,8 @@ const BookmarkRow: React.VFC<{
   color?: string
   bookmark: Bookmark
   refetchBookmark: () => void
-  setBookmarkId: React.Dispatch<React.SetStateAction<string | undefined>>
-}> = ({ bookmark, refetchBookmark, onLocationChange, setBookmarkId }) => {
+  setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
+}> = ({ bookmark, refetchBookmark, onLocationChange, setCurrentPageBookmarkIds }) => {
   const apolloClient = useApolloClient()
   const [isDeleting, setDeleting] = useState<boolean>(false)
 
@@ -94,7 +94,7 @@ const BookmarkRow: React.VFC<{
       },
     })
     await refetchBookmark()
-    setBookmarkId(undefined)
+    setCurrentPageBookmarkIds([])
     setDeleting(false)
   }
 
