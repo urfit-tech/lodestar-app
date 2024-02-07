@@ -123,9 +123,9 @@ const CheckoutBlock: React.VFC<{
     shipping: {
       name: '',
       phone: '',
-      city: '台北市',
-      district: '中正區',
-      zipCode: '100',
+      city: '',
+      district: '',
+      zipCode: '',
       address: '',
       shippingMethod: 'home-delivery',
       specification: '',
@@ -161,6 +161,12 @@ const CheckoutBlock: React.VFC<{
               ? zipCodes[member.shipping.city][member.shipping.district]
               : member?.shipping?.zipCode || cachedPaymentInfo.shipping.zipCode,
         }
+
+    if (cachedPaymentInfo.shipping.isOutsideTaiwanIsland === 'true') {
+      ;(['zipCode', 'city', 'district'] as Array<keyof ShippingProps>).forEach(
+        key => (cachedPaymentInfo.shipping[key] = ''),
+      )
+    }
 
     cachedPaymentInfo.invoice = cachedInvoice
       ? (JSON.parse(cachedInvoice).value as InvoiceProps)
@@ -470,6 +476,7 @@ const CheckoutBlock: React.VFC<{
               onChange={value => setShipping(value)}
               isValidating={isValidating}
               isGiftPlanDeliverable={isGiftPlanDeliverable}
+              defaultValue={cachedPaymentInfo.shipping}
             />
           </AdminCard>
         </div>
