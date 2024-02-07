@@ -103,7 +103,7 @@ export const ProgramDisplayedListItem: React.VFC<{
           </div>
           {memberId && (
             <StyledProgressBar className="flex-shrink-0">
-              <ProgressBar percent={program.viewRate ? program.viewRate * 100 : 0} />
+              <ProgressBar percent={program.viewRate ? Math.floor(program.viewRate * 100) : 0} />
             </StyledProgressBar>
           )}
         </StyledProgramInfo>

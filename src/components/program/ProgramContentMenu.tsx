@@ -152,7 +152,7 @@ const ProgramContentMenu: React.VFC<{
   ebookLocation: string | number
   ebook: Book | null
   onEbookLocationChange: (location: string | number) => void
-  onSelect?: (programContentId: string) => void
+  onSelect?: (programContentId: string | undefined) => void
 }> = ({
   program,
   onSelect,
@@ -241,7 +241,9 @@ const ProgramContentMenu: React.VFC<{
                   borderBottom="1px solid #ececec"
                   p="1.5rem 0 1rem 0"
                   cursor="pointer"
-                  onClick={() => ebook?.rendition.display(searchResult.cfi)}
+                  onClick={() => {
+                    onEbookLocationChange(searchResult.cfi)
+                  }}
                 >
                   <Box mb="0.5rem" fontSize="16px" lineHeight="24px" color="#585858" fontWeight="500">
                     <HightLightText text={searchResult.excerpt} highlight={searchText} />
