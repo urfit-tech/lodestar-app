@@ -46,7 +46,7 @@ export const EbookBookmarkModal: React.VFC<{
       <Modal scrollBehavior="inside" isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalCloseButton />
+          <ModalCloseButton zIndex={1500} />
           <ModalBody>
             <Tabs>
               <TabList>
