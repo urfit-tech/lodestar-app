@@ -12,6 +12,7 @@ import {
 import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
 import { useState } from 'react'
 import styled from 'styled-components'
+import { Bookmark } from '../program/ProgramContentEbookReader'
 import { EbookBookmarkModal } from './EbookBookmarkModal'
 import EbookStyledModal from './EbookStyledModal'
 import type { Rendition } from 'epubjs'
@@ -33,13 +34,7 @@ const SliderContainer = styled(Flex)`
 export const EbookReaderControlBar: React.VFC<{
   isLocationGenerated: boolean
   chapter: string
-  programContentBookmark: Array<{
-    id: any
-    epubCfi: string
-    createdAt: Date
-    highlightContent: string
-    chapter: string | null | undefined
-  }>
+  programContentBookmarks: Array<Bookmark>
   fontSize: number
   lineHeight: number
   refetchBookmark: () => void
@@ -51,11 +46,11 @@ export const EbookReaderControlBar: React.VFC<{
   sliderValue: number
   onThemeChange: (theme: 'light' | 'dark') => void
   currentThemeData: { color: string; backgroundColor: string }
-  setBookmarkId: React.Dispatch<React.SetStateAction<string | undefined>>
+  setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
 }> = ({
   isLocationGenerated,
   chapter,
-  programContentBookmark,
+  programContentBookmarks,
   fontSize,
   lineHeight,
   rendition,
@@ -67,7 +62,7 @@ export const EbookReaderControlBar: React.VFC<{
   onLineHeightChange,
   onThemeChange,
   currentThemeData,
-  setBookmarkId,
+  setCurrentPageBookmarkIds,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
   const [isFocus, setFocus] = useState(false)
@@ -154,9 +149,9 @@ export const EbookReaderControlBar: React.VFC<{
             )}
           />
           <EbookBookmarkModal
-            setBookmarkId={setBookmarkId}
+            setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
             currentThemeData={currentThemeData}
-            programContentBookmark={programContentBookmark}
+            programContentBookmarks={programContentBookmarks}
             onLocationChange={onLocationChange}
             refetchBookmark={refetchBookmark}
           />

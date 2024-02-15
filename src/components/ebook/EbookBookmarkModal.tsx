@@ -22,20 +22,15 @@ import { useState } from 'react'
 import { ReactComponent as DeleteIcon } from '../../images/delete-o.svg'
 import { ReactComponent as BookmarkIcon } from '../../images/icon-grid-view.svg'
 import { ReactComponent as MarkIcon } from '../../images/mark.svg'
+import { Bookmark } from '../program/ProgramContentEbookReader'
 
 export const EbookBookmarkModal: React.VFC<{
   refetchBookmark: () => void
   onLocationChange: (loc: string) => void
   currentThemeData: { color: string; backgroundColor: string }
-  programContentBookmark: Array<{
-    id: string
-    epubCfi: string
-    createdAt: Date
-    highlightContent: string
-    chapter: string | null | undefined
-  }>
-  setBookmarkId: React.Dispatch<React.SetStateAction<string | undefined>>
-}> = ({ refetchBookmark, onLocationChange, currentThemeData, programContentBookmark, setBookmarkId }) => {
+  programContentBookmarks: Array<Bookmark>
+  setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
+}> = ({ refetchBookmark, onLocationChange, currentThemeData, programContentBookmarks, setCurrentPageBookmarkIds }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <Flex>
@@ -51,7 +46,7 @@ export const EbookBookmarkModal: React.VFC<{
       <Modal scrollBehavior="inside" isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalCloseButton />
+          <ModalCloseButton zIndex={1500} />
           <ModalBody>
             <Tabs>
               <TabList>
@@ -60,13 +55,13 @@ export const EbookBookmarkModal: React.VFC<{
               <TabPanels>
                 <TabPanel>
                   <Grid gap={3}>
-                    {programContentBookmark.map(bookmark => (
+                    {programContentBookmarks.map(bookmark => (
                       <BookmarkRow
                         key={bookmark.id}
                         onLocationChange={onLocationChange}
                         refetchBookmark={refetchBookmark}
                         bookmark={bookmark}
-                        setBookmarkId={setBookmarkId}
+                        setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
                       />
                     ))}
                   </Grid>
@@ -83,16 +78,10 @@ export const EbookBookmarkModal: React.VFC<{
 const BookmarkRow: React.VFC<{
   onLocationChange: (loc: string) => void
   color?: string
-  bookmark: {
-    id: string
-    epubCfi: string
-    createdAt: Date
-    highlightContent: string
-    chapter: string | null | undefined
-  }
+  bookmark: Bookmark
   refetchBookmark: () => void
-  setBookmarkId: React.Dispatch<React.SetStateAction<string | undefined>>
-}> = ({ bookmark, refetchBookmark, onLocationChange, setBookmarkId }) => {
+  setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
+}> = ({ bookmark, refetchBookmark, onLocationChange, setCurrentPageBookmarkIds }) => {
   const apolloClient = useApolloClient()
   const [isDeleting, setDeleting] = useState<boolean>(false)
 
@@ -105,7 +94,7 @@ const BookmarkRow: React.VFC<{
       },
     })
     await refetchBookmark()
-    setBookmarkId(undefined)
+    setCurrentPageBookmarkIds([])
     setDeleting(false)
   }
 

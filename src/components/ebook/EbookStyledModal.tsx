@@ -110,7 +110,7 @@ const EbookStyledModal: React.VFC<{
                 <Button
                   {...ButtonStyle}
                   onClick={() => {
-                    if (lineHeight <= 1.0) {
+                    if (lineHeight <= 1.5) {
                       toast({
                         title: '已達最小行距',
                         status: 'info',
@@ -118,7 +118,7 @@ const EbookStyledModal: React.VFC<{
                         isClosable: false,
                         position: 'top',
                       })
-                      onLineHeightChange(1.0)
+                      onLineHeightChange(1.5)
                     } else {
                       onLineHeightChange(prev => prev - 0.1)
                     }
