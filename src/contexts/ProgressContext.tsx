@@ -12,6 +12,7 @@ type ProgressProps = {
     progress: number
     lastProgress: number
     updatedAt: Date | undefined
+    programContentEbookTocId?: string
   }[]
   refetchProgress?: () => void
   insertProgress?: (
@@ -107,6 +108,17 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
               last_progress
               updated_at
             }
+            program_content_ebook {
+              id
+              program_content_ebook_tocs {
+                id
+                program_content_ebook_toc_progress_list(where: { member_id: { _eq: $memberId } }) {
+                  id
+                  latest_progress
+                  finished_at
+                }
+              }
+            }
           }
         }
       }
@@ -114,26 +126,32 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
     { skip: !programId || !memberId, variables: { programId, memberId } },
   )
 
-  const programContentProgress: ProgressProps['programContentProgress'] = useMemo(
-    () =>
-      loading || error || !data
-        ? undefined
-        : flatten(
-            data.program_content_body.map(contentBody =>
-              contentBody.program_contents.map(content => {
-                return {
-                  programContentBodyType: contentBody.type || null,
-                  programContentId: content.id,
-                  programContentSectionId: content.content_section_id,
-                  progress: content.program_content_progress[0]?.progress || 0,
-                  lastProgress: content.program_content_progress[0]?.last_progress || 0,
-                  updatedAt: content.program_content_progress[0]?.updated_at || undefined,
-                }
-              }),
-            ),
-          ),
-    [data, error, loading],
-  )
+  const programContentProgress: ProgressProps['programContentProgress'] = useMemo(() => {
+    return flatten(
+      data?.program_content_body.map(contentBody =>
+        contentBody.program_contents.map(content =>
+          contentBody.type === 'ebook'
+            ? content.program_content_ebook?.program_content_ebook_tocs.map(toc => ({
+                programContentEbookTocId: content.program_content_ebook?.program_content_ebook_tocs[0]?.id || undefined,
+                programContentBodyType: contentBody.type || null,
+                programContentId: content.id,
+                programContentSectionId: content.content_section_id,
+                progress: toc.program_content_ebook_toc_progress_list[0]?.finished_at ? 1 : 0,
+                lastProgress: toc.program_content_ebook_toc_progress_list[0]?.latest_progress || 0,
+                updatedAt: content.program_content_progress[0]?.updated_at || undefined,
+              })) || []
+            : {
+                programContentBodyType: contentBody.type || null,
+                programContentId: content.id,
+                programContentSectionId: content.content_section_id,
+                progress: content.program_content_progress[0]?.progress || 0,
+                lastProgress: content.program_content_progress[0]?.last_progress || 0,
+                updatedAt: content.program_content_progress[0]?.updated_at || undefined,
+              },
+        ),
+      ) || [],
+    )
+  }, [data])
 
   return {
     loadingProgress: loading,

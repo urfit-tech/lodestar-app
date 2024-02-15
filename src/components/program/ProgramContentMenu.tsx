@@ -152,7 +152,7 @@ const ProgramContentMenu: React.VFC<{
   ebookLocation: string | number
   ebook: Book | null
   onEbookLocationChange: (location: string | number) => void
-  onSelect?: (programContentId: string) => void
+  onSelect?: (programContentId: string | undefined) => void
 }> = ({
   program,
   onSelect,
@@ -241,7 +241,9 @@ const ProgramContentMenu: React.VFC<{
                   borderBottom="1px solid #ececec"
                   p="1.5rem 0 1rem 0"
                   cursor="pointer"
-                  onClick={() => ebook?.rendition.display(searchResult.cfi)}
+                  onClick={() => {
+                    onEbookLocationChange(searchResult.cfi)
+                  }}
                 >
                   <Box mb="0.5rem" fontSize="16px" lineHeight="24px" color="#585858" fontWeight="500">
                     <HightLightText text={searchResult.excerpt} highlight={searchText} />
@@ -463,12 +465,14 @@ const SortBySectionItem: React.VFC<{
   }>()
   const [previousPage] = useQueryParam('back', StringParam)
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
-
   const contentType = contentCurrentProgress?.programContentBodyType || ''
+  const programContentProgress = useProgramContentProgress()
   const { currentExamExerciseData, loadingCurrentExamData, errorCurrentExamData, refetchCurrentExamData } =
     useExamExercise(programContent.id, currentMemberId || '', contentType, exerciseId)
   const { practiceIds } = usePracticeExist({ memberId: currentMemberId, programContentId: programContent.id })
   const { data: materials, loading: materailLoading } = useProgramContentMaterial(programContent.id)
+
+  const FormatProgressStatus = (progress: number) => (progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half')
 
   let progress = 0
   if (contentType === 'exercise' || contentType === 'exam') {
@@ -489,13 +493,20 @@ const SortBySectionItem: React.VFC<{
     }
   } else if (contentType === 'practice') {
     progress = practiceIds && practiceIds.length > 1 ? 1 : 0
+  } else if (contentType === 'ebook') {
+    const ebookTocProgress = programContentProgress?.filter(v => v.programContentId === programContent.id) || []
+    if (ebookTocProgress.length > 0) {
+      progress = sum(ebookTocProgress.map(v => v.progress || 0)) / ebookTocProgress.length
+    } else {
+      progress = 0
+    }
   } else {
     progress = contentCurrentProgress?.progress || 0
   }
 
   const { hasProgramContentPermission } = useHasProgramContentPermission(programId, programContent.id)
 
-  const progressStatus = progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half'
+  const progressStatus = FormatProgressStatus(progress)
 
   const isActive = programContent.id === programContentId
   const isTrial = programContent?.displayMode === DisplayModeEnum.trial
@@ -606,6 +617,9 @@ const ProgramContentDateMenu: React.VFC<{
   ebookLocation: string | number
   onEbookLocationChange: (location: string | number) => void
 }> = ({ program, programPackageId, onSelect, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
+  const { programContentId: currentProgramContentId } = useParams<{
+    programContentId?: string
+  }>()
   const programContents = flatten(program.contentSections.map(programContentSection => programContentSection.contents))
 
   return (
@@ -618,7 +632,7 @@ const ProgramContentDateMenu: React.VFC<{
             onClick={() => onSelect && onSelect(programContent.id)}
             programPackageId={programPackageId}
           />
-          {programContent.contentType === 'ebook' ? (
+          {programContent.contentType === 'ebook' && programContent.id === currentProgramContentId ? (
             <EbookSecondaryMenu
               programContentId={programContent.id}
               tocs={programContent.ebook.programContentEbookTocs}
@@ -677,6 +691,13 @@ const SortByDateItem: React.VFC<{
     }
   } else if (contentType === 'practice') {
     progress = practiceIds && practiceIds.length > 1 ? 1 : 0
+  } else if (contentType === 'ebook') {
+    const ebookTocProgress = programContentProgress?.filter(v => v.programContentId === programContent.id) || []
+    if (ebookTocProgress.length > 0) {
+      progress = sum(ebookTocProgress.map(v => v.progress || 0)) / ebookTocProgress.length
+    } else {
+      progress = 0
+    }
   } else {
     progress = programContentProgress?.find(v => v.programContentId === programContentId)?.progress || 0
   }

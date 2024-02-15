@@ -113,7 +113,7 @@ export type Bookmark = {
   highlightContent: string
   chapter: string | null | undefined
   href: string
-  percentage: any
+  percentage: number
 }
 
 const ProgramContentEbookReader: React.VFC<{
@@ -144,7 +144,7 @@ const ProgramContentEbookReader: React.VFC<{
 
   const [sliderValue, setSliderValue] = useState<number>(0)
   const [isLocationGenerated, setIsLocationGenerated] = useState<boolean>(false)
-  const [bookmarkId, setBookmarkId] = useState<string | undefined>(undefined)
+  const [currentPageBookmarkIds, setCurrentPageBookmarkIds] = useState<string[]>([])
   const [chapter, setChapter] = useState('')
 
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
@@ -209,17 +209,18 @@ const ProgramContentEbookReader: React.VFC<{
     rendition.current?.themes.override('background-color', getReaderTheme(theme).backgroundColor)
     rendition.current?.themes.override('font-size', `${ebookFontSize}px`)
     rendition.current?.themes.override('line-height', ebookLineHeight.toString())
+    rendition.current?.themes.default({ p: { 'font-size': `${ebookFontSize}px !important` } })
+    rendition.current?.themes.default({ p: { 'line-height': `${ebookLineHeight} !important` } })
     const location = rendition.current?.currentLocation() as any as Location
     setSliderValue(location?.start?.percentage * 100 || 0)
   }, [theme, ebookFontSize, ebookLineHeight])
-
   return (
     <div>
-      {source && chapter ? (
+      {source && currentMemberId && chapter ? (
         <EbookReaderBookmarkIcon
           bookmarkData={bookmarkData}
-          bookmarkId={bookmarkId}
-          setBookmarkId={setBookmarkId}
+          currentPageBookmarkIds={currentPageBookmarkIds}
+          setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
           refetchBookmark={refetchBookmark}
         />
       ) : null}
@@ -260,10 +261,12 @@ const ProgramContentEbookReader: React.VFC<{
                       // set check is currentPage in bookmark and bookmark data
                       const isPercentageInRange = (percentage: number) =>
                         inRange(percentage, start.percentage, end.percentage)
-                      const currentPageBookmark = programContentBookmarks.find(bookmark =>
+                      const currentPageBookmarks = programContentBookmarks.filter(bookmark =>
                         isPercentageInRange(bookmark.percentage),
                       )
-                      setBookmarkId(currentPageBookmark ? currentPageBookmark.id : undefined)
+                      setCurrentPageBookmarkIds(
+                        currentPageBookmarks.length > 0 ? currentPageBookmarks.map(bookmark => bookmark.id) : [],
+                      )
                       setBookmarkData({
                         percentage: start.percentage,
                         chapter: chapterLabel,
@@ -322,6 +325,11 @@ const ProgramContentEbookReader: React.VFC<{
                   }}
                   getRendition={async (_rendition: Rendition) => {
                     rendition.current = _rendition
+                    // initial theme
+                    rendition.current.themes.override('color', '#424242')
+                    rendition.current.themes.override('background-color', '#ffffff')
+                    rendition.current?.themes.default({ p: { 'font-size': '18px!important' } })
+                    rendition.current?.themes.default({ p: { 'line-height': '1.5 !important' } })
                     rendition.current.on('resized', (size: { width: number; height: number }) => {
                       console.log(`resized => width: ${size.width}, height: ${size.height}`)
                     })
@@ -373,7 +381,7 @@ const ProgramContentEbookReader: React.VFC<{
           onLineHeightChange={setEbookLineHeight}
           onThemeChange={setTheme}
           currentThemeData={getReaderTheme(theme)}
-          setBookmarkId={setBookmarkId}
+          setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
         />
       ) : null}
     </div>
@@ -382,10 +390,10 @@ const ProgramContentEbookReader: React.VFC<{
 
 const EbookReaderBookmarkIcon: React.VFC<{
   bookmarkData: BookmarkData | undefined
-  bookmarkId: string | undefined
-  setBookmarkId: React.Dispatch<React.SetStateAction<string | undefined>>
+  currentPageBookmarkIds: string[]
+  setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
   refetchBookmark: () => void
-}> = ({ refetchBookmark, bookmarkData, bookmarkId, setBookmarkId }) => {
+}> = ({ refetchBookmark, bookmarkData, currentPageBookmarkIds, setCurrentPageBookmarkIds }) => {
   const apolloClient = useApolloClient()
 
   const insertBookmark = async () => {
@@ -405,18 +413,21 @@ const EbookReaderBookmarkIcon: React.VFC<{
     })
 
     const bookmarkId = response.data.insert_program_content_ebook_bookmark.returning[0].id
-    setBookmarkId(bookmarkId)
+    setCurrentPageBookmarkIds([...(currentPageBookmarkIds ? currentPageBookmarkIds : []), bookmarkId])
     await refetchBookmark()
   }
 
   const deleteBookmark = async () => {
-    await apolloClient.mutate({
-      mutation: deleteProgramContentEbookBookmark,
-      variables: {
-        id: bookmarkId,
-      },
-    })
-    setBookmarkId(undefined)
+    currentPageBookmarkIds?.forEach(
+      async id =>
+        await apolloClient.mutate({
+          mutation: deleteProgramContentEbookBookmark,
+          variables: {
+            id,
+          },
+        }),
+    )
+    setCurrentPageBookmarkIds([])
     await refetchBookmark()
   }
 
@@ -429,9 +440,9 @@ const EbookReaderBookmarkIcon: React.VFC<{
         zIndex: 2,
         right: '20px',
       }}
-      onClick={bookmarkId ? () => deleteBookmark() : () => insertBookmark()}
+      onClick={currentPageBookmarkIds.length > 0 ? () => deleteBookmark() : () => insertBookmark()}
     >
-      <ReaderBookmark color={bookmarkId ? '#FF7D62' : undefined} />
+      <ReaderBookmark color={currentPageBookmarkIds.length > 0 ? '#FF7D62' : undefined} />
     </Flex>
   )
 }
