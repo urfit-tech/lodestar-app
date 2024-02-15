@@ -194,7 +194,10 @@ const PlayListItem: React.VFC<{
         isPlaying ? 'playing' : isLock ? 'lock' : undefined
       } ${progressStatus} `}
       onClick={() => {
-        if (pathname.includes('contents') && (contentType === 'audio' || contentType === 'video')) {
+        if (
+          pathname.includes('contents') &&
+          (contentType === 'audio' || contentType === 'video' || contentType === 'text' || contentType === 'ebook')
+        ) {
           history.push(`/programs/${programId}/contents/${contentId}`)
         }
         if (
