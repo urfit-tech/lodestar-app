@@ -5,42 +5,6 @@ import { notEmpty } from '../helpers'
 import { PracticePreviewProps, PracticeProps } from '../types/practice'
 import { ProgramRoleName } from '../types/program'
 
-export const usePracticeExist = (options: {
-  practiceId?: string
-  memberId?: string | null
-  programContentId?: string
-}) => {
-  const { loading, error, data } = useQuery<hasura.GetPracticeExist, hasura.GetPracticeExistVariables>(
-    gql`
-      query GetPracticeExist($practiceId: uuid!, $memberId: String!, $programContentId: uuid!) {
-        practice(
-          where: {
-            id: { _eq: $practiceId }
-            member_id: { _eq: $memberId }
-            program_content_id: { _eq: $programContentId }
-          }
-        ) {
-          id
-        }
-      }
-    `,
-    {
-      skip: !options.practiceId,
-      variables: {
-        practiceId: options.practiceId,
-        memberId: options.memberId || '',
-        programContentId: options.programContentId,
-      },
-    },
-  )
-  const practiceIds = data?.practice.map(v => v.id)
-  return {
-    loading,
-    error,
-    practiceIds,
-  }
-}
-
 export const usePractice = (options: { practiceId?: string; memberId?: string | null; programContentId?: string }) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_PRACTICE, hasura.GET_PRACTICEVariables>(GET_PRACTICE, {
     variables: {
