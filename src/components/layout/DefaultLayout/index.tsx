@@ -38,7 +38,7 @@ import GlobalSearchModal from './GlobalSearchModal'
 
 const StyledLayoutWrapper = styled(StyledLayout)`
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
 `
 const StyledNotificationBar = styled.div<{ variant?: string }>`
   position: sticky;
@@ -266,7 +266,7 @@ const DefaultLayout: React.FC<{
             )}
           </div>
         </StyledLayoutHeader>
-        
+
         {settings['feature.email_verification.enabled'] === '1' && isUnVerifiedEmails && !noNotificationBar && (
           <StyledNotificationBar variant="warning">
             <p>
