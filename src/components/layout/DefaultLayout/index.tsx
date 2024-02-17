@@ -46,7 +46,7 @@ declare let window: LodestarWindow
 
 const StyledLayoutWrapper = styled(StyledLayout)`
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
 `
 const StyledNotificationBar = styled.div<{ variant?: string }>`
   position: sticky;
