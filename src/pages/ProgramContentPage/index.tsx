@@ -90,7 +90,7 @@ const ProgramContentPage: React.VFC = () => {
           <div>
             {ebook ? (
               <Button
-                paddingX="0.5rem"
+                paddingX="0.4rem"
                 colorScheme="primary"
                 variant="ghost"
                 size="sm"
@@ -103,36 +103,36 @@ const ProgramContentPage: React.VFC = () => {
                   }
                 }}
               >
-                <Icon as={SearchIcon} mr="0.5rem" />
+                <Icon as={SearchIcon} mr="0.3rem" />
                 搜尋
               </Button>
             ) : null}
 
             {enabledModules.customer_review && (
               <Button
-                paddingX="0.5rem"
+                paddingX="0.4rem"
                 colorScheme="primary"
                 variant="ghost"
                 size="sm"
                 onClick={() => window.open(`/programs/${programId}?visitIntro=1&moveToBlock=customer-review`)}
               >
-                <Icon as={BsStar} mr="0.5rem" />
+                <Icon as={BsStar} mr="0.3rem" />
                 {formatMessage(commonMessages.button.review)}
               </Button>
             )}
             <Button
-              paddingX="0.5rem"
+              paddingX="0.4rem"
               size="sm"
               colorScheme="primary"
               variant="ghost"
               onClick={() => window.open(`/programs/${programId}?visitIntro=1`)}
             >
-              <Icon as={AiOutlineProfile} mr="0.5rem" />
+              <Icon as={AiOutlineProfile} mr="0.3rem" />
               {formatMessage(commonMessages.button.intro)}
             </Button>
             {!settings['layout.program_content'] && (
               <Button
-                paddingX="0.5rem"
+                paddingX="0.4rem"
                 size="sm"
                 colorScheme="primary"
                 variant="ghost"
@@ -145,7 +145,7 @@ const ProgramContentPage: React.VFC = () => {
                   }
                 }}
               >
-                <Icon as={AiOutlineUnorderedList} mr="0.5rem" />
+                <Icon as={AiOutlineUnorderedList} mr="0.3rem" />
                 {formatMessage(commonMessages.button.list)}
               </Button>
             )}
