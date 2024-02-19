@@ -173,7 +173,7 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
             programContentId: content.id,
             programContentSectionId: content.content_section_id,
             progress: extendProgramType.includes(contentBody.type || '')
-              ? progress
+              ? progress || 0
               : content.program_content_progress[0]?.progress || 0,
             lastProgress: extendProgramType.includes(contentBody.type || '')
               ? progress
