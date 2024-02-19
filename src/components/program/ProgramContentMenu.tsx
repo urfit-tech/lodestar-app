@@ -7,9 +7,9 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment-timezone'
 import { flatten, sum } from 'ramda'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { AiOutlineCalendar, AiOutlineFileText, AiOutlinePlaySquare, AiOutlineVideoCamera } from 'react-icons/ai'
+import { AiOutlineCalendar, AiOutlineFileText, AiOutlineVideoCamera } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import AudioPlayerContext from '../../contexts/AudioPlayerContext'
@@ -17,15 +17,13 @@ import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import { useExamExercise } from '../../hooks/exam'
-import { usePracticeExist } from '../../hooks/practice'
+import { useSpecifyExamExercise } from '../../hooks/exam'
 import { useEnrolledProgramIds, useProgramContentBody, useProgramContentMaterial } from '../../hooks/program'
 import { MicrophoneIcon } from '../../images'
 import { ReactComponent as LockIcon } from '../../images/icon-lock.svg'
 import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
 import { ReactComponent as QuizIcon } from '../../images/quiz.svg'
 import { useHasProgramContentPermission } from '../../pages/ProgramContentPage/ProgramContentBlock'
-import { programContentProgress } from '../../types/exam'
 import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
 import { getChapter } from './ProgramContentEbookReader'
 import programMessages from './translation'
@@ -167,11 +165,8 @@ const ProgramContentMenu: React.VFC<{
   const [sortBy, setSortBy] = useState<'section' | 'date'>('section')
   const [searchText, setSearchText] = useState<string>('')
   const [ebookSearchResults, setEbookSearchResults] = useState<{ toc: string; cfi: string; excerpt: string }[]>([])
-  const { search } = useLocation()
   const { currentMemberId } = useAuth()
   const { visible } = useContext(AudioPlayerContext)
-  const query = new URLSearchParams(search)
-  const programPackageId = query.get('back')
   const { enrolledProgramIds, loading: enrolledProgramIdsLoading } = useEnrolledProgramIds(currentMemberId || '')
   const isEnrolled = enrolledProgramIds.includes(program.id)
   const programContents = program.contentSections.map(v => v.contents).flat()
@@ -273,7 +268,6 @@ const ProgramContentMenu: React.VFC<{
             <ProgramContentSectionMenu
               isScrollToTop={isScrollToTop}
               program={program}
-              programPackageId={programPackageId}
               isLoading={enrolledProgramIdsLoading}
               isEnrolled={isEnrolled}
               onSelect={onSelect}
@@ -284,7 +278,6 @@ const ProgramContentMenu: React.VFC<{
           ) : sortBy === 'date' ? (
             <ProgramContentDateMenu
               program={program}
-              programPackageId={programPackageId}
               onSelect={onSelect}
               ebookCurrentToc={ebookCurrentToc}
               ebookLocation={ebookLocation}
@@ -303,7 +296,6 @@ const ProgramContentSectionMenu: React.VFC<{
       contents: ProgramContent[]
     })[]
   }
-  programPackageId: string | null
   isEnrolled: boolean
   isLoading: boolean
   isScrollToTop?: boolean
@@ -313,7 +305,6 @@ const ProgramContentSectionMenu: React.VFC<{
   onEbookLocationChange: (location: string | number) => void
 }> = ({
   program,
-  programPackageId,
   isEnrolled,
   isLoading,
   isScrollToTop,
@@ -326,13 +317,14 @@ const ProgramContentSectionMenu: React.VFC<{
 
   return (
     <>
-      {program.contentSections.map((v, i) => (
+      {program.contentSections.map((contentSection, i) => (
         <ContentSection
-          key={v.id}
+          key={contentSection.id}
           isScrollToTop={isScrollToTop}
-          defaultCollapse={programContentId ? v.contents.some(w => w.id === programContentId) : i === 0}
-          programContentSection={v}
-          programPackageId={programPackageId}
+          defaultCollapse={
+            programContentId ? contentSection.contents.some(content => content.id === programContentId) : i === 0
+          }
+          programContentSection={contentSection}
           isLoading={isLoading}
           isEnrolled={isEnrolled}
           onSelect={onSelect}
@@ -349,7 +341,6 @@ const ContentSection: React.VFC<{
   programContentSection: ProgramContentSection & {
     contents: ProgramContent[]
   }
-  programPackageId: string | null
   isEnrolled: boolean
   isLoading: boolean
   isScrollToTop?: boolean
@@ -360,7 +351,6 @@ const ContentSection: React.VFC<{
   onEbookLocationChange: (location: string | number) => void
 }> = ({
   programContentSection,
-  programPackageId,
   isEnrolled,
   isLoading,
   defaultCollapse,
@@ -372,21 +362,31 @@ const ContentSection: React.VFC<{
 }) => {
   const programContentProgress = useProgramContentProgress()
   const [isCollapse, setIsCollapse] = useState(defaultCollapse)
-  const [passExam, setPassExam] = useState<string[]>([])
   const { programContentId: currentProgramContentId } = useParams<{
     programContentId?: string
   }>()
+  const [exerciseId] = useQueryParam('exerciseId', StringParam)
+  const { specifyExamExercise } = useSpecifyExamExercise(exerciseId || '')
 
   const contentProgress =
     programContentProgress?.filter(progress => progress.programContentSectionId === programContentSection.id) || []
-  const otherProgress = contentProgress.filter(
-    progress => progress.programContentBodyType !== 'exam' && progress.programContentBodyType !== 'exercise',
-  )
-  const sectionProgress = contentProgress.length
-    ? Math.floor(
-        ((sum(otherProgress.map(progress => progress.progress)) + passExam.length) * 100) / contentProgress.length,
-      )
-    : 0
+
+  const sectionProgress =
+    contentProgress.length > 0
+      ? Math.floor(
+          (sum(
+            contentProgress.map(cp => {
+              if (exerciseId && specifyExamExercise.programContentId === cp.programContentId) {
+                return specifyExamExercise.progress
+              } else {
+                return cp.progress
+              }
+            }),
+          ) *
+            100) /
+            contentProgress.length,
+        )
+      : 0
 
   return (
     <StyledContentSection key={programContentSection.id}>
@@ -402,19 +402,13 @@ const ContentSection: React.VFC<{
         {programContentSection.contents?.map(programContent => (
           <>
             <SortBySectionItem
-              isScrollToTop={isScrollToTop}
               key={programContent.id}
               programContent={programContent}
-              contentCurrentProgress={contentProgress.find(item => item.programContentId === programContent.id)}
+              isScrollToTop={isScrollToTop}
               onSetIsCollapse={setIsCollapse}
               isEnrolled={isEnrolled}
               isLoading={isLoading}
-              passExam={passExam}
-              setPassExam={setPassExam}
-              onClick={() => {
-                onSelect?.(programContent.id)
-              }}
-              programPackageId={programPackageId}
+              onClick={() => onSelect?.(programContent.id)}
             />
             {programContent.contentType === 'ebook' && programContent.id === currentProgramContentId ? (
               <EbookSecondaryMenu
@@ -434,27 +428,12 @@ const ContentSection: React.VFC<{
 
 const SortBySectionItem: React.VFC<{
   programContent: ProgramContent
-  contentCurrentProgress: programContentProgress | undefined
   isEnrolled: boolean
   isLoading: boolean
   isScrollToTop?: boolean
   onSetIsCollapse?: React.Dispatch<React.SetStateAction<boolean | undefined>>
   onClick?: () => void
-  passExam?: string[]
-  setPassExam: React.Dispatch<React.SetStateAction<string[]>>
-  programPackageId: string | null
-}> = ({
-  programContent,
-  isEnrolled,
-  isLoading,
-  isScrollToTop,
-  onSetIsCollapse,
-  onClick,
-  passExam = [],
-  setPassExam,
-  contentCurrentProgress,
-  programPackageId,
-}) => {
+}> = ({ programContent, isEnrolled, isLoading, isScrollToTop, onSetIsCollapse, onClick }) => {
   const currentRef = useRef<HTMLInputElement>(null)
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -465,44 +444,17 @@ const SortBySectionItem: React.VFC<{
   }>()
   const [previousPage] = useQueryParam('back', StringParam)
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
-  const contentType = contentCurrentProgress?.programContentBodyType || ''
   const programContentProgress = useProgramContentProgress()
-  const { currentExamExerciseData, loadingCurrentExamData, errorCurrentExamData, refetchCurrentExamData } =
-    useExamExercise(programContent.id, currentMemberId || '', contentType, exerciseId)
-  const { practiceIds } = usePracticeExist({ memberId: currentMemberId, programContentId: programContent.id })
+  const { specifyExamExercise } = useSpecifyExamExercise(exerciseId || '')
   const { data: materials, loading: materailLoading } = useProgramContentMaterial(programContent.id)
 
   const FormatProgressStatus = (progress: number) => (progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half')
 
-  let progress = 0
-  if (contentType === 'exercise' || contentType === 'exam') {
-    if (currentExamExerciseData) {
-      let { gainedPointsTotal, passingScore } = currentExamExerciseData
-      if (gainedPointsTotal !== null && !isNaN(gainedPointsTotal) && !loadingCurrentExamData && !errorCurrentExamData) {
-        if (passingScore <= gainedPointsTotal) {
-          progress = 1
-        } else if (passingScore > gainedPointsTotal) {
-          progress = 0.5
-        }
-      }
-
-      if (!passExam.includes(programContent.id) && gainedPointsTotal && passingScore <= gainedPointsTotal) {
-        setPassExam([...passExam, programContent.id])
-        passExam.push(programContent.id)
-      }
-    }
-  } else if (contentType === 'practice') {
-    progress = practiceIds && practiceIds.length > 1 ? 1 : 0
-  } else if (contentType === 'ebook') {
-    const ebookTocProgress = programContentProgress?.filter(v => v.programContentId === programContent.id) || []
-    if (ebookTocProgress.length > 0) {
-      progress = sum(ebookTocProgress.map(v => v.progress || 0)) / ebookTocProgress.length
-    } else {
-      progress = 0
-    }
-  } else {
-    progress = contentCurrentProgress?.progress || 0
-  }
+  const progress = exerciseId
+    ? programContentId === specifyExamExercise.programContentId
+      ? specifyExamExercise.progress
+      : 0
+    : programContentProgress?.find(v => v.programContentId === programContent.id)?.progress || 0
 
   const { hasProgramContentPermission } = useHasProgramContentPermission(programId, programContent.id)
 
@@ -533,24 +485,19 @@ const SortBySectionItem: React.VFC<{
       id={programContent.id}
       ref={currentRef}
       className={`${progressStatus} ${isActive ? 'active' : isLock ? 'lock' : ''}`}
-      onClick={async () => {
+      onClick={() => {
         onClick?.()
-        if (contentType === 'exercise' || contentType === 'exam') {
-          await refetchCurrentExamData()
-        }
         history.push(
-          `/programs/${programId}/contents/${programContent.id}${programPackageId ? `?back=${programPackageId}` : ''}`,
+          `/programs/${programId}/contents/${programContent.id}${previousPage ? `?back=${previousPage}` : ''}`,
         )
       }}
     >
       <StyledItemTitle className="mb-2">{programContent.title}</StyledItemTitle>
-
       {(!isLock || isLoading) && (
         <StyledIconWrapper>
           <Icon as={CheckIcon} />
         </StyledIconWrapper>
       )}
-
       <div className="d-flex">
         <div className="mr-3 d-flex justify-content-center">
           {!isLoading && isLock ? (
@@ -611,12 +558,11 @@ const ProgramContentDateMenu: React.VFC<{
       contents: ProgramContent[]
     })[]
   }
-  programPackageId: string | null
   onSelect?: (programContentId: string) => void
   ebookCurrentToc: string | null
   ebookLocation: string | number
   onEbookLocationChange: (location: string | number) => void
-}> = ({ program, programPackageId, onSelect, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
+}> = ({ program, onSelect, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
   const { programContentId: currentProgramContentId } = useParams<{
     programContentId?: string
   }>()
@@ -630,7 +576,6 @@ const ProgramContentDateMenu: React.VFC<{
             key={programContent.id}
             programContent={programContent}
             onClick={() => onSelect && onSelect(programContent.id)}
-            programPackageId={programPackageId}
           />
           {programContent.contentType === 'ebook' && programContent.id === currentProgramContentId ? (
             <EbookSecondaryMenu
@@ -650,57 +595,24 @@ const ProgramContentDateMenu: React.VFC<{
 const SortByDateItem: React.VFC<{
   programContent: ProgramContent
   onClick?: () => void
-  programPackageId: string | null
-}> = ({ programContent, onClick, programPackageId }) => {
+}> = ({ programContent, onClick }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { programId, programContentId } = useParams<{
     programId: string
     programContentId?: string
   }>()
-  const { currentMemberId } = useAuth()
-
   const [previousPage] = useQueryParam('back', StringParam)
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
   const programContentProgress = useProgramContentProgress()
-  const contentType =
-    programContentProgress?.find(progress => progress.programContentId === programContent.id)?.programContentBodyType ||
-    ''
-
-  const { currentExamExerciseData, loadingCurrentExamData, errorCurrentExamData } = useExamExercise(
-    programContent.id,
-    currentMemberId || '',
-    contentType,
-    exerciseId,
-  )
-  const { practiceIds } = usePracticeExist({ memberId: currentMemberId, programContentId: programContent.id })
+  const { specifyExamExercise } = useSpecifyExamExercise(exerciseId || '')
   const { data: materials, loading: materailLoading } = useProgramContentMaterial(programContent.id)
 
-  let progress = 0
-
-  if (contentType === 'exercise' || contentType === 'exam') {
-    if (currentExamExerciseData) {
-      let { gainedPointsTotal, passingScore } = currentExamExerciseData
-      if (gainedPointsTotal !== null && !isNaN(gainedPointsTotal) && !loadingCurrentExamData && !errorCurrentExamData) {
-        if (passingScore <= gainedPointsTotal) {
-          progress = 1
-        } else if (passingScore > gainedPointsTotal) {
-          progress = 0.5
-        }
-      }
-    }
-  } else if (contentType === 'practice') {
-    progress = practiceIds && practiceIds.length > 1 ? 1 : 0
-  } else if (contentType === 'ebook') {
-    const ebookTocProgress = programContentProgress?.filter(v => v.programContentId === programContent.id) || []
-    if (ebookTocProgress.length > 0) {
-      progress = sum(ebookTocProgress.map(v => v.progress || 0)) / ebookTocProgress.length
-    } else {
-      progress = 0
-    }
-  } else {
-    progress = programContentProgress?.find(v => v.programContentId === programContentId)?.progress || 0
-  }
+  const progress = exerciseId
+    ? programContentId === specifyExamExercise.programContentId
+      ? specifyExamExercise.progress
+      : 0
+    : programContentProgress?.find(v => v.programContentId === programContent.id)?.progress || 0
 
   return (
     <StyledItem
@@ -711,9 +623,7 @@ const SortByDateItem: React.VFC<{
       onClick={() => {
         onClick?.()
         history.push(
-          `/programs/${programId}/contents/${programContent.id}${
-            programPackageId !== null ? `?back=${programPackageId}` : ''
-          }`,
+          `/programs/${programId}/contents/${programContent.id}${previousPage ? `?back=${previousPage}` : ''}`,
         )
       }}
     >
@@ -724,8 +634,7 @@ const SortByDateItem: React.VFC<{
       </StyledIconWrapper>
 
       <div>
-        {/* <StyledIcon as={AiOutlineCalendar} className="mr-2" /> */}
-        <StyledIcon as={AiOutlinePlaySquare} className="mr-2" />
+        <StyledIcon as={AiOutlineCalendar} className="mr-2" />
         {programContent.publishedAt && dateFormatter(programContent.publishedAt)}
       </div>
       {!materailLoading && materials && materials.length !== 0 && (
@@ -834,7 +743,7 @@ const EbookSecondaryMenu: React.VFC<{
     <Box {...(currentProgramContentId === programContentId ? { bg: `${rgba(theme.colors.primary[500], 0.1)}` } : null)}>
       {tocs.map(toc => {
         return (
-          <Box>
+          <Box key={toc.id}>
             <Flex
               position="relative"
               justifyContent="space-between"

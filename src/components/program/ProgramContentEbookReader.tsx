@@ -5,9 +5,10 @@ import { inRange } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
-import { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useContext, useLayoutEffect, useRef, useState } from 'react'
 import { EpubView, ReactReaderStyle } from 'react-reader'
 import styled from 'styled-components'
+import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
 import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
@@ -138,6 +139,7 @@ const ProgramContentEbookReader: React.VFC<{
   const apolloClient = useApolloClient()
   const rendition = useRef<Rendition | undefined>(undefined)
   const toc = useRef<NavItem[]>([])
+  const { refetchProgress } = useContext(ProgressContext)
   const { programContentBookmarks, refetch: refetchBookmark } = useEbookBookmark(programContentId, currentMemberId)
   const { upsertProgramContentEbookTocProgress, updateProgramContentEbookTocProgressFinishedAt } =
     useMutationProgramContentEbookTocProgress()
@@ -146,11 +148,9 @@ const ProgramContentEbookReader: React.VFC<{
   const [isLocationGenerated, setIsLocationGenerated] = useState<boolean>(false)
   const [currentPageBookmarkIds, setCurrentPageBookmarkIds] = useState<string[]>([])
   const [chapter, setChapter] = useState('')
-
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [ebookFontSize, setEbookFontSize] = useState(18)
   const [ebookLineHeight, setEbookLineHeight] = useState(1.5)
-
   const [bookmarkData, setBookmarkData] = useState<BookmarkData>()
 
   const { id: appId } = useApp()
@@ -289,8 +289,8 @@ const ProgramContentEbookReader: React.VFC<{
                         try {
                           apolloClient
                             .query({
-                              query: GetProgramContentEbookToc,
-                              variables: { memberId: currentMemberId, programContentId, href: `%${href}%` },
+                              query: GetProgramContentEbookTocId,
+                              variables: { programContentId, href: `%${href}%` },
                               fetchPolicy: 'no-cache',
                             })
                             .then(({ data }) => {
@@ -313,6 +313,7 @@ const ProgramContentEbookReader: React.VFC<{
                                         finishedAt: new Date(),
                                       },
                                     })
+                                    refetchProgress?.()
                                   }
                                 })
                               }
@@ -447,18 +448,10 @@ const EbookReaderBookmarkIcon: React.VFC<{
   )
 }
 
-const GetProgramContentEbookToc = gql`
-  query PhGetProgramContentEbookTocAndCurrentMemberProgress(
-    $programContentId: uuid!
-    $href: String!
-    $memberId: String!
-  ) {
+const GetProgramContentEbookTocId = gql`
+  query PhGetProgramContentEbookTocId($programContentId: uuid!, $href: String!) {
     program_content_ebook_toc(where: { program_content_id: { _eq: $programContentId }, href: { _ilike: $href } }) {
       id
-      program_content_ebook_toc_progress_list(where: { member_id: { _eq: $memberId } }) {
-        id
-        finished_at
-      }
     }
   }
 `
