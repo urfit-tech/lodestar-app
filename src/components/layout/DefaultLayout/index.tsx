@@ -110,7 +110,7 @@ const DefaultLayout: React.FC<{
         variant={white ? 'white' : undefined}
         header={noHeader ? 'noHeader' : '' /* for remove blank on the top */}
       >
-        {!noHeader && (
+        {!noHeader ? (
           <StyledLayoutHeader
             className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}
           >
@@ -271,7 +271,7 @@ const DefaultLayout: React.FC<{
               )}
             </div>
           </StyledLayoutHeader>
-        )}
+        ) : null}
 
         {settings['feature.email_verification.enabled'] === '1' && isUnVerifiedEmails && !noNotificationBar && (
           <StyledNotificationBar variant="warning">
