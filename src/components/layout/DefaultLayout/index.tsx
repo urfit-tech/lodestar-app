@@ -290,7 +290,7 @@ const DefaultLayout: React.FC<{
             {centeredBox ? <CenteredBox>{children}</CenteredBox> : children}
           </LayoutContentWrapper>
 
-          {!noFooter && (renderFooter?.({ DefaultFooter: Footer }) || <Footer />)}
+          {!noFooter ? renderFooter?.({ DefaultFooter: Footer }) || <Footer /> : null}
           {/* more space for fixed blocks */}
           <Responsive.Default>
             {typeof footerBottomSpace === 'string' && <EmptyBlock height={footerBottomSpace} />}
