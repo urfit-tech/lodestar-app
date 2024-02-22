@@ -13,7 +13,12 @@ import hasura from '../../hasura'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
 import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
 import { decryptData } from './decryptUtils'
-import type { NavItem, Rendition, Book, Location } from 'epubjs'
+import type { NavItem, Rendition, Book, Location, Contents } from 'epubjs'
+
+type ITextSelection = {
+  text: string
+  cfiRange: string
+}
 
 const ReaderBookmark = styled.div`
   position: relative;
@@ -152,6 +157,7 @@ const ProgramContentEbookReader: React.VFC<{
   const [ebookFontSize, setEbookFontSize] = useState(18)
   const [ebookLineHeight, setEbookLineHeight] = useState(1.5)
   const [bookmarkData, setBookmarkData] = useState<BookmarkData>()
+  const [selections, setSelections] = useState<ITextSelection[]>([])
 
   const { id: appId } = useApp()
 
@@ -200,6 +206,25 @@ const ProgramContentEbookReader: React.VFC<{
     },
   }
 
+  const setRenderSelection = (cfiRange: string, contents: Contents) => {
+    const rangeText = rendition.current?.getRange(cfiRange)?.toString()
+    if (rangeText) {
+      setSelections(list =>
+        list.concat({
+          text: rangeText,
+          cfiRange,
+        }),
+      )
+      rendition.current?.annotations.add('highlight', cfiRange, {}, undefined, 'hl', {
+        fill: 'red',
+        'fill-opacity': '0.5',
+        'mix-blend-mode': 'multiply',
+      })
+      const selection = contents.window.getSelection()
+      selection?.removeAllRanges()
+    }
+  }
+
   useLayoutEffect(() => {
     getEpubFromS3(programContentId, authToken)
   }, [authToken, programContentId, getEpubFromS3])
@@ -214,6 +239,7 @@ const ProgramContentEbookReader: React.VFC<{
     const location = rendition.current?.currentLocation() as any as Location
     setSliderValue(location?.start?.percentage * 100 || 0)
   }, [theme, ebookFontSize, ebookLineHeight])
+
   return (
     <div>
       {source && currentMemberId && chapter ? (
@@ -334,6 +360,13 @@ const ProgramContentEbookReader: React.VFC<{
 
                     rendition.current.on('resized', (size: { width: number; height: number }) => {
                       console.log(`resized => width: ${size.width}, height: ${size.height}`)
+                    })
+                    rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
+                      console.log('QQQQQQQQQQQ')
+                      const rangeText = rendition.current?.getRange(cfiRange)?.toString()
+                      if (rangeText) {
+                        setSelections(prevSelections => [...prevSelections, { text: rangeText, cfiRange }])
+                      }
                     })
                     await rendition.current?.book.locations.generate(150).then(() => {
                       setIsLocationGenerated(true)
