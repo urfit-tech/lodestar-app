@@ -1,6 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
 import { flatten, sum } from 'ramda'
-import { useMemo } from 'react'
 import { Exam, ExamTimeUnit, ExercisePublic, Question } from '../types/exam'
 import hasura from './../hasura'
 
@@ -201,22 +200,11 @@ export const useExamExaminableTimeLimit = (programContentId: string, memberId: s
   }
 }
 
-export const useExamExercise = (
-  programContentId: string,
-  memberId: string,
-  contentType: string,
-  exerciseId?: string | null,
-) => {
-  const condition: hasura.GET_EXAM_EXERCISEVariables['condition'] = {
-    id: exerciseId ? { _eq: exerciseId } : undefined,
-    program_content_id: { _eq: programContentId },
-    member_id: exerciseId ? undefined : { _eq: memberId },
-    answer: { _is_null: false },
-  }
-  const { loading, error, data, refetch } = useQuery<hasura.GET_EXAM_EXERCISE, hasura.GET_EXAM_EXERCISEVariables>(
+export const useSpecifyExamExercise = (exerciseId?: string | null) => {
+  const { loading, data, refetch } = useQuery<hasura.GetSpecifyExamExercise, hasura.GetSpecifyExamExerciseVariables>(
     gql`
-      query GET_EXAM_EXERCISE($condition: exercise_bool_exp!) {
-        exercise(where: $condition, order_by: { created_at: desc }, limit: 1) {
+      query GetSpecifyExamExercise($exerciseId: uuid!) {
+        exercise_by_pk(id: $exerciseId) {
           id
           exercise_publics {
             exercise_id
@@ -229,34 +217,41 @@ export const useExamExercise = (
             id
             passing_score
           }
+          program_content {
+            id
+            program_content_section {
+              id
+            }
+          }
         }
       }
     `,
-    { skip: contentType !== 'exercise' && contentType !== 'exam', variables: { condition } },
+    { skip: Boolean(exerciseId), variables: { exerciseId } },
   )
 
-  const latestExerciseData = data?.exercise?.[0]
+  const passingScore = data?.exercise_by_pk?.exam?.passing_score || 0
+  const gainedPointsTotal =
+    data?.exercise_by_pk?.exercise_publics?.reduce((acc, item) => {
+      return acc + Number(item?.gained_points)
+    }, 0) || 0
 
-  const currentExamExerciseData: { passingScore: number; gainedPointsTotal: number } | null = useMemo(() => {
-    if (latestExerciseData)
-      return {
-        passingScore: latestExerciseData?.exam?.passing_score || 0,
-        gainedPointsTotal:
-          latestExerciseData?.exercise_publics?.reduce((acc, item) => {
-            return acc + Number(item?.gained_points)
-          }, 0) || 0,
-      }
-
-    return null
-  }, [latestExerciseData])
+  const specifyExamExercise: {
+    id: string
+    programContentId: string
+    progress: number
+  } | null = {
+    id: data?.exercise_by_pk?.id,
+    programContentId: data?.exercise_by_pk?.program_content.id,
+    progress: gainedPointsTotal >= passingScore ? 1 : 0.5,
+  }
 
   return {
-    currentExamExerciseData,
-    refetchCurrentExamData: refetch,
-    loadingCurrentExamData: loading,
-    errorCurrentExamData: error,
+    specifyExamExercise,
+    refetch,
+    loading,
   }
 }
+
 export const useExercisePublic = (programContentId: string) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_EXERCISE_PUBLIC, hasura.GET_EXERCISE_PUBLICVariables>(
     gql`

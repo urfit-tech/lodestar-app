@@ -1,5 +1,5 @@
 import { gql, useMutation, useQuery } from '@apollo/client'
-import { flatten } from 'ramda'
+import { flatten, sum } from 'ramda'
 import React, { createContext, useMemo } from 'react'
 import hasura from '../hasura'
 
@@ -12,7 +12,6 @@ type ProgressProps = {
     progress: number
     lastProgress: number
     updatedAt: Date | undefined
-    programContentEbookTocId?: string
   }[]
   refetchProgress?: () => void
   insertProgress?: (
@@ -108,15 +107,31 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
               last_progress
               updated_at
             }
-            program_content_ebook {
+            program_content_ebook_toc {
               id
-              program_content_ebook_tocs {
+              program_content_ebook_toc_progress_list(where: { member_id: { _eq: $memberId } }) {
                 id
-                program_content_ebook_toc_progress_list(where: { member_id: { _eq: $memberId } }) {
-                  id
-                  latest_progress
-                  finished_at
-                }
+                latest_progress
+                finished_at
+              }
+            }
+            practices(where: { member_id: { _eq: $memberId }, is_deleted: { _eq: false } }) {
+              id
+              program_content_id
+            }
+            exercises(order_by: { created_at: desc }) {
+              id
+              program_content_id
+              exercise_publics(where: { member_id: { _eq: $memberId } }) {
+                exercise_id
+                question_points
+                question_id
+                question_started_at
+                gained_points
+              }
+              exam {
+                id
+                passing_score
               }
             }
           }
@@ -129,26 +144,43 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
   const programContentProgress: ProgressProps['programContentProgress'] = useMemo(() => {
     return flatten(
       data?.program_content_body.map(contentBody =>
-        contentBody.program_contents.map(content =>
-          contentBody.type === 'ebook'
-            ? content.program_content_ebook?.program_content_ebook_tocs.map(toc => ({
-                programContentEbookTocId: content.program_content_ebook?.program_content_ebook_tocs[0]?.id || undefined,
-                programContentBodyType: contentBody.type || null,
-                programContentId: content.id,
-                programContentSectionId: content.content_section_id,
-                progress: toc.program_content_ebook_toc_progress_list[0]?.finished_at ? 1 : 0,
-                lastProgress: toc.program_content_ebook_toc_progress_list[0]?.latest_progress || 0,
-                updatedAt: content.program_content_progress[0]?.updated_at || undefined,
-              })) || []
-            : {
-                programContentBodyType: contentBody.type || null,
-                programContentId: content.id,
-                programContentSectionId: content.content_section_id,
-                progress: content.program_content_progress[0]?.progress || 0,
-                lastProgress: content.program_content_progress[0]?.last_progress || 0,
-                updatedAt: content.program_content_progress[0]?.updated_at || undefined,
-              },
-        ),
+        contentBody.program_contents.map(content => {
+          const extendProgramType = ['exercise', 'exam', 'ebook', 'practice']
+          const passingScore = content.exercises?.[0]?.exam?.passing_score || 0
+          const gainedPointsTotal =
+            content.exercises?.[0]?.exercise_publics.reduce((acc, cur) => acc + Number(cur.gained_points), 0) || 0
+          let progress =
+            contentBody.type === 'exercise' || contentBody.type === 'exam'
+              ? content.exercises.length < 0
+                ? 0
+                : gainedPointsTotal >= passingScore
+                ? 1
+                : 0.5
+              : contentBody.type === 'ebook'
+              ? sum(
+                  content.program_content_ebook_toc.map(toc =>
+                    toc.program_content_ebook_toc_progress_list[0]?.finished_at ? 1 : 0,
+                  ),
+                ) / content.program_content_ebook_toc.length
+              : contentBody.type === 'practice'
+              ? content.practices.length > 0
+                ? 1
+                : 0
+              : 0
+
+          return {
+            programContentBodyType: contentBody.type || null,
+            programContentId: content.id,
+            programContentSectionId: content.content_section_id,
+            progress: extendProgramType.includes(contentBody.type || '')
+              ? progress || 0
+              : content.program_content_progress[0]?.progress || 0,
+            lastProgress: extendProgramType.includes(contentBody.type || '')
+              ? progress
+              : content.program_content_progress[0]?.last_progress || 0,
+            updatedAt: content.program_content_progress[0]?.updated_at || undefined,
+          }
+        }),
       ) || [],
     )
   }, [data])

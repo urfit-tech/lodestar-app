@@ -11,6 +11,7 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
+import { useState } from 'react'
 import { MinusIcon, PlusIcon } from '../../images'
 
 const EbookStyledModal: React.VFC<{
@@ -24,7 +25,13 @@ const EbookStyledModal: React.VFC<{
   }>
 }> = ({ renderTrigger, fontSize, lineHeight, onFontSizeChange, onLineHeightChange, onThemeChange }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [selectedTheme, setSelectedTheme] = useState('light')
   const toast = useToast()
+
+  const handleOnClick = (theme: 'light' | 'dark') => {
+    onThemeChange(theme)
+    setSelectedTheme(theme)
+  }
 
   const LabelStyle = {
     alignItems: 'center',
@@ -45,6 +52,7 @@ const EbookStyledModal: React.VFC<{
     p: '10px 20px',
     _hover: {},
   }
+  const { color, backgroundColor, ...buttonAppearanceStyle } = ButtonStyle
 
   const IconStyle = {
     fill: '#585858',
@@ -151,15 +159,19 @@ const EbookStyledModal: React.VFC<{
 
               <Flex>
                 <Flex {...LabelStyle}>主題</Flex>
-                <Button {...ButtonStyle} onClick={() => onThemeChange('light')}>
+                <Button
+                  {...buttonAppearanceStyle}
+                  colorScheme="primary"
+                  variant={selectedTheme === 'light' ? 'solid' : 'outline'}
+                  onClick={() => handleOnClick('light')}
+                >
                   亮色
                 </Button>
                 <Button
-                  {...ButtonStyle}
-                  backgroundColor="#424242"
-                  color="#ffffff"
-                  border=""
-                  onClick={() => onThemeChange('dark')}
+                  {...buttonAppearanceStyle}
+                  colorScheme={selectedTheme === 'dark' ? 'primary' : 'whiteAlpha'}
+                  variant={selectedTheme === 'dark' ? 'solid' : 'outline'}
+                  onClick={() => handleOnClick('dark')}
                 >
                   深色
                 </Button>

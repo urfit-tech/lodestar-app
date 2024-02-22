@@ -173,7 +173,7 @@ export const commonMessages = {
     verifySms: { id: 'common.button.verifySms', defaultMessage: '驗證簡訊碼' },
     login: { id: 'auth.login', defaultMessage: '登入' },
     save: { id: 'common.button.save', defaultMessage: '儲存' },
-    list: { id: 'common.button.list', defaultMessage: `查看清單` },
+    list: { id: 'common.button.list', defaultMessage: `清單` },
     back: { id: 'common.button.back', defaultMessage: '返回' },
     subscribeNow: { id: 'common.subscribe.now', defaultMessage: '立即訂閱' },
     subscribe: { id: 'common.subscribe', defaultMessage: '立即參與' },

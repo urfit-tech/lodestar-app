@@ -38,7 +38,7 @@ import GlobalSearchModal from './GlobalSearchModal'
 
 const StyledLayoutWrapper = styled(StyledLayout)`
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
 `
 const StyledNotificationBar = styled.div<{ variant?: string }>`
   position: sticky;
@@ -110,162 +110,168 @@ const DefaultLayout: React.FC<{
         variant={white ? 'white' : undefined}
         header={noHeader ? 'noHeader' : '' /* for remove blank on the top */}
       >
-        <StyledLayoutHeader className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}>
-          <div className="d-flex align-items-center">
-            <LogoBlock className="mr-4">
-              {renderTitle ? (
-                renderTitle()
-              ) : (
-                <Link to="/">{settings['logo'] ? <StyledLogo src={settings['logo']} alt="logo" /> : name}</Link>
-              )}
-            </LogoBlock>
-          </div>
-          <div className="d-flex align-items-center">
-            <Responsive.Desktop>
-              {navs
-                .filter(nav => nav.block === 'header')
-                .map(nav =>
-                  nav.external ? (
-                    <Menu key={nav.id}>
-                      <MenuButton
-                        as={
-                          settings['style.header.menu_button.animation.enable'] === '1'
-                            ? StyledNavAnimationButton
-                            : StyledNavButton
-                        }
-                        onClick={() => {
-                          nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')
-                        }}
-                      >
-                        <Link to={nav.href ? nav.href : '#!'}>{nav.label}</Link>
-                        {nav.tag && (
-                          <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
-                            {nav.tag}
-                          </StyledNavTag>
-                        )}
-                      </MenuButton>
-                    </Menu>
-                  ) : (
-                    <Menu key={nav.id}>
-                      <MenuButton
-                        as={
-                          settings['style.header.menu_button.animation.enable'] === '1'
-                            ? StyledNavAnimationButton
-                            : StyledNavButton
-                        }
-                        onClick={e => {
-                          if (nav.href) {
-                            if (nav.href[0] === '/') {
-                              history.push(nav.href)
-                            } else {
-                              window.location.assign(nav.href)
-                            }
-                          }
-                        }}
-                      >
-                        <Link to={nav.href ? nav.href : '#!'}>{nav.label}</Link>
-                        {nav.tag && (
-                          <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
-                            {nav.tag}
-                          </StyledNavTag>
-                        )}
-                      </MenuButton>
-                      {nav.subNavs.length > 0 && (
-                        <MenuList>
-                          {nav.subNavs?.map((subNav, idx) =>
-                            subNav.external ? (
-                              <StyledMenuItem
-                                key={idx}
-                                _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}
-                                onClick={() =>
-                                  subNav.href && window.open(subNav.href, '_blank', 'noopener=yes,noreferrer=yes')
-                                }
-                              >
-                                {subNav.label}
-                              </StyledMenuItem>
-                            ) : (
-                              <StyledMenuItem
-                                key={idx}
-                                _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}
-                                onClick={() => {
-                                  if (subNav.href) {
-                                    if (subNav.href[0] === '/') {
-                                      history.push(subNav.href)
-                                    } else {
-                                      window.location.assign(subNav.href)
-                                    }
-                                  }
-                                }}
-                              >
-                                {subNav.label}
-                              </StyledMenuItem>
-                            ),
-                          )}
-                        </MenuList>
-                      )}
-                    </Menu>
-                  ),
+        {!noHeader ? (
+          <StyledLayoutHeader
+            className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}
+          >
+            <div className="d-flex align-items-center">
+              <LogoBlock className="mr-4">
+                {renderTitle ? (
+                  renderTitle()
+                ) : (
+                  <Link to="/">{settings['logo'] ? <StyledLogo src={settings['logo']} alt="logo" /> : name}</Link>
                 )}
+              </LogoBlock>
+            </div>
+            <div className="d-flex align-items-center">
+              <Responsive.Desktop>
+                {navs
+                  .filter(nav => nav.block === 'header')
+                  .map(nav =>
+                    nav.external ? (
+                      <Menu key={nav.id}>
+                        <MenuButton
+                          as={
+                            settings['style.header.menu_button.animation.enable'] === '1'
+                              ? StyledNavAnimationButton
+                              : StyledNavButton
+                          }
+                          onClick={() => {
+                            nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')
+                          }}
+                        >
+                          <Link to={nav.href ? nav.href : '#!'}>{nav.label}</Link>
+                          {nav.tag && (
+                            <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                              {nav.tag}
+                            </StyledNavTag>
+                          )}
+                        </MenuButton>
+                      </Menu>
+                    ) : (
+                      <Menu key={nav.id}>
+                        <MenuButton
+                          as={
+                            settings['style.header.menu_button.animation.enable'] === '1'
+                              ? StyledNavAnimationButton
+                              : StyledNavButton
+                          }
+                          onClick={e => {
+                            if (nav.href) {
+                              if (nav.href[0] === '/') {
+                                history.push(nav.href)
+                              } else {
+                                window.location.assign(nav.href)
+                              }
+                            }
+                          }}
+                        >
+                          <Link to={nav.href ? nav.href : '#!'}>{nav.label}</Link>
+                          {nav.tag && (
+                            <StyledNavTag borderRadius="full" color="#fff" bg={theme?.colors?.primary?.[500]}>
+                              {nav.tag}
+                            </StyledNavTag>
+                          )}
+                        </MenuButton>
+                        {nav.subNavs.length > 0 && (
+                          <MenuList>
+                            {nav.subNavs?.map((subNav, idx) =>
+                              subNav.external ? (
+                                <StyledMenuItem
+                                  key={idx}
+                                  _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}
+                                  onClick={() =>
+                                    subNav.href && window.open(subNav.href, '_blank', 'noopener=yes,noreferrer=yes')
+                                  }
+                                >
+                                  {subNav.label}
+                                </StyledMenuItem>
+                              ) : (
+                                <StyledMenuItem
+                                  key={idx}
+                                  _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}
+                                  onClick={() => {
+                                    if (subNav.href) {
+                                      if (subNav.href[0] === '/') {
+                                        history.push(subNav.href)
+                                      } else {
+                                        window.location.assign(subNav.href)
+                                      }
+                                    }
+                                  }}
+                                >
+                                  {subNav.label}
+                                </StyledMenuItem>
+                              ),
+                            )}
+                          </MenuList>
+                        )}
+                      </Menu>
+                    ),
+                  )}
 
-              {isAuthenticated &&
-                (renderCreatorPageNavItem?.({
-                  memberId: currentMemberId,
-                }) ||
-                  (!!Number(settings['nav.creator_page.enabled']) && (
-                    <Menu>
-                      <MenuButton
-                        as={
-                          settings['style.header.menu_button.animation.enable'] === '1'
-                            ? StyledNavAnimationButton
-                            : StyledNavButton
-                        }
-                        onClick={() => history.push(`/creators/${currentMemberId}`)}
-                      >
-                        <Link to={`/creators/${currentMemberId}`}>
-                          {settings['nav.creator_page.name'] || formatMessage(commonMessages.button.creatorPage)}
-                        </Link>
-                      </MenuButton>
-                    </Menu>
-                  )))}
+                {isAuthenticated &&
+                  (renderCreatorPageNavItem?.({
+                    memberId: currentMemberId,
+                  }) ||
+                    (!!Number(settings['nav.creator_page.enabled']) && (
+                      <Menu>
+                        <MenuButton
+                          as={
+                            settings['style.header.menu_button.animation.enable'] === '1'
+                              ? StyledNavAnimationButton
+                              : StyledNavButton
+                          }
+                          onClick={() => history.push(`/creators/${currentMemberId}`)}
+                        >
+                          <Link to={`/creators/${currentMemberId}`}>
+                            {settings['nav.creator_page.name'] || formatMessage(commonMessages.button.creatorPage)}
+                          </Link>
+                        </MenuButton>
+                      </Menu>
+                    )))}
 
-              {isAuthenticated &&
-                (renderMyPageNavItem?.({
-                  memberId: currentMemberId,
-                }) ||
-                  (!(settings['nav.my_page.disable'] === '1') && (
-                    <Menu>
-                      <MenuButton
-                        as={
-                          settings['style.header.menu_button.animation.enable'] === '1'
-                            ? StyledNavAnimationButton
-                            : StyledNavButton
-                        }
-                        onClick={() => history.push(`/members/${currentMemberId}`)}
-                      >
-                        <Link to={`/members/${currentMemberId}`}>
-                          {settings['nav.my_page.name'] || formatMessage(commonMessages.button.myPage)}
-                        </Link>
-                      </MenuButton>
-                    </Menu>
-                  )))}
-            </Responsive.Desktop>
+                {isAuthenticated &&
+                  (renderMyPageNavItem?.({
+                    memberId: currentMemberId,
+                  }) ||
+                    (!(settings['nav.my_page.disable'] === '1') && (
+                      <Menu>
+                        <MenuButton
+                          as={
+                            settings['style.header.menu_button.animation.enable'] === '1'
+                              ? StyledNavAnimationButton
+                              : StyledNavButton
+                          }
+                          onClick={() => history.push(`/members/${currentMemberId}`)}
+                        >
+                          <Link to={`/members/${currentMemberId}`}>
+                            {settings['nav.my_page.name'] || formatMessage(commonMessages.button.myPage)}
+                          </Link>
+                        </MenuButton>
+                      </Menu>
+                    )))}
+              </Responsive.Desktop>
 
-            {(enabledModules.search || enabledModules.search_advanced) && <GlobalSearchModal />}
-            {!noCart && !settings['feature.cart.disable'] && (renderCartButton ? renderCartButton() : <CartDropdown />)}
-            {currentMemberId && !settings['feature.notify.disable'] && <NotificationDropdown />}
-            {currentMemberId && currentMember ? (
-              <MemberProfileButton
-                id={currentMemberId}
-                name={currentMember.name}
-                username={currentMember.username}
-                email={currentMember.email}
-                pictureUrl={currentMember.pictureUrl || DefaultAvatar}
-              />
-            ) : (
-              <AuthButton />
-            )}
-          </div>
-        </StyledLayoutHeader>
+              {(enabledModules.search || enabledModules.search_advanced) && <GlobalSearchModal />}
+              {!noCart &&
+                !settings['feature.cart.disable'] &&
+                (renderCartButton ? renderCartButton() : <CartDropdown />)}
+              {currentMemberId && !settings['feature.notify.disable'] && <NotificationDropdown />}
+              {currentMemberId && currentMember ? (
+                <MemberProfileButton
+                  id={currentMemberId}
+                  name={currentMember.name}
+                  username={currentMember.username}
+                  email={currentMember.email}
+                  pictureUrl={currentMember.pictureUrl || DefaultAvatar}
+                />
+              ) : (
+                <AuthButton />
+              )}
+            </div>
+          </StyledLayoutHeader>
+        ) : null}
 
         {settings['feature.email_verification.enabled'] === '1' && isUnVerifiedEmails && !noNotificationBar && (
           <StyledNotificationBar variant="warning">
@@ -284,7 +290,7 @@ const DefaultLayout: React.FC<{
             {centeredBox ? <CenteredBox>{children}</CenteredBox> : children}
           </LayoutContentWrapper>
 
-          {!noFooter && (renderFooter?.({ DefaultFooter: Footer }) || <Footer />)}
+          {!noFooter ? renderFooter?.({ DefaultFooter: Footer }) || <Footer /> : null}
           {/* more space for fixed blocks */}
           <Responsive.Default>
             {typeof footerBottomSpace === 'string' && <EmptyBlock height={footerBottomSpace} />}

@@ -293,7 +293,7 @@ export const useProgram = (programId: string) => {
             id
             title
             description
-            program_contents(order_by: { position: asc }) {
+            program_contents(where: { display_mode: { _neq: "conceal" } }, order_by: { position: asc }) {
               id
               title
               abstract
