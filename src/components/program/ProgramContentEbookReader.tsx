@@ -361,10 +361,11 @@ const ProgramContentEbookReader: React.VFC<{
                       console.log(`resized => width: ${size.width}, height: ${size.height}`)
                     })
                     rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
-                      console.log('QQQQQQQQQQQ')
                       const rangeText = rendition.current?.getRange(cfiRange)?.toString()
+                      console.log({ rangeText })
                       if (rangeText) {
                         setSelections(prevSelections => [...prevSelections, { text: rangeText, cfiRange }])
+                        setRenderSelection(cfiRange, contents)
                       }
                     })
                     await rendition.current?.book.locations.generate(150).then(() => {
