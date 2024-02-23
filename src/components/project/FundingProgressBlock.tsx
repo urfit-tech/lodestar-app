@@ -3,9 +3,10 @@ import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { commonMessages, productMessages, projectMessages } from '../../helpers/translation'
+import { commonMessages, productMessages } from '../../helpers/translation'
 import { ProjectIntroProps } from '../../types/project'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
+import projectMessages from './translation'
 
 const StyledWrapper = styled.div`
   position: relative;
@@ -93,7 +94,7 @@ const FundingProgressBlock: React.VFC<{
         {targetUnit === 'participants' && (
           <>
             <StyledTitle variant="participants">
-              {formatMessage(projectMessages.text.totalParticipants, { count: enrollmentCount })}
+              {formatMessage(projectMessages.FundingProgressBlock.totalParticipants, { count: enrollmentCount })}
             </StyledTitle>
             <StyledMeta>
               {formatMessage(productMessages.project.paragraph.goal)} {targetAmount}{' '}
@@ -140,9 +141,9 @@ const FundingProgressBlock: React.VFC<{
       {percent >= 100 && (
         <StyledGoalAchievedBlock className="d-flex align-items-center justify-content-center">
           <div>
-            募資
+            {formatMessage(projectMessages.FundingProgressBlock.funding)}
             <br />
-            達標
+            {formatMessage(projectMessages.FundingProgressBlock.achieved)}
           </div>
         </StyledGoalAchievedBlock>
       )}

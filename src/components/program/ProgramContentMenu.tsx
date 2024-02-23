@@ -145,11 +145,11 @@ const ProgramContentMenu: React.VFC<{
       contents: ProgramContent[]
     })[]
   }
-  menuStatus: 'search' | 'list' | null
-  ebookCurrentToc: string | null
-  ebookLocation: string | number
-  ebook: Book | null
-  onEbookLocationChange: (location: string | number) => void
+  menuStatus?: 'search' | 'list' | null
+  ebookCurrentToc?: string | null
+  ebookLocation?: string | number
+  ebook?: Book | null
+  onEbookLocationChange?: (location: string | number) => void
   onSelect?: (programContentId: string | undefined) => void
 }> = ({
   program,
@@ -237,7 +237,7 @@ const ProgramContentMenu: React.VFC<{
                   p="1.5rem 0 1rem 0"
                   cursor="pointer"
                   onClick={() => {
-                    onEbookLocationChange(searchResult.cfi)
+                    onEbookLocationChange?.(searchResult.cfi)
                   }}
                 >
                   <Box mb="0.5rem" fontSize="16px" lineHeight="24px" color="#585858" fontWeight="500">
@@ -300,9 +300,9 @@ const ProgramContentSectionMenu: React.VFC<{
   isLoading: boolean
   isScrollToTop?: boolean
   onSelect?: (programContentId: string) => void
-  ebookCurrentToc: string | null
-  ebookLocation: string | number
-  onEbookLocationChange: (location: string | number) => void
+  ebookCurrentToc?: string | null
+  ebookLocation?: string | number
+  onEbookLocationChange?: (location: string | number) => void
 }> = ({
   program,
   isEnrolled,
@@ -346,9 +346,9 @@ const ContentSection: React.VFC<{
   isScrollToTop?: boolean
   defaultCollapse?: boolean
   onSelect?: (programContentId: string) => void
-  ebookCurrentToc: string | null
-  ebookLocation: string | number
-  onEbookLocationChange: (location: string | number) => void
+  ebookCurrentToc?: string | null
+  ebookLocation?: string | number
+  onEbookLocationChange?: (location: string | number) => void
 }> = ({
   programContentSection,
   isEnrolled,
@@ -410,7 +410,11 @@ const ContentSection: React.VFC<{
               isLoading={isLoading}
               onClick={() => onSelect?.(programContent.id)}
             />
-            {programContent.contentType === 'ebook' && programContent.id === currentProgramContentId ? (
+            {programContent.contentType === 'ebook' &&
+            programContent.id === currentProgramContentId &&
+            ebookCurrentToc &&
+            ebookLocation &&
+            onEbookLocationChange ? (
               <EbookSecondaryMenu
                 programContentId={programContent.id}
                 tocs={programContent.ebook.programContentEbookTocs}
@@ -559,9 +563,9 @@ const ProgramContentDateMenu: React.VFC<{
     })[]
   }
   onSelect?: (programContentId: string) => void
-  ebookCurrentToc: string | null
-  ebookLocation: string | number
-  onEbookLocationChange: (location: string | number) => void
+  ebookCurrentToc?: string | null
+  ebookLocation?: string | number
+  onEbookLocationChange?: (location: string | number) => void
 }> = ({ program, onSelect, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
   const { programContentId: currentProgramContentId } = useParams<{
     programContentId?: string
@@ -577,7 +581,11 @@ const ProgramContentDateMenu: React.VFC<{
             programContent={programContent}
             onClick={() => onSelect && onSelect(programContent.id)}
           />
-          {programContent.contentType === 'ebook' && programContent.id === currentProgramContentId ? (
+          {programContent.contentType === 'ebook' &&
+          programContent.id === currentProgramContentId &&
+          ebookCurrentToc &&
+          ebookLocation &&
+          onEbookLocationChange ? (
             <EbookSecondaryMenu
               programContentId={programContent.id}
               tocs={programContent.ebook.programContentEbookTocs}
