@@ -331,6 +331,7 @@ const ProgramContentEbookReader: React.VFC<{
                     rendition.current.themes.override('background-color', '#ffffff')
                     rendition.current?.themes.default({ p: { 'font-size': '18px!important' } })
                     rendition.current?.themes.default({ p: { 'line-height': '1.5 !important' } })
+                    rendition.current?.themes.default({ body: { 'user-select': 'none' } })
                     rendition.current.on('resized', (size: { width: number; height: number }) => {
                       console.log(`resized => width: ${size.width}, height: ${size.height}`)
                     })
