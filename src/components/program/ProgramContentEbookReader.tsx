@@ -1,11 +1,11 @@
 import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
-import { Flex, Spinner } from '@chakra-ui/react'
+import { Button, Flex, Spinner } from '@chakra-ui/react'
 import axios from 'axios'
 import { inRange } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
-import { useCallback, useContext, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { EpubView, ReactReaderStyle } from 'react-reader'
 import styled from 'styled-components'
 import { ProgressContext } from '../../contexts/ProgressContext'
@@ -158,6 +158,8 @@ const ProgramContentEbookReader: React.VFC<{
   const [ebookLineHeight, setEbookLineHeight] = useState(1.5)
   const [bookmarkData, setBookmarkData] = useState<BookmarkData>()
   const [selections, setSelections] = useState<ITextSelection[]>([])
+  const [toolbarVisible, setToolbarVisible] = useState(false)
+  const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 })
 
   const { id: appId } = useApp()
 
@@ -207,8 +209,16 @@ const ProgramContentEbookReader: React.VFC<{
   }
 
   const setRenderSelection = (cfiRange: string, contents: Contents) => {
-    const rangeText = rendition.current?.getRange(cfiRange)?.toString()
-    if (rangeText) {
+    const range = rendition.current?.getRange(cfiRange)
+    if (range) {
+      const rect = range.getBoundingClientRect()
+      setToolbarPosition({
+        top: rect.bottom + contents.window.scrollY, // Position the toolbar below the selected text
+        left: rect.left + contents.window.scrollX,
+      })
+      setToolbarVisible(true)
+
+      const rangeText = range.toString()
       setSelections(list =>
         list.concat({
           text: rangeText,
@@ -240,8 +250,28 @@ const ProgramContentEbookReader: React.VFC<{
     setSliderValue(location?.start?.percentage * 100 || 0)
   }, [theme, ebookFontSize, ebookLineHeight])
 
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      const selection = document.getSelection()
+      if (!selection || selection.isCollapsed) {
+        setToolbarVisible(false)
+      }
+    }
+
+    document.addEventListener('selectionchange', handleSelectionChange)
+
+    return () => {
+      document.removeEventListener('selectionchange', handleSelectionChange)
+    }
+  }, [])
+
+  const handleColorChange = (color: string) => {
+    setToolbarVisible(false)
+  }
+
   return (
     <div>
+      <TextSelectionToolbar visible={toolbarVisible} position={toolbarPosition} onColorChange={handleColorChange} />
       {source && currentMemberId && chapter ? (
         <EbookReaderBookmarkIcon
           bookmarkData={bookmarkData}
@@ -617,6 +647,42 @@ const useEbookBookmark = (programContentId: string, memberId: string | null) => 
     programContentBookmarks,
     refetch,
   }
+}
+
+type TextSelectionToolbarProps = {
+  visible: boolean
+  position: { top: number; left: number }
+  onColorChange: (color: string) => void
+}
+
+const TextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({ visible, position, onColorChange }) => {
+  if (!visible) return null
+
+  const handleColorChange = (color: string) => {
+    onColorChange(color)
+  }
+
+  return (
+    <div
+      style={{
+        background: '#4242a4',
+        position: 'absolute',
+        top: position.top + 55,
+        left: position.left,
+        zIndex: 1000,
+      }}
+    >
+      <Button colorScheme="primary" onClick={() => handleColorChange('red')}>
+        Red
+      </Button>
+      <Button colorScheme="primary" onClick={() => handleColorChange('blue')}>
+        Blue
+      </Button>
+      <Button colorScheme="primary" onClick={() => handleColorChange('green')}>
+        Green
+      </Button>
+    </div>
+  )
 }
 
 export default ProgramContentEbookReader
