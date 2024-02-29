@@ -331,12 +331,21 @@ const ProgramContentEbookReader: React.VFC<{
                     rendition.current.themes.override('background-color', '#ffffff')
                     rendition.current?.themes.default({ p: { 'font-size': '18px!important' } })
                     rendition.current?.themes.default({ p: { 'line-height': '1.5 !important' } })
+
                     rendition.current.on('resized', (size: { width: number; height: number }) => {
                       console.log(`resized => width: ${size.width}, height: ${size.height}`)
                     })
                     await rendition.current?.book.locations.generate(150).then(() => {
                       setIsLocationGenerated(true)
                       setEbook(rendition.current?.book || null)
+                    })
+                  }}
+                  handleTextSelected={(cfiRange, contents) => {
+                    contents.document.addEventListener('copy', e => {
+                      e.preventDefault()
+                    })
+                    contents.document.addEventListener('contextmenu', e => {
+                      e.preventDefault()
                     })
                   }}
                 />
