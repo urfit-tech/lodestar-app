@@ -122,7 +122,7 @@ const ProgramContentBlock: React.VFC<{
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSkeleton(false)
-    }, 1000)
+    }, 750)
 
     return () => clearTimeout(timer)
   }, [])
@@ -394,7 +394,6 @@ const useHasProgramContentPermission: (
   isLoading: boolean
 } = (programId, programContentId) => {
   const { currentMemberId, authToken } = useAuth()
-  const [data, setData] = useState<{ programContentId: string } | {}>({})
   const [hasProgramContentPermission, setHasProgramContentPermission] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const isUnmounted = useRef(false)
@@ -411,7 +410,6 @@ const useHasProgramContentPermission: (
           })
 
           if (!isUnmounted.current) {
-            setData(data)
             setHasProgramContentPermission(Object.keys(data).length > 0)
             setIsLoading(false)
           }
