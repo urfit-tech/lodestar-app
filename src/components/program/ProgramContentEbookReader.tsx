@@ -1,5 +1,6 @@
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
-import { Button, Flex, Spinner } from '@chakra-ui/react'
+import { Flex, Spinner } from '@chakra-ui/react'
 import axios from 'axios'
 import { inRange } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -35,6 +36,38 @@ const ReaderBookmark = styled.div`
     border-left: 13px solid ${props => (props.color ? props.color : '#E2E2E2')};
     border-top: 13px solid rgba(0, 0, 0, 0);
     transform: rotate(180deg);
+  }
+`
+
+const StyledButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  .anticon {
+    color: white;
+  }
+`
+
+const CircleButton = styled.button`
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: orange;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
   }
 `
 
@@ -271,7 +304,17 @@ const ProgramContentEbookReader: React.VFC<{
 
   return (
     <div>
-      <TextSelectionToolbar visible={toolbarVisible} position={toolbarPosition} onColorChange={handleColorChange} />
+      <TextSelectionToolbar visible={toolbarVisible} position={toolbarPosition} onColorChange={handleColorChange}>
+        <StyledButton>
+          <CircleButton />
+        </StyledButton>
+        <StyledButton>
+          <EditOutlined />
+        </StyledButton>
+        <StyledButton>
+          <DeleteOutlined />
+        </StyledButton>
+      </TextSelectionToolbar>
       {source && currentMemberId && chapter ? (
         <EbookReaderBookmarkIcon
           bookmarkData={bookmarkData}
@@ -664,34 +707,25 @@ type TextSelectionToolbarProps = {
   onColorChange: (color: string) => void
 }
 
-const TextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({ visible, position, onColorChange }) => {
+const TextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({ visible, position, children }) => {
   if (!visible) return null
 
-  const handleColorChange = (color: string) => {
-    onColorChange(color)
-  }
+  const ToolbarContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: auto;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 4px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    background-color: #222;
+    position: absolute;
+    z-index: 1000;
+    gap: 10px;
+  `
 
-  return (
-    <div
-      style={{
-        background: '#4242a4',
-        position: 'absolute',
-        top: position.top + 55,
-        left: position.left,
-        zIndex: 1000,
-      }}
-    >
-      <Button colorScheme="primary" onClick={() => handleColorChange('red')}>
-        Red
-      </Button>
-      <Button colorScheme="primary" onClick={() => handleColorChange('blue')}>
-        Blue
-      </Button>
-      <Button colorScheme="primary" onClick={() => handleColorChange('green')}>
-        Green
-      </Button>
-    </div>
-  )
+  return <ToolbarContainer style={{ top: position.top + 55, left: position.left }}>{children}</ToolbarContainer>
 }
 
 export default ProgramContentEbookReader
