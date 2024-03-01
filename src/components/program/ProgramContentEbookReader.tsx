@@ -193,6 +193,14 @@ const ProgramContentEbookReader: React.VFC<{
   const [selections, setSelections] = useState<ITextSelection[]>([])
   const [toolbarVisible, setToolbarVisible] = useState(false)
   const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 })
+  const currentSelection = useRef<{ cfiRange: string | null; contents: Contents | null }>({
+    cfiRange: null,
+    contents: null,
+  })
+
+  const setCurrentSelection = (cfiRange: string, contents: Contents) => {
+    currentSelection.current = { cfiRange, contents }
+  }
 
   const { id: appId } = useApp()
 
@@ -244,13 +252,6 @@ const ProgramContentEbookReader: React.VFC<{
   const setRenderSelection = (cfiRange: string, contents: Contents) => {
     const range = rendition.current?.getRange(cfiRange)
     if (range) {
-      const rect = range.getBoundingClientRect()
-      setToolbarPosition({
-        top: rect.bottom + contents.window.scrollY, // Position the toolbar below the selected text
-        left: rect.left + contents.window.scrollX,
-      })
-      setToolbarVisible(true)
-
       const rangeText = range.toString()
       setSelections(list =>
         list.concat({
@@ -259,7 +260,7 @@ const ProgramContentEbookReader: React.VFC<{
         }),
       )
       rendition.current?.annotations.add('highlight', cfiRange, {}, undefined, 'hl', {
-        fill: 'red',
+        fill: 'rgba(255, 190, 30, 0.5)',
         'fill-opacity': '0.5',
         'mix-blend-mode': 'multiply',
       })
@@ -298,14 +299,15 @@ const ProgramContentEbookReader: React.VFC<{
     }
   }, [])
 
-  const handleColorChange = (color: string) => {
+  const handleColor = () => {
+    setRenderSelection(currentSelection.current.cfiRange as string, currentSelection.current.contents as Contents)
     setToolbarVisible(false)
   }
 
   return (
     <div>
-      <TextSelectionToolbar visible={toolbarVisible} position={toolbarPosition} onColorChange={handleColorChange}>
-        <StyledButton>
+      <TextSelectionToolbar visible={toolbarVisible} position={toolbarPosition}>
+        <StyledButton onClick={handleColor}>
           <CircleButton />
         </StyledButton>
         <StyledButton>
@@ -436,10 +438,17 @@ const ProgramContentEbookReader: React.VFC<{
                     })
                     rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
                       const rangeText = rendition.current?.getRange(cfiRange)?.toString()
-                      console.log({ rangeText })
                       if (rangeText) {
                         setSelections(prevSelections => [...prevSelections, { text: rangeText, cfiRange }])
-                        setRenderSelection(cfiRange, contents)
+                        // setRenderSelection(cfiRange, contents)
+                        const range = rendition.current?.getRange(cfiRange)
+                        const rect = range.getBoundingClientRect()
+                        setToolbarPosition({
+                          top: rect.bottom + contents.window.scrollY, // Position the toolbar below the selected text
+                          left: rect.left + contents.window.scrollX,
+                        })
+                        setCurrentSelection(cfiRange, contents)
+                        setToolbarVisible(true)
                       }
                     })
                     await rendition.current?.book.locations.generate(150).then(() => {
@@ -704,7 +713,6 @@ const useEbookBookmark = (programContentId: string, memberId: string | null) => 
 type TextSelectionToolbarProps = {
   visible: boolean
   position: { top: number; left: number }
-  onColorChange: (color: string) => void
 }
 
 const TextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({ visible, position, children }) => {
