@@ -137,23 +137,23 @@ const ProgramContentBlock: React.VFC<{
     (_, i, contents) => contents[i - 1]?.id === programContentId,
   )
 
-  const shouldUpdateProgress = !(
-    loadingProgramContent ||
-    programContentBodyType === 'video' ||
-    programContentBodyType === 'audio' ||
-    !insertProgress ||
-    !refetchProgress ||
-    initialProgress === 1 ||
-    !currentMemberId ||
-    !isAuthenticated ||
-    !hasPermission ||
-    (programContentBodyType &&
-      ['text', 'practice', 'exam'].includes(programContentBodyType) &&
-      moment().isBefore(moment(programContent?.publishedAt))) ||
-    programContent?.publishedAt === null
-  )
-
   useEffect(() => {
+    const shouldUpdateProgress = !(
+      loadingProgramContent ||
+      programContentBodyType === 'video' ||
+      programContentBodyType === 'audio' ||
+      !insertProgress ||
+      !refetchProgress ||
+      initialProgress === 1 ||
+      !currentMemberId ||
+      !isAuthenticated ||
+      !hasPermission ||
+      (programContentBodyType &&
+        ['text', 'practice', 'exam'].includes(programContentBodyType) &&
+        moment().isBefore(moment(programContent?.publishedAt))) ||
+      programContent?.publishedAt === null
+    )
+
     if (!shouldUpdateProgress) {
       return
     }
