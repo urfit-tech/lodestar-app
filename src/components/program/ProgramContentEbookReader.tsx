@@ -442,15 +442,22 @@ const ProgramContentEbookReader: React.VFC<{
                         setSelections(prevSelections => [...prevSelections, { text: rangeText, cfiRange }])
                         // setRenderSelection(cfiRange, contents)
                         const range = rendition.current?.getRange(cfiRange)
-                        const rect = range.getBoundingClientRect()
-                        setToolbarPosition({
-                          top: rect.bottom + contents.window.scrollY, // Position the toolbar below the selected text
-                          left: rect.left + contents.window.scrollX,
-                        })
+                        if (range) {
+                          const rect = range.getBoundingClientRect()
+                          setToolbarPosition({
+                            top: rect.bottom + contents.window.scrollY, // Position the toolbar below the selected text
+                            left: rect.left + contents.window.scrollX,
+                          })
+                        }
                         setCurrentSelection(cfiRange, contents)
                         setToolbarVisible(true)
                       }
                     })
+
+                    rendition.current.on('click', (event: MouseEvent) => {
+                      setToolbarVisible(false)
+                    })
+
                     await rendition.current?.book.locations.generate(150).then(() => {
                       setIsLocationGenerated(true)
                       setEbook(rendition.current?.book || null)
