@@ -104,28 +104,18 @@ const ProgramContentBlock: React.VFC<{
   const { authToken, currentMemberId, currentUserRole, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { loadingProgramContent, programContent } = useProgramContent(programContentId)
-  const { hasProgramContentPermission, isLoading } = useHasProgramContentPermission(programId, programContentId)
+  const { hasProgramContentPermission, isLoading: loadingPermission } = useHasProgramContentPermission(
+    programId,
+    programContentId,
+  )
   const { changeGlobalPlayingState, setup, close, changeBackgroundMode, isBackgroundMode } =
     useContext(AudioPlayerContext)
   const endedAtRef = useRef(0)
-  const [hasPermission, setHasPermission] = useState(false)
-  const [showSkeleton, setShowSkeleton] = useState(true)
 
-  useEffect(() => {
-    setHasPermission(
-      hasProgramContentPermission ||
-        programContent?.displayMode === 'trial' ||
-        (programContent?.displayMode === 'loginToTrial' && Boolean(currentMemberId && isAuthenticated)),
-    )
-  }, [hasProgramContentPermission, currentMemberId, isAuthenticated, programContent?.displayMode])
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSkeleton(false)
-    }, 750)
-
-    return () => clearTimeout(timer)
-  }, [])
+  const hasPermission =
+    hasProgramContentPermission ||
+    programContent?.displayMode === 'trial' ||
+    (programContent?.displayMode === 'loginToTrial' && Boolean(currentMemberId && isAuthenticated))
 
   const instructor = programRoles.filter(role => role.name === 'instructor')[0]
 
@@ -137,23 +127,23 @@ const ProgramContentBlock: React.VFC<{
     (_, i, contents) => contents[i - 1]?.id === programContentId,
   )
 
-  useEffect(() => {
-    const shouldUpdateProgress = !(
-      loadingProgramContent ||
-      programContentBodyType === 'video' ||
-      programContentBodyType === 'audio' ||
-      !insertProgress ||
-      !refetchProgress ||
-      initialProgress === 1 ||
-      !currentMemberId ||
-      !isAuthenticated ||
-      !hasPermission ||
-      (programContentBodyType &&
-        ['text', 'practice', 'exam'].includes(programContentBodyType) &&
-        moment().isBefore(moment(programContent?.publishedAt))) ||
-      programContent?.publishedAt === null
-    )
+  const shouldUpdateProgress = !(
+    loadingProgramContent ||
+    programContentBodyType === 'video' ||
+    programContentBodyType === 'audio' ||
+    !insertProgress ||
+    !refetchProgress ||
+    initialProgress === 1 ||
+    !currentMemberId ||
+    !isAuthenticated ||
+    !hasPermission ||
+    (programContentBodyType &&
+      ['text', 'practice', 'exam'].includes(programContentBodyType) &&
+      moment().isBefore(moment(programContent?.publishedAt))) ||
+    programContent?.publishedAt === null
+  )
 
+  useEffect(() => {
     if (!shouldUpdateProgress) {
       return
     }
@@ -172,7 +162,14 @@ const ProgramContentBlock: React.VFC<{
     programContent?.publishedAt,
   ])
 
-  if (loadingApp || loadingProgramContent || !programContent || !insertProgress || !refetchProgress) {
+  if (
+    loadingPermission ||
+    loadingApp ||
+    loadingProgramContent ||
+    !programContent ||
+    !insertProgress ||
+    !refetchProgress
+  ) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
   const insertProgramProgress = async (progress: number) => {
@@ -222,12 +219,6 @@ const ProgramContentBlock: React.VFC<{
               <LockIcon className="mr-2 mb-1" />
               {formatMessage(pageMessages.ProgramContentBlock.loginTrial)}
             </Button>
-          ) : isLoading ? (
-            !showSkeleton && (
-              <div style={{ width: '80%', margin: '0 auto 1.75rem' }}>
-                <SkeletonText mt="4" noOfLines={4} spacing="4" skeletonHeight="2" />
-              </div>
-            )
           ) : (
             <Button
               colorScheme="primary"
@@ -249,7 +240,7 @@ const ProgramContentBlock: React.VFC<{
             <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundModeDescription)}</p>
           </StyledBackgroundModeDescriptionBlock>
         )}
-      {!isLoading && programContent.contentType === 'video' ? (
+      {programContent.contentType === 'video' ? (
         (!isBackgroundMode || programContent.videos[0]?.data?.source === 'youtube') &&
         ((hasPermission && moment().isAfter(moment(programContent.publishedAt))) ||
           currentUserRole === 'app-owner') && (
