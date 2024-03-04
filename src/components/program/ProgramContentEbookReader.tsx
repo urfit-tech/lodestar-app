@@ -19,6 +19,7 @@ import type { NavItem, Rendition, Book, Location, Contents } from 'epubjs'
 type ITextSelection = {
   text: string
   cfiRange: string
+  color?: string
 }
 
 const ReaderBookmark = styled.div`
@@ -249,7 +250,7 @@ const ProgramContentEbookReader: React.VFC<{
     },
   }
 
-  const setRenderSelection = (cfiRange: string, contents: Contents) => {
+  const setRenderSelection = (cfiRange: string, contents: Contents, color: string = 'rgba(255, 190, 30, 0.5)') => {
     const range = rendition.current?.getRange(cfiRange)
     if (range) {
       const rangeText = range.toString()
@@ -257,10 +258,11 @@ const ProgramContentEbookReader: React.VFC<{
         list.concat({
           text: rangeText,
           cfiRange,
+          color,
         }),
       )
-      rendition.current?.annotations.add('highlight', cfiRange, {}, undefined, 'hl', {
-        fill: 'rgba(255, 190, 30, 0.5)',
+      rendition.current?.annotations.highlight(cfiRange, {}, function () {}, 'hl', {
+        fill: color,
         'fill-opacity': '0.5',
         'mix-blend-mode': 'multiply',
       })
@@ -300,7 +302,11 @@ const ProgramContentEbookReader: React.VFC<{
   }, [])
 
   const handleColor = () => {
-    setRenderSelection(currentSelection.current.cfiRange as string, currentSelection.current.contents as Contents)
+    setRenderSelection(
+      currentSelection.current.cfiRange as string,
+      currentSelection.current.contents as Contents,
+      'rgba(255, 190, 30, 0.5)',
+    )
     setToolbarVisible(false)
   }
 
@@ -439,7 +445,6 @@ const ProgramContentEbookReader: React.VFC<{
                     rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
                       const rangeText = rendition.current?.getRange(cfiRange)?.toString()
                       if (rangeText) {
-                        setSelections(prevSelections => [...prevSelections, { text: rangeText, cfiRange }])
                         // setRenderSelection(cfiRange, contents)
                         const range = rendition.current?.getRange(cfiRange)
                         if (range) {
@@ -452,6 +457,14 @@ const ProgramContentEbookReader: React.VFC<{
                         setCurrentSelection(cfiRange, contents)
                         setToolbarVisible(true)
                       }
+                    })
+
+                    rendition.current.themes.default({
+                      '.epubjs-hl': {
+                        fill: 'rgba(255, 190, 30, 0.5)',
+                        'fill-opacity': '0.3',
+                        'mix-blend-mode': 'multiply',
+                      },
                     })
 
                     rendition.current.on('click', (event: MouseEvent) => {
