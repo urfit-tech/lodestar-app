@@ -1,6 +1,8 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
+import { Icon } from '@chakra-ui/icons'
 import { Flex, Spinner } from '@chakra-ui/react'
+import { Input, Modal } from 'antd'
 import axios from 'axios'
 import { inRange } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -11,6 +13,7 @@ import { EpubView, ReactReaderStyle } from 'react-reader'
 import styled from 'styled-components'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
+import { ReactComponent as QuoteIcon } from '../../images/quote.svg'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
 import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
 import { decryptData } from './decryptUtils'
@@ -70,6 +73,82 @@ const CircleButton = styled.button`
   &:focus {
     outline: none;
   }
+`
+
+const StyledCommentModal = styled(Modal)`
+  .ant-modal-content {
+    /* width: 500px; */
+    /* height: 402px; */
+    width: 450px;
+    /* padding: 15px 15px 15px 15px; */
+    border-radius: 4px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    background-color: #fff;
+  }
+  .ant-modal-body .headerContainer {
+    color: #585858;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .ant-modal-body .modelContainer {
+    margin-top: 25px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .ant-modal-body .modelContainer .quote {
+    width: 40px;
+    height: 45px;
+    color: #ffbe1e;
+  }
+
+  .ant-modal-body .modelContainer .commentArea {
+    min-width: 350px;
+  }
+
+  .ant-modal-body .modelContainer .commentArea h2 {
+    font-size: 20px;
+    font-weight: bold;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: 0.2px;
+    font-family: NotoSansCJKtc;
+    color: var(--gray-darker);
+  }
+
+  .ant-modal-body .modelContainer .commentArea p {
+    margin-top: 25px;
+    margin-bottom: 0px;
+  }
+
+  .ant-modal-footer {
+    border-top: 0px;
+    width: 450px;
+  }
+
+  @media screen and (max-width: 992px) {
+    .ant-modal-body .modelContainer .commentArea {
+      min-width: 200px;
+    }
+  }
+`
+
+const ToolbarContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: auto;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 4px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+  background-color: #222;
+  position: absolute;
+  z-index: 1000;
+  gap: 10px;
 `
 
 export const getChapter = (book: Book, href: string) => {
@@ -198,6 +277,18 @@ const ProgramContentEbookReader: React.VFC<{
     cfiRange: null,
     contents: null,
   })
+  const [openCommentModel, setOpenCommentModel] = useState(false)
+
+  const showCommentModal = () => {
+    setOpenCommentModel(true)
+  }
+  const handleOk = () => {
+    setOpenCommentModel(false)
+  }
+
+  const handleCancel = () => {
+    setOpenCommentModel(false)
+  }
 
   const setCurrentSelection = (cfiRange: string, contents: Contents) => {
     currentSelection.current = { cfiRange, contents }
@@ -285,7 +376,8 @@ const ProgramContentEbookReader: React.VFC<{
     const location = rendition.current?.currentLocation() as any as Location
     setSliderValue(location?.start?.percentage * 100 || 0)
   }, [theme, ebookFontSize, ebookLineHeight])
-
+  console.log('currentSelection', currentSelection)
+  console.log('window.getSelection()', window.getSelection())
   useEffect(() => {
     const handleSelectionChange = () => {
       const selection = document.getSelection()
@@ -312,11 +404,28 @@ const ProgramContentEbookReader: React.VFC<{
 
   return (
     <div>
+      <StyledCommentModal visible={openCommentModel} onOk={handleOk} onCancel={handleCancel}>
+        <div className="headerContainer">
+          <h1>畫線註釋</h1>
+        </div>
+        <div className="modelContainer">
+          <Icon as={QuoteIcon} className="quote" />
+          <div className="commentArea">
+            <h2>
+              {currentSelection.current?.cfiRange &&
+                rendition.current?.getRange(currentSelection.current?.cfiRange as string)?.toString()}
+            </h2>
+            <p>詮釋內容</p>
+            <Input.TextArea rows={4} />
+          </div>
+        </div>
+      </StyledCommentModal>
+
       <TextSelectionToolbar visible={toolbarVisible} position={toolbarPosition}>
         <StyledButton onClick={handleColor}>
           <CircleButton />
         </StyledButton>
-        <StyledButton>
+        <StyledButton onClick={showCommentModal}>
           <EditOutlined />
         </StyledButton>
         <StyledButton>
@@ -737,21 +846,6 @@ type TextSelectionToolbarProps = {
 
 const TextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({ visible, position, children }) => {
   if (!visible) return null
-
-  const ToolbarContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: auto;
-    height: 44px;
-    padding: 0 12px;
-    border-radius: 4px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
-    background-color: #222;
-    position: absolute;
-    z-index: 1000;
-    gap: 10px;
-  `
 
   return <ToolbarContainer style={{ top: position.top + 55, left: position.left }}>{children}</ToolbarContainer>
 }
