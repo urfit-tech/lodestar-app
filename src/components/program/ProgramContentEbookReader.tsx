@@ -43,7 +43,7 @@ const ReaderBookmark = styled.div`
   }
 `
 
-const StyledButton = styled.button`
+const StyledButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -376,8 +376,7 @@ const ProgramContentEbookReader: React.VFC<{
     const location = rendition.current?.currentLocation() as any as Location
     setSliderValue(location?.start?.percentage * 100 || 0)
   }, [theme, ebookFontSize, ebookLineHeight])
-  console.log('currentSelection', currentSelection)
-  console.log('window.getSelection()', window.getSelection())
+
   useEffect(() => {
     const handleSelectionChange = () => {
       const selection = document.getSelection()
@@ -548,19 +547,16 @@ const ProgramContentEbookReader: React.VFC<{
                     rendition.current?.themes.default({ p: { 'font-size': '18px!important' } })
                     rendition.current?.themes.default({ p: { 'line-height': '1.5 !important' } })
 
-                    rendition.current.on('resized', (size: { width: number; height: number }) => {
-                      console.log(`resized => width: ${size.width}, height: ${size.height}`)
-                    })
                     rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
                       const rangeText = rendition.current?.getRange(cfiRange)?.toString()
                       if (rangeText) {
-                        // setRenderSelection(cfiRange, contents)
                         const range = rendition.current?.getRange(cfiRange)
                         if (range) {
                           const rect = range.getBoundingClientRect()
+
                           setToolbarPosition({
                             top: rect.bottom + contents.window.scrollY, // Position the toolbar below the selected text
-                            left: rect.left + contents.window.scrollX,
+                            left: rect.left % contents.content.clientWidth,
                           })
                         }
                         setCurrentSelection(cfiRange, contents)
