@@ -168,8 +168,9 @@ const ProgramContentEbookReader: React.VFC<{
     contents: null,
   })
   const [openCommentModel, setOpenCommentModel] = useState(false)
+  const [isRenditionReady, setIsRenditionReady] = useState(false)
 
-  const { error, selections, setRenderSelection, saveHighlight } = useEbookHighlight()
+  const { error, highlights, saveHighlight, getHighLightData, markHighlightAsMarked } = useEbookHighlight()
 
   const showCommentModal = () => {
     setOpenCommentModel(true)
@@ -236,27 +237,6 @@ const ProgramContentEbookReader: React.VFC<{
     },
   }
 
-  // const setRenderSelection = (cfiRange: string, contents: Contents, color: string = 'rgba(255, 190, 30, 0.5)') => {
-  //   const range = rendition.current?.getRange(cfiRange)
-  //   if (range) {
-  //     const rangeText = range.toString()
-  //     setSelections(list =>
-  //       list.concat({
-  //         text: rangeText,
-  //         cfiRange,
-  //         color,
-  //       }),
-  //     )
-  //     rendition.current?.annotations.highlight(cfiRange, {}, function () {}, 'hl', {
-  //       fill: color,
-  //       'fill-opacity': '0.5',
-  //       'mix-blend-mode': 'multiply',
-  //     })
-  //     const selection = contents.window.getSelection()
-  //     selection?.removeAllRanges()
-  //   }
-  // }
-
   useLayoutEffect(() => {
     getEpubFromS3(programContentId, authToken)
   }, [authToken, programContentId, getEpubFromS3])
@@ -273,32 +253,27 @@ const ProgramContentEbookReader: React.VFC<{
   }, [theme, ebookFontSize, ebookLineHeight])
 
   useEffect(() => {
-    const handleSelectionChange = () => {
-      const selection = document.getSelection()
-      if (!selection || selection.isCollapsed) {
-        setToolbarVisible(false)
-      }
+    if (programContentId && currentMemberId) {
+      getHighLightData({ programContentId, memberId: currentMemberId })
     }
-
-    document.addEventListener('selectionchange', handleSelectionChange)
-
-    return () => {
-      document.removeEventListener('selectionchange', handleSelectionChange)
-    }
-  }, [])
+  }, [programContentId, currentMemberId])
 
   useEffect(() => {
-    // 取出最後一個selection
-    const selection = selections[selections.length - 1]
-    if (selection) {
-      // 確保 selection 存在
-      rendition.current?.annotations.highlight(selection.cfiRange, {}, function () {}, 'hl', {
-        fill: selection.color,
-        'fill-opacity': '0.5',
-        'mix-blend-mode': 'multiply',
+    if (rendition.current && isRenditionReady) {
+      highlights.forEach((highlight, index) => {
+        if (highlight.isNew) {
+          console.log({ range: highlight.cfiRange, color: highlight.color })
+          rendition.current.annotations.highlight(highlight.cfiRange, {}, function () {}, 'hl', {
+            fill: highlight.color,
+            'fill-opacity': '0.5',
+            'mix-blend-mode': 'multiply',
+          })
+
+          markHighlightAsMarked(index)
+        }
       })
     }
-  }, [selections])
+  }, [highlights, isRenditionReady])
 
   const handleColor = () => {
     const range = rendition.current?.getRange(currentSelection.current.cfiRange as string)
@@ -449,11 +424,18 @@ const ProgramContentEbookReader: React.VFC<{
                   }}
                   getRendition={async (_rendition: Rendition) => {
                     rendition.current = _rendition
+                    if (rendition.current) {
+                      setIsRenditionReady(true)
+                    }
                     // initial theme
                     rendition.current.themes.override('color', '#424242')
                     rendition.current.themes.override('background-color', '#ffffff')
                     rendition.current?.themes.default({ p: { 'font-size': '18px!important' } })
                     rendition.current?.themes.default({ p: { 'line-height': '1.5 !important' } })
+
+                    rendition.current.on('resized', (size: { width: number; height: number }) => {
+                      console.log(`resized => width: ${size.width}, height: ${size.height}`)
+                    })
 
                     rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
                       const rangeText = rendition.current?.getRange(cfiRange)?.toString()

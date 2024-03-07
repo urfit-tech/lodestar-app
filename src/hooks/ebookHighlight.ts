@@ -1,7 +1,17 @@
 import { gql, useApolloClient } from '@apollo/client'
 import { useCallback, useState } from 'react'
 
-type EbookHighlightRequestDto = {
+type Highlight = {
+  text: string
+  cfiRange: string
+  color: string
+  programContentId: string
+  memberId: string
+  chapter: string
+  isNew?: boolean
+}
+
+type SaveEbookHighlightRequestDto = {
   epubCfi: string
   programContentId: string
   memberId: string
@@ -10,13 +20,9 @@ type EbookHighlightRequestDto = {
   color: string
 }
 
-type ITextSelection = {
-  text: string
-  cfiRange: string
-  color: string
+type GetEbookHighlightRequestDto = {
   programContentId: string
   memberId: string
-  chapter: string
 }
 
 const INSERT_EBOOK_HIGHLIGHT_MUTATION = gql`
@@ -53,10 +59,27 @@ const INSERT_EBOOK_HIGHLIGHT_MUTATION = gql`
   }
 `
 
-async function create(
-  dto: EbookHighlightRequestDto,
+const GET_EBOOK_HIGHLIGHT_QUERY = gql`
+  query GetProgramContentEbookHighlight($programContentId: uuid!, $memberId: String!) {
+    program_content_ebook_highlight(
+      where: { program_content_id: { _eq: $programContentId }, member_id: { _eq: $memberId } }
+    ) {
+      chapter
+      color
+      epub_cfi
+      highlight_content
+      member_id
+      created_at
+      id
+      program_content_id
+    }
+  }
+`
+
+const create = async (
+  dto: SaveEbookHighlightRequestDto,
   dataSource: any,
-): Promise<{ error: Error | null; result: boolean }> {
+): Promise<{ error: Error | null; result: boolean }> => {
   try {
     const response = await dataSource.mutate({
       mutation: INSERT_EBOOK_HIGHLIGHT_MUTATION,
@@ -73,40 +96,47 @@ async function create(
   }
 }
 
+const get = async (
+  dto: GetEbookHighlightRequestDto,
+  dataSource: any,
+): Promise<{ error: Error | null; result: boolean; data?: Highlight[] }> => {
+  try {
+    const response = await dataSource.query({
+      query: GET_EBOOK_HIGHLIGHT_QUERY,
+      variables: {
+        programContentId: dto.programContentId,
+        memberId: dto.memberId,
+      },
+    })
+
+    console.log(response.data)
+
+    if (response.data.program_content_ebook_highlight.length > 0) {
+      const highlights: Highlight[] = response.data.program_content_ebook_highlight.map(item => ({
+        text: item.highlight_content,
+        cfiRange: item.epub_cfi,
+        color: item.color,
+        programContentId: item.program_content_id,
+        memberId: item.member_id,
+        chapter: item.chapter,
+      }))
+
+      console.log(highlights)
+      return { error: null, result: true, data: highlights }
+    } else {
+      return { error: new Error('No ebook highlights found'), result: false }
+    }
+  } catch (error) {
+    // Check if the error is an instance of Error, if not convert it to an Error object
+    const errorInstance = error instanceof Error ? error : new Error(String(error))
+    return { error: errorInstance, result: false }
+  }
+}
+
 export const useEbookHighlight = () => {
   const [error, setError] = useState<string | null>(null)
-  const [selections, setSelections] = useState<ITextSelection[]>([])
+  const [highlights, setHighlights] = useState<Highlight[]>([])
   const apolloClient = useApolloClient()
-
-  const setRenderSelection = useCallback(
-    (
-      range: any,
-      cfiRange: string,
-      contents: any,
-      color: string = 'rgba(255, 190, 30, 0.5)',
-      programContentId: string,
-      memberId: string,
-      chapter: string,
-    ) => {
-      if (range) {
-        const rangeText = range.toString()
-        setSelections(list => [
-          ...list,
-          {
-            text: rangeText,
-            cfiRange,
-            color,
-            programContentId: programContentId,
-            memberId: memberId,
-            chapter,
-          },
-        ])
-        const selection = contents.window.getSelection()
-        selection?.removeAllRanges()
-      }
-    },
-    [],
-  )
 
   const saveHighlight = useCallback(
     async (
@@ -120,7 +150,7 @@ export const useEbookHighlight = () => {
     ) => {
       if (range) {
         const highlightContent = range.toString()
-        const highlightData: EbookHighlightRequestDto = {
+        const highlightData: SaveEbookHighlightRequestDto = {
           epubCfi: cfiRange,
           programContentId,
           memberId,
@@ -133,17 +163,51 @@ export const useEbookHighlight = () => {
         if (error) {
           setError(error.message)
         } else {
-          setRenderSelection(range, cfiRange, contents, color, programContentId, memberId, chapter)
+          setHighlights(prevHighlights => [
+            ...prevHighlights,
+            {
+              text: highlightContent,
+              cfiRange,
+              color,
+              programContentId,
+              memberId,
+              chapter,
+              isNew: true,
+            },
+          ])
+          const selection = contents.window.getSelection()
+          selection?.removeAllRanges()
         }
       }
     },
-    [apolloClient, setRenderSelection],
+    [apolloClient],
   )
+
+  const getHighLightData = useCallback(
+    async (dto: GetEbookHighlightRequestDto) => {
+      const { error, result, data } = await get(dto, apolloClient)
+
+      console.log({ error, result, data })
+      if (result && data) {
+        setHighlights(data.map(item => ({ ...item, isNew: true })))
+      } else if (error) {
+        setError(error.message)
+      }
+    },
+    [apolloClient],
+  )
+
+  const markHighlightAsMarked = useCallback((index: number) => {
+    setHighlights(prevHighlights =>
+      prevHighlights.map((highlight, idx) => (idx === index ? { ...highlight, isNew: false } : highlight)),
+    )
+  }, [])
 
   return {
     error,
-    selections,
-    setRenderSelection,
+    highlights,
     saveHighlight,
+    getHighLightData,
+    markHighlightAsMarked,
   }
 }
