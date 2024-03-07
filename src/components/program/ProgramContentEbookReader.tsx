@@ -1,6 +1,5 @@
 import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
 import { Flex, Spinner } from '@chakra-ui/react'
-import { Modal } from 'antd'
 import axios from 'axios'
 import { inRange } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -11,6 +10,7 @@ import { EpubView, ReactReaderStyle } from 'react-reader'
 import styled from 'styled-components'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
+import { useEbookHighlight } from '../../hooks/ebookHighlight'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
 import EbookCommentModal from '../ebook/EbookCommentModel'
 import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
@@ -39,68 +39,6 @@ const ReaderBookmark = styled.div`
     border-left: 13px solid ${props => (props.color ? props.color : '#E2E2E2')};
     border-top: 13px solid rgba(0, 0, 0, 0);
     transform: rotate(180deg);
-  }
-`
-
-const StyledCommentModal = styled(Modal)`
-  .ant-modal-content {
-    /* width: 500px; */
-    /* height: 402px; */
-    width: 450px;
-    /* padding: 15px 15px 15px 15px; */
-    border-radius: 4px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
-    background-color: #fff;
-  }
-  .ant-modal-body .headerContainer {
-    color: #585858;
-    font-size: 20px;
-    font-weight: bold;
-  }
-
-  .ant-modal-body .modelContainer {
-    margin-top: 25px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-  }
-  .ant-modal-body .modelContainer .quoteIcon {
-    width: 40px;
-    height: 45px;
-    color: #ffbe1e;
-    margin-right: 2px;
-  }
-
-  .ant-modal-body .modelContainer .commentArea {
-    min-width: 350px;
-  }
-
-  .ant-modal-body .modelContainer .commentArea h2 {
-    font-size: 20px;
-    font-weight: bold;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.5;
-    letter-spacing: 0.2px;
-    font-family: NotoSansCJKtc;
-    color: var(--gray-darker);
-  }
-
-  .ant-modal-body .modelContainer .commentArea p {
-    margin-top: 25px;
-    margin-bottom: 0px;
-  }
-
-  .ant-modal-footer {
-    border-top: 0px;
-    width: 450px;
-  }
-
-  @media screen and (max-width: 992px) {
-    .ant-modal-body .modelContainer .commentArea {
-      min-width: 200px;
-    }
   }
 `
 
@@ -223,7 +161,6 @@ const ProgramContentEbookReader: React.VFC<{
   const [ebookFontSize, setEbookFontSize] = useState(18)
   const [ebookLineHeight, setEbookLineHeight] = useState(1.5)
   const [bookmarkData, setBookmarkData] = useState<BookmarkData>()
-  const [selections, setSelections] = useState<ITextSelection[]>([])
   const [toolbarVisible, setToolbarVisible] = useState(false)
   const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 })
   const currentSelection = useRef<{ cfiRange: string | null; contents: Contents | null }>({
@@ -231,6 +168,8 @@ const ProgramContentEbookReader: React.VFC<{
     contents: null,
   })
   const [openCommentModel, setOpenCommentModel] = useState(false)
+
+  const { error, selections, setRenderSelection, saveHighlight } = useEbookHighlight()
 
   const showCommentModal = () => {
     setOpenCommentModel(true)
@@ -297,26 +236,26 @@ const ProgramContentEbookReader: React.VFC<{
     },
   }
 
-  const setRenderSelection = (cfiRange: string, contents: Contents, color: string = 'rgba(255, 190, 30, 0.5)') => {
-    const range = rendition.current?.getRange(cfiRange)
-    if (range) {
-      const rangeText = range.toString()
-      setSelections(list =>
-        list.concat({
-          text: rangeText,
-          cfiRange,
-          color,
-        }),
-      )
-      rendition.current?.annotations.highlight(cfiRange, {}, function () {}, 'hl', {
-        fill: color,
-        'fill-opacity': '0.5',
-        'mix-blend-mode': 'multiply',
-      })
-      const selection = contents.window.getSelection()
-      selection?.removeAllRanges()
-    }
-  }
+  // const setRenderSelection = (cfiRange: string, contents: Contents, color: string = 'rgba(255, 190, 30, 0.5)') => {
+  //   const range = rendition.current?.getRange(cfiRange)
+  //   if (range) {
+  //     const rangeText = range.toString()
+  //     setSelections(list =>
+  //       list.concat({
+  //         text: rangeText,
+  //         cfiRange,
+  //         color,
+  //       }),
+  //     )
+  //     rendition.current?.annotations.highlight(cfiRange, {}, function () {}, 'hl', {
+  //       fill: color,
+  //       'fill-opacity': '0.5',
+  //       'mix-blend-mode': 'multiply',
+  //     })
+  //     const selection = contents.window.getSelection()
+  //     selection?.removeAllRanges()
+  //   }
+  // }
 
   useLayoutEffect(() => {
     getEpubFromS3(programContentId, authToken)
@@ -348,12 +287,33 @@ const ProgramContentEbookReader: React.VFC<{
     }
   }, [])
 
+  useEffect(() => {
+    // 取出最後一個selection
+    const selection = selections[selections.length - 1]
+    if (selection) {
+      // 確保 selection 存在
+      rendition.current?.annotations.highlight(selection.cfiRange, {}, function () {}, 'hl', {
+        fill: selection.color,
+        'fill-opacity': '0.5',
+        'mix-blend-mode': 'multiply',
+      })
+    }
+  }, [selections])
+
   const handleColor = () => {
-    setRenderSelection(
-      currentSelection.current.cfiRange as string,
-      currentSelection.current.contents as Contents,
-      'rgba(255, 190, 30, 0.5)',
-    )
+    const range = rendition.current?.getRange(currentSelection.current.cfiRange as string)
+    if (currentMemberId && range) {
+      saveHighlight(
+        range,
+        currentSelection.current.cfiRange as string,
+        currentSelection.current.contents as Contents,
+        'rgba(255, 190, 30, 0.5)',
+        programContentId,
+        currentMemberId,
+        chapter,
+      )
+    }
+
     setToolbarVisible(false)
   }
 
