@@ -262,8 +262,7 @@ const ProgramContentEbookReader: React.VFC<{
     if (rendition.current && isRenditionReady) {
       highlights.forEach((highlight, index) => {
         if (highlight.isNew) {
-          console.log({ range: highlight.cfiRange, color: highlight.color })
-          rendition.current.annotations.highlight(highlight.cfiRange, {}, function () {}, 'hl', {
+          rendition.current?.annotations.highlight(highlight.cfiRange, {}, function () {}, 'hl', {
             fill: highlight.color,
             'fill-opacity': '0.5',
             'mix-blend-mode': 'multiply',
@@ -277,6 +276,7 @@ const ProgramContentEbookReader: React.VFC<{
 
   const handleColor = () => {
     const range = rendition.current?.getRange(currentSelection.current.cfiRange as string)
+    console.log(range?.toString(), currentSelection.current.cfiRange)
     if (currentMemberId && range) {
       saveHighlight(
         range,
