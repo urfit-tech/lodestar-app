@@ -18,12 +18,6 @@ import EbookTextSelectionToolbar from '../ebook/EbookTextSelectionToolbar'
 import { decryptData } from './decryptUtils'
 import type { NavItem, Rendition, Book, Location, Contents } from 'epubjs'
 
-type ITextSelection = {
-  text: string
-  cfiRange: string
-  color?: string
-}
-
 const ReaderBookmark = styled.div`
   position: relative;
   width: 26px;
