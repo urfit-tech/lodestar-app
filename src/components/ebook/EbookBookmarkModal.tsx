@@ -3,6 +3,11 @@ import {
   Flex,
   Grid,
   Icon,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -20,6 +25,7 @@ import {
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { FaQuoteLeft } from 'react-icons/fa'
+import { HiDotsVertical } from 'react-icons/hi'
 import styled from 'styled-components'
 import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
 import { ReactComponent as DeleteIcon } from '../../images/delete-o.svg'
@@ -91,7 +97,7 @@ const StyledHighlight = styled.div`
       transform: translateY(-50%);
       width: 4px;
       height: 100%;
-      background-color: #dadada;
+      background-color: var(--warning);
       border-radius: 2px;
     }
   }
@@ -263,7 +269,17 @@ const HighlightRow: React.VFC<{
         <p className="highlightChapter">{highlight.chapter}</p>
       </div>
       <div className="actionContainer">
-        {isDeleting ? <Spinner size="sm" /> : <DeleteIcon onClick={() => deleteBookmark(highlight.id)} />}
+        {isDeleting ? (
+          <Spinner size="sm" />
+        ) : (
+          <Menu>
+            <MenuButton as={IconButton} aria-label="Options" icon={<HiDotsVertical />} variant="ghost" />
+            <MenuList minWidth="auto" width="fit-content">
+              <MenuItem>編輯</MenuItem>
+              <MenuItem>刪除</MenuItem>
+            </MenuList>
+          </Menu>
+        )}
       </div>
     </StyledHighlight>
   )
