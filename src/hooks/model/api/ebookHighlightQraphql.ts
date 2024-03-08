@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client'
 
 export type Highlight = {
+  annotation: string | null
   text: string
   cfiRange: string
   color: string
@@ -11,6 +12,7 @@ export type Highlight = {
 }
 
 export type SaveEbookHighlightRequestDto = {
+  annotation: string | null
   epubCfi: string
   programContentId: string
   memberId: string
@@ -26,6 +28,7 @@ export type GetEbookHighlightRequestDto = {
 
 const INSERT_EBOOK_HIGHLIGHT_MUTATION = gql`
   mutation InsertProgramContentEbookHighlight(
+    $annotation: String
     $chapter: String
     $color: String
     $epubCfi: String
@@ -35,6 +38,7 @@ const INSERT_EBOOK_HIGHLIGHT_MUTATION = gql`
   ) {
     insert_program_content_ebook_highlight(
       objects: {
+        annotation: $annotation
         chapter: $chapter
         color: $color
         epub_cfi: $epubCfi
@@ -45,6 +49,7 @@ const INSERT_EBOOK_HIGHLIGHT_MUTATION = gql`
     ) {
       affected_rows
       returning {
+        annotation
         chapter
         color
         epub_cfi
@@ -63,6 +68,7 @@ const GET_EBOOK_HIGHLIGHT_QUERY = gql`
     program_content_ebook_highlight(
       where: { program_content_id: { _eq: $programContentId }, member_id: { _eq: $memberId } }
     ) {
+      annotation
       chapter
       color
       epub_cfi
@@ -82,7 +88,15 @@ export const createHighlight = async (
   try {
     const response = await dataSource.mutate({
       mutation: INSERT_EBOOK_HIGHLIGHT_MUTATION,
-      variables: dto,
+      variables: {
+        annotation: dto.annotation,
+        chapter: dto.chapter,
+        color: dto.color,
+        epubCfi: dto.epubCfi,
+        highLightContent: dto.highLightContent,
+        memberId: dto.memberId,
+        programContentId: dto.programContentId,
+      },
     })
 
     if (response.data.insert_program_content_ebook_highlight.affected_rows > 0) {
@@ -91,6 +105,7 @@ export const createHighlight = async (
       return { error: new Error('Failed to insert ebook highlight'), result: false }
     }
   } catch (error: any) {
+    console.error(error)
     return { error, result: false }
   }
 }
@@ -109,9 +124,9 @@ export const getEbookHighlights = async (
     })
 
     if (response.data.program_content_ebook_highlight.length > 0) {
-      console.log(response.data.program_content_ebook_highlight)
       const highlights: Highlight[] = response.data.program_content_ebook_highlight.map(
         (item: {
+          annotation: string
           highlight_content: string
           epub_cfi: string
           color: string
@@ -120,6 +135,7 @@ export const getEbookHighlights = async (
           chapter: string
           __typename: string
         }) => ({
+          annotation: item.annotation,
           text: item.highlight_content,
           cfiRange: item.epub_cfi,
           color: item.color,
@@ -129,7 +145,6 @@ export const getEbookHighlights = async (
         }),
       )
 
-      console.log(highlights)
       return { error: null, result: true, data: highlights }
     } else {
       return { error: new Error('No ebook highlights found'), result: false }

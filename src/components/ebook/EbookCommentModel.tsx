@@ -1,6 +1,6 @@
 // CommentModal.tsx
 import { Input, Modal } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
 import { FaQuoteLeft } from 'react-icons/fa'
 import styled from 'styled-components'
 
@@ -70,10 +70,18 @@ type CommentModalProps = {
   visible: boolean
   onOk: () => void
   onCancel: () => void
+  onCommentChange: (comment: string) => void // 新增的prop
   content?: string | null | undefined
 }
 
-const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCancel, content }) => {
+const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCancel, onCommentChange, content }) => {
+  const [comment, setComment] = useState('')
+
+  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newComment = e.target.value
+    setComment(newComment)
+    onCommentChange(newComment)
+  }
   return (
     <StyledCommentModal visible={visible} onOk={onOk} onCancel={onCancel}>
       <div className="headerContainer">
@@ -87,7 +95,7 @@ const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCance
         <div className="commentArea">
           <h2>{content}</h2>
           <p>詮釋內容</p>
-          <Input.TextArea rows={4} />
+          <Input.TextArea rows={4} value={comment} onChange={handleCommentChange} />
         </div>
       </div>
     </StyledCommentModal>

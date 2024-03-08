@@ -165,14 +165,33 @@ const ProgramContentEbookReader: React.VFC<{
   const [isRenditionReady, setIsRenditionReady] = useState(false)
 
   const { error, highlights, saveHighlight, getHighLightData, markHighlightAsMarked } = useEbookHighlight()
+  const [annotation, setAnnotation] = useState<string | null>(null)
+  const handleCommentChange = (newComment: string) => {
+    setAnnotation(newComment)
+  }
 
   const showCommentModal = () => {
     setOpenCommentModel(true)
     setToolbarVisible(false)
   }
   const handleCommentOk = () => {
-    setOpenCommentModel(false)
-    setToolbarVisible(false)
+    const range = rendition.current?.getRange(currentSelection.current.cfiRange as string)
+    console.log(range?.toString(), currentSelection.current.cfiRange)
+    if (currentMemberId && range) {
+      saveHighlight({
+        annotation: annotation,
+        range: range,
+        cfiRange: currentSelection.current.cfiRange as string,
+        contents: currentSelection.current.contents as Contents,
+        color: 'rgba(255, 190, 30, 0.5)',
+        programContentId: programContentId,
+        memberId: currentMemberId,
+        chapter: chapter,
+      })
+      setAnnotation(null)
+      setOpenCommentModel(false)
+      setToolbarVisible(false)
+    }
   }
 
   const handleCommentCancel = () => {
@@ -262,6 +281,14 @@ const ProgramContentEbookReader: React.VFC<{
             'mix-blend-mode': 'multiply',
           })
 
+          if (highlight.annotation) {
+            rendition.current?.annotations.underline(highlight.cfiRange, {}, function () {}, 'underline_epubjs', {
+              stroke: highlight.color,
+              'stroke-opacity': '0.9',
+              'stroke-dasharray': '1,2',
+              'mix-blend-mode': 'multiply',
+            })
+          }
           markHighlightAsMarked(index)
         }
       })
@@ -270,17 +297,17 @@ const ProgramContentEbookReader: React.VFC<{
 
   const handleColor = () => {
     const range = rendition.current?.getRange(currentSelection.current.cfiRange as string)
-    console.log(range?.toString(), currentSelection.current.cfiRange)
     if (currentMemberId && range) {
-      saveHighlight(
-        range,
-        currentSelection.current.cfiRange as string,
-        currentSelection.current.contents as Contents,
-        'rgba(255, 190, 30, 0.5)',
-        programContentId,
-        currentMemberId,
-        chapter,
-      )
+      saveHighlight({
+        annotation: null,
+        range: range,
+        cfiRange: currentSelection.current.cfiRange as string,
+        contents: currentSelection.current.contents as Contents,
+        color: 'rgba(255, 190, 30, 0.5)',
+        programContentId: programContentId,
+        memberId: currentMemberId,
+        chapter: chapter,
+      })
     }
 
     setToolbarVisible(false)
@@ -292,6 +319,7 @@ const ProgramContentEbookReader: React.VFC<{
         visible={openCommentModel}
         onOk={handleCommentOk}
         onCancel={handleCommentCancel}
+        onCommentChange={handleCommentChange}
         content={
           currentSelection.current?.cfiRange &&
           rendition.current?.getRange(currentSelection.current?.cfiRange as string)?.toString()

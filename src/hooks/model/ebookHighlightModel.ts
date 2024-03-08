@@ -10,7 +10,6 @@ import {
 export const useEbookHighlightModel = () => {
   const apolloClient = useApolloClient()
   const saveHighlightData = async (dto: SaveEbookHighlightRequestDto): Promise<void> => {
-    console.log('saveHighlightData', dto)
     const { error } = await createHighlight(dto, apolloClient)
     if (error) {
       throw error

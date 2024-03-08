@@ -1,28 +1,21 @@
 import { useCallback, useState } from 'react'
+import { Highlight, SaveEbookHighlightRequestDto } from './model/api/ebookHighlightQraphql'
 import { useEbookHighlightModel } from './model/ebookHighlightModel'
-
-type Highlight = {
-  text: string
-  cfiRange: string
-  color: string
-  programContentId: string
-  memberId: string
-  chapter: string
-  isNew?: boolean
-}
-
-type SaveEbookHighlightRequestDto = {
-  epubCfi: string
-  programContentId: string
-  memberId: string
-  highLightContent: string
-  chapter: string
-  color: string
-}
 
 type GetEbookHighlightRequestDto = {
   programContentId: string
   memberId: string
+}
+
+interface SaveHighlightParams {
+  annotation: string | null
+  range: Range
+  cfiRange: string
+  contents: any
+  color: string
+  programContentId: string
+  memberId: string
+  chapter: string
 }
 
 export const useEbookHighlight = () => {
@@ -31,18 +24,20 @@ export const useEbookHighlight = () => {
   const { saveHighlightData, fetchHighlightsData } = useEbookHighlightModel()
 
   const saveHighlight = useCallback(
-    async (
-      range: Range,
-      cfiRange: string,
-      contents: any,
-      color: string = 'rgba(255, 190, 30, 0.5)',
-      programContentId: string,
-      memberId: string,
-      chapter: string,
-    ) => {
+    async ({
+      annotation,
+      range,
+      cfiRange,
+      contents,
+      color = 'rgba(255, 190, 30, 0.5)',
+      programContentId,
+      memberId,
+      chapter,
+    }: SaveHighlightParams) => {
       if (range) {
         const highlightContent = range.toString()
         const highlightData: SaveEbookHighlightRequestDto = {
+          annotation,
           epubCfi: cfiRange,
           programContentId,
           memberId,
@@ -56,6 +51,7 @@ export const useEbookHighlight = () => {
           setHighlights(prevHighlights => [
             ...prevHighlights,
             {
+              annotation,
               text: highlightContent,
               cfiRange,
               color,
