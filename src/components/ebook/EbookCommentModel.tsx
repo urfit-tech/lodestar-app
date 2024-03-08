@@ -70,7 +70,7 @@ type CommentModalProps = {
   visible: boolean
   onOk: () => void
   onCancel: () => void
-  onCommentChange: (comment: string) => void // 新增的prop
+  onCommentChange: (comment: string) => void
   content?: string | null | undefined
 }
 

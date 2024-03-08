@@ -19,6 +19,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { useState } from 'react'
+import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
 import { ReactComponent as DeleteIcon } from '../../images/delete-o.svg'
 import { ReactComponent as BookmarkIcon } from '../../images/icon-grid-view.svg'
 import { ReactComponent as MarkIcon } from '../../images/mark.svg'
@@ -29,12 +30,21 @@ export const EbookBookmarkModal: React.VFC<{
   onLocationChange: (loc: string) => void
   currentThemeData: { color: string; backgroundColor: string }
   programContentBookmarks: Array<Bookmark>
+  programContentHighlights: Array<Highlight>
   setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
-}> = ({ refetchBookmark, onLocationChange, currentThemeData, programContentBookmarks, setCurrentPageBookmarkIds }) => {
+}> = ({
+  refetchBookmark,
+  onLocationChange,
+  currentThemeData,
+  programContentBookmarks,
+  programContentHighlights,
+  setCurrentPageBookmarkIds,
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+
   return (
     <Flex>
-      <Tooltip label="書籤" aria-label="書籤" placement="top">
+      <Tooltip label="書籤及註釋" aria-label="書籤及註釋" placement="top">
         <Icon
           ml={{ base: '20px', md: '16px' }}
           as={BookmarkIcon}
@@ -51,6 +61,7 @@ export const EbookBookmarkModal: React.VFC<{
             <Tabs>
               <TabList>
                 <Tab>書籤</Tab>
+                <Tab>畫線註釋</Tab>
               </TabList>
               <TabPanels>
                 <TabPanel>
@@ -61,6 +72,19 @@ export const EbookBookmarkModal: React.VFC<{
                         onLocationChange={onLocationChange}
                         refetchBookmark={refetchBookmark}
                         bookmark={bookmark}
+                        setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
+                      />
+                    ))}
+                  </Grid>
+                </TabPanel>
+                <TabPanel>
+                  <Grid gap={3}>
+                    {programContentHighlights.map(highlight => (
+                      <HighlightRow
+                        key={highlight.id}
+                        onLocationChange={onLocationChange}
+                        refetchBookmark={refetchBookmark}
+                        highlight={highlight}
                         setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
                       />
                     ))}
@@ -125,6 +149,47 @@ const BookmarkRow: React.VFC<{
   )
 }
 
+const HighlightRow: React.VFC<{
+  onLocationChange: (loc: string) => void
+  highlight: Highlight
+  refetchBookmark: () => void
+  setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
+}> = ({ highlight, refetchBookmark, onLocationChange, setCurrentPageBookmarkIds }) => {
+  const apolloClient = useApolloClient()
+  const [isDeleting, setDeleting] = useState<boolean>(false)
+
+  const deleteBookmark = async (id: string) => {
+    setDeleting(true)
+
+    setDeleting(false)
+  }
+
+  return (
+    <Flex w="100%" alignItems="start">
+      <Flex w="10%">
+        <MarkIcon fill="#FF7D62" />
+      </Flex>
+      <Flex
+        cursor="pointer"
+        w="80%"
+        direction="column"
+        onClick={() => {
+          onLocationChange(highlight.cfiRange)
+        }}
+      >
+        <Text size="sm" color="#585858" noOfLines={1}>
+          {highlight.text}
+        </Text>
+        <Text fontSize="14px" color="#9b9b9b" fontWeight="500" noOfLines={1}>
+          {highlight.chapter}
+        </Text>
+      </Flex>
+      <Flex cursor="pointer" w="10%">
+        {isDeleting ? <Spinner size="sm" /> : <DeleteIcon onClick={() => deleteBookmark(highlight.id)} />}
+      </Flex>
+    </Flex>
+  )
+}
 export const deleteProgramContentEbookBookmark = gql`
   mutation deleteEbookBookmark($id: uuid!) {
     delete_program_content_ebook_bookmark_by_pk(id: $id) {

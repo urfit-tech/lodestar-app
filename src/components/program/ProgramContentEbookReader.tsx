@@ -536,6 +536,7 @@ const ProgramContentEbookReader: React.VFC<{
           rendition={rendition}
           chapter={chapter}
           programContentBookmarks={programContentBookmarks}
+          programContentHighlights={highlights}
           fontSize={ebookFontSize}
           lineHeight={ebookLineHeight}
           refetchBookmark={refetchBookmark}

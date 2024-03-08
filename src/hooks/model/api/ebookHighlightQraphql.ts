@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client'
 
 export type Highlight = {
+  id: any
   annotation: string | null
   text: string
   cfiRange: string
@@ -49,6 +50,7 @@ const INSERT_EBOOK_HIGHLIGHT_MUTATION = gql`
     ) {
       affected_rows
       returning {
+        id
         annotation
         chapter
         color
@@ -84,7 +86,7 @@ const GET_EBOOK_HIGHLIGHT_QUERY = gql`
 export const createHighlight = async (
   dto: SaveEbookHighlightRequestDto,
   dataSource: any,
-): Promise<{ error: Error | null; result: boolean }> => {
+): Promise<{ error: Error | null; result: boolean; data: Highlight | null }> => {
   try {
     const response = await dataSource.mutate({
       mutation: INSERT_EBOOK_HIGHLIGHT_MUTATION,
@@ -100,13 +102,13 @@ export const createHighlight = async (
     })
 
     if (response.data.insert_program_content_ebook_highlight.affected_rows > 0) {
-      return { error: null, result: true }
+      return { error: null, result: true, data: response.data.insert_program_content_ebook_highlight.returning[0] }
     } else {
-      return { error: new Error('Failed to insert ebook highlight'), result: false }
+      return { error: new Error('Failed to insert ebook highlight'), result: false, data: null }
     }
   } catch (error: any) {
     console.error(error)
-    return { error, result: false }
+    return { error, result: false, data: null }
   }
 }
 
@@ -133,6 +135,7 @@ export const getEbookHighlights = async (
           program_content_id: string
           member_id: string
           chapter: string
+          id: string
           __typename: string
         }) => ({
           annotation: item.annotation,
@@ -142,6 +145,7 @@ export const getEbookHighlights = async (
           programContentId: item.program_content_id,
           memberId: item.member_id,
           chapter: item.chapter,
+          id: item.id,
         }),
       )
 

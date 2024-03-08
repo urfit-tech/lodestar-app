@@ -9,11 +9,17 @@ import {
 
 export const useEbookHighlightModel = () => {
   const apolloClient = useApolloClient()
-  const saveHighlightData = async (dto: SaveEbookHighlightRequestDto): Promise<void> => {
-    const { error } = await createHighlight(dto, apolloClient)
+  const saveHighlightData = async (dto: SaveEbookHighlightRequestDto): Promise<Highlight | null> => {
+    const { error, result, data } = await createHighlight(dto, apolloClient)
     if (error) {
       throw error
     }
+
+    if (result && data) {
+      return data
+    }
+
+    return null
   }
 
   const fetchHighlightsData = async (dto: GetEbookHighlightRequestDto): Promise<Highlight[]> => {

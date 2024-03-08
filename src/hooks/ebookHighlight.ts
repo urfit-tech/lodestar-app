@@ -47,20 +47,24 @@ export const useEbookHighlight = () => {
         }
 
         try {
-          await saveHighlightData(highlightData)
-          setHighlights(prevHighlights => [
-            ...prevHighlights,
-            {
-              annotation,
-              text: highlightContent,
-              cfiRange,
-              color,
-              programContentId,
-              memberId,
-              chapter,
-              isNew: true,
-            },
-          ])
+          const data = await saveHighlightData(highlightData)
+          if (data) {
+            console.log(data)
+            setHighlights(prevHighlights => [
+              ...prevHighlights,
+              {
+                id: data.id,
+                annotation,
+                text: highlightContent,
+                cfiRange,
+                color,
+                programContentId,
+                memberId,
+                chapter,
+                isNew: true,
+              },
+            ])
+          }
 
           const selection = contents.window.getSelection()
           selection?.removeAllRanges()
@@ -76,6 +80,7 @@ export const useEbookHighlight = () => {
     async (dto: GetEbookHighlightRequestDto) => {
       try {
         const data = await fetchHighlightsData(dto)
+        console.log(data)
         setHighlights(data.map(item => ({ ...item, isNew: true })))
       } catch (error: any) {
         setError(error.message)
