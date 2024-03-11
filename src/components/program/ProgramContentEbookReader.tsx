@@ -11,6 +11,7 @@ import styled from 'styled-components'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
 import { useEbookHighlight } from '../../hooks/ebookHighlight'
+import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
 import EbookCommentModal from '../ebook/EbookCommentModel'
 import EbookDeleteHighlightModal from '../ebook/EbookDeleteCommentModel'
@@ -176,6 +177,8 @@ const ProgramContentEbookReader: React.VFC<{
     setAnnotation(newComment)
   }
 
+  const [highlightToDelete, setHighlightToDelete] = useState<Highlight | null>(null)
+
   const showCommentModal = () => {
     setOpenCommentModel(true)
     setToolbarVisible(false)
@@ -205,24 +208,28 @@ const ProgramContentEbookReader: React.VFC<{
     setToolbarVisible(false)
   }
 
-  const showDeleteHighlightModal = () => {
-    const existingHighlight = highlights.find(highlight => highlight.cfiRange === currentSelection.current.cfiRange)
-    if (existingHighlight?.id) {
+  const showDeleteHighlightModal = (cfiRange: string | null, id: string | null = null) => {
+    const existingHighlight = id
+      ? highlights.find(highlight => highlight.id === id)
+      : highlights.find(highlight => highlight.cfiRange === cfiRange)
+
+    if (existingHighlight) {
+      setHighlightToDelete(existingHighlight)
       setDeleteHighlightModel(true)
       setToolbarVisible(false)
     }
   }
 
   const handleDeleteHighlightModalOk = () => {
-    const existingHighlight = highlights.find(highlight => highlight.cfiRange === currentSelection.current.cfiRange)
-    if (existingHighlight?.id) {
-      deleteHighlight({ id: existingHighlight.id })
+    if (highlightToDelete?.id) {
+      deleteHighlight({ id: highlightToDelete.id })
 
-      rendition.current?.annotations.remove(existingHighlight.cfiRange, 'highlight')
-      rendition.current?.annotations.remove(existingHighlight.cfiRange, 'underline')
+      rendition.current?.annotations.remove(highlightToDelete.cfiRange, 'highlight')
+      rendition.current?.annotations.remove(highlightToDelete.cfiRange, 'underline')
 
       setDeleteHighlightModel(false)
       setToolbarVisible(false)
+      setHighlightToDelete(null)
     }
   }
 
@@ -349,7 +356,9 @@ const ProgramContentEbookReader: React.VFC<{
     <div>
       <EbookDeleteHighlightModal
         visible={openDeleteHighlightModel}
-        onOk={handleDeleteHighlightModalOk}
+        onOk={() => {
+          handleDeleteHighlightModalOk()
+        }}
         onCancel={handleDeleteHighlightModalCancel}
       />
 
@@ -369,7 +378,7 @@ const ProgramContentEbookReader: React.VFC<{
         position={toolbarPosition}
         onHighlight={handleColor}
         onComment={showCommentModal}
-        onDelete={showDeleteHighlightModal}
+        onDelete={() => showDeleteHighlightModal(currentSelection.current.cfiRange, null)}
       />
 
       {source && currentMemberId && chapter ? (
@@ -584,6 +593,7 @@ const ProgramContentEbookReader: React.VFC<{
           currentThemeData={getReaderTheme(theme)}
           setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
           deleteHighlight={deleteHighlight}
+          showDeleteHighlightModal={showDeleteHighlightModal}
         />
       ) : null}
     </div>

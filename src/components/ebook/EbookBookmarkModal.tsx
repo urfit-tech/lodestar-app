@@ -101,6 +101,7 @@ export const EbookBookmarkModal: React.VFC<{
   programContentHighlights: Array<Highlight>
   setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
   deleteHighlight: ({ id }: { id: string }) => void
+  showDeleteHighlightModal: (cfiRange: string | null, id?: string | null) => void
 }> = ({
   refetchBookmark,
   onLocationChange,
@@ -109,6 +110,7 @@ export const EbookBookmarkModal: React.VFC<{
   programContentHighlights,
   setCurrentPageBookmarkIds,
   deleteHighlight,
+  showDeleteHighlightModal,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -157,6 +159,8 @@ export const EbookBookmarkModal: React.VFC<{
                         highlight={highlight}
                         setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
                         deleteHighlight={deleteHighlight}
+                        showDeleteHighlightModal={showDeleteHighlightModal}
+                        modelOnClose={onClose}
                       />
                     ))}
                   </Grid>
@@ -226,14 +230,14 @@ const HighlightRow: React.VFC<{
   refetchBookmark: () => void
   setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
   deleteHighlight: ({ id }: { id: string }) => void
-}> = ({ highlight, onLocationChange, deleteHighlight }) => {
-  const apolloClient = useApolloClient()
+  showDeleteHighlightModal: (cfiRange: string | null, id?: string | null) => void
+  modelOnClose: () => void
+}> = ({ highlight, onLocationChange, deleteHighlight, showDeleteHighlightModal, modelOnClose }) => {
   const [isDeleting, setDeleting] = useState<boolean>(false)
 
   const handleDeleteHighlight = async (id: string) => {
-    setDeleting(true)
-    deleteHighlight({ id })
-    setDeleting(false)
+    modelOnClose()
+    showDeleteHighlightModal(null, highlight.id)
   }
 
   return (
