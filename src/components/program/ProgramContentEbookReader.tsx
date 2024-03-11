@@ -169,15 +169,8 @@ const ProgramContentEbookReader: React.VFC<{
   const [openDeleteHighlightModel, setDeleteHighlightModel] = useState(false)
   const [isRenditionReady, setIsRenditionReady] = useState(false)
 
-  const {
-    error,
-    highlights,
-    saveHighlight,
-    getHighLightData,
-    markHighlightAsMarked,
-    deleteHighlight,
-    markHighlightAsDeleted,
-  } = useEbookHighlight()
+  const { error, highlights, saveHighlight, getHighLightData, markHighlightAsMarked, deleteHighlight } =
+    useEbookHighlight()
   const [annotation, setAnnotation] = useState<string | null>(null)
   const handleCommentChange = (newComment: string) => {
     setAnnotation(newComment)
@@ -224,6 +217,10 @@ const ProgramContentEbookReader: React.VFC<{
     const existingHighlight = highlights.find(highlight => highlight.cfiRange === currentSelection.current.cfiRange)
     if (existingHighlight?.id) {
       deleteHighlight({ id: existingHighlight.id })
+
+      rendition.current?.annotations.remove(existingHighlight.cfiRange, 'highlight')
+      rendition.current?.annotations.remove(existingHighlight.cfiRange, 'underline')
+
       setDeleteHighlightModel(false)
       setToolbarVisible(false)
     }
@@ -326,12 +323,6 @@ const ProgramContentEbookReader: React.VFC<{
           }
           markHighlightAsMarked(index)
         }
-
-        if (highlight.needDelete) {
-          rendition.current?.annotations.remove(highlight.cfiRange, 'highlight')
-          rendition.current?.annotations.remove(highlight.cfiRange, 'underline')
-          markHighlightAsDeleted(highlight.id)
-        }
       })
     }
   }, [highlights, isRenditionReady])
@@ -360,7 +351,6 @@ const ProgramContentEbookReader: React.VFC<{
         visible={openDeleteHighlightModel}
         onOk={handleDeleteHighlightModalOk}
         onCancel={handleDeleteHighlightModalCancel}
-        programContentEbookHighlightId={currentSelection.current?.programContentHighlightId}
       />
 
       <EbookCommentModal
@@ -593,6 +583,7 @@ const ProgramContentEbookReader: React.VFC<{
           onThemeChange={setTheme}
           currentThemeData={getReaderTheme(theme)}
           setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
+          deleteHighlight={deleteHighlight}
         />
       ) : null}
     </div>

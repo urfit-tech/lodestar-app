@@ -98,23 +98,19 @@ export const useEbookHighlight = () => {
     )
   }, [])
 
-  const markHighlightAsDeleted = useCallback((id: string) => {
-    setHighlights(prevHighlights => prevHighlights.filter(h => h.id !== id))
-  }, [])
-
-  const deleteHighlight = useCallback(
-    async (dto: DeleteEbookHighlightRequestDto) => {
-      try {
-        const data = await deleteHighlightData(dto)
-        setHighlights(prevHighlights =>
-          prevHighlights.map(highlight => (highlight.id === dto.id ? { ...highlight, needDelete: true } : highlight)),
-        )
-      } catch (error: any) {
-        setError(error.message)
-      }
-    },
-    [deleteHighlightData],
-  )
+  const deleteHighlight = async (dto: DeleteEbookHighlightRequestDto) => {
+    try {
+      const data = await deleteHighlightData(dto)
+      setHighlights(prevHighlights => {
+        const updatedHighlights = prevHighlights.filter(h => {
+          return h.id !== dto.id
+        })
+        return updatedHighlights
+      })
+    } catch (error: any) {
+      setError(error.message)
+    }
+  }
 
   return {
     error,
@@ -123,6 +119,5 @@ export const useEbookHighlight = () => {
     getHighLightData,
     markHighlightAsMarked,
     deleteHighlight,
-    markHighlightAsDeleted,
   }
 }

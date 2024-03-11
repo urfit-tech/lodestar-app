@@ -100,6 +100,7 @@ export const EbookBookmarkModal: React.VFC<{
   programContentBookmarks: Array<Bookmark>
   programContentHighlights: Array<Highlight>
   setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
+  deleteHighlight: ({ id }: { id: string }) => void
 }> = ({
   refetchBookmark,
   onLocationChange,
@@ -107,6 +108,7 @@ export const EbookBookmarkModal: React.VFC<{
   programContentBookmarks,
   programContentHighlights,
   setCurrentPageBookmarkIds,
+  deleteHighlight,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -154,6 +156,7 @@ export const EbookBookmarkModal: React.VFC<{
                         refetchBookmark={refetchBookmark}
                         highlight={highlight}
                         setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
+                        deleteHighlight={deleteHighlight}
                       />
                     ))}
                   </Grid>
@@ -222,13 +225,14 @@ const HighlightRow: React.VFC<{
   highlight: Highlight
   refetchBookmark: () => void
   setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
-}> = ({ highlight, refetchBookmark, onLocationChange, setCurrentPageBookmarkIds }) => {
+  deleteHighlight: ({ id }: { id: string }) => void
+}> = ({ highlight, onLocationChange, deleteHighlight }) => {
   const apolloClient = useApolloClient()
   const [isDeleting, setDeleting] = useState<boolean>(false)
 
-  const deleteBookmark = async (id: string) => {
+  const handleDeleteHighlight = async (id: string) => {
     setDeleting(true)
-
+    deleteHighlight({ id })
     setDeleting(false)
   }
 
@@ -259,7 +263,7 @@ const HighlightRow: React.VFC<{
             <MenuButton as={IconButton} aria-label="Options" icon={<HiDotsVertical />} variant="ghost" />
             <MenuList minWidth="auto" width="fit-content">
               <MenuItem>編輯</MenuItem>
-              <MenuItem>刪除</MenuItem>
+              <MenuItem onClick={() => handleDeleteHighlight(highlight.id)}>刪除</MenuItem>
             </MenuList>
           </Menu>
         )}
