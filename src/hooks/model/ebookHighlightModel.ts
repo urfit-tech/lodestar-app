@@ -1,6 +1,8 @@
 import { useApolloClient } from '@apollo/client'
 import {
   createHighlight,
+  DeleteEbookHighlightRequestDto,
+  deleteHighlight,
   GetEbookHighlightRequestDto,
   getEbookHighlights,
   Highlight,
@@ -30,8 +32,17 @@ export const useEbookHighlightModel = () => {
     return data || []
   }
 
+  const deleteHighlightData = async (dto: DeleteEbookHighlightRequestDto): Promise<boolean> => {
+    const { error, result } = await deleteHighlight(dto, apolloClient)
+    if (error) {
+      throw error
+    }
+    return result
+  }
+
   return {
     saveHighlightData,
     fetchHighlightsData,
+    deleteHighlightData,
   }
 }

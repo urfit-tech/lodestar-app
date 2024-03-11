@@ -10,6 +10,7 @@ export type Highlight = {
   memberId: string
   chapter: string
   isNew?: boolean
+  needDelete?: boolean
 }
 
 export type SaveEbookHighlightRequestDto = {
@@ -20,6 +21,10 @@ export type SaveEbookHighlightRequestDto = {
   highLightContent: string
   chapter: string
   color: string
+}
+
+export type DeleteEbookHighlightRequestDto = {
+  id: string
 }
 
 export type GetEbookHighlightRequestDto = {
@@ -61,6 +66,14 @@ const INSERT_EBOOK_HIGHLIGHT_MUTATION = gql`
         id
         program_content_id
       }
+    }
+  }
+`
+
+const DELETE_EBOOK_HIGHLIGHT_MUTATION = gql`
+  mutation DeleteProgramContentEbookHighlight($id: uuid!) {
+    delete_program_content_ebook_highlight(where: { id: { _eq: $id } }) {
+      affected_rows
     }
   }
 `
@@ -109,6 +122,24 @@ export const createHighlight = async (
   } catch (error: any) {
     console.error(error)
     return { error, result: false, data: null }
+  }
+}
+
+export const deleteHighlight = async (
+  dto: DeleteEbookHighlightRequestDto,
+  dataSource: any,
+): Promise<{ error: Error | null; result: boolean }> => {
+  try {
+    const response = await dataSource.mutate({
+      mutation: DELETE_EBOOK_HIGHLIGHT_MUTATION,
+      variables: {
+        id: dto.id,
+      },
+    })
+    return { error: null, result: response.data.delete_program_content_ebook_highlight.affected_rows > 0 }
+  } catch (error: any) {
+    console.error(error)
+    return { error, result: false }
   }
 }
 

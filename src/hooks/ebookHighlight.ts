@@ -1,5 +1,9 @@
 import { useCallback, useState } from 'react'
-import { Highlight, SaveEbookHighlightRequestDto } from './model/api/ebookHighlightQraphql'
+import {
+  DeleteEbookHighlightRequestDto,
+  Highlight,
+  SaveEbookHighlightRequestDto,
+} from './model/api/ebookHighlightQraphql'
 import { useEbookHighlightModel } from './model/ebookHighlightModel'
 
 type GetEbookHighlightRequestDto = {
@@ -21,7 +25,7 @@ interface SaveHighlightParams {
 export const useEbookHighlight = () => {
   const [error, setError] = useState<string | null>(null)
   const [highlights, setHighlights] = useState<Highlight[]>([])
-  const { saveHighlightData, fetchHighlightsData } = useEbookHighlightModel()
+  const { saveHighlightData, fetchHighlightsData, deleteHighlightData } = useEbookHighlightModel()
 
   const saveHighlight = useCallback(
     async ({
@@ -49,7 +53,6 @@ export const useEbookHighlight = () => {
         try {
           const data = await saveHighlightData(highlightData)
           if (data) {
-            console.log(data)
             setHighlights(prevHighlights => [
               ...prevHighlights,
               {
@@ -62,6 +65,7 @@ export const useEbookHighlight = () => {
                 memberId,
                 chapter,
                 isNew: true,
+                isDeleted: false,
               },
             ])
           }
@@ -80,8 +84,7 @@ export const useEbookHighlight = () => {
     async (dto: GetEbookHighlightRequestDto) => {
       try {
         const data = await fetchHighlightsData(dto)
-        console.log(data)
-        setHighlights(data.map(item => ({ ...item, isNew: true })))
+        setHighlights(data.map(item => ({ ...item, isNew: true, needDelete: false })))
       } catch (error: any) {
         setError(error.message)
       }
@@ -95,11 +98,31 @@ export const useEbookHighlight = () => {
     )
   }, [])
 
+  const markHighlightAsDeleted = useCallback((id: string) => {
+    setHighlights(prevHighlights => prevHighlights.filter(h => h.id !== id))
+  }, [])
+
+  const deleteHighlight = useCallback(
+    async (dto: DeleteEbookHighlightRequestDto) => {
+      try {
+        const data = await deleteHighlightData(dto)
+        setHighlights(prevHighlights =>
+          prevHighlights.map(highlight => (highlight.id === dto.id ? { ...highlight, needDelete: true } : highlight)),
+        )
+      } catch (error: any) {
+        setError(error.message)
+      }
+    },
+    [deleteHighlightData],
+  )
+
   return {
     error,
     highlights,
     saveHighlight,
     getHighLightData,
     markHighlightAsMarked,
+    deleteHighlight,
+    markHighlightAsDeleted,
   }
 }

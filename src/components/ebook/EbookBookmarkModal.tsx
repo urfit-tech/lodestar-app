@@ -33,23 +33,6 @@ import { ReactComponent as BookmarkIcon } from '../../images/icon-grid-view.svg'
 import { ReactComponent as MarkIcon } from '../../images/mark.svg'
 import { Bookmark } from '../program/ProgramContentEbookReader'
 
-const StyledAnnotation = styled.div`
-  display: flex;
-  align-items: center;
-  position: relative;
-  .annotationText::before {
-    content: '';
-    position: absolute;
-    left: -20px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 100%;
-    background: #dadada;
-    border-radius: 2px;
-  }
-`
-
 const StyledHighlight = styled.div`
   display: flex;
   align-items: start;

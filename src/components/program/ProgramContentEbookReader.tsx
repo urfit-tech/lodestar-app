@@ -13,6 +13,7 @@ import hasura from '../../hasura'
 import { useEbookHighlight } from '../../hooks/ebookHighlight'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
 import EbookCommentModal from '../ebook/EbookCommentModel'
+import EbookDeleteHighlightModal from '../ebook/EbookDeleteCommentModel'
 import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
 import EbookTextSelectionToolbar from '../ebook/EbookTextSelectionToolbar'
 import { decryptData } from './decryptUtils'
@@ -157,14 +158,26 @@ const ProgramContentEbookReader: React.VFC<{
   const [bookmarkData, setBookmarkData] = useState<BookmarkData>()
   const [toolbarVisible, setToolbarVisible] = useState(false)
   const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 })
-  const currentSelection = useRef<{ cfiRange: string | null; contents: Contents | null }>({
+  const currentSelection = useRef<{
+    cfiRange: string | null
+    contents: Contents | null
+  }>({
     cfiRange: null,
     contents: null,
   })
   const [openCommentModel, setOpenCommentModel] = useState(false)
+  const [openDeleteHighlightModel, setDeleteHighlightModel] = useState(false)
   const [isRenditionReady, setIsRenditionReady] = useState(false)
 
-  const { error, highlights, saveHighlight, getHighLightData, markHighlightAsMarked } = useEbookHighlight()
+  const {
+    error,
+    highlights,
+    saveHighlight,
+    getHighLightData,
+    markHighlightAsMarked,
+    deleteHighlight,
+    markHighlightAsDeleted,
+  } = useEbookHighlight()
   const [annotation, setAnnotation] = useState<string | null>(null)
   const handleCommentChange = (newComment: string) => {
     setAnnotation(newComment)
@@ -195,6 +208,28 @@ const ProgramContentEbookReader: React.VFC<{
   }
 
   const handleCommentCancel = () => {
+    setOpenCommentModel(false)
+    setToolbarVisible(false)
+  }
+
+  const showDeleteHighlightModal = () => {
+    const existingHighlight = highlights.find(highlight => highlight.cfiRange === currentSelection.current.cfiRange)
+    if (existingHighlight?.id) {
+      setDeleteHighlightModel(true)
+      setToolbarVisible(false)
+    }
+  }
+
+  const handleDeleteHighlightModalOk = () => {
+    const existingHighlight = highlights.find(highlight => highlight.cfiRange === currentSelection.current.cfiRange)
+    if (existingHighlight?.id) {
+      deleteHighlight({ id: existingHighlight.id })
+      setDeleteHighlightModel(false)
+      setToolbarVisible(false)
+    }
+  }
+
+  const handleDeleteHighlightModalCancel = () => {
     setOpenCommentModel(false)
     setToolbarVisible(false)
   }
@@ -291,6 +326,12 @@ const ProgramContentEbookReader: React.VFC<{
           }
           markHighlightAsMarked(index)
         }
+
+        if (highlight.needDelete) {
+          rendition.current?.annotations.remove(highlight.cfiRange, 'highlight')
+          rendition.current?.annotations.remove(highlight.cfiRange, 'underline')
+          markHighlightAsDeleted(highlight.id)
+        }
       })
     }
   }, [highlights, isRenditionReady])
@@ -315,6 +356,13 @@ const ProgramContentEbookReader: React.VFC<{
 
   return (
     <div>
+      <EbookDeleteHighlightModal
+        visible={openDeleteHighlightModel}
+        onOk={handleDeleteHighlightModalOk}
+        onCancel={handleDeleteHighlightModalCancel}
+        programContentEbookHighlightId={currentSelection.current?.programContentHighlightId}
+      />
+
       <EbookCommentModal
         visible={openCommentModel}
         onOk={handleCommentOk}
@@ -331,9 +379,7 @@ const ProgramContentEbookReader: React.VFC<{
         position={toolbarPosition}
         onHighlight={handleColor}
         onComment={showCommentModal}
-        onDelete={() => {
-          console.log('delete')
-        }}
+        onDelete={showDeleteHighlightModal}
       />
 
       {source && currentMemberId && chapter ? (
@@ -471,6 +517,7 @@ const ProgramContentEbookReader: React.VFC<{
                             left: rect.left % contents.content.clientWidth,
                           })
                         }
+
                         setCurrentSelection(cfiRange, contents)
                         setToolbarVisible(true)
                       }
