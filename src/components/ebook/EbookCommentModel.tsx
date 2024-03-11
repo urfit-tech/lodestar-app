@@ -82,8 +82,13 @@ const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCance
     setComment(newComment)
     onCommentChange(newComment)
   }
+
+  const handleOnOk = () => {
+    onOk()
+    setComment('')
+  }
   return (
-    <StyledCommentModal visible={visible} onOk={onOk} onCancel={onCancel}>
+    <StyledCommentModal visible={visible} onOk={handleOnOk} onCancel={onCancel}>
       <div className="headerContainer">
         <h1>畫線註釋</h1>
       </div>
