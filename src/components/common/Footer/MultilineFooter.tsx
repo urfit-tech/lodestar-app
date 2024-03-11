@@ -39,13 +39,13 @@ const MultilineFooter: React.VFC = () => {
                 trigger={['click']}
                 overlay={
                   <Menu>
-                    <Menu.Item key="zh">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('zh')}>
+                    <Menu.Item key="zh-tw">
+                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('zh-tw')}>
                         繁體中文
                       </StyledButton>
                     </Menu.Item>
-                    <Menu.Item key="en">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('en')}>
+                    <Menu.Item key="en-us">
+                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('en-us')}>
                         English
                       </StyledButton>
                     </Menu.Item>
@@ -58,7 +58,7 @@ const MultilineFooter: React.VFC = () => {
                 }
               >
                 <StyledButton type="link" size="small">
-                  {currentLocale === 'en' ? 'EN' : currentLocale === 'vi' ? 'Tiếng việt' : '繁中'}
+                  {currentLocale === 'en-us' ? 'EN' : currentLocale === 'vi' ? 'Tiếng việt' : '繁中'}
                   <Icon type="down" />
                 </StyledButton>
               </Dropdown>
