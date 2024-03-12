@@ -372,7 +372,10 @@ const ProgramContentEbookReader: React.VFC<{
 
   const handleColor = () => {
     const range = rendition.current?.getRange(currentSelection.current.cfiRange as string)
-    if (currentMemberId && range) {
+
+    const existingHighlight = highlights.find(highlight => highlight.cfiRange === currentSelection.current.cfiRange)
+
+    if (currentMemberId && range && !existingHighlight) {
       saveHighlight({
         annotation: null,
         range: range,
