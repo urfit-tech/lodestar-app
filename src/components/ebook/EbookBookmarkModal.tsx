@@ -102,6 +102,7 @@ export const EbookBookmarkModal: React.VFC<{
   setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
   deleteHighlight: ({ id }: { id: string }) => void
   showDeleteHighlightModal: (cfiRange: string | null, id?: string | null) => void
+  showCommentModal: (cfiRange: string | null, id?: string | null) => void
 }> = ({
   refetchBookmark,
   onLocationChange,
@@ -111,6 +112,7 @@ export const EbookBookmarkModal: React.VFC<{
   setCurrentPageBookmarkIds,
   deleteHighlight,
   showDeleteHighlightModal,
+  showCommentModal,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -161,6 +163,7 @@ export const EbookBookmarkModal: React.VFC<{
                         deleteHighlight={deleteHighlight}
                         showDeleteHighlightModal={showDeleteHighlightModal}
                         modelOnClose={onClose}
+                        showCommentModal={showCommentModal}
                       />
                     ))}
                   </Grid>
@@ -232,12 +235,18 @@ const HighlightRow: React.VFC<{
   deleteHighlight: ({ id }: { id: string }) => void
   showDeleteHighlightModal: (cfiRange: string | null, id?: string | null) => void
   modelOnClose: () => void
-}> = ({ highlight, onLocationChange, deleteHighlight, showDeleteHighlightModal, modelOnClose }) => {
+  showCommentModal: (cfiRange: string | null, id?: string | null) => void
+}> = ({ highlight, onLocationChange, deleteHighlight, showDeleteHighlightModal, modelOnClose, showCommentModal }) => {
   const [isDeleting, setDeleting] = useState<boolean>(false)
 
   const handleDeleteHighlight = async (id: string) => {
     modelOnClose()
     showDeleteHighlightModal(null, highlight.id)
+  }
+
+  const handleCommentHighlight = async (id: string) => {
+    modelOnClose()
+    showCommentModal(null, highlight.id)
   }
 
   return (
@@ -266,7 +275,7 @@ const HighlightRow: React.VFC<{
           <Menu>
             <MenuButton as={IconButton} aria-label="Options" icon={<HiDotsVertical />} variant="ghost" />
             <MenuList minWidth="auto" width="fit-content">
-              <MenuItem>編輯</MenuItem>
+              <MenuItem onClick={() => handleCommentHighlight(highlight.id)}>編輯</MenuItem>
               <MenuItem onClick={() => handleDeleteHighlight(highlight.id)}>刪除</MenuItem>
             </MenuList>
           </Menu>

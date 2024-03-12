@@ -191,15 +191,11 @@ const ProgramContentEbookReader: React.VFC<{
       ? highlights.find(highlight => highlight.id === id)
       : highlights.find(highlight => highlight.cfiRange === cfiRange)
 
-    const range = rendition.current?.getRange(cfiRange as string).toString()
-
-    console.log({ range })
-
     if (!highlightToComment) {
       highlightToComment = {
         id: null,
         annotation: null,
-        text: range || '',
+        text: rendition.current?.getRange(cfiRange as string).toString() || '',
         cfiRange: currentSelection.current.cfiRange as string,
         color: 'rgba(255, 190, 30, 0.5)',
         programContentId: programContentId,
@@ -214,9 +210,7 @@ const ProgramContentEbookReader: React.VFC<{
   }
 
   const handleCommentOk = () => {
-    const range = rendition.current?.getRange(annotation?.cfiRange as string)
-
-    if (currentMemberId && range) {
+    if (currentMemberId && annotation) {
       if (annotation?.id) {
         updateHighlight({
           id: annotation.id,
@@ -224,16 +218,19 @@ const ProgramContentEbookReader: React.VFC<{
           annotation: annotation.annotation,
         })
       } else {
-        saveHighlight({
-          annotation: annotation?.annotation || null,
-          range: range,
-          cfiRange: annotation?.cfiRange as string,
-          contents: annotation?.text,
-          color: 'rgba(255, 190, 30, 0.5)',
-          programContentId: programContentId,
-          memberId: currentMemberId,
-          chapter: chapter,
-        })
+        const range = rendition.current?.getRange(annotation?.cfiRange as string)
+        if (range) {
+          saveHighlight({
+            annotation: annotation?.annotation || null,
+            range: range,
+            cfiRange: annotation?.cfiRange as string,
+            contents: annotation?.text,
+            color: 'rgba(255, 190, 30, 0.5)',
+            programContentId: programContentId,
+            memberId: currentMemberId,
+            chapter: chapter,
+          })
+        }
       }
 
       setAnnotation(null)
@@ -630,6 +627,7 @@ const ProgramContentEbookReader: React.VFC<{
           setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
           deleteHighlight={deleteHighlight}
           showDeleteHighlightModal={showDeleteHighlightModal}
+          showCommentModal={showCommentModal}
         />
       ) : null}
     </div>

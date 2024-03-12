@@ -51,6 +51,7 @@ export const EbookReaderControlBar: React.VFC<{
   setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
   deleteHighlight: ({ id }: { id: string }) => void
   showDeleteHighlightModal: (cfiRange: string | null, id?: string | null) => void
+  showCommentModal: (cfiRange: string | null, id?: string | null) => void
 }> = ({
   isLocationGenerated,
   chapter,
@@ -70,6 +71,7 @@ export const EbookReaderControlBar: React.VFC<{
   setCurrentPageBookmarkIds,
   deleteHighlight,
   showDeleteHighlightModal,
+  showCommentModal,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
   const [isFocus, setFocus] = useState(false)
@@ -164,6 +166,7 @@ export const EbookReaderControlBar: React.VFC<{
             refetchBookmark={refetchBookmark}
             deleteHighlight={deleteHighlight}
             showDeleteHighlightModal={showDeleteHighlightModal}
+            showCommentModal={showCommentModal}
           />
         </Flex>
       </Flex>
