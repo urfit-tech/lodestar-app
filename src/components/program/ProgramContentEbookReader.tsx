@@ -172,14 +172,16 @@ const ProgramContentEbookReader: React.VFC<{
 
   const { error, highlights, saveHighlight, getHighLightData, markHighlightAsMarked, deleteHighlight } =
     useEbookHighlight()
-  const [annotation, setAnnotation] = useState<string | null>(null)
-  const handleCommentChange = (newComment: string) => {
-    setAnnotation(newComment)
-  }
+
+  const [annotation, setAnnotation] = useState<{ comment: string | null; content: string | null }>({
+    comment: '',
+    content: '',
+  })
 
   const [highlightToDelete, setHighlightToDelete] = useState<Highlight | null>(null)
 
-  const showCommentModal = () => {
+  const showCommentModal = (comment: string, content: string) => {
+    setAnnotation({ comment, content })
     setOpenCommentModel(true)
     setToolbarVisible(false)
   }
@@ -188,7 +190,7 @@ const ProgramContentEbookReader: React.VFC<{
     console.log(range?.toString(), currentSelection.current.cfiRange)
     if (currentMemberId && range) {
       saveHighlight({
-        annotation: annotation,
+        annotation: annotation.comment,
         range: range,
         cfiRange: currentSelection.current.cfiRange as string,
         contents: currentSelection.current.contents as Contents,
@@ -197,7 +199,7 @@ const ProgramContentEbookReader: React.VFC<{
         memberId: currentMemberId,
         chapter: chapter,
       })
-      setAnnotation(null)
+      setAnnotation({ comment: '', content: '' })
       setOpenCommentModel(false)
       setToolbarVisible(false)
     }
@@ -366,18 +368,22 @@ const ProgramContentEbookReader: React.VFC<{
         visible={openCommentModel}
         onOk={handleCommentOk}
         onCancel={handleCommentCancel}
-        onCommentChange={handleCommentChange}
-        content={
-          currentSelection.current?.cfiRange &&
-          rendition.current?.getRange(currentSelection.current?.cfiRange as string)?.toString()
-        }
+        annotation={annotation}
+        setAnnotation={setAnnotation}
       />
 
       <EbookTextSelectionToolbar
         visible={toolbarVisible}
         position={toolbarPosition}
         onHighlight={handleColor}
-        onComment={showCommentModal}
+        onComment={() =>
+          showCommentModal(
+            '',
+            (currentSelection.current?.cfiRange &&
+              rendition.current?.getRange(currentSelection.current?.cfiRange as string)?.toString()) ||
+              '',
+          )
+        }
         onDelete={() => showDeleteHighlightModal(currentSelection.current.cfiRange, null)}
       />
 

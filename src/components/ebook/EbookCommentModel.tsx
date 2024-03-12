@@ -1,14 +1,15 @@
 // CommentModal.tsx
 import { Input, Modal } from 'antd'
-import React, { useState } from 'react'
+import React from 'react'
 import { FaQuoteLeft } from 'react-icons/fa'
 import styled from 'styled-components'
+import { BREAK_POINT } from '../common/Responsive'
 
 const StyledCommentModal = styled(Modal)`
   .ant-modal-content {
-    /* width: 500px; */
+    max-width: 400px;
     /* height: 402px; */
-    width: 450px;
+    width: auto;
     /* padding: 15px 15px 15px 15px; */
     border-radius: 4px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
@@ -34,7 +35,12 @@ const StyledCommentModal = styled(Modal)`
   }
 
   .ant-modal-body .modelContainer .commentArea {
-    min-width: 350px;
+    margin-right: 10px;
+    width: 100%;
+  }
+
+  .ant-modal-body .modelContainer .commentArea .ant-input-textarea {
+    width: 100%;
   }
 
   .ant-modal-body .modelContainer .commentArea h2 {
@@ -56,12 +62,22 @@ const StyledCommentModal = styled(Modal)`
 
   .ant-modal-footer {
     border-top: 0px;
-    width: 450px;
+    width: 100%;
   }
 
-  @media screen and (max-width: 992px) {
-    .ant-modal-body .modelContainer .commentArea {
+  @media screen and (max-width: ${BREAK_POINT}px) {
+    /* .ant-modal-body .modelContainer .commentArea {
       min-width: 200px;
+    } */
+    .ant-modal-body .modelContainer .quoteIcon {
+      width: 30px;
+      height: 35px;
+    }
+    .ant-modal-body .modelContainer .commentArea h2 {
+      font-size: 16px;
+    }
+    .ant-modal-body .modelContainer .commentArea p {
+      margin-top: 15px;
     }
   }
 `
@@ -70,23 +86,20 @@ type CommentModalProps = {
   visible: boolean
   onOk: () => void
   onCancel: () => void
-  onCommentChange: (comment: string) => void
-  content?: string | null | undefined
+  annotation: { comment: string | null; content: string | null }
+  setAnnotation: (annotation: { comment: string | null; content: string | null }) => void
 }
 
-const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCancel, onCommentChange, content }) => {
-  const [comment, setComment] = useState('')
-
+const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCancel, annotation, setAnnotation }) => {
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newComment = e.target.value
-    setComment(newComment)
-    onCommentChange(newComment)
+    setAnnotation({ ...annotation, comment: newComment })
   }
 
   const handleOnOk = () => {
     onOk()
-    setComment('')
   }
+
   return (
     <StyledCommentModal visible={visible} onOk={handleOnOk} onCancel={onCancel}>
       <div className="headerContainer">
@@ -98,9 +111,9 @@ const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCance
         </div>
 
         <div className="commentArea">
-          <h2>{content}</h2>
+          <h2>{annotation.content}</h2>
           <p>詮釋內容</p>
-          <Input.TextArea rows={4} value={comment} onChange={handleCommentChange} />
+          <Input.TextArea rows={4} value={annotation.comment || ''} onChange={handleCommentChange} />
         </div>
       </div>
     </StyledCommentModal>

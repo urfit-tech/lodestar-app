@@ -2,12 +2,13 @@
 import { Modal } from 'antd'
 import React from 'react'
 import styled from 'styled-components'
+import { BREAK_POINT } from '../common/Responsive'
 
 const StyledCommentModal = styled(Modal)`
   .ant-modal-content {
-    /* width: 500px; */
+    max-width: 400px;
     /* height: 402px; */
-    width: 450px;
+    width: auto;
     /* padding: 15px 15px 15px 15px; */
     border-radius: 4px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
@@ -32,22 +33,6 @@ const StyledCommentModal = styled(Modal)`
     margin-right: 2px;
   }
 
-  .ant-modal-body .modelContainer .commentArea {
-    min-width: 350px;
-  }
-
-  .ant-modal-body .modelContainer .commentArea h2 {
-    font-size: 20px;
-    font-weight: bold;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.5;
-    letter-spacing: 0.2px;
-    font-family: NotoSansCJKtc;
-    color: var(--gray-darker);
-  }
-
   .ant-modal-body .modelContainer .commentArea p {
     margin-top: 25px;
     margin-bottom: 0px;
@@ -55,12 +40,12 @@ const StyledCommentModal = styled(Modal)`
 
   .ant-modal-footer {
     border-top: 0px;
-    width: 450px;
+    width: 100%;
   }
 
-  @media screen and (max-width: 992px) {
-    .ant-modal-body .modelContainer .commentArea {
-      min-width: 200px;
+  @media screen and (max-width: ${BREAK_POINT}px) {
+    .ant-modal-body .modelContainer .commentArea p {
+      margin-top: 15px;
     }
   }
 `
