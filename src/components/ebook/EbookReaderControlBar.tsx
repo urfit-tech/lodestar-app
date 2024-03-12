@@ -12,6 +12,7 @@ import {
 import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
 import { useState } from 'react'
 import styled from 'styled-components'
+import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
 import { Bookmark } from '../program/ProgramContentEbookReader'
 import { EbookBookmarkModal } from './EbookBookmarkModal'
 import EbookStyledModal from './EbookStyledModal'
@@ -35,6 +36,7 @@ export const EbookReaderControlBar: React.VFC<{
   isLocationGenerated: boolean
   chapter: string
   programContentBookmarks: Array<Bookmark>
+  programContentHighlights: Array<Highlight>
   fontSize: number
   lineHeight: number
   refetchBookmark: () => void
@@ -47,10 +49,14 @@ export const EbookReaderControlBar: React.VFC<{
   onThemeChange: (theme: 'light' | 'dark') => void
   currentThemeData: { color: string; backgroundColor: string }
   setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>
+  deleteHighlight: ({ id }: { id: string }) => void
+  showDeleteHighlightModal: (cfiRange: string | null, id?: string | null) => void
+  showCommentModal: (cfiRange: string | null, id?: string | null) => void
 }> = ({
   isLocationGenerated,
   chapter,
   programContentBookmarks,
+  programContentHighlights,
   fontSize,
   lineHeight,
   rendition,
@@ -63,6 +69,9 @@ export const EbookReaderControlBar: React.VFC<{
   onThemeChange,
   currentThemeData,
   setCurrentPageBookmarkIds,
+  deleteHighlight,
+  showDeleteHighlightModal,
+  showCommentModal,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
   const [isFocus, setFocus] = useState(false)
@@ -152,8 +161,12 @@ export const EbookReaderControlBar: React.VFC<{
             setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
             currentThemeData={currentThemeData}
             programContentBookmarks={programContentBookmarks}
+            programContentHighlights={programContentHighlights}
             onLocationChange={onLocationChange}
             refetchBookmark={refetchBookmark}
+            deleteHighlight={deleteHighlight}
+            showDeleteHighlightModal={showDeleteHighlightModal}
+            showCommentModal={showCommentModal}
           />
         </Flex>
       </Flex>
