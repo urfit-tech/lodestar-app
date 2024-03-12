@@ -170,8 +170,15 @@ const ProgramContentEbookReader: React.VFC<{
   const [openDeleteHighlightModel, setDeleteHighlightModel] = useState(false)
   const [isRenditionReady, setIsRenditionReady] = useState(false)
 
-  const { error, highlights, saveHighlight, getHighLightData, markHighlightAsMarked, deleteHighlight } =
-    useEbookHighlight()
+  const {
+    error,
+    highlights,
+    saveHighlight,
+    getHighLightData,
+    markHighlightAsMarked,
+    deleteHighlight,
+    updateHighlight,
+  } = useEbookHighlight()
 
   const [annotation, setAnnotation] = useState<Highlight | null>(null)
 
@@ -207,19 +214,28 @@ const ProgramContentEbookReader: React.VFC<{
   }
 
   const handleCommentOk = () => {
-    const range = rendition.current?.getRange(currentSelection.current.cfiRange as string)
-    console.log(range?.toString(), currentSelection.current.cfiRange)
+    const range = rendition.current?.getRange(annotation?.cfiRange as string)
+
     if (currentMemberId && range) {
-      saveHighlight({
-        annotation: annotation?.annotation || null,
-        range: range,
-        cfiRange: currentSelection.current.cfiRange as string,
-        contents: currentSelection.current.contents as Contents,
-        color: 'rgba(255, 190, 30, 0.5)',
-        programContentId: programContentId,
-        memberId: currentMemberId,
-        chapter: chapter,
-      })
+      if (annotation?.id) {
+        updateHighlight({
+          id: annotation.id,
+          color: annotation.color,
+          annotation: annotation.annotation,
+        })
+      } else {
+        saveHighlight({
+          annotation: annotation?.annotation || null,
+          range: range,
+          cfiRange: annotation?.cfiRange as string,
+          contents: annotation?.text,
+          color: 'rgba(255, 190, 30, 0.5)',
+          programContentId: programContentId,
+          memberId: currentMemberId,
+          chapter: chapter,
+        })
+      }
+
       setAnnotation(null)
       setOpenCommentModel(false)
       setToolbarVisible(false)

@@ -7,12 +7,27 @@ import {
   getEbookHighlights,
   Highlight,
   SaveEbookHighlightRequestDto,
+  UpdateEbookHighlightRequestDto,
+  updateHighlight,
 } from './api/ebookHighlightQraphql'
 
 export const useEbookHighlightModel = () => {
   const apolloClient = useApolloClient()
   const saveHighlightData = async (dto: SaveEbookHighlightRequestDto): Promise<Highlight | null> => {
     const { error, result, data } = await createHighlight(dto, apolloClient)
+    if (error) {
+      throw error
+    }
+
+    if (result && data) {
+      return data
+    }
+
+    return null
+  }
+
+  const updateHighlightData = async (dto: UpdateEbookHighlightRequestDto): Promise<Highlight | null> => {
+    const { error, result, data } = await updateHighlight(dto, apolloClient)
     if (error) {
       throw error
     }
@@ -44,5 +59,6 @@ export const useEbookHighlightModel = () => {
     saveHighlightData,
     fetchHighlightsData,
     deleteHighlightData,
+    updateHighlightData,
   }
 }

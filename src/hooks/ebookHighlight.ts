@@ -3,6 +3,7 @@ import {
   DeleteEbookHighlightRequestDto,
   Highlight,
   SaveEbookHighlightRequestDto,
+  UpdateEbookHighlightRequestDto,
 } from './model/api/ebookHighlightQraphql'
 import { useEbookHighlightModel } from './model/ebookHighlightModel'
 
@@ -25,7 +26,24 @@ interface SaveHighlightParams {
 export const useEbookHighlight = () => {
   const [error, setError] = useState<string | null>(null)
   const [highlights, setHighlights] = useState<Highlight[]>([])
-  const { saveHighlightData, fetchHighlightsData, deleteHighlightData } = useEbookHighlightModel()
+  const { saveHighlightData, fetchHighlightsData, deleteHighlightData, updateHighlightData } = useEbookHighlightModel()
+
+  const updateHighlight = useCallback(async (dto: UpdateEbookHighlightRequestDto) => {
+    try {
+      const data = await updateHighlightData(dto)
+      if (data) {
+        setHighlights(prevHighlights =>
+          prevHighlights.map(highlight =>
+            highlight.id === dto.id ? { ...highlight, color: data.color, annotation: data.annotation } : highlight,
+          ),
+        )
+      } else {
+        throw new Error('Update failed or returned no data')
+      }
+    } catch (error: any) {
+      setError(error.message || 'An error occurred during highlight update.')
+    }
+  }, [])
 
   const saveHighlight = useCallback(
     async ({
@@ -119,5 +137,6 @@ export const useEbookHighlight = () => {
     getHighLightData,
     markHighlightAsMarked,
     deleteHighlight,
+    updateHighlight,
   }
 }

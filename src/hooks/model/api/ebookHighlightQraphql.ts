@@ -32,6 +32,31 @@ export type GetEbookHighlightRequestDto = {
   memberId: string
 }
 
+export type UpdateEbookHighlightRequestDto = {
+  id: string
+  annotation?: string | null
+  color?: string
+}
+
+const UPDATE_PRPGRAM_CONTENT_EBOOK_HIGHLIGHT = gql`
+  mutation UpdateProgramContentEbookHighlight($id: uuid!, $annotation: String, $color: String) {
+    update_program_content_ebook_highlight_by_pk(
+      pk_columns: { id: $id }
+      _set: { annotation: $annotation, color: $color }
+    ) {
+      id
+      annotation
+      chapter
+      color
+      epub_cfi
+      highlight_content
+      member_id
+      created_at
+      program_content_id
+    }
+  }
+`
+
 const INSERT_EBOOK_HIGHLIGHT_MUTATION = gql`
   mutation InsertProgramContentEbookHighlight(
     $annotation: String
@@ -188,5 +213,30 @@ export const getEbookHighlights = async (
     // Check if the error is an instance of Error, if not convert it to an Error object
     const errorInstance = error instanceof Error ? error : new Error(String(error))
     return { error: errorInstance, result: false }
+  }
+}
+
+export const updateHighlight = async (
+  dto: UpdateEbookHighlightRequestDto,
+  dataSource: any,
+): Promise<{ error: Error | null; result: boolean; data: Highlight | null }> => {
+  try {
+    const response = await dataSource.mutate({
+      mutation: UPDATE_PRPGRAM_CONTENT_EBOOK_HIGHLIGHT,
+      variables: {
+        id: dto.id,
+        annotation: dto.annotation,
+        color: dto.color,
+      },
+    })
+
+    if (response.data.update_program_content_ebook_highlight_by_pk) {
+      return { error: null, result: true, data: response.data.update_program_content_ebook_highlight_by_pk }
+    } else {
+      return { error: new Error('Failed to update ebook highlight'), result: false, data: null }
+    }
+  } catch (error: any) {
+    console.error(error)
+    return { error, result: false, data: null }
   }
 }
