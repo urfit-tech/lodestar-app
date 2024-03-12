@@ -66,6 +66,11 @@ const StyledCommentModal = styled(Modal)`
     width: 100%;
   }
 
+  .ant-btn-primary {
+    background-color: #10bad9;
+    border-color: #10bad9;
+  }
+
   @media screen and (max-width: ${BREAK_POINT}px) {
     /* .ant-modal-body .modelContainer .commentArea {
       min-width: 200px;
@@ -111,7 +116,7 @@ const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCance
   }
 
   return (
-    <StyledCommentModal visible={visible} onOk={handleOnOk} onCancel={onCancel}>
+    <StyledCommentModal visible={visible} okText="儲存" onOk={handleOnOk} onCancel={onCancel}>
       <div className="headerContainer">
         <h1>畫線註釋</h1>
       </div>

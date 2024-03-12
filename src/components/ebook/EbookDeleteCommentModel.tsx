@@ -43,6 +43,11 @@ const StyledCommentModal = styled(Modal)`
     width: 100%;
   }
 
+  .ant-btn-primary {
+    background-color: #ff7d62;
+    border-color: #ff7d62;
+  }
+
   @media screen and (max-width: ${BREAK_POINT}px) {
     .ant-modal-body .modelContainer .commentArea p {
       margin-top: 15px;
