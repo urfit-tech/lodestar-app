@@ -1,8 +1,9 @@
 // CommentModal.tsx
 import { Input, Modal } from 'antd'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaQuoteLeft } from 'react-icons/fa'
 import styled from 'styled-components'
+import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledCommentModal = styled(Modal)`
@@ -86,14 +87,23 @@ type CommentModalProps = {
   visible: boolean
   onOk: () => void
   onCancel: () => void
-  annotation: { comment: string | null; content: string | null }
-  setAnnotation: (annotation: { comment: string | null; content: string | null }) => void
+  annotation: Highlight | null
+  setAnnotation: React.Dispatch<React.SetStateAction<Highlight | null>>
 }
 
 const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCancel, annotation, setAnnotation }) => {
+  const [text, setText] = useState<string>('')
+
+  useEffect(() => {
+    setText(annotation?.text || '')
+  }, [annotation])
+
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newComment = e.target.value
-    setAnnotation({ ...annotation, comment: newComment })
+
+    if (annotation) {
+      setAnnotation({ ...annotation, annotation: newComment })
+    }
   }
 
   const handleOnOk = () => {
@@ -111,9 +121,9 @@ const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCance
         </div>
 
         <div className="commentArea">
-          <h2>{annotation.content}</h2>
+          <h2>{text}</h2>
           <p>詮釋內容</p>
-          <Input.TextArea rows={4} value={annotation.comment || ''} onChange={handleCommentChange} />
+          <Input.TextArea rows={4} value={annotation?.annotation || ''} onChange={handleCommentChange} />
         </div>
       </div>
     </StyledCommentModal>

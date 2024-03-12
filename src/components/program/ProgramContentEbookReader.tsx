@@ -173,24 +173,45 @@ const ProgramContentEbookReader: React.VFC<{
   const { error, highlights, saveHighlight, getHighLightData, markHighlightAsMarked, deleteHighlight } =
     useEbookHighlight()
 
-  const [annotation, setAnnotation] = useState<{ comment: string | null; content: string | null }>({
-    comment: '',
-    content: '',
-  })
+  const [annotation, setAnnotation] = useState<Highlight | null>(null)
 
   const [highlightToDelete, setHighlightToDelete] = useState<Highlight | null>(null)
 
-  const showCommentModal = (comment: string, content: string) => {
-    setAnnotation({ comment, content })
+  const showCommentModal = (cfiRange: string | null, id: string | null = null) => {
+    let highlightToComment
+
+    highlightToComment = id
+      ? highlights.find(highlight => highlight.id === id)
+      : highlights.find(highlight => highlight.cfiRange === cfiRange)
+
+    const range = rendition.current?.getRange(cfiRange as string).toString()
+
+    console.log({ range })
+
+    if (!highlightToComment) {
+      highlightToComment = {
+        id: null,
+        annotation: null,
+        text: range || '',
+        cfiRange: currentSelection.current.cfiRange as string,
+        color: 'rgba(255, 190, 30, 0.5)',
+        programContentId: programContentId,
+        memberId: currentMemberId?.toString() || '',
+        chapter: chapter,
+      }
+    }
+
+    setAnnotation(highlightToComment)
     setOpenCommentModel(true)
     setToolbarVisible(false)
   }
+
   const handleCommentOk = () => {
     const range = rendition.current?.getRange(currentSelection.current.cfiRange as string)
     console.log(range?.toString(), currentSelection.current.cfiRange)
     if (currentMemberId && range) {
       saveHighlight({
-        annotation: annotation.comment,
+        annotation: annotation?.annotation || null,
         range: range,
         cfiRange: currentSelection.current.cfiRange as string,
         contents: currentSelection.current.contents as Contents,
@@ -199,7 +220,7 @@ const ProgramContentEbookReader: React.VFC<{
         memberId: currentMemberId,
         chapter: chapter,
       })
-      setAnnotation({ comment: '', content: '' })
+      setAnnotation(null)
       setOpenCommentModel(false)
       setToolbarVisible(false)
     }
@@ -376,14 +397,7 @@ const ProgramContentEbookReader: React.VFC<{
         visible={toolbarVisible}
         position={toolbarPosition}
         onHighlight={handleColor}
-        onComment={() =>
-          showCommentModal(
-            '',
-            (currentSelection.current?.cfiRange &&
-              rendition.current?.getRange(currentSelection.current?.cfiRange as string)?.toString()) ||
-              '',
-          )
-        }
+        onComment={() => showCommentModal(currentSelection.current.cfiRange, null)}
         onDelete={() => showDeleteHighlightModal(currentSelection.current.cfiRange, null)}
       />
 
