@@ -348,6 +348,8 @@ const ProgramContentEbookReader: React.VFC<{
 
   useEffect(() => {
     if (rendition.current && isRenditionReady) {
+      // Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
+
       highlights.forEach((highlight, index) => {
         if (highlight.isNew) {
           rendition.current?.annotations.highlight(highlight.cfiRange, {}, function () {}, 'hl', {
@@ -530,6 +532,13 @@ const ProgramContentEbookReader: React.VFC<{
                     if (rendition.current) {
                       setIsRenditionReady(true)
                     }
+
+                    const iframes = document.querySelectorAll('iframe[id^="epubjs-view"]')
+                    console.log(iframes)
+                    iframes.forEach(iframe => {
+                      iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms')
+                    })
+
                     // initial theme
                     rendition.current.themes.override('color', '#424242')
                     rendition.current.themes.override('background-color', '#ffffff')
@@ -539,8 +548,11 @@ const ProgramContentEbookReader: React.VFC<{
                     rendition.current.on('resized', (size: { width: number; height: number }) => {
                       console.log(`resized => width: ${size.width}, height: ${size.height}`)
                     })
+                    console.log('hey')
 
                     rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
+                      console.log("'selected''selected''selected'")
+
                       const rangeText = rendition.current?.getRange(cfiRange)?.toString()
                       if (rangeText) {
                         const range = rendition.current?.getRange(cfiRange)
