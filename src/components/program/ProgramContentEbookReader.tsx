@@ -5,15 +5,20 @@ import { inRange } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
-import { useCallback, useContext, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { EpubView, ReactReaderStyle } from 'react-reader'
 import styled from 'styled-components'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
+import { useEbookHighlight } from '../../hooks/ebookHighlight'
+import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
+import EbookCommentModal from '../ebook/EbookCommentModel'
+import EbookDeleteHighlightModal from '../ebook/EbookDeleteCommentModel'
 import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
+import EbookTextSelectionToolbar from '../ebook/EbookTextSelectionToolbar'
 import { decryptData } from './decryptUtils'
-import type { NavItem, Rendition, Book, Location } from 'epubjs'
+import type { NavItem, Rendition, Book, Location, Contents } from 'epubjs'
 
 const ReaderBookmark = styled.div`
   position: relative;
@@ -152,6 +157,126 @@ const ProgramContentEbookReader: React.VFC<{
   const [ebookFontSize, setEbookFontSize] = useState(18)
   const [ebookLineHeight, setEbookLineHeight] = useState(1.5)
   const [bookmarkData, setBookmarkData] = useState<BookmarkData>()
+  const [toolbarVisible, setToolbarVisible] = useState(false)
+  const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 })
+  const currentSelection = useRef<{
+    cfiRange: string | null
+    contents: Contents | null
+  }>({
+    cfiRange: null,
+    contents: null,
+  })
+  const [openCommentModel, setOpenCommentModel] = useState(false)
+  const [openDeleteHighlightModel, setDeleteHighlightModel] = useState(false)
+  const [isRenditionReady, setIsRenditionReady] = useState(false)
+
+  const {
+    error,
+    highlights,
+    saveHighlight,
+    getHighLightData,
+    markHighlightAsMarked,
+    deleteHighlight,
+    updateHighlight,
+  } = useEbookHighlight()
+
+  const [annotation, setAnnotation] = useState<Highlight | null>(null)
+
+  const [highlightToDelete, setHighlightToDelete] = useState<Highlight | null>(null)
+
+  const showCommentModal = (cfiRange: string | null, id: string | null = null) => {
+    let highlightToComment
+
+    highlightToComment = id
+      ? highlights.find(highlight => highlight.id === id)
+      : highlights.find(highlight => highlight.cfiRange === cfiRange)
+
+    if (!highlightToComment) {
+      highlightToComment = {
+        id: null,
+        annotation: null,
+        text: rendition.current?.getRange(cfiRange as string).toString() || '',
+        cfiRange: currentSelection.current.cfiRange as string,
+        color: 'rgba(255, 190, 30, 0.5)',
+        programContentId: programContentId,
+        memberId: currentMemberId?.toString() || '',
+        chapter: chapter,
+      }
+    }
+
+    setAnnotation(highlightToComment)
+    setOpenCommentModel(true)
+    setToolbarVisible(false)
+  }
+
+  const handleCommentOk = () => {
+    if (currentMemberId && annotation) {
+      if (annotation?.id) {
+        updateHighlight({
+          id: annotation.id,
+          color: annotation.color,
+          annotation: annotation.annotation,
+        })
+      } else {
+        const range = rendition.current?.getRange(annotation?.cfiRange as string)
+        if (range) {
+          saveHighlight({
+            annotation: annotation?.annotation || null,
+            range: range,
+            cfiRange: annotation?.cfiRange as string,
+            contents: annotation?.text,
+            color: 'rgba(255, 190, 30, 0.5)',
+            programContentId: programContentId,
+            memberId: currentMemberId,
+            chapter: chapter,
+          })
+        }
+      }
+
+      setAnnotation(null)
+      setOpenCommentModel(false)
+      setToolbarVisible(false)
+    }
+  }
+
+  const handleCommentCancel = () => {
+    setOpenCommentModel(false)
+    setToolbarVisible(false)
+  }
+
+  const showDeleteHighlightModal = (cfiRange: string | null, id: string | null = null) => {
+    const existingHighlight = id
+      ? highlights.find(highlight => highlight.id === id)
+      : highlights.find(highlight => highlight.cfiRange === cfiRange)
+
+    if (existingHighlight) {
+      setHighlightToDelete(existingHighlight)
+      setDeleteHighlightModel(true)
+      setToolbarVisible(false)
+    }
+  }
+
+  const handleDeleteHighlightModalOk = () => {
+    if (highlightToDelete?.id) {
+      deleteHighlight({ id: highlightToDelete.id })
+
+      rendition.current?.annotations.remove(highlightToDelete.cfiRange, 'highlight')
+      rendition.current?.annotations.remove(highlightToDelete.cfiRange, 'underline')
+
+      setDeleteHighlightModel(false)
+      setToolbarVisible(false)
+      setHighlightToDelete(null)
+    }
+  }
+
+  const handleDeleteHighlightModalCancel = () => {
+    setOpenCommentModel(false)
+    setToolbarVisible(false)
+  }
+
+  const setCurrentSelection = (cfiRange: string, contents: Contents) => {
+    currentSelection.current = { cfiRange, contents }
+  }
 
   const { id: appId } = useApp()
 
@@ -214,8 +339,84 @@ const ProgramContentEbookReader: React.VFC<{
     const location = rendition.current?.currentLocation() as any as Location
     setSliderValue(location?.start?.percentage * 100 || 0)
   }, [theme, ebookFontSize, ebookLineHeight])
+
+  useEffect(() => {
+    if (programContentId && currentMemberId) {
+      getHighLightData({ programContentId, memberId: currentMemberId })
+    }
+  }, [programContentId, currentMemberId])
+
+  useEffect(() => {
+    if (rendition.current && isRenditionReady) {
+      highlights.forEach((highlight, index) => {
+        if (highlight.isNew) {
+          rendition.current?.annotations.highlight(highlight.cfiRange, {}, function () {}, 'hl', {
+            fill: highlight.color,
+            'fill-opacity': '0.5',
+            'mix-blend-mode': 'multiply',
+          })
+
+          if (highlight.annotation) {
+            rendition.current?.annotations.underline(highlight.cfiRange, {}, function () {}, 'underline_epubjs', {
+              stroke: highlight.color,
+              'stroke-opacity': '0.9',
+              'stroke-dasharray': '1,2',
+              'mix-blend-mode': 'multiply',
+            })
+          }
+          markHighlightAsMarked(index)
+        }
+      })
+    }
+  }, [highlights, isRenditionReady])
+
+  const handleColor = () => {
+    const range = rendition.current?.getRange(currentSelection.current.cfiRange as string)
+
+    const existingHighlight = highlights.find(highlight => highlight.cfiRange === currentSelection.current.cfiRange)
+
+    if (currentMemberId && range && !existingHighlight) {
+      saveHighlight({
+        annotation: null,
+        range: range,
+        cfiRange: currentSelection.current.cfiRange as string,
+        contents: currentSelection.current.contents as Contents,
+        color: 'rgba(255, 190, 30, 0.5)',
+        programContentId: programContentId,
+        memberId: currentMemberId,
+        chapter: chapter,
+      })
+    }
+
+    setToolbarVisible(false)
+  }
+
   return (
     <div>
+      <EbookDeleteHighlightModal
+        visible={openDeleteHighlightModel}
+        onOk={() => {
+          handleDeleteHighlightModalOk()
+        }}
+        onCancel={handleDeleteHighlightModalCancel}
+      />
+
+      <EbookCommentModal
+        visible={openCommentModel}
+        onOk={handleCommentOk}
+        onCancel={handleCommentCancel}
+        annotation={annotation}
+        setAnnotation={setAnnotation}
+      />
+
+      <EbookTextSelectionToolbar
+        visible={toolbarVisible}
+        position={toolbarPosition}
+        onHighlight={handleColor}
+        onComment={() => showCommentModal(currentSelection.current.cfiRange, null)}
+        onDelete={() => showDeleteHighlightModal(currentSelection.current.cfiRange, null)}
+      />
+
       {source && currentMemberId && chapter ? (
         <EbookReaderBookmarkIcon
           bookmarkData={bookmarkData}
@@ -326,6 +527,9 @@ const ProgramContentEbookReader: React.VFC<{
                   }}
                   getRendition={async (_rendition: Rendition) => {
                     rendition.current = _rendition
+                    if (rendition.current) {
+                      setIsRenditionReady(true)
+                    }
                     // initial theme
                     rendition.current.themes.override('color', '#424242')
                     rendition.current.themes.override('background-color', '#ffffff')
@@ -335,6 +539,37 @@ const ProgramContentEbookReader: React.VFC<{
                     rendition.current.on('resized', (size: { width: number; height: number }) => {
                       console.log(`resized => width: ${size.width}, height: ${size.height}`)
                     })
+
+                    rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
+                      const rangeText = rendition.current?.getRange(cfiRange)?.toString()
+                      if (rangeText) {
+                        const range = rendition.current?.getRange(cfiRange)
+                        if (range) {
+                          const rect = range.getBoundingClientRect()
+
+                          setToolbarPosition({
+                            top: rect.bottom + contents.window.scrollY, // Position the toolbar below the selected text
+                            left: rect.left % contents.content.clientWidth,
+                          })
+                        }
+
+                        setCurrentSelection(cfiRange, contents)
+                        setToolbarVisible(true)
+                      }
+                    })
+
+                    rendition.current.themes.default({
+                      '.epubjs-hl': {
+                        fill: 'rgba(255, 190, 30, 0.5)',
+                        'fill-opacity': '0.3',
+                        'mix-blend-mode': 'multiply',
+                      },
+                    })
+
+                    rendition.current.on('mousedown', (event: MouseEvent) => {
+                      setToolbarVisible(false)
+                    })
+
                     await rendition.current?.book.locations.generate(150).then(() => {
                       setIsLocationGenerated(true)
                       setEbook(rendition.current?.book || null)
@@ -383,6 +618,7 @@ const ProgramContentEbookReader: React.VFC<{
           rendition={rendition}
           chapter={chapter}
           programContentBookmarks={programContentBookmarks}
+          programContentHighlights={highlights}
           fontSize={ebookFontSize}
           lineHeight={ebookLineHeight}
           refetchBookmark={refetchBookmark}
@@ -392,6 +628,9 @@ const ProgramContentEbookReader: React.VFC<{
           onThemeChange={setTheme}
           currentThemeData={getReaderTheme(theme)}
           setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
+          deleteHighlight={deleteHighlight}
+          showDeleteHighlightModal={showDeleteHighlightModal}
+          showCommentModal={showCommentModal}
         />
       ) : null}
     </div>
