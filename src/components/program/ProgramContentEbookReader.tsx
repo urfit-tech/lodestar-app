@@ -541,7 +541,7 @@ const ProgramContentEbookReader: React.VFC<{
                         console.log('epubView', epubView)
                         epubView.setAttribute(
                           'sandbox',
-                          'allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-top-navigation allow-forms',
+                          'allow-same-origin allow-popups  allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-top-navigation allow-forms',
                         )
                       }
                     })
