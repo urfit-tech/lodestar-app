@@ -530,6 +530,22 @@ const ProgramContentEbookReader: React.VFC<{
                     if (rendition.current) {
                       setIsRenditionReady(true)
                     }
+
+                    rendition.current?.on('rendered', () => {
+                      const iframes = document.getElementsByTagName('iframe')
+                      console.log(iframes[0])
+
+                      let epubView = iframes[0]
+
+                      if (epubView) {
+                        console.log('epubView', epubView)
+                        epubView.setAttribute(
+                          'sandbox',
+                          'allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-top-navigation allow-forms',
+                        )
+                      }
+                    })
+
                     // initial theme
                     rendition.current.themes.override('color', '#424242')
                     rendition.current.themes.override('background-color', '#ffffff')
@@ -541,6 +557,8 @@ const ProgramContentEbookReader: React.VFC<{
                     })
 
                     rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
+                      console.log("'selected''selected''selected'")
+
                       const rangeText = rendition.current?.getRange(cfiRange)?.toString()
                       if (rangeText) {
                         const range = rendition.current?.getRange(cfiRange)
