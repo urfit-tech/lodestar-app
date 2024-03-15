@@ -407,6 +407,8 @@ const useHasProgramContentPermission: (
         } catch (err) {
           !axios.isCancel(err) && console.log(err)
         }
+      } else {
+        setIsLoading(false)
       }
     },
     [currentMemberId, programContentId, programId],
