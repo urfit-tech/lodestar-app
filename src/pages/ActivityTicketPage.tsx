@@ -100,7 +100,7 @@ const ActivityTicketPage: React.VFC<{
     return <Redirect to={`/members/${currentMemberId}`} />
   }
 
-  const flatSessions = activityData.activityTickets
+  const flatSessions = activityData.activityTickets.filter(ticket => ticket.id === activityTicketId)
     .flatMap(ticket =>
       ticket.activitySessionTickets.map(session => ({
         ...session.activitySession,
