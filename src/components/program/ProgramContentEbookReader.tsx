@@ -541,6 +541,17 @@ const ProgramContentEbookReader: React.VFC<{
                       })
                     })
 
+                    rendition.current?.on('relocated', () => {
+                      const iframes = document.getElementsByTagName('iframe')
+
+                      Array.from(iframes).forEach(iframe => {
+                        iframe.setAttribute(
+                          'sandbox',
+                          'allow-same-origin allow-popups allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-top-navigation allow-forms',
+                        )
+                      })
+                    })
+
                     // initial theme
                     rendition.current.themes.override('color', '#424242')
                     rendition.current.themes.override('background-color', '#ffffff')
