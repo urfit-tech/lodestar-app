@@ -571,6 +571,26 @@ const ProgramContentEbookReader: React.VFC<{
                       }
                     })
 
+                    rendition.current.on('selectionchange', (cfiRange: string, contents: Contents) => {
+                      console.log("'selected''selected''selected'")
+
+                      const rangeText = rendition.current?.getRange(cfiRange)?.toString()
+                      if (rangeText) {
+                        const range = rendition.current?.getRange(cfiRange)
+                        if (range) {
+                          const rect = range.getBoundingClientRect()
+
+                          setToolbarPosition({
+                            top: rect.bottom + contents.window.scrollY, // Position the toolbar below the selected text
+                            left: rect.left % contents.content.clientWidth,
+                          })
+                        }
+
+                        setCurrentSelection(cfiRange, contents)
+                        setToolbarVisible(true)
+                      }
+                    })
+
                     rendition.current.themes.default({
                       '.epubjs-hl': {
                         fill: 'rgba(255, 190, 30, 0.5)',
