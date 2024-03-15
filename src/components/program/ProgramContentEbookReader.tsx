@@ -371,10 +371,6 @@ const ProgramContentEbookReader: React.VFC<{
   }, [highlights, isRenditionReady])
 
   useEffect(() => {
-    console.log(sliderValue)
-  }, [sliderValue])
-
-  useEffect(() => {
     highlights.forEach((highlight, index) => {
       rendition.current?.annotations.remove(highlight.cfiRange, 'highlight')
       if (highlight.annotation) {
@@ -574,8 +570,6 @@ const ProgramContentEbookReader: React.VFC<{
                     })
 
                     rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
-                      console.log("'selected''selected''selected'")
-
                       setTimeout(() => {
                         const rangeText = rendition.current?.getRange(cfiRange)?.toString()
                         if (rangeText) {
@@ -596,8 +590,6 @@ const ProgramContentEbookReader: React.VFC<{
                     })
 
                     rendition.current.on('selectionchange', (cfiRange: string, contents: Contents) => {
-                      console.log("'selected''selected''selected'")
-
                       const rangeText = rendition.current?.getRange(cfiRange)?.toString()
                       if (rangeText) {
                         const range = rendition.current?.getRange(cfiRange)
