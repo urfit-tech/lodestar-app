@@ -370,6 +370,34 @@ const ProgramContentEbookReader: React.VFC<{
     }
   }, [highlights, isRenditionReady])
 
+  useEffect(() => {
+    console.log(sliderValue)
+  }, [sliderValue])
+
+  useEffect(() => {
+    highlights.forEach((highlight, index) => {
+      rendition.current?.annotations.remove(highlight.cfiRange, 'highlight')
+      if (highlight.annotation) {
+        rendition.current?.annotations.remove(highlight.cfiRange, 'underline')
+      }
+
+      rendition.current?.annotations.highlight(highlight.cfiRange, {}, function () {}, 'hl', {
+        fill: highlight.color,
+        'fill-opacity': '0.5',
+        'mix-blend-mode': 'multiply',
+      })
+
+      if (highlight.annotation) {
+        rendition.current?.annotations.underline(highlight.cfiRange, {}, function () {}, 'underline_epubjs', {
+          stroke: highlight.color,
+          'stroke-opacity': '0.9',
+          'stroke-dasharray': '1,2',
+          'mix-blend-mode': 'multiply',
+        })
+      }
+    })
+  }, [ebookFontSize, ebookLineHeight])
+
   const handleColor = () => {
     const range = rendition.current?.getRange(currentSelection.current.cfiRange as string)
 
