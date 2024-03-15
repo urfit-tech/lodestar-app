@@ -469,6 +469,7 @@ const ProgramContentEbookReader: React.VFC<{
                     const { start, end, atEnd } = rendition.current?.location || {}
 
                     if (start && end && rendition.current) {
+                      setToolbarVisible(false)
                       setSliderValue(start.percentage * 100)
                       // if this page is end page, set slider value to 100
                       if (atEnd) {
