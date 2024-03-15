@@ -530,19 +530,15 @@ const ProgramContentEbookReader: React.VFC<{
                     if (rendition.current) {
                       setIsRenditionReady(true)
                     }
-
                     rendition.current?.on('rendered', () => {
                       const iframes = document.getElementsByTagName('iframe')
-                      console.log(iframes[0])
 
-                      let epubView = iframes[0]
-
-                      if (epubView) {
-                        epubView.setAttribute(
+                      Array.from(iframes).forEach(iframe => {
+                        iframe.setAttribute(
                           'sandbox',
-                          'allow-same-origin allow-popups  allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-top-navigation allow-forms',
+                          'allow-same-origin allow-popups allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-top-navigation allow-forms',
                         )
-                      }
+                      })
                     })
 
                     // initial theme
