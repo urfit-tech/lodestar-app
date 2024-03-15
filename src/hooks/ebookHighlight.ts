@@ -102,7 +102,7 @@ export const useEbookHighlight = () => {
     async (dto: GetEbookHighlightRequestDto) => {
       try {
         const data = await fetchHighlightsData(dto)
-        setHighlights(data.map(item => ({ ...item, isNew: true, needDelete: false })))
+        setHighlights(data.map(item => ({ ...item, isNew: true })))
       } catch (error: any) {
         setError(error.message)
       }
