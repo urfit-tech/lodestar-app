@@ -433,6 +433,10 @@ const ProgramContentEbookReader: React.VFC<{
               <div style={readerStyles.reader}>
                 <EpubView
                   url={source}
+                  epubOptions={{
+                    allowPopups: true, // Adds `allow-popups` to sandbox-attribute
+                    allowScriptedContent: true, // Adds `allow-scripts` to sandbox-attribute
+                  }}
                   showToc={false}
                   tocChanged={_toc => (toc.current = _toc)}
                   location={location}
@@ -530,27 +534,6 @@ const ProgramContentEbookReader: React.VFC<{
                     if (rendition.current) {
                       setIsRenditionReady(true)
                     }
-                    rendition.current?.on('rendered', () => {
-                      const iframes = document.getElementsByTagName('iframe')
-
-                      Array.from(iframes).forEach(iframe => {
-                        iframe.setAttribute(
-                          'sandbox',
-                          'allow-same-origin allow-popups allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-top-navigation allow-forms',
-                        )
-                      })
-                    })
-
-                    rendition.current?.on('relocated', () => {
-                      const iframes = document.getElementsByTagName('iframe')
-
-                      Array.from(iframes).forEach(iframe => {
-                        iframe.setAttribute(
-                          'sandbox',
-                          'allow-same-origin allow-popups allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-top-navigation allow-forms',
-                        )
-                      })
-                    })
 
                     // initial theme
                     rendition.current.themes.override('color', '#424242')
@@ -565,21 +548,23 @@ const ProgramContentEbookReader: React.VFC<{
                     rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
                       console.log("'selected''selected''selected'")
 
-                      const rangeText = rendition.current?.getRange(cfiRange)?.toString()
-                      if (rangeText) {
-                        const range = rendition.current?.getRange(cfiRange)
-                        if (range) {
-                          const rect = range.getBoundingClientRect()
+                      setTimeout(() => {
+                        const rangeText = rendition.current?.getRange(cfiRange)?.toString()
+                        if (rangeText) {
+                          const range = rendition.current?.getRange(cfiRange)
+                          if (range) {
+                            const rect = range.getBoundingClientRect()
 
-                          setToolbarPosition({
-                            top: rect.bottom + contents.window.scrollY, // Position the toolbar below the selected text
-                            left: rect.left % contents.content.clientWidth,
-                          })
+                            setToolbarPosition({
+                              top: rect.bottom + contents.window.scrollY, // Position the toolbar below the selected text
+                              left: rect.left % contents.content.clientWidth,
+                            })
+                          }
+
+                          setCurrentSelection(cfiRange, contents)
+                          setToolbarVisible(true)
                         }
-
-                        setCurrentSelection(cfiRange, contents)
-                        setToolbarVisible(true)
-                      }
+                      }, 0)
                     })
 
                     rendition.current.on('selectionchange', (cfiRange: string, contents: Contents) => {
