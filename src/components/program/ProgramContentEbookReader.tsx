@@ -396,39 +396,30 @@ const ProgramContentEbookReader: React.VFC<{
   useEffect(() => {
     highlights.forEach((highlight, index) => {
       if (rendition.current && isRenditionReady) {
-        const range = rendition.current?.getRange(highlight.cfiRange)
-        if (!range) {
-          console.log({
-            cfi: highlight.cfiRange,
-            range,
-          })
+        rendition.current?.annotations.remove(highlight.cfiRange, 'highlight')
+        if (highlight.annotation) {
+          rendition.current?.annotations.remove(highlight.cfiRange, 'underline')
         }
-        if (range) {
-          rendition.current?.annotations.remove(highlight.cfiRange, 'highlight')
-          if (highlight.annotation) {
-            rendition.current?.annotations.remove(highlight.cfiRange, 'underline')
-          }
 
-          rendition.current?.annotations.highlight(highlight.cfiRange, {}, function () {}, 'hl', {
-            fill: highlight.color,
-            'fill-opacity': '0.5',
-            'mix-blend-mode': 'multiply',
+        rendition.current?.annotations.highlight(highlight.cfiRange, {}, function () {}, 'hl', {
+          fill: highlight.color,
+          'fill-opacity': '0.5',
+          'mix-blend-mode': 'multiply',
+        })
+
+        if (highlight.annotation) {
+          rendition.current?.annotations.add('underline', highlight.cfiRange, {}, undefined, 'underline', {
+            stroke: 'transparent',
+            'stroke-opacity': '0.5',
+            'mix-blend-mode': 'none',
+            'stroke-width': '1',
+            'stroke-linecap': 'butt',
+            'stroke-dasharray': '1,2',
           })
-
-          if (highlight.annotation) {
-            rendition.current?.annotations.add('underline', highlight.cfiRange, {}, undefined, 'underline', {
-              stroke: 'transparent',
-              'stroke-opacity': '0.5',
-              'mix-blend-mode': 'none',
-              'stroke-width': '1',
-              'stroke-linecap': 'butt',
-              'stroke-dasharray': '1,2',
-            })
-          }
         }
       }
     })
-  }, [ebookFontSize, ebookLineHeight])
+  }, [ebookFontSize, ebookLineHeight, sliderValue])
 
   const handleColor = () => {
     const range = rendition.current?.getRange(currentSelection.current.cfiRange as string)
@@ -468,7 +459,7 @@ const ProgramContentEbookReader: React.VFC<{
         setAnnotation={setAnnotation}
       />
       <EbookTextSelectionToolbar
-        visible={Boolean(toolbarVisible && source && currentMemberId && chapter)}
+        visible={Boolean(toolbarVisible && source && currentMemberId)}
         position={toolbarPosition}
         onHighlight={handleColor}
         onComment={() => showCommentModal(currentSelection.current.cfiRange, null)}
