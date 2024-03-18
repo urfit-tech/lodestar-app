@@ -57,6 +57,7 @@ type TextSelectionToolbarProps = {
   onHighlight: () => void
   onComment: () => void
   onDelete: () => void
+  setVisible: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const EbookTextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({
@@ -65,8 +66,12 @@ const EbookTextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({
   onHighlight,
   onComment,
   onDelete,
+  setVisible,
 }) => {
-  if (!visible) return null
+  if (!visible) {
+    setVisible(false)
+    return null
+  }
 
   return (
     <ToolbarContainer style={{ top: position.top + 55, left: position.left }}>
