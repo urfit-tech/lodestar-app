@@ -494,11 +494,13 @@ const ProgramContentEbookReader: React.VFC<{
                     // reRenderAnnotation()
 
                     if (start && end && rendition.current) {
+                      setToolbarVisible(false)
                       setSliderValue(start.percentage * 100)
                       // if this page is end page, set slider value to 100
                       if (atEnd) {
                         setSliderValue(100)
                       }
+
                       // set chapter and check if current page is ended page
                       const chapterLabel = getChapter(rendition.current.book, rendition.current.location.start.href)
                       setChapter(chapterLabel)
