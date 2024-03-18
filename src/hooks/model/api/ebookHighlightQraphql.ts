@@ -9,8 +9,6 @@ export type Highlight = {
   programContentId: string
   memberId: string
   chapter: string
-  isNew?: boolean
-  needDelete?: boolean
 }
 
 export type SaveEbookHighlightRequestDto = {
