@@ -28,6 +28,7 @@ import { handleError } from '../helpers'
 import { activityMessages, commonMessages, productMessages } from '../helpers/translation'
 import { useActivityAttendance, useActivityTicket, useAttendSession, useEnrolledActivity } from '../hooks/activity'
 import { MapOIcon, TimesIcon, VideoIcon } from '../images'
+import { StringParam, useQueryParam } from 'use-query-params'
 
 const StyledContainer = styled.div`
   padding: 2.5rem 15px 5rem;
@@ -86,6 +87,7 @@ const ActivityTicketPage: React.VFC<{
   } = useEnrolledActivity(ticket?.activity.id || '', currentMemberId || '')
   const { loadingAttendance, attendance, refetchAttendance } = useActivityAttendance(memberId, activityTicketId)
   const { attendActivitySession, leaveActivitySession } = useAttendSession()
+  const [sessionId] = useQueryParam('sessionId', StringParam)
   const [loading, setLoading] = useState(false)
 
   if (loadingTicket || loadingEnrolledActivity) {
@@ -194,7 +196,7 @@ const ActivityTicketPage: React.VFC<{
           <div className="col-12 col-lg-8">
             <div className="mb-5">
               {Object.values(mergedSessions)
-                .filter(session => enabledModules.activity_online || session.type === 'offline')
+                .filter(session => enabledModules.activity_online || session.type === 'offline').filter(session => sessionId ? session.id === sessionId : true)
                 .map(session => (
                   <div key={session.id} className="mb-4">
                     <ActivitySessionItem

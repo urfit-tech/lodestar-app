@@ -12,6 +12,11 @@ type GetEbookHighlightRequestDto = {
   memberId: string
 }
 
+type EbookHighlightViewModel = Highlight & {
+  colorDone?: boolean
+  underlineDone?: boolean
+}
+
 interface SaveHighlightParams {
   annotation: string | null
   range: Range
@@ -21,11 +26,12 @@ interface SaveHighlightParams {
   programContentId: string
   memberId: string
   chapter: string
+  percentage: number
 }
 
 export const useEbookHighlight = () => {
   const [error, setError] = useState<string | null>(null)
-  const [highlights, setHighlights] = useState<Highlight[]>([])
+  const [highlights, setHighlights] = useState<EbookHighlightViewModel[]>([])
   const { saveHighlightData, fetchHighlightsData, deleteHighlightData, updateHighlightData } = useEbookHighlightModel()
 
   const updateHighlight = useCallback(async (dto: UpdateEbookHighlightRequestDto) => {
@@ -33,9 +39,11 @@ export const useEbookHighlight = () => {
       const data = await updateHighlightData(dto)
       if (data) {
         setHighlights(prevHighlights =>
-          prevHighlights.map(highlight =>
-            highlight.id === dto.id ? { ...highlight, color: data.color, annotation: data.annotation } : highlight,
-          ),
+          prevHighlights
+            .map(highlight =>
+              highlight.id === dto.id ? { ...highlight, color: data.color, annotation: data.annotation } : highlight,
+            )
+            .sort((a, b) => a.percentage - b.percentage),
         )
       } else {
         throw new Error('Update failed or returned no data')
@@ -55,6 +63,7 @@ export const useEbookHighlight = () => {
       programContentId,
       memberId,
       chapter,
+      percentage,
     }: SaveHighlightParams) => {
       if (range) {
         const highlightContent = range.toString()
@@ -66,26 +75,30 @@ export const useEbookHighlight = () => {
           highLightContent: highlightContent,
           chapter,
           color,
+          percentage,
         }
 
         try {
           const data = await saveHighlightData(highlightData)
           if (data) {
-            setHighlights(prevHighlights => [
-              ...prevHighlights,
-              {
-                id: data.id,
-                annotation,
-                text: highlightContent,
-                cfiRange,
-                color,
-                programContentId,
-                memberId,
-                chapter,
-                isNew: true,
-                isDeleted: false,
-              },
-            ])
+            setHighlights(prevHighlights =>
+              [
+                ...prevHighlights,
+                {
+                  id: data.id,
+                  annotation,
+                  text: highlightContent,
+                  cfiRange,
+                  color,
+                  programContentId,
+                  memberId,
+                  chapter,
+                  percentage,
+                  colorDone: false,
+                  underlineDone: false,
+                },
+              ].sort((a, b) => a.percentage - b.percentage),
+            )
           }
 
           const selection = contents.window.getSelection()
@@ -102,7 +115,11 @@ export const useEbookHighlight = () => {
     async (dto: GetEbookHighlightRequestDto) => {
       try {
         const data = await fetchHighlightsData(dto)
-        setHighlights(data.map(item => ({ ...item, isNew: true })))
+        setHighlights(
+          data
+            .map(item => ({ ...item, colorDone: false, underlineDone: false }))
+            .sort((a, b) => a.percentage - b.percentage),
+        )
       } catch (error: any) {
         setError(error.message)
       }
@@ -110,9 +127,15 @@ export const useEbookHighlight = () => {
     [fetchHighlightsData],
   )
 
-  const markHighlightAsMarked = useCallback((index: number) => {
+  const markColorAnnotationAsMarked = useCallback((index: number) => {
     setHighlights(prevHighlights =>
-      prevHighlights.map((highlight, idx) => (idx === index ? { ...highlight, isNew: false } : highlight)),
+      prevHighlights.map((highlight, idx) => (idx === index ? { ...highlight, colorDone: true } : highlight)),
+    )
+  }, [])
+
+  const markUnderLineAnnotationAsMarked = useCallback((index: number) => {
+    setHighlights(prevHighlights =>
+      prevHighlights.map((highlight, idx) => (idx === index ? { ...highlight, underline: true } : highlight)),
     )
   }, [])
 
@@ -133,9 +156,11 @@ export const useEbookHighlight = () => {
   return {
     error,
     highlights,
+    setHighlights,
     saveHighlight,
     getHighLightData,
-    markHighlightAsMarked,
+    markColorAnnotationAsMarked,
+    markUnderLineAnnotationAsMarked,
     deleteHighlight,
     updateHighlight,
   }
