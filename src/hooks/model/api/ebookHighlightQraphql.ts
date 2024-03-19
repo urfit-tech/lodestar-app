@@ -9,6 +9,7 @@ export type Highlight = {
   programContentId: string
   memberId: string
   chapter: string
+  percentage: number
 }
 
 export type SaveEbookHighlightRequestDto = {
@@ -19,6 +20,7 @@ export type SaveEbookHighlightRequestDto = {
   highLightContent: string
   chapter: string
   color: string
+  percentage?: number
 }
 
 export type DeleteEbookHighlightRequestDto = {
@@ -51,6 +53,7 @@ const UPDATE_PRPGRAM_CONTENT_EBOOK_HIGHLIGHT = gql`
       member_id
       created_at
       program_content_id
+      percentage
     }
   }
 `
@@ -64,6 +67,7 @@ const INSERT_EBOOK_HIGHLIGHT_MUTATION = gql`
     $highLightContent: String
     $memberId: String
     $programContentId: uuid!
+    $percentage: numeric
   ) {
     insert_program_content_ebook_highlight(
       objects: {
@@ -74,6 +78,7 @@ const INSERT_EBOOK_HIGHLIGHT_MUTATION = gql`
         highlight_content: $highLightContent
         member_id: $memberId
         program_content_id: $programContentId
+        percentage: $percentage
       }
     ) {
       affected_rows
@@ -88,6 +93,7 @@ const INSERT_EBOOK_HIGHLIGHT_MUTATION = gql`
         created_at
         id
         program_content_id
+        percentage
       }
     }
   }
@@ -115,6 +121,7 @@ const GET_EBOOK_HIGHLIGHT_QUERY = gql`
       created_at
       id
       program_content_id
+      percentage
     }
   }
 `
@@ -134,6 +141,7 @@ export const createHighlight = async (
         highLightContent: dto.highLightContent,
         memberId: dto.memberId,
         programContentId: dto.programContentId,
+        percentage: dto.percentage,
       },
     })
 
@@ -182,6 +190,7 @@ export const getEbookHighlights = async (
     if (response.data.program_content_ebook_highlight.length > 0) {
       const highlights: Highlight[] = response.data.program_content_ebook_highlight.map(
         (item: {
+          percentage: number
           annotation: string
           highlight_content: string
           epub_cfi: string
@@ -200,6 +209,7 @@ export const getEbookHighlights = async (
           memberId: item.member_id,
           chapter: item.chapter,
           id: item.id,
+          percentage: item.percentage,
         }),
       )
 
