@@ -203,6 +203,7 @@ const ProgramContentEbookReader: React.VFC<{
         programContentId: programContentId,
         memberId: currentMemberId?.toString() || '',
         chapter: chapter,
+        percentage: sliderValue,
       }
     }
 
@@ -231,6 +232,7 @@ const ProgramContentEbookReader: React.VFC<{
             programContentId: programContentId,
             memberId: currentMemberId,
             chapter: chapter,
+            percentage: sliderValue,
           })
         }
       }
@@ -349,7 +351,6 @@ const ProgramContentEbookReader: React.VFC<{
   }, [programContentId, currentMemberId])
 
   const reRenderAnnotation = () => {
-    console.log('rerender')
     if (rendition.current && isRenditionReady) {
       let isChanged = false
 
@@ -436,6 +437,7 @@ const ProgramContentEbookReader: React.VFC<{
         programContentId: programContentId,
         memberId: currentMemberId,
         chapter: chapter,
+        percentage: sliderValue,
       })
     }
 

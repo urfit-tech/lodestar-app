@@ -26,6 +26,7 @@ interface SaveHighlightParams {
   programContentId: string
   memberId: string
   chapter: string
+  percentage: number
 }
 
 export const useEbookHighlight = () => {
@@ -38,9 +39,11 @@ export const useEbookHighlight = () => {
       const data = await updateHighlightData(dto)
       if (data) {
         setHighlights(prevHighlights =>
-          prevHighlights.map(highlight =>
-            highlight.id === dto.id ? { ...highlight, color: data.color, annotation: data.annotation } : highlight,
-          ),
+          prevHighlights
+            .map(highlight =>
+              highlight.id === dto.id ? { ...highlight, color: data.color, annotation: data.annotation } : highlight,
+            )
+            .sort((a, b) => a.percentage - b.percentage),
         )
       } else {
         throw new Error('Update failed or returned no data')
@@ -60,6 +63,7 @@ export const useEbookHighlight = () => {
       programContentId,
       memberId,
       chapter,
+      percentage,
     }: SaveHighlightParams) => {
       if (range) {
         const highlightContent = range.toString()
@@ -71,26 +75,30 @@ export const useEbookHighlight = () => {
           highLightContent: highlightContent,
           chapter,
           color,
+          percentage,
         }
 
         try {
           const data = await saveHighlightData(highlightData)
           if (data) {
-            setHighlights(prevHighlights => [
-              ...prevHighlights,
-              {
-                id: data.id,
-                annotation,
-                text: highlightContent,
-                cfiRange,
-                color,
-                programContentId,
-                memberId,
-                chapter,
-                colorDone: false,
-                underlineDone: false,
-              },
-            ])
+            setHighlights(prevHighlights =>
+              [
+                ...prevHighlights,
+                {
+                  id: data.id,
+                  annotation,
+                  text: highlightContent,
+                  cfiRange,
+                  color,
+                  programContentId,
+                  memberId,
+                  chapter,
+                  percentage,
+                  colorDone: false,
+                  underlineDone: false,
+                },
+              ].sort((a, b) => a.percentage - b.percentage),
+            )
           }
 
           const selection = contents.window.getSelection()
@@ -107,7 +115,11 @@ export const useEbookHighlight = () => {
     async (dto: GetEbookHighlightRequestDto) => {
       try {
         const data = await fetchHighlightsData(dto)
-        setHighlights(data.map(item => ({ ...item, colorDone: false, underlineDone: false })))
+        setHighlights(
+          data
+            .map(item => ({ ...item, colorDone: false, underlineDone: false }))
+            .sort((a, b) => a.percentage - b.percentage),
+        )
       } catch (error: any) {
         setError(error.message)
       }
