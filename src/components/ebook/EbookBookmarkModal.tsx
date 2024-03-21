@@ -116,6 +116,11 @@ export const EbookBookmarkModal: React.VFC<{
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  const onLocationChangeAndCloseModel = (loc: string) => {
+    onLocationChange(loc)
+    onClose()
+  }
+
   return (
     <Flex>
       <Tooltip label="書籤及註釋" aria-label="書籤及註釋" placement="top">
@@ -143,7 +148,7 @@ export const EbookBookmarkModal: React.VFC<{
                     {programContentBookmarks.map(bookmark => (
                       <BookmarkRow
                         key={bookmark.id}
-                        onLocationChange={onLocationChange}
+                        onLocationChange={onLocationChangeAndCloseModel}
                         refetchBookmark={refetchBookmark}
                         bookmark={bookmark}
                         setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
@@ -156,7 +161,7 @@ export const EbookBookmarkModal: React.VFC<{
                     {programContentHighlights.map(highlight => (
                       <HighlightRow
                         key={highlight.id}
-                        onLocationChange={onLocationChange}
+                        onLocationChange={onLocationChangeAndCloseModel}
                         refetchBookmark={refetchBookmark}
                         highlight={highlight}
                         setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
