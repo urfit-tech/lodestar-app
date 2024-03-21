@@ -392,7 +392,7 @@ const useHasProgramContentPermission: (
   const fetch = useCallback(
     async (source: CancelTokenSource) => {
       if (currentMemberId && programId && programContentId) {
-        const route = `/programs/${programId}/contents/${programContentId}`
+        const route = `/programs/${programId}/content/${programContentId}`
         try {
           const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
             params: { memberId: currentMemberId },
