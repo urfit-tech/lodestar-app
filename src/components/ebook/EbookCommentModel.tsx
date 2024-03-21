@@ -127,7 +127,7 @@ const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCance
 
         <div className="commentArea">
           <h2>{text}</h2>
-          <p>詮釋內容</p>
+          <p>註釋內容</p>
           <Input.TextArea rows={4} value={annotation?.annotation || ''} onChange={handleCommentChange} />
         </div>
       </div>
