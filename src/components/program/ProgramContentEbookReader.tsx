@@ -274,7 +274,7 @@ const ProgramContentEbookReader: React.VFC<{
   }
 
   const handleDeleteHighlightModalCancel = () => {
-    setOpenCommentModel(false)
+    setDeleteHighlightModel(false)
     setToolbarVisible(false)
   }
 
