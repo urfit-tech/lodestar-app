@@ -174,8 +174,10 @@ const ProgramContentEbookReader: React.VFC<{
     error,
     highlights,
     saveHighlight,
+    setHighlights,
     getHighLightData,
-    markHighlightAsMarked,
+    markColorAnnotationAsMarked,
+    markUnderLineAnnotationAsMarked,
     deleteHighlight,
     updateHighlight,
   } = useEbookHighlight()
@@ -201,6 +203,7 @@ const ProgramContentEbookReader: React.VFC<{
         programContentId: programContentId,
         memberId: currentMemberId?.toString() || '',
         chapter: chapter,
+        percentage: sliderValue,
       }
     }
 
@@ -229,6 +232,7 @@ const ProgramContentEbookReader: React.VFC<{
             programContentId: programContentId,
             memberId: currentMemberId,
             chapter: chapter,
+            percentage: sliderValue,
           })
         }
       }
@@ -346,29 +350,77 @@ const ProgramContentEbookReader: React.VFC<{
     }
   }, [programContentId, currentMemberId])
 
-  useEffect(() => {
+  const reRenderAnnotation = () => {
     if (rendition.current && isRenditionReady) {
-      highlights.forEach((highlight, index) => {
-        if (highlight.isNew) {
+      let isChanged = false
+
+      const updatedHighlights = highlights.map((highlight, index) => {
+        let newHighlight = { ...highlight }
+        if (!highlight.colorDone) {
           rendition.current?.annotations.highlight(highlight.cfiRange, {}, function () {}, 'hl', {
             fill: highlight.color,
             'fill-opacity': '0.5',
             'mix-blend-mode': 'multiply',
           })
 
-          if (highlight.annotation) {
-            rendition.current?.annotations.underline(highlight.cfiRange, {}, function () {}, 'underline_epubjs', {
-              stroke: highlight.color,
-              'stroke-opacity': '0.9',
-              'stroke-dasharray': '1,2',
-              'mix-blend-mode': 'multiply',
-            })
-          }
-          markHighlightAsMarked(index)
+          newHighlight.colorDone = true
+          isChanged = true
         }
+
+        if (highlight.annotation && !highlight.underlineDone) {
+          rendition.current?.annotations.add('underline', highlight.cfiRange, {}, undefined, 'underline', {
+            stroke: 'transparent',
+            'stroke-opacity': '0.5',
+            'mix-blend-mode': 'none',
+            'stroke-width': '1',
+            'stroke-linecap': 'butt',
+            'stroke-dasharray': '1,2',
+          })
+
+          newHighlight.underlineDone = true
+          isChanged = true
+        }
+
+        return newHighlight
       })
+
+      if (isChanged) {
+        setHighlights(updatedHighlights)
+      }
     }
+  }
+
+  useEffect(() => {
+    reRenderAnnotation()
   }, [highlights, isRenditionReady])
+
+  useEffect(() => {
+    highlights.forEach((highlight, index) => {
+      if (rendition.current && isRenditionReady) {
+        rendition.current?.annotations.remove(highlight.cfiRange, 'highlight')
+        if (highlight.annotation) {
+          rendition.current?.annotations.remove(highlight.cfiRange, 'underline')
+        }
+
+        rendition.current?.annotations.highlight(highlight.cfiRange, {}, function () {}, 'hl', {
+          fill: highlight.color,
+          'fill-opacity': '0.5',
+          'mix-blend-mode': 'multiply',
+        })
+
+        if (highlight.annotation) {
+          rendition.current?.annotations.add('underline', highlight.cfiRange, {}, undefined, 'underline', {
+            stroke: 'transparent',
+            'stroke-opacity': '0.5',
+            'mix-blend-mode': 'none',
+            'stroke-width': '1',
+            'stroke-linecap': 'butt',
+            'stroke-dasharray': '1,2',
+          })
+        }
+      }
+    })
+  }, [ebookFontSize, ebookLineHeight, sliderValue])
 
   const handleColor = () => {
     const range = rendition.current?.getRange(currentSelection.current.cfiRange as string)
@@ -385,6 +437,7 @@ const ProgramContentEbookReader: React.VFC<{
         programContentId: programContentId,
         memberId: currentMemberId,
         chapter: chapter,
+        percentage: sliderValue,
       })
     }
 
@@ -400,7 +453,6 @@ const ProgramContentEbookReader: React.VFC<{
         }}
         onCancel={handleDeleteHighlightModalCancel}
       />
-
       <EbookCommentModal
         visible={openCommentModel}
         onOk={handleCommentOk}
@@ -408,15 +460,14 @@ const ProgramContentEbookReader: React.VFC<{
         annotation={annotation}
         setAnnotation={setAnnotation}
       />
-
       <EbookTextSelectionToolbar
-        visible={toolbarVisible}
+        visible={Boolean(toolbarVisible && source && currentMemberId)}
         position={toolbarPosition}
         onHighlight={handleColor}
         onComment={() => showCommentModal(currentSelection.current.cfiRange, null)}
         onDelete={() => showDeleteHighlightModal(currentSelection.current.cfiRange, null)}
+        setVisible={setToolbarVisible}
       />
-
       {source && currentMemberId && chapter ? (
         <EbookReaderBookmarkIcon
           bookmarkData={bookmarkData}
@@ -425,7 +476,6 @@ const ProgramContentEbookReader: React.VFC<{
           refetchBookmark={refetchBookmark}
         />
       ) : null}
-
       {source ? (
         <div style={{ height: '85vh' }}>
           <div style={readerStyles.container}>
@@ -433,19 +483,26 @@ const ProgramContentEbookReader: React.VFC<{
               <div style={readerStyles.reader}>
                 <EpubView
                   url={source}
+                  epubOptions={{
+                    allowPopups: true, // Adds `allow-popups` to sandbox-attribute
+                    allowScriptedContent: true, // Adds `allow-scripts` to sandbox-attribute
+                  }}
                   showToc={false}
                   tocChanged={_toc => (toc.current = _toc)}
                   location={location}
                   locationChanged={async (epubCfi: string) => {
                     onLocationChange(epubCfi)
                     const { start, end, atEnd } = rendition.current?.location || {}
+                    // reRenderAnnotation()
 
                     if (start && end && rendition.current) {
+                      setToolbarVisible(false)
                       setSliderValue(start.percentage * 100)
                       // if this page is end page, set slider value to 100
                       if (atEnd) {
                         setSliderValue(100)
                       }
+
                       // set chapter and check if current page is ended page
                       const chapterLabel = getChapter(rendition.current.book, rendition.current.location.start.href)
                       setChapter(chapterLabel)
@@ -530,6 +587,7 @@ const ProgramContentEbookReader: React.VFC<{
                     if (rendition.current) {
                       setIsRenditionReady(true)
                     }
+
                     // initial theme
                     rendition.current.themes.override('color', '#424242')
                     rendition.current.themes.override('background-color', '#ffffff')
@@ -541,6 +599,27 @@ const ProgramContentEbookReader: React.VFC<{
                     })
 
                     rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
+                      setTimeout(() => {
+                        const rangeText = rendition.current?.getRange(cfiRange)?.toString()
+                        if (rangeText) {
+                          const range = rendition.current?.getRange(cfiRange)
+                          if (range) {
+                            const rect = range.getBoundingClientRect()
+
+                            setToolbarPosition({
+                              top: rect.bottom + contents.window.scrollY, // Position the toolbar below the selected text
+                              left: rect.left % contents.content.clientWidth,
+                            })
+                          }
+
+                          setCurrentSelection(cfiRange, contents)
+
+                          setToolbarVisible(true)
+                        }
+                      }, 0)
+                    })
+
+                    rendition.current.on('selectionchange', (cfiRange: string, contents: Contents) => {
                       const rangeText = rendition.current?.getRange(cfiRange)?.toString()
                       if (rangeText) {
                         const range = rendition.current?.getRange(cfiRange)
@@ -609,7 +688,6 @@ const ProgramContentEbookReader: React.VFC<{
           <Spinner />
         </Flex>
       )}
-
       {source ? (
         <EbookReaderControlBar
           isLocationGenerated={isLocationGenerated}
