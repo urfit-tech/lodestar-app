@@ -19,6 +19,7 @@ import { ReactComponent as MemberCertificateIcon } from '../../images/certificat
 import { ReactComponent as ClipboardListIcon } from '../../images/clipboard-list.svg'
 import { ReactComponent as CoinIcon } from '../../images/coin.svg'
 import { ReactComponent as CommentsIcon } from '../../images/comments.svg'
+import { ReactComponent as MemberSettingIcon } from '../../images/cw-member-setting.svg'
 import { ReactComponent as DeviceIcon } from '../../images/device.svg'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
 import { ReactComponent as GroupBuyIcon } from '../../images/group-buy.svg'
@@ -92,7 +93,7 @@ export const MemberAdminMenu: React.VFC<
   MenuProps & { renderAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement }
 > = ({ renderAdminMenu, ...props }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId, currentUserRole, permissions, authToken } = useAuth()
+  const { currentMemberId, authToken } = useAuth()
   const { enabledModules, settings } = useApp()
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
   const { socialCards } = useSocialCardCollection()
@@ -251,10 +252,19 @@ export const MemberAdminMenu: React.VFC<
       ),
     },
     {
+      key: 'cw_member_setting',
+      item: (
+        <Menu.Item key="_blank_cw_member_setting" data-href="https://myaccount.cwg.tw/cw/">
+          <Icon as={MemberSettingIcon} className="mr-2" />
+          天下會員中心
+        </Menu.Item>
+      ),
+    },
+    {
       key: 'customer_support_link',
       item: (
         // <Menu.Item key="_blank" data-href={settings['customer_support_link']}>
-        <Menu.Item key="_blank" data-href="mailto:bill@cw.com.tw">
+        <Menu.Item key="_blank_customer_support_link" data-href="mailto:bill@cw.com.tw">
           <Icon as={CommentsIcon} className="mr-2" />
           {formatMessage(commonMessages.content.contact)}
         </Menu.Item>
