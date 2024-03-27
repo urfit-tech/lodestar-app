@@ -249,7 +249,6 @@ const ProgramContentListSection: React.VFC<{
                 }
               }}
             >
-              {/* <StyledPinnedIcon pin={isPinned} /> */}
               <Typography.Text className="d-flex align-items-center">
                 <span>{item.title}</span>
               </Typography.Text>
@@ -393,16 +392,12 @@ const ProgramContentListSection: React.VFC<{
           <StyledTitle>
             {formatMessage(productMessages.program.title.content)}
             {!checkAllPinned() && (
-              <StyleAllCollapsed
-                // isBlocked={!!checkAllPinned()}
-                onClick={() => !checkAllPinned() && toggleAllCollapsed()}
-              >
+              <StyleAllCollapsed onClick={() => !checkAllPinned() && toggleAllCollapsed()}>
                 {allCollapsed ? '全部收合' : '全部展開'}
                 <IconButton
                   icon={<FaChevronDown style={{ transform: allCollapsed ? 'rotate(0deg)' : 'rotate(270deg)' }} />}
                   aria-label="Rotate Icon"
                   variant="ghost"
-                  // disabled={!!checkAllPinned()}
                 ></IconButton>
               </StyleAllCollapsed>
             )}
@@ -431,7 +426,6 @@ const ProgramContentListSection: React.VFC<{
                         aria-label="Rotate Icon"
                         variant="ghost"
                         onClick={() => toggleContentCollapsed(programContentSection.id)}
-                        // disabled={contentTitleCollapsed[programContentSection.id].isAllPinned}
                       ></IconButton>
                     )}
                   </ProgramSectionTitle>
