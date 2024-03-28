@@ -648,24 +648,6 @@ const ProgramContentEbookReader: React.VFC<{
                       console.log(`resized => width: ${size.width}, height: ${size.height}`)
                     })
 
-                    rendition.current.hooks.content.register((contents: Contents) => {
-                      const doc = contents.document
-                      doc.addEventListener('mousedown', () => {
-                        const selection = doc.getSelection()
-                        selection?.removeAllRanges()
-                      })
-                      doc.addEventListener('mouseup', () => {
-                        const selection = doc.getSelection()
-                        if (selection?.rangeCount || 0 > 0) {
-                          const range = selection?.getRangeAt(0)
-                          if (range?.startContainer !== range?.endContainer) {
-                            selection?.removeAllRanges()
-                            setToolbarVisible(false)
-                          }
-                        }
-                      })
-                    })
-
                     rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
                       setTimeout(() => {
                         const rangeText = rendition.current?.getRange(cfiRange)?.toString()
