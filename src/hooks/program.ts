@@ -86,7 +86,6 @@ export const usePublishedProgramCollection = (options?: {
           }
           program_content_sections {
             id
-            collapsed_status
             program_contents_aggregate {
               aggregate {
                 sum {
@@ -294,7 +293,6 @@ export const useProgram = (programId: string) => {
             id
             title
             description
-            collapsed_status
             program_contents(where: { display_mode: { _neq: "conceal" } }, order_by: { position: asc }) {
               id
               title
@@ -307,7 +305,6 @@ export const useProgram = (programId: string) => {
               sale_price
               sold_at
               content_body_id
-              pinned_status
               program_content_type {
                 id
                 type
@@ -463,7 +460,6 @@ export const useProgram = (programId: string) => {
           id: programContentSection.id,
           title: programContentSection.title,
           description: programContentSection.description || '',
-          collapsed_status: programContentSection.collapsed_status,
           contents: programContentSection.program_contents.map(programContent => ({
             id: programContent.id,
             title: programContent.title,
@@ -471,7 +467,6 @@ export const useProgram = (programId: string) => {
             contentSectionTitle: programContentSection.title,
             abstract: programContent.abstract || '',
             metadata: programContent.metadata,
-            pinned_status: programContent.pinned_status,
             duration: programContent.duration,
             contentType:
               programContent.program_content_videos.length > 0
@@ -584,10 +579,8 @@ export const GetProgramContent = gql`
       sold_at
       metadata
       duration
-      pinned_status
       program_content_section {
         title
-        collapsed_status
       }
       program_content_plans {
         id
@@ -645,11 +638,9 @@ export const useProgramContent = (programContentId: string) => {
             id: data.program_content_by_pk.id,
             title: data.program_content_by_pk.title,
             contentSectionTitle: data.program_content_by_pk.program_content_section.title,
-            pinnedStatus: data.program_content_by_pk.pinned_status || false,
             abstract: data.program_content_by_pk.abstract || '',
             metadata: data.program_content_by_pk.metadata,
             duration: data.program_content_by_pk.duration,
-            pinned_status: data.program_content_by_pk.pinned_status,
             contentType: data.program_content_by_pk.program_content_body?.type || null,
             publishedAt: data.program_content_by_pk.published_at
               ? new Date(data.program_content_by_pk.published_at)
@@ -1015,7 +1006,6 @@ export const useRecentProgramContent = (memberId: string) => {
           program_content_id
           last_progress
           program_content {
-            pinned_status
             program_content_body {
               type
             }

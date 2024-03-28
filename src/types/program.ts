@@ -89,7 +89,6 @@ export type ProgramContentSection = {
   id: string
   title: string
   description: string | null
-  collapsed_status: boolean
   // materialsCount?: number
 }
 
@@ -119,7 +118,6 @@ export type ProgramContent = {
   audios: { data: object }[]
   contentBodyId: string
   ebook: ProgramContentEbook
-  pinned_status: boolean
 }
 
 export type ProgramContentBodyProps = {
