@@ -513,3 +513,7 @@ export const getProductEnrollmentFromLodestar = async (
   }
   return null
 }
+
+export const filterRepeatValues = (array: string[]) => {
+  return Array.from(new Set(array))
+}
