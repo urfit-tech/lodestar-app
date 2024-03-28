@@ -186,6 +186,32 @@ const ProgramContentEbookReader: React.VFC<{
   const [annotation, setAnnotation] = useState<Highlight | null>(null)
 
   const [highlightToDelete, setHighlightToDelete] = useState<Highlight | null>(null)
+  const originalNextRef = useRef<(() => Promise<void>) | undefined>()
+  const originalPrevRef = useRef<(() => Promise<void>) | undefined>()
+
+  const updateNavigation = () => {
+    if (rendition.current) {
+      if (openCommentModel) {
+        rendition.current.next = () => {
+          return Promise.resolve()
+        }
+        rendition.current.prev = () => {
+          return Promise.resolve()
+        }
+      } else {
+        if (typeof originalNextRef.current === 'function') {
+          rendition.current.next = originalNextRef.current
+        }
+        if (typeof originalPrevRef.current === 'function') {
+          rendition.current.prev = originalPrevRef.current
+        }
+      }
+    }
+  }
+
+  useEffect(() => {
+    updateNavigation()
+  }, [openCommentModel])
 
   const showCommentModal = (cfiRange: string | null, id: string | null = null) => {
     let highlightToComment
@@ -602,6 +628,11 @@ const ProgramContentEbookReader: React.VFC<{
                     rendition.current = _rendition
                     if (rendition.current) {
                       setIsRenditionReady(true)
+
+                      originalNextRef.current = rendition.current.next.bind(rendition.current)
+                      originalPrevRef.current = rendition.current.prev.bind(rendition.current)
+
+                      updateNavigation()
                     }
 
                     // initial theme
