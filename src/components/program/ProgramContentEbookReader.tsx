@@ -633,6 +633,8 @@ const ProgramContentEbookReader: React.VFC<{
                       originalPrevRef.current = rendition.current.prev.bind(rendition.current)
 
                       updateNavigation()
+
+                      rendition.current.spread('auto')
                     }
 
                     // initial theme
@@ -644,6 +646,24 @@ const ProgramContentEbookReader: React.VFC<{
                     rendition.current.on('resized', (size: { width: number; height: number }) => {
                       setReRenderHighlightQueue(prev => [...prev, `${size}`])
                       console.log(`resized => width: ${size.width}, height: ${size.height}`)
+                    })
+
+                    rendition.current.hooks.content.register((contents: Contents) => {
+                      const doc = contents.document
+                      doc.addEventListener('mousedown', () => {
+                        const selection = doc.getSelection()
+                        selection?.removeAllRanges()
+                      })
+                      doc.addEventListener('mouseup', () => {
+                        const selection = doc.getSelection()
+                        if (selection?.rangeCount || 0 > 0) {
+                          const range = selection?.getRangeAt(0)
+                          if (range?.startContainer !== range?.endContainer) {
+                            selection?.removeAllRanges()
+                            setToolbarVisible(false)
+                          }
+                        }
+                      })
                     })
 
                     rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
