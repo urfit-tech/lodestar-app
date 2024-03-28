@@ -23,6 +23,7 @@ import {
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/react'
+import moment from 'moment-timezone'
 import { useState } from 'react'
 import { FaQuoteLeft } from 'react-icons/fa'
 import { HiDotsVertical } from 'react-icons/hi'
@@ -54,10 +55,10 @@ const StyledHighlight = styled.div`
 
   .highlightText,
   .annotationText,
-  .highlightChapter {
+  .chapterAndTime {
     margin-bottom: 8px;
   }
-  .highlightChapter {
+  .chapterAndTime {
     font-family: NotoSansCJKtc;
     font-size: 14px;
     font-weight: 500;
@@ -91,6 +92,11 @@ const StyledHighlight = styled.div`
     justify-content: center;
     align-items: center;
   }
+
+  .highlightDateAndChapter {
+    display: flex;
+    align-items: center;
+  }
 `
 
 export const EbookBookmarkModal: React.VFC<{
@@ -115,6 +121,11 @@ export const EbookBookmarkModal: React.VFC<{
   showCommentModal,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const onLocationChangeAndCloseModel = (loc: string) => {
+    onLocationChange(loc)
+    onClose()
+  }
 
   return (
     <Flex>
@@ -143,7 +154,7 @@ export const EbookBookmarkModal: React.VFC<{
                     {programContentBookmarks.map(bookmark => (
                       <BookmarkRow
                         key={bookmark.id}
-                        onLocationChange={onLocationChange}
+                        onLocationChange={onLocationChangeAndCloseModel}
                         refetchBookmark={refetchBookmark}
                         bookmark={bookmark}
                         setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
@@ -156,7 +167,7 @@ export const EbookBookmarkModal: React.VFC<{
                     {programContentHighlights.map(highlight => (
                       <HighlightRow
                         key={highlight.id}
-                        onLocationChange={onLocationChange}
+                        onLocationChange={onLocationChangeAndCloseModel}
                         refetchBookmark={refetchBookmark}
                         highlight={highlight}
                         setCurrentPageBookmarkIds={setCurrentPageBookmarkIds}
@@ -239,6 +250,8 @@ const HighlightRow: React.VFC<{
 }> = ({ highlight, onLocationChange, deleteHighlight, showDeleteHighlightModal, modelOnClose, showCommentModal }) => {
   const [isDeleting, setDeleting] = useState<boolean>(false)
 
+  const formattedCreatedAt = moment(highlight.createdAt).tz('Asia/Taipei').format('YYYY-MM-DD HH:mm')
+
   const handleDeleteHighlight = async (id: string) => {
     modelOnClose()
     showDeleteHighlightModal(null, highlight.id)
@@ -266,7 +279,11 @@ const HighlightRow: React.VFC<{
             <p className="annotationText">{highlight.annotation}</p>
           </div>
         )}
-        <p className="highlightChapter">{highlight.chapter}</p>
+        <div className="highlightDateAndChapter">
+          <p className="chapterAndTime">
+            {formattedCreatedAt}&nbsp;&nbsp;{highlight.chapter}
+          </p>
+        </div>
       </div>
       <div className="actionContainer">
         {isDeleting ? (

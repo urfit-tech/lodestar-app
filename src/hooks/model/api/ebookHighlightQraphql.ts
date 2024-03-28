@@ -10,6 +10,7 @@ export type Highlight = {
   memberId: string
   chapter: string
   percentage: number
+  createdAt: string
 }
 
 export type SaveEbookHighlightRequestDto = {
@@ -146,7 +147,23 @@ export const createHighlight = async (
     })
 
     if (response.data.insert_program_content_ebook_highlight.affected_rows > 0) {
-      return { error: null, result: true, data: response.data.insert_program_content_ebook_highlight.returning[0] }
+      const highlight = response.data.insert_program_content_ebook_highlight.returning[0]
+      return {
+        error: null,
+        result: true,
+        data: {
+          id: highlight.id,
+          annotation: highlight.annotation,
+          text: highlight.highlight_content,
+          cfiRange: highlight.epub_cfi,
+          color: highlight.color,
+          programContentId: highlight.program_content_id,
+          memberId: highlight.member_id,
+          chapter: highlight.chapter,
+          percentage: highlight.percentage,
+          createdAt: highlight.created_at,
+        },
+      }
     } else {
       return { error: new Error('Failed to insert ebook highlight'), result: false, data: null }
     }
@@ -199,6 +216,7 @@ export const getEbookHighlights = async (
           member_id: string
           chapter: string
           id: string
+          created_at: string
           __typename: string
         }) => ({
           annotation: item.annotation,
@@ -210,6 +228,7 @@ export const getEbookHighlights = async (
           chapter: item.chapter,
           id: item.id,
           percentage: item.percentage,
+          createdAt: item.created_at,
         }),
       )
 
@@ -218,7 +237,6 @@ export const getEbookHighlights = async (
       return { error: new Error('No ebook highlights found'), result: false }
     }
   } catch (error) {
-    // Check if the error is an instance of Error, if not convert it to an Error object
     const errorInstance = error instanceof Error ? error : new Error(String(error))
     return { error: errorInstance, result: false }
   }

@@ -96,6 +96,7 @@ export const useEbookHighlight = () => {
                   percentage,
                   colorDone: false,
                   underlineDone: false,
+                  createdAt: data.createdAt,
                 },
               ].sort((a, b) => a.percentage - b.percentage),
             )
