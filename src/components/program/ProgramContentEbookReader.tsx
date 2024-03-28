@@ -169,6 +169,7 @@ const ProgramContentEbookReader: React.VFC<{
   const [openCommentModel, setOpenCommentModel] = useState(false)
   const [openDeleteHighlightModel, setDeleteHighlightModel] = useState(false)
   const [isRenditionReady, setIsRenditionReady] = useState(false)
+  const [reRenderHighlightQueue, setReRenderHighlightQueue] = useState<string[]>([])
 
   const {
     error,
@@ -394,7 +395,7 @@ const ProgramContentEbookReader: React.VFC<{
     reRenderAnnotation()
   }, [highlights, isRenditionReady])
 
-  useEffect(() => {
+  const reapplyHighlightsAndAnnotations = () => {
     highlights.forEach((highlight, index) => {
       if (rendition.current && isRenditionReady) {
         rendition.current?.annotations.remove(highlight.cfiRange, 'highlight')
@@ -420,7 +421,22 @@ const ProgramContentEbookReader: React.VFC<{
         }
       }
     })
+  }
+
+  useEffect(() => {
+    reapplyHighlightsAndAnnotations()
   }, [ebookFontSize, ebookLineHeight, sliderValue])
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (reRenderHighlightQueue.length < 2) {
+        return false
+      }
+      reapplyHighlightsAndAnnotations()
+    }, 100)
+
+    return () => clearTimeout(timeoutId)
+  }, [reRenderHighlightQueue])
 
   const handleColor = () => {
     const range = rendition.current?.getRange(currentSelection.current.cfiRange as string)
@@ -595,6 +611,7 @@ const ProgramContentEbookReader: React.VFC<{
                     rendition.current?.themes.default({ p: { 'line-height': '1.5 !important' } })
 
                     rendition.current.on('resized', (size: { width: number; height: number }) => {
+                      setReRenderHighlightQueue(prev => [...prev, `${size}`])
                       console.log(`resized => width: ${size.width}, height: ${size.height}`)
                     })
 
