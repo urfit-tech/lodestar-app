@@ -169,6 +169,7 @@ const ProgramContentEbookReader: React.VFC<{
   const [openCommentModel, setOpenCommentModel] = useState(false)
   const [openDeleteHighlightModel, setDeleteHighlightModel] = useState(false)
   const [isRenditionReady, setIsRenditionReady] = useState(false)
+  const [reRenderHighlightQueue, setReRenderHighlightQueue] = useState<string[]>([])
 
   const {
     error,
@@ -185,6 +186,32 @@ const ProgramContentEbookReader: React.VFC<{
   const [annotation, setAnnotation] = useState<Highlight | null>(null)
 
   const [highlightToDelete, setHighlightToDelete] = useState<Highlight | null>(null)
+  const originalNextRef = useRef<(() => Promise<void>) | undefined>()
+  const originalPrevRef = useRef<(() => Promise<void>) | undefined>()
+
+  const updateNavigation = () => {
+    if (rendition.current) {
+      if (openCommentModel) {
+        rendition.current.next = () => {
+          return Promise.resolve()
+        }
+        rendition.current.prev = () => {
+          return Promise.resolve()
+        }
+      } else {
+        if (typeof originalNextRef.current === 'function') {
+          rendition.current.next = originalNextRef.current
+        }
+        if (typeof originalPrevRef.current === 'function') {
+          rendition.current.prev = originalPrevRef.current
+        }
+      }
+    }
+  }
+
+  useEffect(() => {
+    updateNavigation()
+  }, [openCommentModel])
 
   const showCommentModal = (cfiRange: string | null, id: string | null = null) => {
     let highlightToComment
@@ -394,7 +421,7 @@ const ProgramContentEbookReader: React.VFC<{
     reRenderAnnotation()
   }, [highlights, isRenditionReady])
 
-  useEffect(() => {
+  const reapplyHighlightsAndAnnotations = () => {
     highlights.forEach((highlight, index) => {
       if (rendition.current && isRenditionReady) {
         rendition.current?.annotations.remove(highlight.cfiRange, 'highlight')
@@ -420,7 +447,22 @@ const ProgramContentEbookReader: React.VFC<{
         }
       }
     })
-  }, [ebookFontSize, ebookLineHeight, sliderValue])
+  }
+
+  useEffect(() => {
+    reapplyHighlightsAndAnnotations()
+  }, [ebookFontSize, ebookLineHeight, sliderValue, theme, ebookLineHeight])
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (reRenderHighlightQueue.length < 2) {
+        return false
+      }
+      reapplyHighlightsAndAnnotations()
+    }, 100)
+
+    return () => clearTimeout(timeoutId)
+  }, [reRenderHighlightQueue])
 
   const handleColor = () => {
     const range = rendition.current?.getRange(currentSelection.current.cfiRange as string)
@@ -586,6 +628,13 @@ const ProgramContentEbookReader: React.VFC<{
                     rendition.current = _rendition
                     if (rendition.current) {
                       setIsRenditionReady(true)
+
+                      originalNextRef.current = rendition.current.next.bind(rendition.current)
+                      originalPrevRef.current = rendition.current.prev.bind(rendition.current)
+
+                      updateNavigation()
+
+                      rendition.current.spread('auto')
                     }
 
                     // initial theme
@@ -595,6 +644,7 @@ const ProgramContentEbookReader: React.VFC<{
                     rendition.current?.themes.default({ p: { 'line-height': '1.5 !important' } })
 
                     rendition.current.on('resized', (size: { width: number; height: number }) => {
+                      setReRenderHighlightQueue(prev => [...prev, `${size}`])
                       console.log(`resized => width: ${size.width}, height: ${size.height}`)
                     })
 
