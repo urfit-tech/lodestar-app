@@ -451,7 +451,7 @@ const ProgramContentEbookReader: React.VFC<{
 
   useEffect(() => {
     reapplyHighlightsAndAnnotations()
-  }, [ebookFontSize, ebookLineHeight, sliderValue])
+  }, [ebookFontSize, ebookLineHeight, sliderValue, theme, ebookLineHeight])
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
