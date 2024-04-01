@@ -13,7 +13,7 @@ const StyledSection = styled.section`
   .feature-image {
     width: 100%;
     min-height: 320px;
-    background-image: url(https://static.kolable.com/images/haohaoming/teacher20240326.png);
+    background-image: url(https://static.kolable.com/images/haohaoming/teacher20240401.png);
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center top;
