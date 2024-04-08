@@ -1,4 +1,3 @@
-import { CheckIcon } from '@chakra-ui/icons'
 import {
   Button,
   Icon,
@@ -10,7 +9,6 @@ import {
   SkeletonText,
   useDisclosure,
 } from '@chakra-ui/react'
-import dayjs from 'dayjs'
 import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -19,16 +17,17 @@ import React, { useEffect, useState } from 'react'
 import { AiOutlineRight } from 'react-icons/ai'
 import { HiExternalLink } from 'react-icons/hi'
 import { defineMessages, useIntl } from 'react-intl'
-import { Link, Redirect } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import ActivityBanner from '../components/activity/ActivityBanner'
 import ActivitySessionItem from '../components/activity/ActivitySessionItem'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { handleError } from '../helpers'
 import { activityMessages, commonMessages, productMessages } from '../helpers/translation'
-import { useActivityAttendance, useActivityTicket, useAttendSession, useEnrolledActivity } from '../hooks/activity'
+import { useActivityAttendance, useAttendSession } from '../hooks/activity'
+import { useMemberRightActivityTicket } from '../hooks/activityTicket'
 import { MapOIcon, TimesIcon, VideoIcon } from '../images'
-import { StringParam, useQueryParam } from 'use-query-params'
 
 const StyledContainer = styled.div`
   padding: 2.5rem 15px 5rem;
@@ -102,53 +101,64 @@ type Invoice = {
 }
 
 const ActivityTicketDetailsPage = () => {
+  const { activityTicketId } = useParams<{ activityTicketId: string }>()
+  console.log({ activityTicketId })
+  const { activityTicketData, activityTicketDataLoading, refetchActivityTicketData } =
+    useMemberRightActivityTicket(activityTicketId)
+  console.log({ activityTicketData })
+  const [sessionId] = useQueryParam('', StringParam)
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const [loading, setLoading] = useState(false)
 
   const [ticket, setTicket] = useState<ActivityTicket | null>(null)
   const [sessions, setSessions] = useState<ActivitySession[]>([])
-  const [attendance, setAttendance] = useState<{ [sessionId: string]: boolean }>({})
+  // const [attendance, setAttendance] = useState<{ [sessionId: string]: boolean }>({})
   const [invoice, setInvoice] = useState<Invoice | null>(null)
+  const { enabledModules } = useApp()
+  const { currentMemberId, currentUserRole } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const { attendActivitySession, leaveActivitySession } = useAttendSession()
+  const { loadingAttendance, attendance, refetchAttendance } = useActivityAttendance(
+    currentMemberId as string,
+    activityTicketId,
+  )
 
   const { formatMessage } = useIntl()
 
   useEffect(() => {
-    setTicket({
-      id: '1',
-      activity: {
-        id: '1',
-        title: '活動標題',
-        coverUrl: 'https://example.com/cover.jpg',
-        categories: [{ id: '1', name: '分類1' }],
-      },
-    })
+    if (activityTicketData) {
+      setTicket({
+        id: activityTicketData?.id,
+        activity: {
+          id: activityTicketData.activity.id,
+          title: activityTicketData.activity.title,
+          coverUrl: activityTicketData.activity.coverUrl,
+          categories: activityTicketData.activity.categories,
+        },
+      })
 
-    setSessions([
-      {
-        id: '1',
-        startedAt: '2023-01-01T09:00:00Z',
-        endedAt: '2023-01-01T10:00:00Z',
-        location: '地點1',
-        description: '描述1',
-        threshold: '門檻1',
-        onlineLink: 'https://example.com/link1',
-        title: '會議1',
-        maxAmount: { online: 50, offline: 50 },
-        participants: { online: 30, offline: 20 },
-        isEnrolled: true,
-        type: 'both',
-      },
-    ])
+      setSessions(activityTicketData.sessions)
 
-    setAttendance({ '1': true })
+      // const newAttendance: { [sessionId: string]: boolean } = {}
+      // activityTicketData.sessions.forEach(session => {
+      //   newAttendance[session.id] = session.attended
+      // })
 
-    setInvoice({
-      name: 'admin',
-      email: 'admin@kolable.com',
-      phone: '000000000',
-      orderProductId: 'FFFFFFFFF',
-    })
-  }, [])
+      setInvoice({
+        name: activityTicketData.invoice.name,
+        email: activityTicketData.invoice.email,
+        phone: activityTicketData.invoice.phone,
+        orderProductId: activityTicketData.invoice.orderProductId,
+      })
+    }
+  }, [activityTicketData])
+
+  if (activityTicketDataLoading === true) {
+    return (
+      <DefaultLayout noFooter>
+        <SkeletonText mt="1" noOfLines={4} spacing="4" />
+      </DefaultLayout>
+    )
+  }
 
   return (
     <DefaultLayout noFooter white>
@@ -162,7 +172,9 @@ const ActivityTicketDetailsPage = () => {
         activityTitle={ticket?.activity.title || ''}
         coverImage={ticket?.activity.coverUrl || ''}
       >
-        <QRCode value={window.location.href} size={256} />
+        {enabledModules.qrcode && currentUserRole === 'general-member' && (
+          <QRCode value={window.location.href} size={256} />
+        )}
       </ActivityBanner>
 
       <StyledContainer className="container">
@@ -184,7 +196,7 @@ const ActivityTicketDetailsPage = () => {
               )}
               <div>
                 {formatMessage(productMessages.activity.content.orderNo)}
-                {invoice?.orderProductId.split('-', 1)[0]}
+                {invoice?.orderProductId?.split('-', 1)[0]}
               </div>
             </StyledMeta>
           </div>
@@ -265,10 +277,18 @@ const ActivityTicketDetailsPage = () => {
                         colorScheme="primary"
                         isFullWidth
                         isLoading={loading}
+                        disabled={attendance[session.id]}
                         onClick={() => {
                           setLoading(true)
-                          // TODO
-                          setLoading(false)
+                          attendActivitySession({
+                            variables: {
+                              orderProductId: invoice?.orderProductId,
+                              activitySessionId: session.id,
+                            },
+                          })
+                            .then(() => refetchAttendance())
+                            .catch(error => handleError(error))
+                            .finally(() => setLoading(false))
                         }}
                       >
                         {attendance[session.id] ? formatMessage(messages.attended) : formatMessage(messages.attendNow)}
