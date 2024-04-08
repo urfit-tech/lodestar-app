@@ -242,7 +242,7 @@ const ProgramPackageCollectionBlock: React.VFC<{
       {programPackageEnrollment.length === 0 &&
         expiredProgramPackageEnrollment.length === 0 &&
         totalProgramCounts === 0 && <p>{formatMessage(commonMessages.content.noProgramPackage)}</p>}
-      {totalProgramPackageCounts > 0 && programPackage.length === 0 && (
+      {totalProgramPackageCounts > 0 && programPackage.length === 0 && search !== '' && (
         <p>{formatMessage(productMessages.programPackage.content.noSearchEnrolledProgramPackage)}</p>
       )}
     </div>
