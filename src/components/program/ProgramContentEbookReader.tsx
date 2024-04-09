@@ -369,7 +369,12 @@ const ProgramContentEbookReader: React.VFC<{
     rendition.current?.themes.default({ p: { 'line-height': `${ebookLineHeight} !important` } })
     const location = rendition.current?.currentLocation() as any as Location
     setSliderValue(location?.start?.percentage * 100 || 0)
-  }, [theme, ebookFontSize, ebookLineHeight])
+  }, [ebookFontSize, ebookLineHeight])
+
+  useLayoutEffect(() => {
+    rendition.current?.themes.override('color', getReaderTheme(theme).color)
+    rendition.current?.themes.override('background-color', getReaderTheme(theme).backgroundColor)
+  }, [theme])
 
   useEffect(() => {
     if (programContentId && currentMemberId) {
