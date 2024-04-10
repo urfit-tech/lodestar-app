@@ -19,7 +19,6 @@ import { HiExternalLink } from 'react-icons/hi'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
 import ActivityBanner from '../components/activity/ActivityBanner'
 import ActivitySessionItem from '../components/activity/ActivitySessionItem'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -28,6 +27,7 @@ import { activityMessages, commonMessages, productMessages } from '../helpers/tr
 import { useActivityAttendance, useAttendSession } from '../hooks/activity'
 import { useMemberRightActivityTicket } from '../hooks/activityTicket'
 import { MapOIcon, TimesIcon, VideoIcon } from '../images'
+import NotFoundPage from './NotFoundPage'
 
 const StyledContainer = styled.div`
   padding: 2.5rem 15px 5rem;
@@ -103,15 +103,12 @@ type Invoice = {
 const ActivityTicketDetailsPage = () => {
   const { activityTicketId } = useParams<{ activityTicketId: string }>()
   console.log({ activityTicketId })
-  const { activityTicketData, activityTicketDataLoading, refetchActivityTicketData } =
-    useMemberRightActivityTicket(activityTicketId)
+  const { activityTicketData, activityTicketDataLoading } = useMemberRightActivityTicket(activityTicketId)
   console.log({ activityTicketData })
-  const [sessionId] = useQueryParam('', StringParam)
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   const [ticket, setTicket] = useState<ActivityTicket | null>(null)
   const [sessions, setSessions] = useState<ActivitySession[]>([])
-  // const [attendance, setAttendance] = useState<{ [sessionId: string]: boolean }>({})
   const [invoice, setInvoice] = useState<Invoice | null>(null)
   const { enabledModules } = useApp()
   const { currentMemberId, currentUserRole } = useAuth()
@@ -138,11 +135,6 @@ const ActivityTicketDetailsPage = () => {
 
       setSessions(activityTicketData.sessions)
 
-      // const newAttendance: { [sessionId: string]: boolean } = {}
-      // activityTicketData.sessions.forEach(session => {
-      //   newAttendance[session.id] = session.attended
-      // })
-
       setInvoice({
         name: activityTicketData.invoice.name,
         email: activityTicketData.invoice.email,
@@ -152,7 +144,11 @@ const ActivityTicketDetailsPage = () => {
     }
   }, [activityTicketData])
 
-  if (activityTicketDataLoading === true) {
+  if (!activityTicketDataLoading && !activityTicketData) {
+    return <NotFoundPage />
+  }
+
+  if (activityTicketDataLoading) {
     return (
       <DefaultLayout noFooter>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
