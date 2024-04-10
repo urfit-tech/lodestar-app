@@ -39,7 +39,40 @@ export type MemberRightActivityTicket = ActivityTicket & { sessions: ActivitySes
 export const useMemberRightActivityTicket = (activityTicketId: string) => {
   const { currentMemberId, authToken } = useAuth()
   const [data, setData] = useState<MemberRightActivityTicket | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
+
+  const convertToMemberRightActivityTicket = (rawData: any): MemberRightActivityTicket => {
+    return {
+      id: rawData.id,
+      activity: {
+        id: rawData?.activity?.id,
+        title: rawData?.activity?.title,
+        coverUrl: rawData?.activity?.coverUrl,
+        categories: rawData?.activity?.categories,
+      },
+      sessions: rawData.sessions.map((session: any) => ({
+        id: session?.id,
+        startedAt: session?.startedAt,
+        endedAt: session?.endedAt,
+        location: session?.location,
+        description: session?.description,
+        threshold: session?.threshold,
+        onlineLink: session?.onlineLink,
+        title: session?.title,
+        maxAmount: session?.maxAmount,
+        participants: session?.participants,
+        isEnrolled: session?.isEnrolled,
+        type: session?.type,
+        attended: session?.attended,
+      })),
+      invoice: {
+        name: rawData?.invoice?.name,
+        email: rawData?.invoice?.email,
+        phone: rawData?.invoice?.phone,
+        orderProductId: rawData?.invoice?.orderProductId,
+      },
+    }
+  }
 
   const fetch = useCallback(
     async (activityTicketId: string) => {
@@ -48,14 +81,21 @@ export const useMemberRightActivityTicket = (activityTicketId: string) => {
 
         setLoading(true)
         try {
-          const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
-            params: { memberId: currentMemberId, activityTicketId: activityTicketId },
+          const response = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+            params: { activityTicketId: activityTicketId },
             headers: { authorization: `Bearer ${authToken}` },
           })
 
-          setData(data)
+          if (response.status === 200 && response.data) {
+            const convertedData = convertToMemberRightActivityTicket(response.data)
+            setData(convertedData)
+          } else {
+            console.error('No data returned or status code is not 200.')
+            setData(null)
+          }
         } catch (err) {
           console.log(err)
+          setData(null)
         } finally {
           setLoading(false)
         }
