@@ -1,23 +1,9 @@
-import {
-  Center,
-  Divider,
-  Flex,
-  HStack,
-  SkeletonText,
-  Spinner,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-} from '@chakra-ui/react'
+import { Flex, SkeletonText, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import { Typography } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
-import { FiGrid, FiList } from 'react-icons/fi'
 import { defineMessages, useIntl } from 'react-intl'
 import { Redirect, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -29,7 +15,7 @@ import MerchandiseOrderCollectionBlock from '../../components/merchandise/Mercha
 import ProgramPackageCollectionBlock from '../../components/package/ProgramPackageCollectionBlock'
 import EnrolledProgramCollectionBlock from '../../containers/program/EnrolledProgramCollectionBlock'
 import ProjectPlanCollectionBlock from '../../containers/project/ProjectPlanCollectionBlock'
-import { commonMessages, productMessages } from '../../helpers/translation'
+import { commonMessages } from '../../helpers/translation'
 import { useMemberPageEnrollmentsCounts, useProductEnrollment } from '../../hooks/common'
 import { usePublicMember } from '../../hooks/member'
 import ActivityTicketCollectionBlock from './ActivityTicketCollectionBlock'
@@ -65,76 +51,6 @@ const StyledTabPanel = styled(TabPanel)`
     padding: 24px 0;
   }
 `
-
-export const ProgramTab: React.FC<{
-  onProgramTabClick: (tab: string) => void
-  tab: string
-  totalProgramPackageCounts: number
-  totalProgramCounts: number
-}> = ({ onProgramTabClick, tab, totalProgramPackageCounts, totalProgramCounts }) => {
-  const { formatMessage } = useIntl()
-  return (
-    <>
-      <Flex cursor="pointer">
-        <HStack spacing="10px">
-          {totalProgramCounts > 0 && (
-            <Text
-              fontSize="2xl"
-              as="b"
-              onClick={() => onProgramTabClick('program')}
-              color={tab === 'program' ? 'black' : '#cdcdcd'}
-            >
-              {formatMessage(productMessages.program.title.course)}
-            </Text>
-          )}
-          {totalProgramCounts > 0 && totalProgramPackageCounts > 0 && (
-            <Center height="20px">
-              <Divider orientation="vertical" />
-            </Center>
-          )}
-          {totalProgramPackageCounts > 0 && (
-            <Text
-              fontSize="2xl"
-              as="b"
-              onClick={() => onProgramTabClick('programPackage')}
-              color={(totalProgramCounts === 0 && 'black') || (tab === 'programPackage' ? 'black' : '#cdcdcd')}
-            >
-              {formatMessage(commonMessages.ui.packages)}
-            </Text>
-          )}
-        </HStack>
-      </Flex>
-    </>
-  )
-}
-
-export const ViewSwitch: React.FC<{ view: string; onClick: () => void; className?: string }> = ({
-  view,
-  onClick,
-  className,
-}) => {
-  const { formatMessage } = useIntl()
-  return (
-    <Flex marginRight="20px" cursor="pointer" className={className}>
-      {
-        <HStack spacing="5px" onClick={onClick}>
-          {view === 'Grid' && (
-            <>
-              <FiList />
-              <span>{formatMessage(commonMessages.term.list)}</span>
-            </>
-          )}
-          {view === 'List' && (
-            <>
-              <FiGrid />
-              <span>{formatMessage(commonMessages.term.grid)}</span>
-            </>
-          )}
-        </HStack>
-      }
-    </Flex>
-  )
-}
 
 const MemberPage: React.VFC = () => {
   const { formatMessage } = useIntl()
