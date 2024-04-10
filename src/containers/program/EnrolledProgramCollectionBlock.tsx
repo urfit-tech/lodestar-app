@@ -309,7 +309,7 @@ const EnrolledProgramCollectionBlock: React.VFC<{
       {programEnrollment.length === 0 && expiredProgramEnrollment.length === 0 && totalProgramPackageCounts === 0 && (
         <p>{formatMessage(productMessages.program.content.noProgram)}</p>
       )}
-      {totalProgramCounts > 0 && programs.length === 0 && (
+      {totalProgramCounts > 0 && programs.length === 0 && search !== '' && (
         <p>{formatMessage(productMessages.program.content.noSearchEnrolledProgram)}</p>
       )}
     </div>
