@@ -101,9 +101,11 @@ type Invoice = {
 }
 
 const ActivityTicketDetailsPage = () => {
-  const { activityTicketId } = useParams<{ activityTicketId: string }>()
+  const { activityTicketId, sessionId } = useParams<{ activityTicketId: string; sessionId: string | undefined }>()
+
+  console.log({ activityTicketId, sessionId })
   console.log({ activityTicketId })
-  const { activityTicketData, activityTicketDataLoading } = useMemberRightActivityTicket(activityTicketId)
+  const { activityTicketData, activityTicketDataLoading } = useMemberRightActivityTicket(activityTicketId, sessionId)
   console.log({ activityTicketData })
   const { isOpen, onClose, onOpen } = useDisclosure()
 

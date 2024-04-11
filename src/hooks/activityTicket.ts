@@ -36,7 +36,7 @@ type Invoice = {
 
 export type MemberRightActivityTicket = ActivityTicket & { sessions: ActivitySession[] } & { invoice: Invoice }
 
-export const useMemberRightActivityTicket = (activityTicketId: string) => {
+export const useMemberRightActivityTicket = (activityTicketId: string, sessionId: string | null | undefined) => {
   const { currentMemberId, authToken } = useAuth()
   const [data, setData] = useState<MemberRightActivityTicket | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
@@ -82,7 +82,10 @@ export const useMemberRightActivityTicket = (activityTicketId: string) => {
         setLoading(true)
         try {
           const response = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
-            params: { activityTicketId: activityTicketId },
+            params: {
+              activityTicketId: activityTicketId,
+              ...(sessionId ? { sessionId: sessionId } : {}),
+            },
             headers: { authorization: `Bearer ${authToken}` },
           })
 

@@ -205,7 +205,7 @@ const defaultRoutesMap: RoutesMap = {
   },
 
   activity_ticket: {
-    path: '/activity_ticket/:activityTicketId',
+    path: '/activity_ticket/:activityTicketId/session/:sessionId',
     pageName: 'ActivityTicketDetailsPage',
   },
 

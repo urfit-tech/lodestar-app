@@ -72,43 +72,47 @@ const ActivityTicketCollectionBlock: React.VFC<{
       <List>
         {displayType === 'ticket'
           ? activityEnrollment.map(ticket => (
-            <Link to={`/orders/${ticket.orderId}/products/${ticket.orderProductId}`} key={ticket.orderProductId}>
-              <div className="mb-4">
-                <ActivityTicketItem ticketId={ticket.activityTicketId} />
-              </div>
-            </Link>
-          ))
-          : displayType === 'session' ? activityEnrollment
-            .flatMap(ticket => ticket.activitySession.map(session => ({ ...session, ticket })))
-            .filter(session => dayjs(session.endedAt).isBefore(dayjs()) === isExpired)
-            .sort((a, b) =>
-              isExpired
-                ? dayjs(b.endedAt).valueOf() - dayjs(a.endedAt).valueOf()
-                : dayjs(a.endedAt).valueOf() - dayjs(b.endedAt).valueOf(),
-            )
-            .map(session => {
-              return (
-                <Link
-                  to={`/orders/${session.ticket.orderId}/products/${session.ticket.orderProductId}?sessionId=${session.id}`}
-                  key={session.id}
-                >
-                  <div className="mb-4">
-                    <ActivitySessionCard
-                      session={{
-                        id: session.id,
-                        location: session.location || '',
-                        onlineLink: session.onlineLink || '',
-                        activityTitle: session.activityTitle,
-                        title: session.title,
-                        coverUrl: session.activityCoverUrl,
-                        startedAt: session.startedAt,
-                        endedAt: session.endedAt,
-                      }}
-                    />
-                  </div>
-                </Link>
+              <Link to={`/activity_ticket/${ticket.activityTicketId}`} key={ticket.orderProductId}>
+                <div className="mb-4">
+                  <ActivityTicketItem ticketId={ticket.activityTicketId} />
+                </div>
+              </Link>
+            ))
+          : displayType === 'session'
+          ? activityEnrollment
+              .flatMap(ticket => ticket.activitySession.map(session => ({ ...session, ticket })))
+              .filter(session => dayjs(session.endedAt).isBefore(dayjs()) === isExpired)
+              .sort((a, b) =>
+                isExpired
+                  ? dayjs(b.endedAt).valueOf() - dayjs(a.endedAt).valueOf()
+                  : dayjs(a.endedAt).valueOf() - dayjs(b.endedAt).valueOf(),
               )
-            }) : null}
+              .map(session => {
+                return (
+                  <Link
+                    to={`/activity_ticket/${session.ticket.activityTicketId}${
+                      session.id ? '/session/' + session.id : ''
+                    }`}
+                    key={session.id}
+                  >
+                    <div className="mb-4">
+                      <ActivitySessionCard
+                        session={{
+                          id: session.id,
+                          location: session.location || '',
+                          onlineLink: session.onlineLink || '',
+                          activityTitle: session.activityTitle,
+                          title: session.title,
+                          coverUrl: session.activityCoverUrl,
+                          startedAt: session.startedAt,
+                          endedAt: session.endedAt,
+                        }}
+                      />
+                    </div>
+                  </Link>
+                )
+              })
+          : null}
       </List>
     </div>
   )
