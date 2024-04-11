@@ -7,9 +7,10 @@ import { useIntl } from 'react-intl'
 import CustomChakraSelect from '../../components/common/CustomChakraSelect'
 import CustomMenuButton from '../../components/common/CustomMenuButton'
 import CustomSearchInput from '../../components/common/CustomSearchInput'
+import ViewSwitch from '../../components/common/ViewSwitch'
+import { ProgramTab } from '../../components/program/ProgramTab'
 import RadioCard from '../../components/RadioCard'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import { ProgramTab, ViewSwitch } from '../../pages/MemberPage'
 import { ProgramEnrollment } from '../../types/program'
 import ProgramCard from './ProgramCard'
 
@@ -306,7 +307,10 @@ const EnrolledProgramCollectionBlock: React.VFC<{
       {programEnrollment.length === 0 && expiredProgramEnrollment.length > 0 && !isExpired && (
         <p>{formatMessage(productMessages.program.content.noEnrolledProgram)}</p>
       )}
-      {programEnrollment.length > 0 && programs.length === 0 && (
+      {programEnrollment.length === 0 && expiredProgramEnrollment.length === 0 && totalProgramPackageCounts === 0 && (
+        <p>{formatMessage(productMessages.program.content.noProgram)}</p>
+      )}
+      {totalProgramCounts > 0 && programs.length === 0 && search !== '' && (
         <p>{formatMessage(productMessages.program.content.noSearchEnrolledProgram)}</p>
       )}
     </div>

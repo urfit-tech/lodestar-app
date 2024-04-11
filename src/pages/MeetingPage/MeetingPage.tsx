@@ -15,6 +15,7 @@ import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 
 type CategoryCheckboxes = {
+  id: number
   title: string
   description: string
   value: string
@@ -74,8 +75,12 @@ const MeetingPage = () => {
     const email = formEntries.find(entry => entry[0] === 'email')?.[1]
     const phone = formEntries.find(entry => entry[0] === 'phone')?.[1]
     const referal = formEntries.find(entry => entry[0] === 'referal')?.[1]
-    const fields = formEntries.filter(entry => entry[0] === 'field').flatMap(entry => entry[1].toString().split('/'))
+    const uniqueFields = Array.from(
+      new Set(formEntries.filter(entry => entry[0] === 'field').flatMap(entry => entry[1].toString().split('/'))),
+    )
+
     const timeslots = formEntries.filter(entry => entry[0] === 'timeslot').map(entry => entry[1])
+    const adPropertyValues = propertyDefaultValue['廣告素材'].replace(/{領域}/g, uniqueFields.join('+'))
     const landingPage = Cookies.get('landing') // setting from backend
 
     let utm
@@ -94,7 +99,7 @@ const MeetingPage = () => {
           name,
           managerUsername,
           taskTitle: `專屬預約諮詢:${timeslots.join('/')}`,
-          categoryNames: fields,
+          categoryNames: uniqueFields,
           properties: [
             { name: '介紹人', value: referal },
             { name: '聯盟來源', value: utm.utm_source || '' },
@@ -102,7 +107,7 @@ const MeetingPage = () => {
             { name: '聯盟成交編號', value: utm.utm_term || '' },
             { name: '行銷內容', value: utm.utm_content || '' },
             { name: '來源網址', value: landingPage || '' },
-            { name: '廣告素材', value: propertyDefaultValue['廣告素材'] || '' },
+            { name: '廣告素材', value: adPropertyValues || '' },
             { name: '行銷活動', value: propertyDefaultValue['行銷活動'] || '' },
             { name: '名單分級', value: propertyDefaultValue['名單分級'] || '' },
           ],
@@ -153,7 +158,7 @@ const MeetingPage = () => {
           <CheckboxGroup colorScheme="primary">
             <Stack>
               {categoryCheckboxes.map(checkbox => (
-                <Checkbox name="field" value={checkbox.value}>
+                <Checkbox name="field" value={checkbox.value} key={checkbox.id}>
                   <Badge className="mr-1" variant="outline" colorScheme="primary">
                     {checkbox.title}
                   </Badge>

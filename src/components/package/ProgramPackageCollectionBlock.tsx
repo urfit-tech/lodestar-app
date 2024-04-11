@@ -3,8 +3,9 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { Fragment, useState } from 'react'
 import { BiSort } from 'react-icons/bi'
 import { useIntl } from 'react-intl'
+import ViewSwitch from '../../components/common/ViewSwitch'
+import { ProgramTab } from '../../components/program/ProgramTab'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import { ProgramTab, ViewSwitch } from '../../pages/MemberPage'
 import { ProgramPackageEnrollment } from '../../types/programPackage'
 import CustomChakraSelect from '../common/CustomChakraSelect'
 import CustomMenuButton from '../common/CustomMenuButton'
@@ -241,7 +242,10 @@ const ProgramPackageCollectionBlock: React.VFC<{
       {programPackageEnrollment.length === 0 && expiredProgramPackageEnrollment.length > 0 && !isExpired && (
         <p>{formatMessage(productMessages.programPackage.content.noEnrolledProgramPackage)}</p>
       )}
-      {search !== '' && programPackageEnrollment.length > 0 && programPackage.length === 0 && (
+      {programPackageEnrollment.length === 0 &&
+        expiredProgramPackageEnrollment.length === 0 &&
+        totalProgramCounts === 0 && <p>{formatMessage(commonMessages.content.noProgramPackage)}</p>}
+      {totalProgramPackageCounts > 0 && programPackage.length === 0 && search !== '' && (
         <p>{formatMessage(productMessages.programPackage.content.noSearchEnrolledProgramPackage)}</p>
       )}
     </div>
