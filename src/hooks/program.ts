@@ -722,16 +722,74 @@ export const useEnrolledProgramIds = (memberId: string) => {
     },
   )
 
+  const { enrolledCards } = _useCardsByMemberId(memberId)
+  const { enrolledCardPrograms } = _useProgramByCardIds(enrolledCards)
+
   const enrolledProgramIds = data
     ? uniq([
         ...data.program_enrollment.map(enrollment => enrollment.program_id),
         ...data.program_plan_enrollment.map(enrollment => enrollment.program_plan?.program_id || ''),
         ...data.program_content_enrollment.map(enrollment => enrollment.program_id),
+        ...enrolledCardPrograms,
       ])
     : []
 
   return {
     enrolledProgramIds,
+    error,
+    loading,
+    refetch,
+  }
+}
+
+const _useCardsByMemberId = (memberId: string) => {
+  const { loading, error, data, refetch } = useQuery(
+    gql`
+      query useCardsByMemberId($memberId: String!) {
+        card_enrollment(where: { member_id: { _eq: $memberId } }, distinct_on: card_id) {
+          card_id
+        }
+      }
+    `,
+    {
+      variables: { memberId },
+      fetchPolicy: 'no-cache',
+    },
+  )
+
+  const enrolledCards = data
+    ? uniq([...data.card_enrollment.map((enrollment: { card_id: any }) => enrollment.card_id)])
+    : []
+
+  return {
+    enrolledCards,
+    error,
+    loading,
+    refetch,
+  }
+}
+
+const _useProgramByCardIds = (cardIds: string[]) => {
+  const { loading, error, data, refetch } = useQuery(
+    gql`
+      query useProgramByCardIds($cardIds: [uuid!]) {
+        program_plan(where: { card_id: { _in: $cardIds } }, distinct_on: program_id) {
+          program_id
+        }
+      }
+    `,
+    {
+      variables: { cardIds },
+      fetchPolicy: 'no-cache',
+    },
+  )
+
+  const enrolledCardPrograms = data
+    ? uniq([...data.program_plan.map((enrollment: { program_id: any }) => enrollment.program_id)])
+    : []
+
+  return {
+    enrolledCardPrograms,
     error,
     loading,
     refetch,
