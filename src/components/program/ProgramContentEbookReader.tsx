@@ -713,6 +713,13 @@ const ProgramContentEbookReader: React.VFC<{
                       updateNavigation()
 
                       rendition.current.spread('auto')
+
+                      rendition.current.hooks.content.register((contents: any) => {
+                        const doc = contents.document
+                        const body = doc.body
+                        // Disable Chrome mobile's "tap to search" on a web app
+                        body.setAttribute('tabindex', '-1')
+                      })
                     }
 
                     // initial theme
