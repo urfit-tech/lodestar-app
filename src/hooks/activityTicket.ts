@@ -8,6 +8,7 @@ type ActivityTicket = {
     title: string
     coverUrl: string
     categories: { id: string; name: string }[]
+    isParticipantsVisible: boolean
   }
 }
 
@@ -49,6 +50,7 @@ export const useMemberRightActivityTicket = (activityTicketId: string, sessionId
         title: rawData?.activity?.title,
         coverUrl: rawData?.activity?.coverUrl,
         categories: rawData?.activity?.categories,
+        isParticipantsVisible: rawData?.activity?.isParticipantsVisible,
       },
       sessions: rawData.sessions.map((session: any) => ({
         id: session?.id,

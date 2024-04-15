@@ -19,6 +19,7 @@ import { HiExternalLink } from 'react-icons/hi'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import ActivityBanner from '../components/activity/ActivityBanner'
 import ActivitySessionItem from '../components/activity/ActivitySessionItem'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -75,6 +76,7 @@ type ActivityTicket = {
     title: string
     coverUrl: string
     categories: { id: string; name: string }[]
+    isParticipantsVisible: boolean
   }
 }
 
@@ -101,12 +103,9 @@ type Invoice = {
 }
 
 const ActivityTicketDetailsPage = () => {
-  const { activityTicketId, sessionId } = useParams<{ activityTicketId: string; sessionId: string | undefined }>()
-
-  console.log({ activityTicketId, sessionId })
-  console.log({ activityTicketId })
-  const { activityTicketData, activityTicketDataLoading } = useMemberRightActivityTicket(activityTicketId, sessionId)
-  console.log({ activityTicketData })
+  const { activityTicketId } = useParams<{ activityTicketId: string; sessionId: string | undefined }>()
+  const [session] = useQueryParam('session', StringParam)
+  const { activityTicketData, activityTicketDataLoading } = useMemberRightActivityTicket(activityTicketId, session)
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   const [ticket, setTicket] = useState<ActivityTicket | null>(null)
@@ -132,6 +131,7 @@ const ActivityTicketDetailsPage = () => {
           title: activityTicketData.activity.title,
           coverUrl: activityTicketData.activity.coverUrl,
           categories: activityTicketData.activity.categories,
+          isParticipantsVisible: activityTicketData.activity.isParticipantsVisible,
         },
       })
 
@@ -216,7 +216,7 @@ const ActivityTicketDetailsPage = () => {
                       activityTitle: ticket?.activity.title || '',
                       isEnrolled: session.isEnrolled,
                       threshold: session.threshold || '',
-                      isParticipantsVisible: true,
+                      isParticipantsVisible: ticket?.activity.isParticipantsVisible || false,
                       maxAmount: session.maxAmount,
                       participants: session.participants,
                     }}

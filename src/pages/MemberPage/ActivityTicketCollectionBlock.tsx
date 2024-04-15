@@ -91,7 +91,7 @@ const ActivityTicketCollectionBlock: React.VFC<{
                 return (
                   <Link
                     to={`/activity_ticket/${session.ticket.activityTicketId}${
-                      session.id ? '/session/' + session.id : ''
+                      session.id ? '?session=' + session.id : ''
                     }`}
                     key={session.id}
                   >
