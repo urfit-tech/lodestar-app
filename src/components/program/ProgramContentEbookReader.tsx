@@ -170,6 +170,7 @@ const ProgramContentEbookReader: React.VFC<{
   const [openDeleteHighlightModel, setDeleteHighlightModel] = useState(false)
   const [isRenditionReady, setIsRenditionReady] = useState(false)
   const [reRenderHighlightQueue, setReRenderHighlightQueue] = useState<string[]>([])
+  const isDragging = useRef(false)
 
   const {
     error,
@@ -384,6 +385,12 @@ const ProgramContentEbookReader: React.VFC<{
 
   const highlightClickEvent = (e: MouseEvent) => {
     e.stopPropagation()
+
+    if (isDragging.current) {
+      e.preventDefault()
+      isDragging.current = false
+      return
+    }
 
     const {
       dataset: { id: dataId },
@@ -727,6 +734,14 @@ const ProgramContentEbookReader: React.VFC<{
                     rendition.current.themes.override('background-color', '#ffffff')
                     rendition.current?.themes.default({ p: { 'font-size': '18px!important' } })
                     rendition.current?.themes.default({ p: { 'line-height': '1.5 !important' } })
+
+                    rendition.current.on('mousedown', (event: MouseEvent) => {
+                      isDragging.current = false
+                    })
+
+                    rendition.current.on('mousemove', (event: MouseEvent) => {
+                      isDragging.current = true
+                    })
 
                     rendition.current.on('resized', (size: { width: number; height: number }) => {
                       setReRenderHighlightQueue(prev => [...prev, `${size}`])
