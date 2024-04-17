@@ -78,10 +78,21 @@ const MeetingPage = () => {
     const uniqueFields = Array.from(
       new Set(formEntries.filter(entry => entry[0] === 'field').flatMap(entry => entry[1].toString().split('/'))),
     )
-
     const timeslots = formEntries.filter(entry => entry[0] === 'timeslot').map(entry => entry[1])
     const adPropertyValues = propertyDefaultValue['廣告素材'].replace(/{領域}/g, uniqueFields.join('+'))
     const landingPage = Cookies.get('landing') // setting from backend
+
+    if (uniqueFields.length === 0) {
+      alert('「有興趣了解領域」為必填')
+      setIsSubmitting(false)
+      return
+    }
+
+    if (timeslots.length === 0) {
+      alert('「方便聯繫時段」為必填')
+      setIsSubmitting(false)
+      return
+    }
 
     let utm
     try {
