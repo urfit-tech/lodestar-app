@@ -65,6 +65,8 @@ const MembershipCardAdminBlock: React.VFC<{
   const { loadingMembershipCard, errorMembershipCard, membershipCard } = useMembershipCard(cardId)
   const { loadingMember, errorMember, member } = useMember(memberId)
 
+  console.log({ membershipCard })
+
   if (loadingMembershipCard || errorMembershipCard || loadingMember || errorMember || !member || !membershipCard) {
     return null
   }
@@ -81,6 +83,7 @@ const MembershipCardAdminBlock: React.VFC<{
         }}
         title={membershipCard.title}
         description={membershipCard.description}
+        id={membershipCard.id}
       />
     </StyledContainer>
   )

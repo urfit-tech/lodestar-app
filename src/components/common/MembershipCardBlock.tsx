@@ -1,4 +1,5 @@
-import { Icon } from '@chakra-ui/react'
+import { Icon, useDisclosure } from '@chakra-ui/react'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import moment from 'moment'
 import React from 'react'
 import { AiOutlineCalendar } from 'react-icons/ai'
@@ -6,7 +7,7 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
 import MembershipCard from './MembershipCard'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import MembershipCardTermsModal from './MembershipCardTermsModal'
 
 const StyledCardContainer = styled.div`
   min-width: 100px;
@@ -30,6 +31,12 @@ const StyledSubTitle = styled.div`
   letter-spacing: 0.18px;
 `
 
+const StyledTerms = styled.div`
+  display: flex;
+  justify-content: space-between;
+  color: #4c5b8f;
+`
+
 const MembershipCardBlock: React.VFC<{
   template: string
   templateVars?: any
@@ -37,8 +44,11 @@ const MembershipCardBlock: React.VFC<{
   expiredAt?: Date
   description?: string
   variant?: string
-}> = ({ template, templateVars, title, expiredAt, description, variant }) => {
+  id: string
+}> = ({ template, templateVars, title, expiredAt, description, variant, id }) => {
   const { formatMessage } = useIntl()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   if (variant === 'list-item') {
     return (
       <div className="d-flex justify-content-between">
@@ -47,7 +57,7 @@ const MembershipCardBlock: React.VFC<{
           {description && <BraftContent>{description}</BraftContent>}
         </div>
         <StyledCardContainer className="m-0 ml-5">
-          <MembershipCard template={template} templateVars={templateVars} />
+          <MembershipCard template={template} templateVars={templateVars} id={id} />
         </StyledCardContainer>
       </div>
     )
@@ -72,8 +82,11 @@ const MembershipCardBlock: React.VFC<{
             )
           : formatMessage(commonMessages.content.noPeriod)}
       </StyledSubTitle>
-
-      {description && <BraftContent>{description}</BraftContent>}
+      <StyledTerms>
+        {description && <BraftContent>{description}</BraftContent>}
+        <button onClick={onOpen}>優惠條件</button>
+      </StyledTerms>
+      <MembershipCardTermsModal id={id} title={title} isOpen={isOpen} onClose={onClose} onOpen={onOpen} />
     </div>
   )
 }
