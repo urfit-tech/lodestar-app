@@ -102,8 +102,10 @@ export const useEbookHighlight = () => {
             )
           }
 
-          const selection = contents.window.getSelection()
-          selection?.removeAllRanges()
+          if (contents) {
+            const selection = contents.window.getSelection()
+            selection?.removeAllRanges()
+          }
         } catch (error: any) {
           setError(error.message)
         }
