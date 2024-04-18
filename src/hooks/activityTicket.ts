@@ -79,7 +79,7 @@ export const useMemberRightActivityTicket = (activityTicketId: string, sessionId
   const fetch = useCallback(
     async (activityTicketId: string) => {
       if (currentMemberId && activityTicketId) {
-        const route = `/activity/member_right`
+        const route = `/equity/activity_ticket`
 
         setLoading(true)
         try {
