@@ -170,6 +170,7 @@ const ProgramContentEbookReader: React.VFC<{
   const [openDeleteHighlightModel, setDeleteHighlightModel] = useState(false)
   const [isRenditionReady, setIsRenditionReady] = useState(false)
   const [reRenderHighlightQueue, setReRenderHighlightQueue] = useState<string[]>([])
+  const isDragging = useRef(false)
 
   const {
     error,
@@ -254,7 +255,7 @@ const ProgramContentEbookReader: React.VFC<{
             annotation: annotation?.annotation || null,
             range: range,
             cfiRange: annotation?.cfiRange as string,
-            contents: annotation?.text,
+            contents: currentSelection.current.contents as Contents,
             color: 'rgba(255, 190, 30, 0.5)',
             programContentId: programContentId,
             memberId: currentMemberId,
@@ -305,7 +306,7 @@ const ProgramContentEbookReader: React.VFC<{
     setToolbarVisible(false)
   }
 
-  const setCurrentSelection = (cfiRange: string, contents: Contents) => {
+  const setCurrentSelection = (cfiRange: string, contents: any) => {
     currentSelection.current = { cfiRange, contents }
   }
 
@@ -382,6 +383,42 @@ const ProgramContentEbookReader: React.VFC<{
     }
   }, [programContentId, currentMemberId])
 
+  const highlightClickEvent = (e: MouseEvent) => {
+    e.stopPropagation()
+
+    if (isDragging.current) {
+      e.preventDefault()
+      isDragging.current = false
+      return
+    }
+
+    const {
+      dataset: { id: dataId },
+    } = e.target as HTMLElement
+
+    const foundHighlight = highlights.find(highlight => highlight.id === dataId)
+
+    if (foundHighlight) {
+      const range = rendition.current?.getRange(foundHighlight.cfiRange)
+      const content = rendition.current?.hooks.content
+
+      if (range) {
+        const rect = range.getBoundingClientRect()
+
+        if (rect) {
+          setToolbarPosition({
+            top: rect.bottom, // Position the toolbar below the selected text
+            left: rect.left % (content as any).context._layout.width,
+          })
+        }
+
+        setCurrentSelection(foundHighlight.cfiRange, null)
+
+        setToolbarVisible(true)
+      }
+    }
+  }
+
   const reRenderAnnotation = () => {
     if (rendition.current && isRenditionReady) {
       let isChanged = false
@@ -389,25 +426,46 @@ const ProgramContentEbookReader: React.VFC<{
       const updatedHighlights = highlights.map((highlight, index) => {
         let newHighlight = { ...highlight }
         if (!highlight.colorDone) {
-          rendition.current?.annotations.highlight(highlight.cfiRange, {}, function () {}, 'hl', {
-            fill: highlight.color,
-            'fill-opacity': '0.5',
-            'mix-blend-mode': 'multiply',
-          })
+          rendition.current?.annotations.highlight(
+            highlight.cfiRange,
+            {
+              id: highlight.id,
+            },
+            (e: MouseEvent) => {
+              highlightClickEvent(e)
+            },
+            'hl',
+            {
+              fill: highlight.color,
+              'fill-opacity': '0.5',
+              'mix-blend-mode': 'multiply',
+            },
+          )
 
           newHighlight.colorDone = true
           isChanged = true
         }
 
         if (highlight.annotation && !highlight.underlineDone) {
-          rendition.current?.annotations.add('underline', highlight.cfiRange, {}, undefined, 'underline', {
-            stroke: 'transparent',
-            'stroke-opacity': '0.5',
-            'mix-blend-mode': 'none',
-            'stroke-width': '1',
-            'stroke-linecap': 'butt',
-            'stroke-dasharray': '1,2',
-          })
+          rendition.current?.annotations.add(
+            'underline',
+            highlight.cfiRange,
+            {
+              id: highlight.id,
+            },
+            (e: MouseEvent) => {
+              highlightClickEvent(e)
+            },
+            'underline',
+            {
+              stroke: 'transparent',
+              'stroke-opacity': '0.5',
+              'mix-blend-mode': 'none',
+              'stroke-width': '1',
+              'stroke-linecap': 'butt',
+              'stroke-dasharray': '1,2',
+            },
+          )
 
           newHighlight.underlineDone = true
           isChanged = true
@@ -434,21 +492,42 @@ const ProgramContentEbookReader: React.VFC<{
           rendition.current?.annotations.remove(highlight.cfiRange, 'underline')
         }
 
-        rendition.current?.annotations.highlight(highlight.cfiRange, {}, function () {}, 'hl', {
-          fill: highlight.color,
-          'fill-opacity': '0.5',
-          'mix-blend-mode': 'multiply',
-        })
+        rendition.current?.annotations.highlight(
+          highlight.cfiRange,
+          {
+            id: highlight.id,
+          },
+          (e: MouseEvent) => {
+            highlightClickEvent(e)
+          },
+          'hl',
+          {
+            fill: highlight.color,
+            'fill-opacity': '0.5',
+            'mix-blend-mode': 'multiply',
+          },
+        )
 
         if (highlight.annotation) {
-          rendition.current?.annotations.add('underline', highlight.cfiRange, {}, undefined, 'underline', {
-            stroke: 'transparent',
-            'stroke-opacity': '0.5',
-            'mix-blend-mode': 'none',
-            'stroke-width': '1',
-            'stroke-linecap': 'butt',
-            'stroke-dasharray': '1,2',
-          })
+          rendition.current?.annotations.add(
+            'underline',
+            highlight.cfiRange,
+            {
+              id: highlight.id,
+            },
+            (e: MouseEvent) => {
+              highlightClickEvent(e)
+            },
+            'underline',
+            {
+              stroke: 'transparent',
+              'stroke-opacity': '0.5',
+              'mix-blend-mode': 'none',
+              'stroke-width': '1',
+              'stroke-linecap': 'butt',
+              'stroke-dasharray': '1,2',
+            },
+          )
         }
       }
     })
@@ -631,6 +710,7 @@ const ProgramContentEbookReader: React.VFC<{
                   }}
                   getRendition={async (_rendition: Rendition) => {
                     rendition.current = _rendition
+
                     if (rendition.current) {
                       setIsRenditionReady(true)
 
@@ -640,6 +720,13 @@ const ProgramContentEbookReader: React.VFC<{
                       updateNavigation()
 
                       rendition.current.spread('auto')
+
+                      rendition.current.hooks.content.register((contents: any) => {
+                        const doc = contents.document
+                        const body = doc.body
+                        // Disable Chrome mobile's "tap to search" on a web app
+                        body.setAttribute('tabindex', '-1')
+                      })
                     }
 
                     // initial theme
@@ -647,6 +734,14 @@ const ProgramContentEbookReader: React.VFC<{
                     rendition.current.themes.override('background-color', '#ffffff')
                     rendition.current?.themes.default({ p: { 'font-size': '18px!important' } })
                     rendition.current?.themes.default({ p: { 'line-height': '1.5 !important' } })
+
+                    rendition.current.on('mousedown', (event: MouseEvent) => {
+                      isDragging.current = false
+                    })
+
+                    rendition.current.on('mousemove', (event: MouseEvent) => {
+                      isDragging.current = true
+                    })
 
                     rendition.current.on('resized', (size: { width: number; height: number }) => {
                       setReRenderHighlightQueue(prev => [...prev, `${size}`])
