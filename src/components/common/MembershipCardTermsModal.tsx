@@ -26,11 +26,11 @@ interface MembershipCardTermsModalProps {
 }
 
 const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({ isOpen, onClose, onOpen, title, id }) => {
-  const { data } = useMembershipCardTerms(id)
+  const { cards } = useMembershipCardTerms(id)
 
   useEffect(() => {
-    console.log(data)
-  }, [data])
+    console.log({ cards })
+  }, [cards])
 
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>

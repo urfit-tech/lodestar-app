@@ -1,107 +1,181 @@
-import { gql, useQuery } from '@apollo/client'
+import { gql, useApolloClient, useQuery } from '@apollo/client'
+import { first } from 'lodash'
+import { useEffect, useState } from 'react'
 import hasura from '../hasura'
 
-type resCardDiscount = {
-  id: string
-  type: string
-  amount: number
-  product: {
+type strategyDiscount = {
+  productId: string
+  queryClient: any
+}
+
+type MembershipCardPlanDetails = {
+  productName: string
+  productPlanName?: string
+} | null
+
+type CardDiscount = {
+  discountId: string
+  discountType: string
+  discountAmount: number
+  discountProduct: {
     type: string
+    details?: MembershipCardPlanDetails
   }
 }
 
-type resCard = {
+type Card = {
   id: string
   title: string
   description: string
-  card_discounts: resCardDiscount[]
+  card_discounts: CardDiscount[]
 }
 
-type CardDiscountItem = {
-  id: string
-  type: string
-  amount: number
-  productType: string
-}
+const GET_CARD_QUERY = gql`
+  query GetCard($id: uuid!) {
+    card(where: { id: { _eq: $id } }) {
+      id
+      title
+      description
+      card_discounts {
+        id
+        type
+        amount
+        product {
+          type
+          target
+        }
+      }
+    }
+  }
+`
+const Get_Activity_Ticket_Title = gql`
+  query GetActivityTicketTitle($id: uuid!) {
+    activity_ticket(where: { id: { _eq: $id } }) {
+      title
+    }
+  }
+`
 
-type CardInfoWithDiscountList = {
-  id: string
-  title: string
-  description: string
-  cardDiscounts: CardDiscountItem[]
+const Get_Program_And_Program_Plan_Info = gql`
+  query GetProgramPlanInfo($id: uuid!) {
+    program_plan(where: { id: { _eq: $id } }) {
+      title
+      program {
+        title
+      }
+    }
+  }
+`
+
+// Strategy functions map
+const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<MembershipCardPlanDetails> } = {
+  ActivityTicket: async discount => {
+    const { productId, queryClient } = discount
+    let response
+
+    try {
+      response = await queryClient.query({
+        query: Get_Activity_Ticket_Title,
+        variables: {
+          id: productId,
+        },
+      })
+    } catch (error) {
+      return null
+    }
+
+    const activityTicket = first(response.data.activity_ticket) as { title: string }
+
+    return {
+      productName: activityTicket?.title,
+    }
+  },
+  ProgramPlan: async discount => {
+    const { productId, queryClient } = discount
+    let response
+
+    try {
+      response = await queryClient.query({
+        query: Get_Program_And_Program_Plan_Info,
+        variables: {
+          id: productId,
+        },
+      })
+    } catch (error) {
+      return null
+    }
+
+    const programPlan = first(response.data.program_plan) as {
+      title: string
+      program: {
+        title: string
+      }
+    }
+
+    return {
+      productName: programPlan?.title,
+      productPlanName: programPlan?.program?.title,
+    }
+  },
+
+  default: async discount => {
+    // Default product strategy
+    return {
+      productName: 'Default Product',
+      productPlanName: 'Default Plan',
+    }
+  },
 }
 
 export const useMembershipCardTerms = (id: string) => {
-  // const [cardInfoWithDiscountList, setCardInfoWithDiscountList] = useState<CardInfoWithDiscountList | null>(null);
-  let cardInfoWithDiscountList
+  const [cards, setCards] = useState<Card[]>([])
+  const { loading, error, data, refetch } = useQuery<hasura.GetCard, hasura.GetCardVariables>(GET_CARD_QUERY, {
+    variables: { id },
+  })
 
-  const transformCard = (card: resCard): CardInfoWithDiscountList => {
-    return {
-      id: card.id,
-      title: card.title,
-      description: card.description,
-      cardDiscounts: card.card_discounts.map(discount => ({
-        id: discount.id,
-        type: discount.type,
-        amount: discount.amount,
-        productType: discount.product?.type || 'Unknown',
-      })),
+  const queryClient = useApolloClient()
+
+  useEffect(() => {
+    if (data && data.card) {
+      console.log({ data })
+      processCardDiscounts(data.card)
     }
-  }
+  }, [data])
 
-  const { loading, error, data, refetch } = useQuery<hasura.GetCard, hasura.GetCardVariables>(
-    gql`
-      query GetCard($id: uuid!) {
-        card(where: { id: { _eq: $id } }) {
-          id
-          title
-          description
-          card_discounts {
-            id
-            type
-            amount
-            product {
-              type
-              target
+  const processCardDiscounts = async (cards: hasura.GetCard['card']) => {
+    const processedCards = await Promise.all(
+      cards.map(async card => ({
+        id: card.id,
+        title: card.title,
+        description: card.description,
+        card_discounts: await Promise.all(
+          card.card_discounts.map(async discount => {
+            const details = await (strategyMap[discount.product.type] || strategyMap['default'])({
+              productId: discount.product.target,
+              queryClient,
+            })
+
+            return {
+              discountId: discount.id,
+              discountType: discount.type,
+              discountAmount: discount.amount,
+              discountProduct: {
+                type: discount.product.type,
+                ...(details ? { details } : {}),
+              },
             }
-          }
-        }
-      }
-    `,
-    { variables: { id } },
-  )
+          }),
+        ),
+      })),
+    )
 
-  if (error) {
-    throw new Error(`Cannot get card info, error: ${error.message}`)
-  }
-
-  if (data && data.card) {
-    const transformedCards: CardInfoWithDiscountList[] = data.card.map(transformCard)
-
-    transformedCards.map(c => {
-      const d = c.cardDiscounts.map(d => {
-        switch (d.productType) {
-          case 'ActivityTicket':
-            console.log(`ActivityTicket`)
-          case 'ProgramPlan':
-            console.log(`ProgramPlan`)
-          default:
-            console.log(`default`)
-        }
-        return {
-          ...d,
-        }
-      })
-      return {
-        ...c,
-      }
-    })
+    setCards(processedCards)
   }
 
   return {
-    loadingAppointmentPlans: loading,
-    errorAppointmentPlans: error,
-    data,
-    refetchAppointmentPlans: refetch,
+    loading,
+    cards,
+    error,
+    refetch,
   }
 }
