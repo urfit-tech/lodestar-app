@@ -14,10 +14,10 @@ type MembershipCardPlanDetails = {
 } | null
 
 type CardDiscount = {
-  discountId: string
-  discountType: string
-  discountAmount: number
-  discountProduct: {
+  id: string
+  type: string
+  amount: number
+  product: {
     type: string
     details?: MembershipCardPlanDetails
   }
@@ -67,59 +67,82 @@ const Get_Program_And_Program_Plan_Info = gql`
   }
 `
 
+const Get_Program_Package_And_Program_Package_Plan = gql`
+  query GetProgramPackageAndProgramPackagePlan($id: uuid!) {
+    program_package_plan(where: { id: { _eq: $id } }) {
+      title
+      program_package {
+        title
+      }
+    }
+  }
+`
+
+const executeQuery = async (queryClient: any, query: any, variables: any, processData: any) => {
+  let response
+  try {
+    response = await queryClient.query({
+      query: query,
+      variables: variables,
+    })
+  } catch (error) {
+    console.error('Error executing query:', error)
+    return null
+  }
+
+  return processData(response.data)
+}
+
 // Strategy functions map
 const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<MembershipCardPlanDetails> } = {
   ActivityTicket: async discount => {
-    const { productId, queryClient } = discount
-    let response
-
-    try {
-      response = await queryClient.query({
-        query: Get_Activity_Ticket_Title,
-        variables: {
-          id: productId,
-        },
-      })
-    } catch (error) {
-      return null
+    const processData = (data: any) => {
+      const activityTicket = first(data.activity_ticket) as { title: string }
+      return { productName: activityTicket?.title }
     }
 
-    const activityTicket = first(response.data.activity_ticket) as { title: string }
-
-    return {
-      productName: activityTicket?.title,
-    }
+    return executeQuery(discount.queryClient, Get_Activity_Ticket_Title, { id: discount.productId }, processData)
   },
+
   ProgramPlan: async discount => {
-    const { productId, queryClient } = discount
-    let response
-
-    try {
-      response = await queryClient.query({
-        query: Get_Program_And_Program_Plan_Info,
-        variables: {
-          id: productId,
-        },
-      })
-    } catch (error) {
-      return null
-    }
-
-    const programPlan = first(response.data.program_plan) as {
-      title: string
-      program: {
-        title: string
+    const processData = (data: any) => {
+      const programPlan = first(data.program_plan) as { title: string; program: { title: string } }
+      return {
+        productName: programPlan?.program?.title,
+        productPlanName: programPlan?.title,
       }
     }
 
-    return {
-      productName: programPlan?.title,
-      productPlanName: programPlan?.program?.title,
+    return executeQuery(
+      discount.queryClient,
+      Get_Program_And_Program_Plan_Info,
+      { id: discount.productId },
+      processData,
+    )
+  },
+
+  ProgramPackagePlan: async discount => {
+    const processData = (data: any) => {
+      const programPackagePlan = first(data.program_package_plan) as {
+        title: string
+        program_package: { title: string }
+      }
+      return {
+        productName: programPackagePlan?.program_package?.title,
+        productPlanName: programPackagePlan?.title,
+      }
     }
+
+    return executeQuery(
+      discount.queryClient,
+      Get_Program_Package_And_Program_Package_Plan,
+      { id: discount.productId },
+      processData,
+    )
   },
 
   default: async discount => {
-    // Default product strategy
+    // Default product strategy, possibly no need for querying
     return {
       productName: 'Default Product',
       productPlanName: 'Default Plan',
@@ -134,6 +157,15 @@ export const useMembershipCardTerms = (id: string) => {
   })
 
   const queryClient = useApolloClient()
+
+  const { data: testdata, loading: testLoad } = useQuery(Get_Program_Package_And_Program_Package_Plan, {
+    variables: { id: 'bb02a165-44f5-40ff-8219-4e9f1e030f59' },
+    fetchPolicy: 'network-only', // Example: Ensures fresh data is fetched each time
+  })
+
+  useEffect(() => {
+    console.log(testdata)
+  }, [testdata, testLoad])
 
   useEffect(() => {
     if (data && data.card) {
@@ -156,10 +188,10 @@ export const useMembershipCardTerms = (id: string) => {
             })
 
             return {
-              discountId: discount.id,
-              discountType: discount.type,
-              discountAmount: discount.amount,
-              discountProduct: {
+              id: discount.id,
+              type: discount.type,
+              amount: discount.amount,
+              product: {
                 type: discount.product.type,
                 ...(details ? { details } : {}),
               },
