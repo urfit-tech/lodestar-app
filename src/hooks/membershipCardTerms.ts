@@ -1,5 +1,4 @@
 import { gql, useApolloClient, useQuery } from '@apollo/client'
-import { first } from 'lodash'
 import { useEffect, useState } from 'react'
 import hasura from '../hasura'
 
@@ -78,71 +77,73 @@ const Get_Program_Package_And_Program_Package_Plan = gql`
   }
 `
 
-const executeQuery = async (queryClient: any, query: any, variables: any, processData: any) => {
-  let response
+const Get_Podcast_Program_And_Plan = gql`
+  query GetPodcastProgramAndPlan($id: uuid!) {
+    podcast_program(where: { id: { _eq: $id } }) {
+      title
+    }
+  }
+`
+
+const executeQuery = async (queryClient: any, query: any, variables: any) => {
   try {
-    response = await queryClient.query({
+    const response = await queryClient.query({
       query: query,
       variables: variables,
     })
+    return response.data
   } catch (error) {
     console.error('Error executing query:', error)
     return null
   }
-
-  return processData(response.data)
 }
 
 // Strategy functions map
-const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<MembershipCardPlanDetails> } = {
+const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<MembershipCardPlanDetails | null> } = {
   ActivityTicket: async discount => {
-    const processData = (data: any) => {
-      const activityTicket = first(data.activity_ticket) as { title: string }
-      return { productName: activityTicket?.title }
-    }
-
-    return executeQuery(discount.queryClient, Get_Activity_Ticket_Title, { id: discount.productId }, processData)
+    const data = await executeQuery(discount.queryClient, Get_Activity_Ticket_Title, { id: discount.productId })
+    if (!data) return null
+    const activityTicket = data.activity_ticket && data.activity_ticket[0] ? data.activity_ticket[0] : null
+    if (!activityTicket) return null
+    return { productName: activityTicket.title }
   },
 
   ProgramPlan: async discount => {
-    const processData = (data: any) => {
-      const programPlan = first(data.program_plan) as { title: string; program: { title: string } }
-      return {
-        productName: programPlan?.program?.title,
-        productPlanName: programPlan?.title,
-      }
+    const data = await executeQuery(discount.queryClient, Get_Program_And_Program_Plan_Info, { id: discount.productId })
+    if (!data) return null
+    const programPlan = data.program_plan && data.program_plan[0] ? data.program_plan[0] : null
+    if (!programPlan) return null
+    return {
+      productName: programPlan.program.title,
+      productPlanName: programPlan.title,
     }
-
-    return executeQuery(
-      discount.queryClient,
-      Get_Program_And_Program_Plan_Info,
-      { id: discount.productId },
-      processData,
-    )
   },
 
   ProgramPackagePlan: async discount => {
-    const processData = (data: any) => {
-      const programPackagePlan = first(data.program_package_plan) as {
-        title: string
-        program_package: { title: string }
-      }
-      return {
-        productName: programPackagePlan?.program_package?.title,
-        productPlanName: programPackagePlan?.title,
-      }
+    const data = await executeQuery(discount.queryClient, Get_Program_Package_And_Program_Package_Plan, {
+      id: discount.productId,
+    })
+    if (!data) return null
+    const programPackagePlan =
+      data.program_package_plan && data.program_package_plan[0] ? data.program_package_plan[0] : null
+    if (!programPackagePlan) return null
+    return {
+      productName: programPackagePlan.program_package.title,
+      productPlanName: programPackagePlan.title,
     }
+  },
 
-    return executeQuery(
-      discount.queryClient,
-      Get_Program_Package_And_Program_Package_Plan,
-      { id: discount.productId },
-      processData,
-    )
+  PodcastProgram: async discount => {
+    const data = await executeQuery(discount.queryClient, Get_Podcast_Program_And_Plan, { id: discount.productId })
+    if (!data) return null
+    const podcast = data.podcast_program && data.podcast_program[0] ? data.podcast_program[0] : null
+    if (!podcast) return null
+    return {
+      productName: podcast.title,
+    }
   },
 
   default: async discount => {
-    // Default product strategy, possibly no need for querying
     return {
       productName: 'Default Product',
       productPlanName: 'Default Plan',
@@ -158,18 +159,8 @@ export const useMembershipCardTerms = (id: string) => {
 
   const queryClient = useApolloClient()
 
-  const { data: testdata, loading: testLoad } = useQuery(Get_Program_Package_And_Program_Package_Plan, {
-    variables: { id: 'bb02a165-44f5-40ff-8219-4e9f1e030f59' },
-    fetchPolicy: 'network-only', // Example: Ensures fresh data is fetched each time
-  })
-
-  useEffect(() => {
-    console.log(testdata)
-  }, [testdata, testLoad])
-
   useEffect(() => {
     if (data && data.card) {
-      console.log({ data })
       processCardDiscounts(data.card)
     }
   }, [data])
