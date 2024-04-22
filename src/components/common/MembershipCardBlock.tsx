@@ -57,7 +57,7 @@ const MembershipCardBlock: React.VFC<{
           {description && <BraftContent>{description}</BraftContent>}
         </div>
         <StyledCardContainer className="m-0 ml-5">
-          <MembershipCard template={template} templateVars={templateVars} id={id} />
+          <MembershipCard template={template} templateVars={templateVars} />
         </StyledCardContainer>
       </div>
     )
@@ -86,7 +86,7 @@ const MembershipCardBlock: React.VFC<{
         {description && <BraftContent>{description}</BraftContent>}
         <button onClick={onOpen}>優惠條件</button>
       </StyledTerms>
-      <MembershipCardTermsModal id={id} title={title} isOpen={isOpen} onClose={onClose} onOpen={onOpen} />
+      <MembershipCardTermsModal id={id} title={title} isOpen={isOpen} onClose={onClose} />
     </div>
   )
 }

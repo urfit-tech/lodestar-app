@@ -10,6 +10,7 @@ type strategyDiscount = {
 type MembershipCardPlanDetails = {
   productName: string
   productPlanName?: string
+  productId: string
 } | null
 
 type CardDiscount = {
@@ -51,6 +52,9 @@ const Get_Activity_Ticket_Title = gql`
   query GetActivityTicketTitle($id: uuid!) {
     activity_ticket(where: { id: { _eq: $id } }) {
       title
+      activity {
+        id
+      }
     }
   }
 `
@@ -61,6 +65,7 @@ const Get_Program_And_Program_Plan_Info = gql`
       title
       program {
         title
+        id
       }
     }
   }
@@ -72,6 +77,7 @@ const Get_Program_Package_And_Program_Package_Plan = gql`
       title
       program_package {
         title
+        id
       }
     }
   }
@@ -81,6 +87,20 @@ const Get_Podcast_Program_And_Plan = gql`
   query GetPodcastProgramAndPlan($id: uuid!) {
     podcast_program(where: { id: { _eq: $id } }) {
       title
+      id
+    }
+  }
+`
+
+const Get_Program_Plan_By_Membership_Card_Id = gql`
+  query GetProgramPlanByMembershipCard($card_id: uuid!) {
+    program_plan(where: { card_id: { _eq: $card_id } }) {
+      id
+      title
+      program {
+        id
+        title
+      }
     }
   }
 `
@@ -98,6 +118,26 @@ const executeQuery = async (queryClient: any, query: any, variables: any) => {
   }
 }
 
+const fetchMembershipCardEquityProduct = async (queryClient: any, membershipCardId: string) => {
+  const data = await executeQuery(queryClient, Get_Program_Plan_By_Membership_Card_Id, { card_id: membershipCardId })
+  if (!data) return null
+  return data.program_plan.map((item: any) => {
+    return {
+      id: item.id,
+      type: 'equity',
+      amount: 1,
+      product: {
+        type: 'ProgramPlan',
+        details: {
+          productName: item.program.title,
+          productPlanName: item.title,
+          productId: item.program.id,
+        },
+      },
+    }
+  })
+}
+
 // Strategy functions map
 const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<MembershipCardPlanDetails | null> } = {
   ActivityTicket: async discount => {
@@ -105,7 +145,7 @@ const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<Memb
     if (!data) return null
     const activityTicket = data.activity_ticket && data.activity_ticket[0] ? data.activity_ticket[0] : null
     if (!activityTicket) return null
-    return { productName: activityTicket.title }
+    return { productName: activityTicket.title, productId: activityTicket.activity.id }
   },
 
   ProgramPlan: async discount => {
@@ -116,6 +156,7 @@ const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<Memb
     return {
       productName: programPlan.program.title,
       productPlanName: programPlan.title,
+      productId: programPlan.program.id,
     }
   },
 
@@ -130,6 +171,7 @@ const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<Memb
     return {
       productName: programPackagePlan.program_package.title,
       productPlanName: programPackagePlan.title,
+      productId: programPackagePlan.program_package.id,
     }
   },
 
@@ -140,6 +182,7 @@ const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<Memb
     if (!podcast) return null
     return {
       productName: podcast.title,
+      productId: podcast.id,
     }
   },
 
@@ -147,12 +190,13 @@ const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<Memb
     return {
       productName: 'Default Product',
       productPlanName: 'Default Plan',
+      productId: 'default',
     }
   },
 }
 
 export const useMembershipCardTerms = (id: string) => {
-  const [cards, setCards] = useState<Card[]>([])
+  const [cards, setCards] = useState<Card>()
   const { loading, error, data, refetch } = useQuery<hasura.GetCard, hasura.GetCardVariables>(GET_CARD_QUERY, {
     variables: { id },
   })
@@ -166,33 +210,37 @@ export const useMembershipCardTerms = (id: string) => {
   }, [data])
 
   const processCardDiscounts = async (cards: hasura.GetCard['card']) => {
-    const processedCards = await Promise.all(
-      cards.map(async card => ({
-        id: card.id,
-        title: card.title,
-        description: card.description,
-        card_discounts: await Promise.all(
-          card.card_discounts.map(async discount => {
-            const details = await (strategyMap[discount.product.type] || strategyMap['default'])({
-              productId: discount.product.target,
-              queryClient,
-            })
+    const card = cards[0]
+    const processedCard = {
+      id: card.id,
+      title: card.title,
+      description: card.description,
+      card_discounts: await Promise.all(
+        card.card_discounts.map(async discount => {
+          const details = await (strategyMap[discount.product.type] || strategyMap['default'])({
+            productId: discount.product.target,
+            queryClient,
+          })
 
-            return {
-              id: discount.id,
-              type: discount.type,
-              amount: discount.amount,
-              product: {
-                type: discount.product.type,
-                ...(details ? { details } : {}),
-              },
-            }
-          }),
-        ),
-      })),
-    )
+          return {
+            id: discount.id,
+            type: discount.type,
+            amount: discount.amount,
+            product: {
+              type: discount.product.type,
+              ...(details ? { details } : {}),
+            },
+          }
+        }),
+      ),
+    }
 
-    setCards(processedCards)
+    const equityData = await fetchMembershipCardEquityProduct(queryClient, card.id)
+    if (equityData.length > 0) {
+      processedCard.card_discounts.push(...equityData)
+    }
+
+    setCards(processedCard)
   }
 
   return {
