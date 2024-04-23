@@ -677,6 +677,8 @@
   "common.ui.uploadImage": "上傳圖片",
   "common.ui.viewAll": "查看全部",
   "common.ui.virtual": "虛擬",
+  "common.ui.ctaButton": "立即購買課程",
+  "common.ui.previewButton": "課程預告片",
   "common.unit.currency": "元",
   "common.unit.min": "分",
   "common.unit.people": "{projectType} {count, plural, one {人} other {人}}",
@@ -1177,6 +1179,7 @@
   "program.ui.uploadByMe": "我要上傳",
   "program.ui.view": "查看",
   "program.ui.viewOwnPractice": "查看我的作業",
+  
   "programPackage.label.availableForLimitTime": "可觀看 {amount} {unit}",
   "programPackage.label.decorationPart1": "課程",
   "programPackage.label.decorationPart2": "組合",

@@ -677,6 +677,8 @@
   "common.ui.uploadImage": "Upload Image",
   "common.ui.viewAll": "View All",
   "common.ui.virtual": "virtual",
+  "common.ui.ctaButton": "join class",
+  "common.ui.previewButton": "preview class",
   "common.unit.currency": "Yuan",
   "common.unit.min": "min",
   "common.unit.people": "{projectType} {count, plural, one {person} other {person}}",

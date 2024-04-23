@@ -677,6 +677,8 @@
   "common.ui.uploadImage": "Tải lên Hình ảnh",
   "common.ui.viewAll": "Xem tất cả",
   "common.ui.virtual": "ảo",
+  "common.ui.ctaButton": "立即購買課程",
+  "common.ui.previewButton": "課程預告片",
   "common.unit.currency": "Nhân dân tệ",
   "common.unit.min": "tối thiểu",
   "common.unit.people": "{projectType} {count, plural, one {person} other {person}}",
