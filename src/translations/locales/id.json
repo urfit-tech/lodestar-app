@@ -681,6 +681,8 @@
   "common.ui.uploadImage": "Unggah Gambar",
   "common.ui.viewAll": "Lihat Semua",
   "common.ui.virtual": "virtual",
+  "common.ui.ctaButton": "立即購買課程",
+  "common.ui.previewButton": "課程預告片",
   "common.unit.currency": "Yuan",
   "common.unit.min": "min",
   "common.unit.people": "{projectType} {count, plural, one {person} other {person}}",
