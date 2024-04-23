@@ -26,7 +26,7 @@ const ProgramPage: React.VFC = () => {
     }
   }, [resourceCollection, tracking, pageFrom, utmSource, isAuthenticating, loadingResourceCollection])
 
-  return <ProgramPageContent variant="primary" />
+  return <ProgramPageContent variant="secondary" />
 }
 
 export default ProgramPage

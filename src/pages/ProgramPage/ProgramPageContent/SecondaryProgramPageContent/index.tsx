@@ -21,7 +21,7 @@ import { useEnrolledProgramPackage } from '../../../../hooks/programPackage'
 import { ReactComponent as PlayIcon } from '../../../../images/play-fill-icon.svg'
 import ForbiddenPage from '../../../ForbiddenPage'
 import LoadingPage from '../../../LoadingPage'
-import { CustomizeProgramBanner, PerpetualProgramBanner } from '../../ProgramBanner'
+import SecondaryProgramBanner from '../../ProgramBanner/SecondaryProgramBanner'
 import ProgramBestReviewsCarousel from '../../ProgramBestReviewsCarousel'
 import ProgramContentListSection from '../../ProgramContentListSection'
 import ProgramContentCountBlock from '../../ProgramInfoBlock/ProgramContentCountBlock'
@@ -161,15 +161,11 @@ const SecondaryProgramPageContent: React.VFC = () => {
       {!loadingApp && <ProgramPageHelmet program={program} />}
 
       <div>
-        {Number(settings['layout.program_page']) ? (
-          <CustomizeProgramBanner program={program} isEnrolled={isEnrolled} />
-        ) : (
-          <PerpetualProgramBanner
-            program={program}
-            isEnrolledByProgramPackage={isEnrolledByProgramPackage}
-            isDelivered={isDelivered}
-          />
-        )}
+        <SecondaryProgramBanner
+          program={program}
+          isEnrolledByProgramPackage={isEnrolledByProgramPackage}
+          isDelivered={isDelivered}
+        />
 
         <ProgramIntroBlock>
           <div className="container">
