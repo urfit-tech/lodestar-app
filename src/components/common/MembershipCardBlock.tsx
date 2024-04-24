@@ -35,7 +35,7 @@ const StyledSubTitle = styled.div`
     display: flex;
     align-items: center;
   }
-  button {
+  .discountTerm {
     color: #4c5b8f;
   }
 `
@@ -87,7 +87,9 @@ const MembershipCardBlock: React.VFC<{
             : formatMessage(commonMessages.content.noPeriod)}
         </div>
 
-        <button onClick={onOpen}>{formatMessage(commonMessages.defaults.discountTerms)}</button>
+        <button className="discountTerm" onClick={onOpen}>
+          {formatMessage(commonMessages.defaults.discountTerms)}
+        </button>
       </StyledSubTitle>
       <MembershipCardTermsModal id={id} title={title} isOpen={isOpen} onClose={onClose} />
     </div>
