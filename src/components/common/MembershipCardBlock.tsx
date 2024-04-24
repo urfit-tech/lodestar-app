@@ -25,16 +25,19 @@ const StyledTitle = styled.h1`
   text-overflow: ellipsis;
 `
 const StyledSubTitle = styled.div`
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 1rem;
   color: rgba(0, 0, 0, 0.45);
   font-size: 14px;
   letter-spacing: 0.18px;
-`
-
-const StyledTerms = styled.div`
-  display: flex;
-  justify-content: space-between;
-  color: #4c5b8f;
+  .expire {
+    display: flex;
+    align-items: center;
+  }
+  button {
+    color: #4c5b8f;
+  }
 `
 
 const MembershipCardBlock: React.VFC<{
@@ -72,20 +75,20 @@ const MembershipCardBlock: React.VFC<{
       <StyledTitle>{title}</StyledTitle>
 
       <StyledSubTitle>
-        <Icon as={AiOutlineCalendar} className="mr-2" />
-        {expiredAt
-          ? formatMessage(
-              { id: 'common.expiredTime', defaultMessage: '{expiredTime} 止' },
-              {
-                expiredTime: moment(expiredAt).format('YYYY/MM/DD'),
-              },
-            )
-          : formatMessage(commonMessages.content.noPeriod)}
-      </StyledSubTitle>
-      <StyledTerms>
-        {description && <BraftContent>{description}</BraftContent>}
+        <div className="expire">
+          <Icon as={AiOutlineCalendar} className="mr-2" />
+          {expiredAt
+            ? formatMessage(
+                { id: 'common.expiredTime', defaultMessage: '{expiredTime} 止' },
+                {
+                  expiredTime: moment(expiredAt).format('YYYY/MM/DD'),
+                },
+              )
+            : formatMessage(commonMessages.content.noPeriod)}
+        </div>
+
         <button onClick={onOpen}>{formatMessage(commonMessages.defaults.discountTerms)}</button>
-      </StyledTerms>
+      </StyledSubTitle>
       <MembershipCardTermsModal id={id} title={title} isOpen={isOpen} onClose={onClose} />
     </div>
   )
