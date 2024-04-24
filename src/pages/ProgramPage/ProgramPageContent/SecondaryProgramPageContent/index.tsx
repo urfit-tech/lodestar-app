@@ -8,7 +8,7 @@ import { useIntl } from 'react-intl'
 import { Redirect, useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
-import Responsive, { BREAK_POINT } from '../../../../components/common/Responsive'
+import { BREAK_POINT } from '../../../../components/common/Responsive'
 import DefaultLayout from '../../../../components/layout/DefaultLayout'
 import ReviewCollectionBlock from '../../../../components/review/ReviewCollectionBlock'
 import MediaPlayerContext from '../../../../contexts/MediaPlayerContext'
@@ -20,11 +20,10 @@ import ForbiddenPage from '../../../ForbiddenPage'
 import LoadingPage from '../../../LoadingPage'
 import SecondaryProgramBanner from '../../ProgramBanner/SecondaryProgramBanner'
 import ProgramContentListSection from '../../ProgramContentListSection'
-import ProgramInfoCard from '../../ProgramInfoBlock/ProgramInfoCard'
+import SecondaryProgramInfoCard from '../../ProgramInfoBlock/SecondaryProgramInfoCard'
 import ProgramInstructorCollectionBlock from '../../ProgramInstructorCollectionBlock'
 import ProgramPageHelmet from '../../ProgramPageHelmet'
 import ProgramPlanCard from '../../ProgramPlanCard'
-import ProgramTagCard from '../../ProgramTagCard'
 
 const StyledIntroWrapper = styled.div`
   ${desktopViewMixin(css`
@@ -166,6 +165,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
           <div className="container">
             <div className="row">
               <div className="col-12 col-lg-8">
+                <SecondaryProgramInfoCard program={program} />
                 <div className="mb-5">
                   <BraftContent>{program.description}</BraftContent>
                 </div>
@@ -177,50 +177,31 @@ const SecondaryProgramPageContent: React.VFC = () => {
                 ) : null}
               </div>
 
-              {Number(settings['layout.program_page']) ? (
-                <Responsive.Desktop>
-                  <StyledIntroWrapper className="col-12 col-lg-4 mb-3">
-                    {!!program.tags.length && (
-                      <ProgramTagCard
-                        tags={program.tags.map(tag => ({
-                          id: tag,
-                          name: tag,
-                        }))}
-                      />
-                    )}
-                  </StyledIntroWrapper>
-                </Responsive.Desktop>
-              ) : (
-                <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
-                  <Responsive.Desktop>
-                    <ProgramInfoCard instructorId={instructorId} program={program} />
-                  </Responsive.Desktop>
-
-                  {!isEnrolledByProgramPackage && programPlansEnrollmentsAggregateList && (
-                    <div
-                      id="subscription"
-                      className={`mb-5${isPlanListSticky ? ' programPlanSticky' : ''}`}
-                      ref={planListHeightRef}
-                    >
-                      {program.plans
-                        .filter(programPlan => programPlan.publishedAt)
-                        .map(programPlan => (
-                          <div key={programPlan.id} className="mb-3">
-                            <ProgramPlanCard
-                              programId={program.id}
-                              programPlan={programPlan}
-                              enrollmentCount={
-                                programPlansEnrollmentsAggregateList.find(v => v.id === programPlan.id)?.enrollmentCount
-                              }
-                              isProgramSoldOut={Boolean(program.isSoldOut)}
-                              isPublished={Boolean(program.publishedAt)}
-                            />
-                          </div>
-                        ))}
-                    </div>
-                  )}
-                </StyledIntroWrapper>
-              )}
+              <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
+                {!isEnrolledByProgramPackage && programPlansEnrollmentsAggregateList && (
+                  <div
+                    id="subscription"
+                    className={`mb-5${isPlanListSticky ? ' programPlanSticky' : ''}`}
+                    ref={planListHeightRef}
+                  >
+                    {program.plans
+                      .filter(programPlan => programPlan.publishedAt)
+                      .map(programPlan => (
+                        <div key={programPlan.id} className="mb-3">
+                          <ProgramPlanCard
+                            programId={program.id}
+                            programPlan={programPlan}
+                            enrollmentCount={
+                              programPlansEnrollmentsAggregateList.find(v => v.id === programPlan.id)?.enrollmentCount
+                            }
+                            isProgramSoldOut={Boolean(program.isSoldOut)}
+                            isPublished={Boolean(program.publishedAt)}
+                          />
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </StyledIntroWrapper>
             </div>
 
             {!Number(settings['layout.program_page']) ? (
