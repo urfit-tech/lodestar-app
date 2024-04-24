@@ -13,9 +13,10 @@ import {
   Tr,
 } from '@chakra-ui/react'
 import React from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useMembershipCardTerms } from '../../hooks/membershipCardTerms'
+import commonMessages from './translation'
 
 interface MembershipCardTermsModalProps {
   isOpen: boolean
@@ -25,20 +26,6 @@ interface MembershipCardTermsModalProps {
 }
 
 type ProductType = 'ActivityTicket' | 'ProgramPlan' | 'ProgramPackagePlan' | 'PodcastProgram'
-
-const messages = defineMessages({
-  ActivityTicket: { id: 'common.membershipCardTerm.activityTicket', defaultMessage: '活動' },
-  ProgramPlan: { id: 'common.membershipCardTerm.program', defaultMessage: '課程' },
-  ProgramPackagePlan: { id: 'common.membershipCardTerm.programPackage', defaultMessage: '課程組合' },
-  PodcastProgram: { id: 'common.membershipCardTerm.podcastProgram', defaultMessage: '廣播' },
-  cashDiscount: { id: 'common.membershipCardTerm.cashDiscount', defaultMessage: '折抵金額' },
-  percentageDiscount: { id: 'common.membershipCardTerm.percentageDiscount', defaultMessage: '折抵比例' },
-  generalDiscount: { id: 'common.membershipCardTerm.generalDiscount', defaultMessage: '折抵' },
-  type: { id: 'common.membershipCardTerm.type', defaultMessage: '類型' },
-  discountName: { id: 'common.membershipCardTerm.discountName', defaultMessage: '名稱' },
-  discountType: { id: 'common.membershipCardTerm.discountType', defaultMessage: '優惠類型' },
-  equityType: { id: 'common.membershipCardTerm.equityType', defaultMessage: '權益開通' },
-})
 
 const StyledTable = styled(ChakraTable)`
   && {
@@ -65,19 +52,21 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({ isO
   const { formatMessage } = useIntl()
 
   const renderProductType = (productType: string) => {
-    return messages[productType as ProductType] ? formatMessage(messages[productType as ProductType]) : productType
+    return commonMessages.MembershipCardTermsModal[productType as ProductType]
+      ? formatMessage(commonMessages.MembershipCardTermsModal[productType as ProductType])
+      : productType
   }
 
   const renderDiscount = (discount: { type: string; amount: number }) => {
     switch (discount.type) {
       case 'cash':
-        return `${formatMessage(messages.cashDiscount)} ${discount.amount}`
+        return `${formatMessage(commonMessages.MembershipCardTermsModal.cashDiscount)} ${discount.amount}`
       case 'percentage':
-        return `${formatMessage(messages.percentageDiscount)} ${discount.amount}%`
+        return `${formatMessage(commonMessages.MembershipCardTermsModal.percentageDiscount)} ${discount.amount}%`
       case 'equity':
-        return `${formatMessage(messages.equityType)}`
+        return `${formatMessage(commonMessages.MembershipCardTermsModal.equityType)}`
       default:
-        return `${formatMessage(messages.generalDiscount)} ${discount.amount}`
+        return `${formatMessage(commonMessages.MembershipCardTermsModal.generalDiscount)} ${discount.amount}`
     }
   }
 
@@ -101,16 +90,16 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({ isO
       <ModalOverlay />
       <ModalContent maxW={{ base: '80%', sm: '70%', md: '60%', lg: '40%' }} pt="20px" pb="40px" py="30px">
         <ModalHeader>{title}</ModalHeader>
-        <StyledModalHeader>優惠條件</StyledModalHeader>
+        <StyledModalHeader>{formatMessage(commonMessages.MembershipCardTermsModal.discountTerms)}</StyledModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <div style={{ overflowX: 'auto' }}>
             <StyledTable variant="simple">
               <Thead>
                 <Tr>
-                  <Th className="th-type">{formatMessage(messages.type)}</Th>
-                  <Th className="th-type">{formatMessage(messages.discountName)}</Th>
-                  <Th className="th-type">{formatMessage(messages.discountType)}</Th>
+                  <Th className="th-type">{formatMessage(commonMessages.MembershipCardTermsModal.type)}</Th>
+                  <Th className="th-type">{formatMessage(commonMessages.MembershipCardTermsModal.discountName)}</Th>
+                  <Th className="th-type">{formatMessage(commonMessages.MembershipCardTermsModal.discountType)}</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -136,7 +125,7 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({ isO
             </StyledTable>
           </div>
         </ModalBody>
-        <StyledModalHeader>使用描述</StyledModalHeader>
+        <StyledModalHeader>{formatMessage(commonMessages.MembershipCardTermsModal.usageDescription)}</StyledModalHeader>
         <ModalBody>{cards?.description}</ModalBody>
       </ModalContent>
     </Modal>

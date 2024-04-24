@@ -84,7 +84,7 @@ const MembershipCardBlock: React.VFC<{
       </StyledSubTitle>
       <StyledTerms>
         {description && <BraftContent>{description}</BraftContent>}
-        <button onClick={onOpen}>優惠條件</button>
+        <button onClick={onOpen}>{formatMessage(commonMessages.defaults.discountTerms)}</button>
       </StyledTerms>
       <MembershipCardTermsModal id={id} title={title} isOpen={isOpen} onClose={onClose} />
     </div>
