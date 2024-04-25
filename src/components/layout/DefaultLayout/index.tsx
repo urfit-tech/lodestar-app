@@ -264,7 +264,7 @@ const DefaultLayout: React.FC<{
                   name={currentMember.name}
                   username={currentMember.username}
                   email={currentMember.email}
-                  pictureUrl={currentMember.pictureUrl || DefaultAvatar}
+                  pictureUrl={member?.pictureUrl || DefaultAvatar}
                 />
               ) : (
                 <AuthButton />
