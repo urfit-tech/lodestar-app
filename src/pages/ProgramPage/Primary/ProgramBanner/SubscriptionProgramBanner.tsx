@@ -3,11 +3,11 @@ import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import MemberAvatar from '../../../components/common/MemberAvatar'
-import { BREAK_POINT } from '../../../components/common/Responsive'
-import VideoPlayer from '../../../components/common/VideoPlayer'
-import { productMessages } from '../../../helpers/translation'
-import { Program, ProgramRole } from '../../../types/program'
+import MemberAvatar from '../../../../components/common/MemberAvatar'
+import { BREAK_POINT } from '../../../../components/common/Responsive'
+import VideoPlayer from '../../../../components/common/VideoPlayer'
+import { productMessages } from '../../../../helpers/translation'
+import { Program, ProgramRole } from '../../../../types/program'
 
 const StyledTags = styled.div`
   margin-bottom: 1rem;

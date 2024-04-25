@@ -1,7 +1,7 @@
 import React from 'react'
-import Responsive from '../../../components/common/Responsive'
-import { Category } from '../../../types/general'
-import { Program, ProgramContent, ProgramContentSection, ProgramPlan, ProgramRole } from '../../../types/program'
+import Responsive from '../../../../components/common/Responsive'
+import { Category } from '../../../../types/general'
+import { Program, ProgramContent, ProgramContentSection, ProgramPlan, ProgramRole } from '../../../../types/program'
 import ProgramContentCountBlock from './ProgramContentCountBlock'
 import ProgramInfoCard, { StyledProgramInfoCard } from './ProgramInfoCard'
 
