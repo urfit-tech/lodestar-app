@@ -32,6 +32,7 @@ export const commonMessages = {
     or: { id: 'common.or', defaultMessage: '或' },
     about: { id: 'common.about', defaultMessage: '約' },
     countdown: { id: 'common.countdown', defaultMessage: '優惠倒數' },
+    discountTerms: { id: 'common.discountTerms', defaultMessage: '優惠條件' },
     more: { id: 'common.more', defaultMessage: '查看更多' },
     check: { id: 'common.check', defaultMessage: '查看' },
   }),

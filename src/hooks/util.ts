@@ -1,3 +1,4 @@
+import { ApolloClient } from '@apollo/client'
 import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
@@ -147,5 +148,32 @@ export async function fetchCurrentGeolocation() {
     }
   } catch (error) {
     return { ip: null, country: null, countryCode: null, error }
+  }
+}
+
+type QueryOptions = {
+  query: any
+  variables?: Record<string, any>
+}
+
+type ErrorHandler = (error: any) => void
+
+export async function executeQuery(
+  queryClient: ApolloClient<object>,
+  options: QueryOptions,
+  onError?: ErrorHandler,
+): Promise<any> {
+  try {
+    const response = await queryClient.query({
+      query: options.query,
+      variables: options.variables,
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error executing query:', error)
+    if (onError) {
+      onError(error)
+    }
+    return null
   }
 }
