@@ -10,10 +10,9 @@ import styled, { css } from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../../../../components/common/Responsive'
 import DefaultLayout from '../../../../components/layout/DefaultLayout'
-import ReviewCollectionBlock from '../../../../components/review/ReviewCollectionBlock'
 import MediaPlayerContext from '../../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../../contexts/PodcastPlayerContext'
-import { desktopViewMixin, handleError, rgba } from '../../../../helpers'
+import { desktopViewMixin, handleError } from '../../../../helpers'
 import { useEnrolledProgramIds, useProgram, useProgramPlansEnrollmentsAggregateList } from '../../../../hooks/program'
 import { useEnrolledProgramPackage } from '../../../../hooks/programPackage'
 import ForbiddenPage from '../../../ForbiddenPage'
@@ -27,23 +26,16 @@ import ProgramPlanCard from '../../ProgramPlanCard'
 
 const StyledIntroWrapper = styled.div`
   ${desktopViewMixin(css`
-    order: 1;
     padding-left: 35px;
   `)}
 `
-const ProgramAbstract = styled.span`
-  padding-right: 2px;
-  padding-bottom: 2px;
-  background-image: linear-gradient(
-    to bottom,
-    transparent 40%,
-    ${props => rgba(props.theme['@primary-color'], 0.1)} 40%
-  );
-  background-repeat: no-repeat;
-  font-size: 20px;
-  font-weight: bold;
-  white-space: pre-line;
+
+const ContentWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 3rem;
 `
+
 const ProgramIntroBlock = styled.div`
   position: relative;
   padding-top: 2.5rem;
@@ -54,19 +46,6 @@ const ProgramIntroBlock = styled.div`
     padding-top: 3.5rem;
     padding-bottom: 1rem;
   }
-`
-const FixedBottomBlock = styled.div<{ bottomSpace?: string }>`
-  margin: auto;
-  position: fixed;
-  width: 100%;
-  bottom: ${props => props.bottomSpace || 0};
-  left: 0;
-  right: 0;
-  z-index: 999;
-`
-const StyledButtonWrapper = styled.div`
-  padding: 0.5rem 0.75rem;
-  background: white;
 `
 
 const SecondaryProgramPageContent: React.VFC = () => {
@@ -164,66 +143,36 @@ const SecondaryProgramPageContent: React.VFC = () => {
         <ProgramIntroBlock>
           <div className="container">
             <div className="row">
-              <div className="col-12 col-lg-8">
+              <ContentWrapper className="col-12 col-lg-8">
                 <SecondaryProgramInfoCard program={program} />
-                <div className="mb-5">
-                  <BraftContent>{program.description}</BraftContent>
-                </div>
-
-                {!Number(settings['layout.program_page']) ? (
-                  <div className="mb-5">
-                    <ProgramContentListSection program={program} />
-                  </div>
-                ) : null}
-              </div>
+                <BraftContent>{program.description}</BraftContent>
+                <ProgramInstructorCollectionBlock program={program} />
+                <ProgramContentListSection program={program} />
+              </ContentWrapper>
 
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
-                {!isEnrolledByProgramPackage && programPlansEnrollmentsAggregateList && (
-                  <div
-                    id="subscription"
-                    className={`mb-5${isPlanListSticky ? ' programPlanSticky' : ''}`}
-                    ref={planListHeightRef}
-                  >
-                    {program.plans
-                      .filter(programPlan => programPlan.publishedAt)
-                      .map(programPlan => (
-                        <div key={programPlan.id} className="mb-3">
-                          <ProgramPlanCard
-                            programId={program.id}
-                            programPlan={programPlan}
-                            enrollmentCount={
-                              programPlansEnrollmentsAggregateList.find(v => v.id === programPlan.id)?.enrollmentCount
-                            }
-                            isProgramSoldOut={Boolean(program.isSoldOut)}
-                            isPublished={Boolean(program.publishedAt)}
-                          />
-                        </div>
-                      ))}
-                  </div>
-                )}
+                <div
+                  id="subscription"
+                  className={`mb-5${isPlanListSticky ? ' programPlanSticky' : ''}`}
+                  ref={planListHeightRef}
+                >
+                  {program.plans
+                    .filter(programPlan => programPlan.publishedAt)
+                    .map(programPlan => (
+                      <div key={programPlan.id} className="mb-3">
+                        <ProgramPlanCard
+                          programId={program.id}
+                          programPlan={programPlan}
+                          enrollmentCount={
+                            programPlansEnrollmentsAggregateList.find(v => v.id === programPlan.id)?.enrollmentCount
+                          }
+                          isProgramSoldOut={Boolean(program.isSoldOut)}
+                          isPublished={Boolean(program.publishedAt)}
+                        />
+                      </div>
+                    ))}
+                </div>
               </StyledIntroWrapper>
-            </div>
-
-            {!Number(settings['layout.program_page']) ? (
-              <div className="row">
-                <div className="col-12 col-lg-8">
-                  <div className="mb-5">
-                    <ProgramInstructorCollectionBlock program={program} />
-                  </div>
-                </div>
-              </div>
-            ) : null}
-
-            <div id="customer-review" ref={customerReviewBlockRef}>
-              {enabledModules.customer_review && (
-                <div className="row">
-                  <div className="col-12 col-lg-8">
-                    <div className="mb-5">
-                      <ReviewCollectionBlock path={pathname} targetId={programId} />
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </ProgramIntroBlock>

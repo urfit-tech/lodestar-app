@@ -20,7 +20,6 @@ const StyledCountBlock = styled.div`
   row-gap: 20px;
 
   @media (min-width: ${BREAK_POINT}px) {
-    margin-bottom: 2rem;
     display: flex;
     justify-content: space-around;
   }
