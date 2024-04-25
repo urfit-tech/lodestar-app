@@ -1,5 +1,5 @@
-import PrimaryProgramPageContent from './PrimaryProgramPageContent'
-import SecondaryProgramContent from './SecondaryProgramPageContent'
+import PrimaryProgramPageContent from './Primary/PrimaryProgramPageContent'
+import SecondaryProgramContent from './Secondary/SecondaryProgramPageContent'
 
 const ProgramPageContent: React.FC<{ variant: string }> = ({ variant }) => {
   switch (variant) {
