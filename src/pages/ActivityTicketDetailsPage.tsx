@@ -13,7 +13,7 @@ import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/commo
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import QRCode from 'qrcode.react'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { AiOutlineRight } from 'react-icons/ai'
 import { HiExternalLink } from 'react-icons/hi'
 import { defineMessages, useIntl } from 'react-intl'
@@ -64,43 +64,10 @@ const StyledModalBody = styled(ModalBody)`
 `
 
 const messages = defineMessages({
-  attended: { id: 'activity.ui.attended', defaultMessage: '已簽到' },
-  attendNow: { id: 'activity.ui.attendNow', defaultMessage: '立即簽到' },
-  enterLinkPage: { id: 'activity.ui.enterLinkPage', defaultMessage: '進入直播頁面' },
+  attended: { id: 'activity.ui.attended', defaultMessage: 'Checked in' },
+  attendNow: { id: 'activity.ui.attendNow', defaultMessage: 'Check in now' },
+  enterLinkPage: { id: 'activity.ui.enterLinkPage', defaultMessage: 'Enter the live page' },
 })
-
-type ActivityTicket = {
-  id: string
-  activity: {
-    id: string
-    title: string
-    coverUrl: string
-    categories: { id: string; name: string }[]
-    isParticipantsVisible: boolean
-  }
-}
-
-type ActivitySession = {
-  id: string
-  startedAt: string
-  endedAt: string
-  location: string | null
-  description: string | null
-  threshold: string | null
-  onlineLink: string | null
-  title: string
-  maxAmount: { online: number; offline: number }
-  participants: { online: number; offline: number }
-  isEnrolled: boolean
-  type: 'both' | 'offline' | 'online'
-}
-
-type Invoice = {
-  name: string
-  email: string
-  phone: string
-  orderProductId: string
-}
 
 const ActivityTicketDetailsPage = () => {
   const { activityTicketId } = useParams<{ activityTicketId: string; sessionId: string | undefined }>()
@@ -108,24 +75,17 @@ const ActivityTicketDetailsPage = () => {
   const { activityTicketData, activityTicketDataLoading } = useMemberRightActivityTicket(activityTicketId, session)
   const { isOpen, onClose, onOpen } = useDisclosure()
 
-  const [ticket, setTicket] = useState<ActivityTicket | null>(null)
-  const [sessions, setSessions] = useState<ActivitySession[]>([])
-  const [invoice, setInvoice] = useState<Invoice | null>(null)
   const { enabledModules } = useApp()
   const { currentMemberId, currentUserRole } = useAuth()
   const [loading, setLoading] = useState(false)
-  const { attendActivitySession, leaveActivitySession } = useAttendSession()
-  const { loadingAttendance, attendance, refetchAttendance } = useActivityAttendance(
-    currentMemberId as string,
-    activityTicketId,
-  )
+  const { attendActivitySession } = useAttendSession()
+  const { attendance, refetchAttendance } = useActivityAttendance(currentMemberId as string, activityTicketId)
 
   const { formatMessage } = useIntl()
 
-  useEffect(() => {
-    if (activityTicketData) {
-      setTicket({
-        id: activityTicketData?.id,
+  const ticket = activityTicketData
+    ? {
+        id: activityTicketData.id,
         activity: {
           id: activityTicketData.activity.id,
           title: activityTicketData.activity.title,
@@ -133,18 +93,18 @@ const ActivityTicketDetailsPage = () => {
           categories: activityTicketData.activity.categories,
           isParticipantsVisible: activityTicketData.activity.isParticipantsVisible,
         },
-      })
+      }
+    : null
 
-      setSessions(activityTicketData.sessions)
-
-      setInvoice({
+  const sessions = activityTicketData ? activityTicketData.sessions : []
+  const invoice = activityTicketData
+    ? {
         name: activityTicketData.invoice.name,
         email: activityTicketData.invoice.email,
         phone: activityTicketData.invoice.phone,
         orderProductId: activityTicketData.invoice.orderProductId,
-      })
-    }
-  }, [activityTicketData])
+      }
+    : null
 
   if (!activityTicketDataLoading && !activityTicketData) {
     return <NotFoundPage />
