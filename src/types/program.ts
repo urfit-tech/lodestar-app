@@ -114,7 +114,6 @@ export type ProgramContent = {
   listPrice: number | null
   salePrice: number | null
   soldAt: Date | null
-  // materials?: ProgramContentMaterialProps[]
   videos: { id: string; size: number; options: { cloudflare?: object }; data: { source?: string } }[]
   audios: { data: object }[]
   contentBodyId: string
@@ -133,6 +132,13 @@ export type ProgramContentMaterialProps = {
   id: string
   data: any
   createdAt: Date
+}
+
+export type ProgramContentMaterial = {
+  id: string
+  data: any
+  createdAt: Date
+  programContentId: string
 }
 
 export type ProgramContentAttachmentProps = {
