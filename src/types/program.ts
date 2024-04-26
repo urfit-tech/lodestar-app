@@ -140,6 +140,13 @@ export type ProgramContentMaterialProps = {
   createdAt: Date
 }
 
+export type ProgramContentMaterial = {
+  id: string
+  data: any
+  createdAt: Date
+  programContentId: string
+}
+
 export type ProgramContentAttachmentProps = {
   id: string
   data: any
