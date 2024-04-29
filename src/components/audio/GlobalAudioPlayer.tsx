@@ -120,6 +120,7 @@ const GlobalAudioPlayer: React.VFC = () => {
               contentType: programContent.contentType,
               videoId: programContentVideo.id,
               source: programContentVideo.options?.cloudflare ? 'cloudflare' : programContentVideo.data?.source,
+              cloudfront: programContentVideo.options?.cloudfront,
             })
           } else {
             close?.()
@@ -242,6 +243,7 @@ const GlobalAudioPlayer: React.VFC = () => {
               contentType: contentType || '',
               videoId: videos[0]?.id,
               source: videos[0]?.options?.cloudflare ? 'cloudflare' : videos[0]?.data?.source,
+              cloudfront: videos[0]?.options?.cloudfront,
             })
             if (pathname.includes('contents') && documentVisible) {
               history.push(`/programs/${programId}/contents/${contentId}`)
