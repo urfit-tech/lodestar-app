@@ -161,7 +161,7 @@ const ProgramContentListSection: React.VFC<{
 
   function transformProgramContentSections(sections: typeof programContentSections) {
     return sections.reduce((acc: contentTitleCollapsedType, sec) => {
-      const isAllPinned = sec.contents.every(content => content.pinned_status)
+      const isAllPinned = sec.contents.every(content => content.pinnedStatus)
 
       acc[sec.id] = {
         isCollapsed: isAllPinned ? true : sec.collapsed_status,
@@ -442,7 +442,7 @@ const ProgramContentListSection: React.VFC<{
                         </Collapse>
                         {(!getCollapsedSection(programContentSection.id) ||
                           !!getPinnedContent(programContentSection.id)) &&
-                          item.pinned_status && <ContentItem item={item} isPinned={true} />}
+                          item.pinnedStatus && <ContentItem item={item} isPinned={true} />}
                       </React.Fragment>
                     )
                   })}

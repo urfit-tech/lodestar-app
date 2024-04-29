@@ -473,7 +473,7 @@ export const useProgram = (programId: string) => {
             contentSectionTitle: programContentSection.title,
             abstract: programContent.abstract || '',
             metadata: programContent.metadata,
-            pinned_status: programContent.pinned_status,
+            pinnedStatus: programContent.pinned_status,
             duration: programContent.duration,
             contentType:
               programContent.program_content_videos.length > 0
