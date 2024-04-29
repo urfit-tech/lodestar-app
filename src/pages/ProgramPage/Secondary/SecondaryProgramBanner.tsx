@@ -1,4 +1,4 @@
-import { Box, Button } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -8,6 +8,7 @@ import { commonMessages } from '../../../helpers/translation'
 import { ReactComponent as ShareIcon } from '../../../images/icons-share-alt.svg'
 import { ReactComponent as PlayIcon } from '../../../images/play-fill.svg'
 import { Program } from '../../../types/program'
+import { SecondaryEnrollButton, SecondaryOutlineButton } from './SecondaryCTAButton'
 
 const ContentWrapper = styled.div`
   position: absolute;
@@ -53,7 +54,7 @@ const StyledTitleBlock = styled.div<{ noVideo?: boolean }>`
   height: 100%;
 `
 
-const EnrollButton = styled(Button)`
+const EnrollButton = styled(SecondaryEnrollButton)`
   && {
     width: 140px;
     height: 45px;
@@ -65,7 +66,7 @@ const EnrollButton = styled(Button)`
   }
 `
 
-const PreviewButton = styled(Button)`
+const PreviewButton = styled(SecondaryOutlineButton)`
   && {
     width: 140px;
     height: 45px;
@@ -128,9 +129,7 @@ const SecondaryProgramBanner: React.VFC<{
               <StyledTitle className="text-start">{program.title}</StyledTitle>
             </WordingWrapper>
             <ButtonWrapper>
-              <EnrollButton colorScheme="outlined" onClick={() => {}}>
-                {formatMessage(commonMessages.ui.ctaButton)}
-              </EnrollButton>
+              <EnrollButton onClick={() => {}}>{formatMessage(commonMessages.ui.ctaButton)}</EnrollButton>
               <PreviewButton colorScheme="outlined" onClick={() => {}} leftIcon={<PlayIcon />}>
                 {formatMessage(commonMessages.ui.previewButton)}
               </PreviewButton>

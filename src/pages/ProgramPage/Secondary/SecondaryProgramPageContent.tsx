@@ -20,9 +20,9 @@ import LoadingPage from '../../LoadingPage'
 import ProgramContentListSection from '../Primary/ProgramContentListSection'
 import ProgramInstructorCollectionBlock from '../Primary/ProgramInstructorCollectionBlock'
 import ProgramPageHelmet from '../Primary/ProgramPageHelmet'
-import ProgramPlanCard from '../Primary/ProgramPlanCard'
 import SecondaryProgramBanner from './SecondaryProgramBanner'
 import SecondaryProgramInfoCard from './SecondaryProgramInfoCard'
+import SecondaryProgramPlanCard from './SecondaryProgramPlanCard'
 
 const StyledIntroWrapper = styled.div`
   ${desktopViewMixin(css`
@@ -160,7 +160,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
                     .filter(programPlan => programPlan.publishedAt)
                     .map(programPlan => (
                       <div key={programPlan.id} className="mb-3">
-                        <ProgramPlanCard
+                        <SecondaryProgramPlanCard
                           programId={program.id}
                           programPlan={programPlan}
                           enrollmentCount={
