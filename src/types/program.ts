@@ -115,7 +115,12 @@ export type ProgramContent = {
   salePrice: number | null
   soldAt: Date | null
   // materials?: ProgramContentMaterialProps[]
-  videos: { id: string; size: number; options: { cloudflare?: object }; data: { source?: string } }[]
+  videos: {
+    id: string
+    size: number
+    options: { cloudflare?: object; cloudfront?: object }
+    data: { source?: string }
+  }[]
   audios: { data: object }[]
   contentBodyId: string
   ebook: ProgramContentEbook
