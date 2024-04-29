@@ -75,7 +75,7 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({ isO
       case 'ActivityTicket':
         return `/activities/${details.id}`
       case 'ProgramPlan':
-        return `/programs/${details.id}`
+        return `/programs/${details.id}?visitIntro=1`
       case 'ProgramPackagePlan':
         return `/program-packages/${details.id}`
       case 'PodcastProgram':
