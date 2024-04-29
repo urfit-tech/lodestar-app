@@ -10,7 +10,7 @@ export type Highlight = {
   memberId: string
   chapter: string
   percentage: number
-  createdAt: string
+  createdAt?: string
 }
 
 export type SaveEbookHighlightRequestDto = {
