@@ -8,13 +8,14 @@ import hasura from '../hasura'
 import { Category } from '../types/general'
 import {
   DisplayMode,
+  EquityProgram,
+  EquityPrograms,
   PeriodType,
   Program,
   ProgramBriefProps,
-  ProgramContent,
-  ProgramContentAttachmentProps,
   ProgramContentBodyProps,
   ProgramContentMaterial,
+  ProgramContentResponse,
   ProgramPlan,
   ProgramRole,
   ProgramRoleName,
@@ -574,14 +575,7 @@ export const useProgramPlansEnrollmentsAggregateList = (programPlanIds: string[]
 export const useProgramContentById = (programId: string, contentId: string) => {
   const { authToken } = useAuth()
   const [loadingProgramContent, setLoadingProgramContent] = useState(false)
-  const [programContent, setProgramContent] = useState<
-    | Omit<ProgramContent, 'ebook'> & {
-        programContentBody: ProgramContentBodyProps | null
-        attachments: ProgramContentAttachmentProps[]
-        contentSectionTitle: string
-        isEquity: boolean
-      }
-  >()
+  const [programContent, setProgramContent] = useState<ProgramContentResponse>()
 
   useEffect(() => {
     // TODO: Axios staring from v0.22.0 CancelToken deprecated
@@ -592,9 +586,12 @@ export const useProgramContentById = (programId: string, contentId: string) => {
       const route = `/programs/${programId}/contents/${contentId}/trial`
       const getProgramContent = async () => {
         try {
-          const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
-            cancelToken: source.token,
-          })
+          const { data } = await axios.get<ProgramContentResponse>(
+            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            {
+              cancelToken: source.token,
+            },
+          )
           setLoadingProgramContent(false)
           setProgramContent(data)
         } catch (thrown) {
@@ -611,10 +608,13 @@ export const useProgramContentById = (programId: string, contentId: string) => {
       const route = `/programs/${programId}/contents/${contentId}`
       const getProgramContent = async () => {
         try {
-          const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
-            cancelToken: source.token,
-            headers: { authorization: `Bearer ${authToken}` },
-          })
+          const { data } = await axios.get<ProgramContentResponse>(
+            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            {
+              cancelToken: source.token,
+              headers: { authorization: `Bearer ${authToken}` },
+            },
+          )
           setLoadingProgramContent(false)
           setProgramContent(data)
         } catch (thrown) {
@@ -700,16 +700,19 @@ const _useProgramByCardIds = (cardIds: string[]) => {
 export const useEquityPrograms = () => {
   const { currentMemberId, authToken } = useAuth()
   const [loadingEquityPrograms, setLoadingEquityPrograms] = useState(false)
-  const [equityPrograms, setEquityPrograms] = useState<Program[]>()
+  const [equityPrograms, setEquityPrograms] = useState<EquityPrograms>()
   useEffect(() => {
     if (currentMemberId) {
       setLoadingEquityPrograms(true)
       const route = `/equity/programs`
       const getEquityPrograms = async () => {
         try {
-          const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
-            headers: { authorization: `Bearer ${authToken}` },
-          })
+          const { data } = await axios.get<EquityPrograms>(
+            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            {
+              headers: { authorization: `Bearer ${authToken}` },
+            },
+          )
           setLoadingEquityPrograms(false)
           setEquityPrograms(data)
         } catch (err) {
@@ -739,9 +742,12 @@ export const useEquityProgramByProgramId = (programId: string) => {
       const route = `/programs/${programId}`
       const getEquityProgram = async () => {
         try {
-          const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
-            headers: { authorization: `Bearer ${authToken}` },
-          })
+          const { data } = await axios.get<EquityProgram[]>(
+            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            {
+              headers: { authorization: `Bearer ${authToken}` },
+            },
+          )
           setLoadingEquityProgram(false)
           setIsEquityProgram(Object.keys(data).length !== 0)
         } catch (err) {
@@ -824,9 +830,12 @@ export const useProgramContentMaterial = (programId: string) => {
 
       const getProgramContentMaterialByProgramId = async () => {
         try {
-          const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
-            headers: { authorization: `Bearer ${authToken}` },
-          })
+          const { data } = await axios.get<ProgramContentMaterial[]>(
+            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            {
+              headers: { authorization: `Bearer ${authToken}` },
+            },
+          )
           setProgramContentMaterials(data)
           setLoadingProgramContentMaterials(false)
         } catch (err) {
