@@ -147,7 +147,13 @@ export type ProgramContent = {
   audios: { data: object }[]
   contentBodyId: string
   ebook: ProgramContentEbook
-  pinned_status: boolean
+  pinnedStatus: boolean
+}
+
+type MetaData = {
+  private: boolean
+  difficulty: number
+  isCoverRequired: boolean
 }
 
 export type ProgramContentResponse = {
@@ -165,6 +171,11 @@ export type ProgramContentResponse = {
   videos: Videos
   attachments: ProgramContentAttachmentProps[]
   programContentBody: ProgramContentBodyProps
+  metadata: MetaData | null
+  listPrice: number | null
+  salePrice: number | null
+  soldAt: Date | null
+  pinnedStatus: boolean
   isEquity: boolean
 }
 
