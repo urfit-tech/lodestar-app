@@ -483,7 +483,6 @@ const SortBySectionItem: React.VFC<{
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
   const programContentProgress = useProgramContentProgress()
   const { specifyExamExercise } = useSpecifyExamExercise(exerciseId || '')
-  // const { isEquityProgramContent, loadingProgramContent } = useProgramContentById(programId, programContent.id)
   const isEquityProgramContent = programContentEnrollment.some(content => content.contentId === programContent.id)
   const materials = programContentMaterials.filter(material => material.programContentId === programContent.id)
 
