@@ -29,13 +29,15 @@ type ProductType = 'ActivityTicket' | 'ProgramPlan' | 'ProgramPackagePlan' | 'Po
 
 const StyledTable = styled(ChakraTable)`
   && {
-    font-size: 16px;
+    font-size: 14px;
+    overflow-y: 'auto';
+    max-height: '300px';
   }
   a {
     color: #4c5b8f;
   }
   .th-type {
-    font-size: 16px;
+    font-size: 14px;
     color: #585858;
     font-weight: bold;
   }
@@ -45,6 +47,25 @@ const StyledModalHeader = styled(ModalHeader)`
   && {
     font-size: 16px;
   }
+`
+
+const StyledModalBody = styled(ModalBody)`
+  && {
+    max-height: 150px;
+    overflow-y: auto;
+  }
+`
+const StyledTableTh = styled(Th)`
+  && {
+    font-size: 14px;
+    color: #585858;
+    font-weight: bold;
+  }
+`
+
+const StyledTableWrapper = styled.div`
+  max-height: 300px;
+  overflow-y: auto;
 `
 
 const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({ isOpen, onClose, title, id }) => {
@@ -88,18 +109,18 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({ isO
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
       <ModalOverlay />
-      <ModalContent maxW={{ base: '80%', sm: '70%', md: '60%', lg: '40%' }} pt="20px" pb="40px" py="30px">
+      <ModalContent maxW={{ base: '90%', sm: '70%', md: '60%', lg: '45%' }} pt="20px" pb="40px" py="30px">
         <ModalHeader>{title}</ModalHeader>
         <StyledModalHeader>{formatMessage(commonMessages.MembershipCardTermsModal.discountTerms)}</StyledModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <div style={{ overflowX: 'auto' }}>
+          <StyledTableWrapper>
             <StyledTable variant="simple">
               <Thead>
                 <Tr>
-                  <Th className="th-type">{formatMessage(commonMessages.MembershipCardTermsModal.type)}</Th>
-                  <Th className="th-type">{formatMessage(commonMessages.MembershipCardTermsModal.discountName)}</Th>
-                  <Th className="th-type">{formatMessage(commonMessages.MembershipCardTermsModal.discountType)}</Th>
+                  <StyledTableTh>{formatMessage(commonMessages.MembershipCardTermsModal.type)}</StyledTableTh>
+                  <StyledTableTh>{formatMessage(commonMessages.MembershipCardTermsModal.discountName)}</StyledTableTh>
+                  <StyledTableTh>{formatMessage(commonMessages.MembershipCardTermsModal.discountType)}</StyledTableTh>
                 </Tr>
               </Thead>
               <Tbody>
@@ -109,7 +130,7 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({ isO
                     <Td>
                       <a
                         href={generateProductLink({
-                          productName: discount?.product?.type as string,
+                          productName: discount?.product?.type,
                           id: discount?.product?.details?.productId as string,
                         })}
                       >
@@ -123,10 +144,10 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({ isO
                 ))}
               </Tbody>
             </StyledTable>
-          </div>
+          </StyledTableWrapper>
         </ModalBody>
         <StyledModalHeader>{formatMessage(commonMessages.MembershipCardTermsModal.usageDescription)}</StyledModalHeader>
-        <ModalBody>{cards?.description}</ModalBody>
+        <StyledModalBody>{cards?.description}</StyledModalBody>
       </ModalContent>
     </Modal>
   )
