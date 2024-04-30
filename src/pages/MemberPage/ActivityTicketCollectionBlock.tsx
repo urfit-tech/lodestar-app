@@ -62,6 +62,7 @@ const ActivityTicketCollectionBlock: React.VFC<{
 
   const seenSessionIds = new Set()
   const sessions = tickets
+    .filter(ticket => ticket.sessions.length > 0)
     .flatMap(ticket => ticket.sessions.map(session => ({ ...session, ticket })))
     .filter(session => {
       if (seenSessionIds.has(session.id)) {
