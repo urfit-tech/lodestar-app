@@ -13,7 +13,7 @@ import hasura from '../../hasura'
 import { handleError } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useCheck } from '../../hooks/checkout'
-import { useEquityPrograms } from '../../hooks/program'
+import { useEnrolledProgramIds } from '../../hooks/program'
 import EmptyCover from '../../images/empty-cover.png'
 import { CurrencyProps, PeriodType } from '../../types/program'
 import { CustomRatioImage } from '../common/Image'
@@ -81,15 +81,15 @@ const ProgramPackageCoinModal: React.VFC<
 > = ({ renderTrigger, programPackageId, periodAmount, periodType, projectPlanId, ...props }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { currentMember } = useAuth()
+  const { currentMember, currentMemberId } = useAuth()
   const { programPackage } = useProgramPackageProgramCollection(programPackageId, periodAmount, periodType)
   const [visible, setVisible] = useState(false)
-  const { equityProgramIds } = useEquityPrograms()
+  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
 
   const { orderChecking, check, placeOrder, orderPlacing } = useCheck({
     productIds:
       programPackage?.programs
-        .filter(program => program.plan && !equityProgramIds.includes(program.id))
+        .filter(program => program.plan && !enrolledProgramIds.includes(program.id))
         .map(program => `ProgramPlan_${program.plan?.id}`) || [],
     discountId: 'Coin',
     shipping: null,
@@ -142,12 +142,12 @@ const ProgramPackageCoinModal: React.VFC<
         <div className="d-flex align-items-center justify-content-between">
           <StyledPlanTitle>{programPackage?.programPackagePlan?.title}</StyledPlanTitle>
           <StyledCurrency>
-            {programPackage?.programs.map(program => equityProgramIds.includes(program.id)).includes(false) && (
+            {programPackage?.programs.map(program => enrolledProgramIds.includes(program.id)).includes(false) && (
               <PriceLabel
                 currencyId={programPackage?.programs[0]?.plan?.currency.id}
                 listPrice={sum(
                   programPackage?.programs
-                    .filter(program => !equityProgramIds.includes(program.id))
+                    .filter(program => !enrolledProgramIds.includes(program.id))
                     .map(program => program.plan?.listPrice || 0) || [],
                 )}
               />
@@ -181,9 +181,9 @@ const ProgramPackageCoinModal: React.VFC<
                 ratio={9 / 16}
                 src={program.coverUrl || EmptyCover}
                 className="flex-shrink-0 mr-3"
-                disabled={equityProgramIds.includes(program.id)}
+                disabled={enrolledProgramIds.includes(program.id)}
               />
-              <StyledProgramTitle className="flex-grow-1" disabled={equityProgramIds.includes(program.id)}>
+              <StyledProgramTitle className="flex-grow-1" disabled={enrolledProgramIds.includes(program.id)}>
                 {program.title}
               </StyledProgramTitle>
             </div>
@@ -197,11 +197,11 @@ const ProgramPackageCoinModal: React.VFC<
           isDisabled={
             orderChecking ||
             !isPaymentAvailable ||
-            !programPackage?.programs.map(program => equityProgramIds.includes(program.id)).includes(false)
+            !programPackage?.programs.map(program => enrolledProgramIds.includes(program.id)).includes(false)
           }
           onClick={handlePay}
         >
-          {programPackage?.programs.map(program => equityProgramIds.includes(program.id)).includes(false)
+          {programPackage?.programs.map(program => enrolledProgramIds.includes(program.id)).includes(false)
             ? formatMessage(commonMessages.button.useCoin)
             : '已使用代幣兌換'}
         </Button>

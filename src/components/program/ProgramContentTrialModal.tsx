@@ -6,7 +6,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { getFileDownloadableLink } from '../../helpers'
-import { useProgramContentById } from '../../hooks/program'
+import { useProgramContent } from '../../hooks/program'
 import AudioPlayer from '../common/AudioPlayer'
 import ProgramContentPlayer from './ProgramContentPlayer'
 
@@ -56,7 +56,7 @@ const ProgramContentTrialModal: React.VFC<ProgramContentTrialModalProps> = ({
 }) => {
   const { id: appId } = useApp()
   const { authToken } = useAuth()
-  const { programContent } = useProgramContentById(programId, programContentId)
+  const { programContent } = useProgramContent(programContentId)
   const [visible, setVisible] = useState(false)
   const [audioUrl, setAudioUrl] = useState<string>()
 
@@ -64,7 +64,7 @@ const ProgramContentTrialModal: React.VFC<ProgramContentTrialModalProps> = ({
     getFileDownloadableLink(`audios/${appId}/${programId}/${programContentId}`, authToken).then(url => {
       setAudioUrl(url)
     })
-  }, [appId, authToken, programContentId, programId])
+  }, [programContentId, programId])
 
   return (
     <>

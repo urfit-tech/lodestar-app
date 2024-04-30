@@ -6,7 +6,7 @@ import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment-timezone'
 import { flatten, sum } from 'ramda'
-import React, { Fragment, useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AiOutlineCalendar, AiOutlineFileText, AiOutlineVideoCamera } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
@@ -18,19 +18,13 @@ import hasura from '../../hasura'
 import { dateFormatter, durationFormatter, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useSpecifyExamExercise } from '../../hooks/exam'
-import { useProgramContentBody, useProgramContentEnrollment, useProgramContentMaterial } from '../../hooks/program'
+import { useEnrolledProgramIds, useProgramContentBody, useProgramContentMaterial } from '../../hooks/program'
 import { MicrophoneIcon } from '../../images'
 import { ReactComponent as LockIcon } from '../../images/icon-lock.svg'
 import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
 import { ReactComponent as QuizIcon } from '../../images/quiz.svg'
-import {
-  DisplayMode,
-  DisplayModeEnum,
-  Program,
-  ProgramContent,
-  ProgramContentMaterial,
-  ProgramContentSection,
-} from '../../types/program'
+import { useHasProgramContentPermission } from '../../pages/ProgramContentPage/ProgramContentBlock'
+import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
 import { getChapter } from './ProgramContentEbookReader'
 import programMessages from './translation'
 import type { Book } from 'epubjs'
@@ -171,10 +165,10 @@ const ProgramContentMenu: React.VFC<{
   const [sortBy, setSortBy] = useState<'section' | 'date'>('section')
   const [searchText, setSearchText] = useState<string>('')
   const [ebookSearchResults, setEbookSearchResults] = useState<{ toc: string; cfi: string; excerpt: string }[]>([])
+  const { currentMemberId } = useAuth()
   const { visible } = useContext(AudioPlayerContext)
-  const { programContentMaterials, loadingProgramContentMaterials } = useProgramContentMaterial(program.id)
-  const { programContentEnrollment, loadingProgramContentEnrollment } = useProgramContentEnrollment(program.id)
-
+  const { enrolledProgramIds, loading: enrolledProgramIdsLoading } = useEnrolledProgramIds(currentMemberId || '')
+  const isEnrolled = enrolledProgramIds.includes(program.id)
   const programContents = program.contentSections.map(v => v.contents).flat()
   const handleSearch = async (searchText: string) => {
     if (!searchText || !ebook) return
@@ -274,10 +268,8 @@ const ProgramContentMenu: React.VFC<{
             <ProgramContentSectionMenu
               isScrollToTop={isScrollToTop}
               program={program}
-              programContentMaterials={programContentMaterials}
-              loadingProgramContentMaterials={loadingProgramContentMaterials}
-              programContentEnrollment={programContentEnrollment}
-              loadingProgramContentEnrollment={loadingProgramContentEnrollment}
+              isLoading={enrolledProgramIdsLoading}
+              isEnrolled={isEnrolled}
               onSelect={onSelect}
               ebookCurrentToc={ebookCurrentToc}
               ebookLocation={ebookLocation}
@@ -287,8 +279,6 @@ const ProgramContentMenu: React.VFC<{
             <ProgramContentDateMenu
               program={program}
               onSelect={onSelect}
-              programContentMaterials={programContentMaterials}
-              loadingProgramContentMaterials={loadingProgramContentMaterials}
               ebookCurrentToc={ebookCurrentToc}
               ebookLocation={ebookLocation}
               onEbookLocationChange={onEbookLocationChange}
@@ -306,10 +296,8 @@ const ProgramContentSectionMenu: React.VFC<{
       contents: ProgramContent[]
     })[]
   }
-  programContentEnrollment: { contentId: string; displayMode: DisplayMode }[]
-  loadingProgramContentMaterials: boolean
-  programContentMaterials: ProgramContentMaterial[]
-  loadingProgramContentEnrollment: boolean
+  isEnrolled: boolean
+  isLoading: boolean
   isScrollToTop?: boolean
   onSelect?: (programContentId: string) => void
   ebookCurrentToc?: string | null
@@ -317,10 +305,8 @@ const ProgramContentSectionMenu: React.VFC<{
   onEbookLocationChange?: (location: string | number) => void
 }> = ({
   program,
-  programContentMaterials,
-  loadingProgramContentMaterials,
-  programContentEnrollment,
-  loadingProgramContentEnrollment,
+  isEnrolled,
+  isLoading,
   isScrollToTop,
   onSelect,
   ebookCurrentToc,
@@ -339,11 +325,9 @@ const ProgramContentSectionMenu: React.VFC<{
             programContentId ? contentSection.contents.some(content => content.id === programContentId) : i === 0
           }
           programContentSection={contentSection}
-          loadingProgramContentEnrollment={loadingProgramContentEnrollment}
+          isLoading={isLoading}
+          isEnrolled={isEnrolled}
           onSelect={onSelect}
-          programContentMaterials={programContentMaterials}
-          loadingProgramContentMaterials={loadingProgramContentMaterials}
-          programContentEnrollment={programContentEnrollment}
           ebookCurrentToc={ebookCurrentToc}
           ebookLocation={ebookLocation}
           onEbookLocationChange={onEbookLocationChange}
@@ -357,10 +341,8 @@ const ContentSection: React.VFC<{
   programContentSection: ProgramContentSection & {
     contents: ProgramContent[]
   }
-  loadingProgramContentMaterials: boolean
-  programContentMaterials: ProgramContentMaterial[]
-  programContentEnrollment: { contentId: string; displayMode: DisplayMode }[]
-  loadingProgramContentEnrollment: boolean
+  isEnrolled: boolean
+  isLoading: boolean
   isScrollToTop?: boolean
   defaultCollapse?: boolean
   onSelect?: (programContentId: string) => void
@@ -369,12 +351,10 @@ const ContentSection: React.VFC<{
   onEbookLocationChange?: (location: string | number) => void
 }> = ({
   programContentSection,
-  loadingProgramContentEnrollment,
+  isEnrolled,
+  isLoading,
   defaultCollapse,
   isScrollToTop,
-  loadingProgramContentMaterials,
-  programContentMaterials,
-  programContentEnrollment,
   onSelect,
   ebookCurrentToc,
   ebookLocation,
@@ -420,16 +400,14 @@ const ContentSection: React.VFC<{
 
       <StyledContentSectionBody active={isCollapse}>
         {programContentSection.contents?.map(programContent => (
-          <Fragment key={programContent.id}>
+          <>
             <SortBySectionItem
               key={programContent.id}
               programContent={programContent}
               isScrollToTop={isScrollToTop}
               onSetIsCollapse={setIsCollapse}
-              programContentMaterials={programContentMaterials}
-              programContentEnrollment={programContentEnrollment}
-              loadingProgramContentMaterials={loadingProgramContentMaterials}
-              loadingProgramContentEnrollment={loadingProgramContentEnrollment}
+              isEnrolled={isEnrolled}
+              isLoading={isLoading}
               onClick={() => onSelect?.(programContent.id)}
             />
             {programContent.contentType === 'ebook' &&
@@ -445,7 +423,7 @@ const ContentSection: React.VFC<{
                 onEbookLocationChange={onEbookLocationChange}
               />
             ) : null}
-          </Fragment>
+          </>
         ))}
       </StyledContentSectionBody>
     </StyledContentSection>
@@ -454,23 +432,12 @@ const ContentSection: React.VFC<{
 
 const SortBySectionItem: React.VFC<{
   programContent: ProgramContent
-  loadingProgramContentMaterials: boolean
-  programContentMaterials: ProgramContentMaterial[]
-  programContentEnrollment: { contentId: string; displayMode: DisplayMode }[]
-  loadingProgramContentEnrollment: boolean
+  isEnrolled: boolean
+  isLoading: boolean
   isScrollToTop?: boolean
   onSetIsCollapse?: React.Dispatch<React.SetStateAction<boolean | undefined>>
   onClick?: () => void
-}> = ({
-  programContent,
-  loadingProgramContentEnrollment: loadingEquityProgram,
-  loadingProgramContentMaterials,
-  programContentMaterials,
-  programContentEnrollment,
-  isScrollToTop,
-  onSetIsCollapse,
-  onClick,
-}) => {
+}> = ({ programContent, isEnrolled, isLoading, isScrollToTop, onSetIsCollapse, onClick }) => {
   const currentRef = useRef<HTMLInputElement>(null)
   const { formatMessage } = useIntl()
   const history = useHistory()
@@ -483,8 +450,7 @@ const SortBySectionItem: React.VFC<{
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
   const programContentProgress = useProgramContentProgress()
   const { specifyExamExercise } = useSpecifyExamExercise(exerciseId || '')
-  const isEquityProgramContent = programContentEnrollment.some(content => content.contentId === programContent.id)
-  const materials = programContentMaterials.filter(material => material.programContentId === programContent.id)
+  const { data: materials, loading: materailLoading } = useProgramContentMaterial(programContent.id)
 
   const FormatProgressStatus = (progress: number) => (progress === 0 ? 'unread' : progress === 1 ? 'done' : 'half')
 
@@ -494,12 +460,19 @@ const SortBySectionItem: React.VFC<{
       : 0
     : programContentProgress?.find(v => v.programContentId === programContent.id)?.progress || 0
 
+  const { hasProgramContentPermission } = useHasProgramContentPermission(programId, programContent.id)
+
   const progressStatus = FormatProgressStatus(progress)
 
   const isActive = programContent.id === programContentId
   const isTrial = programContent?.displayMode === DisplayModeEnum.trial
   const isLoginTrial = programContent?.displayMode === DisplayModeEnum.loginToTrial
-  const isLock = !(isEquityProgramContent || isTrial || (isLoginTrial && Boolean(currentMemberId && isAuthenticated)))
+  const isLock = !(
+    isEnrolled ||
+    isTrial ||
+    (isLoginTrial && Boolean(currentMemberId && isAuthenticated)) ||
+    hasProgramContentPermission
+  )
 
   useEffect(() => {
     if (isActive) {
@@ -524,14 +497,14 @@ const SortBySectionItem: React.VFC<{
       }}
     >
       <StyledItemTitle className="mb-2">{programContent.title}</StyledItemTitle>
-      {(!isLock || loadingEquityProgram) && (
+      {(!isLock || isLoading) && (
         <StyledIconWrapper>
           <Icon as={CheckIcon} />
         </StyledIconWrapper>
       )}
       <div className="d-flex">
         <div className="mr-3 d-flex justify-content-center">
-          {!loadingEquityProgram && isLock ? (
+          {!isLoading && isLock ? (
             <>
               <StyledIcon as={LockIcon} className="mr-2" />
               <span>
@@ -570,7 +543,7 @@ const SortBySectionItem: React.VFC<{
             </>
           )}
         </div>
-        {!loadingProgramContentMaterials && materials.length !== 0 && (
+        {!materailLoading && materials && materials.length !== 0 && (
           <div>
             <StyledIcon as={AttachmentIcon} className="mr-2" />
             {formatMessage(programMessages.ProgramContentMenu.materialAmount, {
@@ -589,21 +562,11 @@ const ProgramContentDateMenu: React.VFC<{
       contents: ProgramContent[]
     })[]
   }
-  loadingProgramContentMaterials: boolean
-  programContentMaterials: ProgramContentMaterial[]
   onSelect?: (programContentId: string) => void
   ebookCurrentToc?: string | null
   ebookLocation?: string | number
   onEbookLocationChange?: (location: string | number) => void
-}> = ({
-  program,
-  onSelect,
-  loadingProgramContentMaterials,
-  programContentMaterials,
-  ebookCurrentToc,
-  ebookLocation,
-  onEbookLocationChange,
-}) => {
+}> = ({ program, onSelect, ebookCurrentToc, ebookLocation, onEbookLocationChange }) => {
   const { programContentId: currentProgramContentId } = useParams<{
     programContentId?: string
   }>()
@@ -616,8 +579,6 @@ const ProgramContentDateMenu: React.VFC<{
           <SortByDateItem
             key={programContent.id}
             programContent={programContent}
-            programContentMaterials={programContentMaterials}
-            loadingProgramContentMaterials={loadingProgramContentMaterials}
             onClick={() => onSelect && onSelect(programContent.id)}
           />
           {programContent.contentType === 'ebook' &&
@@ -641,10 +602,8 @@ const ProgramContentDateMenu: React.VFC<{
 
 const SortByDateItem: React.VFC<{
   programContent: ProgramContent
-  loadingProgramContentMaterials: boolean
-  programContentMaterials: ProgramContentMaterial[]
   onClick?: () => void
-}> = ({ programContent, loadingProgramContentMaterials, programContentMaterials, onClick }) => {
+}> = ({ programContent, onClick }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { programId, programContentId } = useParams<{
@@ -655,8 +614,7 @@ const SortByDateItem: React.VFC<{
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
   const programContentProgress = useProgramContentProgress()
   const { specifyExamExercise } = useSpecifyExamExercise(exerciseId || '')
-
-  const materials = programContentMaterials.filter(material => material.programContentId === programContent.id)
+  const { data: materials, loading: materailLoading } = useProgramContentMaterial(programContent.id)
 
   const progress = exerciseId
     ? programContentId === specifyExamExercise.programContentId
@@ -687,7 +645,7 @@ const SortByDateItem: React.VFC<{
         <StyledIcon as={AiOutlineCalendar} className="mr-2" />
         {programContent.publishedAt && dateFormatter(programContent.publishedAt)}
       </div>
-      {!loadingProgramContentMaterials && materials.length !== 0 && (
+      {!materailLoading && materials && materials.length !== 0 && (
         <div className="mt-2">
           <StyledIcon as={AttachmentIcon} className="mr-2" />
           {formatMessage(programMessages.ProgramContentMenu.materialAmount, {

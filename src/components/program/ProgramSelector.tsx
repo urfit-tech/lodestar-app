@@ -1,7 +1,7 @@
 import { Select, Spinner } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { useEquityPrograms, useProgram } from '../../hooks/program'
+import { useEnrolledProgramIds, useProgram } from '../../hooks/program'
 import programMessages from './translation'
 
 type ProgramSelectorProps = {
@@ -12,9 +12,9 @@ type ProgramSelectorProps = {
 
 export const EnrolledProgramSelector: React.VFC<ProgramSelectorProps> = ({ value, memberId, onChange }) => {
   const { formatMessage } = useIntl()
-  const { equityProgramIds, loadingEquityPrograms } = useEquityPrograms()
+  const { enrolledProgramIds, loading: loadingProgramIds } = useEnrolledProgramIds(memberId)
 
-  if (loadingEquityPrograms) {
+  if (loadingProgramIds) {
     return <Spinner />
   }
 
@@ -27,9 +27,11 @@ export const EnrolledProgramSelector: React.VFC<ProgramSelectorProps> = ({ value
       onChange={e => onChange?.(e.target.value)}
     >
       <option key="all">{formatMessage(programMessages.ProgramSelector.allPrograms)}</option>
-      {equityProgramIds.map(programId => (
-        <ProgramSelectOption key={programId} programId={programId} />
-      ))}
+      {enrolledProgramIds
+        .filter(enrolledProgramId => !!enrolledProgramId)
+        .map(programId => (
+          <ProgramSelectOption key={programId} programId={programId} />
+        ))}
     </Select>
   )
 }

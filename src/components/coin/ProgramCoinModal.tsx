@@ -11,7 +11,7 @@ import styled from 'styled-components'
 import { handleError } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useCheck } from '../../hooks/checkout'
-import { useEquityProgramByProgramId, useProgram } from '../../hooks/program'
+import { useEnrolledProgramIds, useProgram } from '../../hooks/program'
 import EmptyCover from '../../images/empty-cover.png'
 import { PeriodType } from '../../types/program'
 import { CustomRatioImage } from '../common/Image'
@@ -54,10 +54,11 @@ const ProgramCoinModal: React.VFC<
 > = ({ renderTrigger, programId, periodAmount, periodType, projectPlanId, ...props }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { currentMember } = useAuth()
+  const { currentMember, currentMemberId } = useAuth()
   const { program } = useProgram(programId)
   const [visible, setVisible] = useState(false)
-  const { isEquityProgram } = useEquityProgramByProgramId(programId)
+  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+  const isEnrolled = enrolledProgramIds.includes(programId)
   const targetProgramPlan = program?.plans.find(
     programPlan => programPlan.periodAmount === periodAmount && programPlan.periodType === periodType,
   )
@@ -132,9 +133,7 @@ const ProgramCoinModal: React.VFC<
             isDisabled={orderChecking || !isPaymentAvailable}
             isLoading={orderChecking || orderPlacing}
             onClick={() => {
-              isEquityProgram
-                ? window.confirm(formatMessage(commonMessages.alert.isEnrolled)) && handlePay()
-                : handlePay()
+              isEnrolled ? window.confirm(formatMessage(commonMessages.alert.isEnrolled)) && handlePay() : handlePay()
             }}
           >
             {formatMessage(commonMessages.button.useCoin)}

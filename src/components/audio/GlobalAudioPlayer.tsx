@@ -6,7 +6,7 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import AudioPlayerContext, { AudioPlayerMode } from '../../contexts/AudioPlayerContext'
 import { useInsertProgress } from '../../contexts/ProgressContext'
-import { useProgram, useProgramContentById, useProgramContentEnrollment, useProgramProgress } from '../../hooks/program'
+import { useProgram, useProgramContent, useProgramContentEnrollment, useProgramProgress } from '../../hooks/program'
 import { DisplayModeEnum } from '../../types/program'
 import AudioPlayer from './AudioPlayer'
 
@@ -16,7 +16,6 @@ const GlobalAudioPlayer: React.VFC = () => {
     isPlaying,
     isBackgroundMode,
     programId,
-    setProgramId,
     mimeType,
     changePlayingState,
     changeGlobalPlayingState,
@@ -31,7 +30,6 @@ const GlobalAudioPlayer: React.VFC = () => {
   const endedAtRef = useRef(0)
   const history = useHistory()
   const location = useLocation()
-  const pathname = location.pathname
   const { authToken, currentMemberId, isAuthenticated } = useAuth()
   const { settings } = useApp()
 
@@ -41,14 +39,12 @@ const GlobalAudioPlayer: React.VFC = () => {
 
   const insertProgress = useInsertProgress(currentMemberId || '')
   const { program } = useProgram(programId)
-  const { programContent, loadingProgramContent, isEquityProgramContent } = useProgramContentById(
-    programId,
-    programContentId,
-  )
+  const { programContent, loadingProgramContent } = useProgramContent(programContentId)
   const { programContentEnrollment } = useProgramContentEnrollment(programId)
   const programContentIds = program.contentSections.map(section => section.contents.map(content => content.id)).flat()
   const { programContentProgress } = useProgramProgress(programContentIds)
 
+  const pathname = location.pathname
   const playList = program.contentSections
     .map(section =>
       section.contents.map(content => {
@@ -93,43 +89,39 @@ const GlobalAudioPlayer: React.VFC = () => {
       const programId = pathname.split('/')[2]
       const contentId = pathname.split('/')[4]
       setProgramContentId(contentId)
-      setProgramId && setProgramId(programId)
       if (!loadingProgramContent && programContent) {
         const isPublish = dayjs().isSame(programContent.publishedAt) || dayjs().isAfter(programContent.publishedAt)
         if (isPublish) {
-          if (!!isEquityProgramContent) {
-            const programContentBodyType = programContent.programContentBody?.type
-            if (programContentBodyType === 'audio' && programContent.audios.length !== 0) {
-              setup?.({
-                backgroundMode: isBackgroundMode,
-                title: programContent.title,
-                contentSectionTitle: programContent.contentSectionTitle,
-                programId: programId,
-                contentId,
-                contentType: programContent.contentType,
-              })
-            } else if (
-              programContent &&
-              programContentBodyType === 'video' &&
-              isBackgroundMode &&
-              programContent.videos[0] &&
-              programContent.videos[0].data?.source !== 'youtube' &&
-              programContent.videos.length !== 0
-            ) {
-              const programContentVideo = programContent.videos[0]
-              setup?.({
-                backgroundMode: true,
-                title: programContent.title,
-                contentSectionTitle: programContent.contentSectionTitle,
-                programId: programId,
-                contentId: programContentId,
-                contentType: programContent.contentType,
-                videoId: programContentVideo.id,
-                source: programContentVideo.options?.cloudflare ? 'cloudflare' : programContentVideo.data?.source,
-              })
-            } else {
-              close?.()
-            }
+          const programContentBodyType = programContent.programContentBody?.type
+          if (programContentBodyType === 'audio' && programContent.audios.length !== 0) {
+            setup?.({
+              backgroundMode: isBackgroundMode,
+              title: programContent.title,
+              contentSectionTitle: programContent.contentSectionTitle,
+              programId: programId,
+              contentId,
+              contentType: programContent.contentType,
+            })
+          } else if (
+            programContent &&
+            programContentBodyType === 'video' &&
+            isBackgroundMode &&
+            programContent.videos[0] &&
+            programContent.videos[0].data?.source !== 'youtube' &&
+            programContent.videos.length !== 0
+          ) {
+            const programContentVideo = programContent.videos[0]
+            setup?.({
+              backgroundMode: true,
+              title: programContent.title,
+              contentSectionTitle: programContent.contentSectionTitle,
+              programId: programId,
+              contentId: programContentId,
+              contentType: programContent.contentType,
+              videoId: programContentVideo.id,
+              source: programContentVideo.options?.cloudflare ? 'cloudflare' : programContentVideo.data?.source,
+              cloudfront: programContentVideo.options?.cloudfront,
+            })
           } else {
             close?.()
           }
@@ -153,13 +145,11 @@ const GlobalAudioPlayer: React.VFC = () => {
     currentIndex,
     documentVisible,
     isBackgroundMode,
-    isEquityProgramContent,
     loadingProgramContent,
     pathname,
     playList,
     programContent,
     programContentId,
-    setProgramId,
     settings,
     setup,
   ])
