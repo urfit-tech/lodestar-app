@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Icon, LockIcon } from '@chakra-ui/icons'
 import { Button, SkeletonText, Switch } from '@chakra-ui/react'
-import axios, { CancelTokenSource } from 'axios'
+import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import Cookies from 'js-cookie'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
@@ -9,7 +9,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment-timezone'
 import { flatten, includes } from 'ramda'
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
@@ -20,7 +20,7 @@ import AudioPlayerContext from '../../contexts/AudioPlayerContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { isAndroid, isMobile } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import { useProgramContent } from '../../hooks/program'
+import { useProgramContentById } from '../../hooks/program'
 import { CarIcon } from '../../images'
 import { ProgramContent, ProgramContentSection, ProgramRole } from '../../types/program'
 import pageMessages from '../translation'
@@ -103,19 +103,14 @@ const ProgramContentBlock: React.VFC<{
   const { loading: loadingApp, enabledModules } = useApp()
   const { authToken, currentMemberId, currentUserRole, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
-  const { loadingProgramContent, programContent } = useProgramContent(programContentId)
-  const { hasProgramContentPermission, isLoading: loadingPermission } = useHasProgramContentPermission(
+  const { programContent, loadingProgramContent, isEquityProgramContent } = useProgramContentById(
     programId,
     programContentId,
   )
+
   const { changeGlobalPlayingState, setup, close, changeBackgroundMode, isBackgroundMode } =
     useContext(AudioPlayerContext)
   const endedAtRef = useRef(0)
-
-  const hasPermission =
-    hasProgramContentPermission ||
-    programContent?.displayMode === 'trial' ||
-    (programContent?.displayMode === 'loginToTrial' && Boolean(currentMemberId && isAuthenticated))
 
   const instructor = programRoles.filter(role => role.name === 'instructor')[0]
 
@@ -136,7 +131,7 @@ const ProgramContentBlock: React.VFC<{
     initialProgress === 1 ||
     !currentMemberId ||
     !isAuthenticated ||
-    !hasPermission ||
+    !isEquityProgramContent ||
     (programContentBodyType &&
       ['text', 'practice', 'exam'].includes(programContentBodyType) &&
       moment().isBefore(moment(programContent?.publishedAt))) ||
@@ -158,12 +153,12 @@ const ProgramContentBlock: React.VFC<{
     programContentId,
     currentMemberId,
     isAuthenticated,
-    hasProgramContentPermission,
+    isEquityProgramContent,
     programContent?.publishedAt,
   ])
 
   if (
-    loadingPermission ||
+    loadingProgramContent ||
     loadingApp ||
     loadingProgramContent ||
     !programContent ||
@@ -202,24 +197,23 @@ const ProgramContentBlock: React.VFC<{
   return (
     <div
       id="program_content_block"
-      className={programContent.programContentBody?.type !== 'ebook' ? 'pt-4 p-sm-4' : ''}
+      className={isEquityProgramContent && programContent.programContentBody?.type === 'ebook' ? '' : 'pt-4 p-sm-4'}
     >
-      {((programContent.contentType === 'video' && !hasPermission) ||
-        (programContent.contentType !== 'video' && !programContent.programContentBody)) && (
-        <div className="d-flex justify-content-center">
-          {!hasPermission && programContent.displayMode === 'loginToTrial' ? (
-            <Button
-              colorScheme="primary"
-              className="mb-4"
-              onClick={() => {
-                Cookies.set('redirect', window.location.href)
-                history.push(`/auth?programContentId=${programContentId}`)
-              }}
-            >
-              <LockIcon className="mr-2 mb-1" />
-              {formatMessage(pageMessages.ProgramContentBlock.loginTrial)}
-            </Button>
-          ) : (
+      <div className="d-flex justify-content-center">
+        {programContent.displayMode === 'loginToTrial' && !isAuthenticated ? (
+          <Button
+            colorScheme="primary"
+            className="mb-4"
+            onClick={() => {
+              Cookies.set('redirect', window.location.href)
+              history.push(`/auth?programContentId=${programContentId}`)
+            }}
+          >
+            <LockIcon className="mr-2 mb-1" />
+            {formatMessage(pageMessages.ProgramContentBlock.loginTrial)}
+          </Button>
+        ) : (
+          !isEquityProgramContent && (
             <Button
               colorScheme="primary"
               className="mb-4"
@@ -228,10 +222,11 @@ const ProgramContentBlock: React.VFC<{
               <LockIcon className="mr-2 mb-1" />
               {formatMessage(productMessages.program.content.unPurchased)}
             </Button>
-          )}
-        </div>
-      )}
-      {isBackgroundMode &&
+          )
+        )}
+      </div>
+      {!!isEquityProgramContent &&
+        isBackgroundMode &&
         programContent.videos[0]?.data?.source !== 'youtube' &&
         programContent.contentType === 'video' && (
           <StyledBackgroundModeDescriptionBlock>
@@ -240,9 +235,9 @@ const ProgramContentBlock: React.VFC<{
             <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundModeDescription)}</p>
           </StyledBackgroundModeDescriptionBlock>
         )}
-      {programContent.contentType === 'video' ? (
+      {!!isEquityProgramContent && programContent.contentType === 'video' ? (
         (!isBackgroundMode || programContent.videos[0]?.data?.source === 'youtube') &&
-        ((hasPermission && moment().isAfter(moment(programContent.publishedAt))) ||
+        ((!!isEquityProgramContent && moment().isAfter(moment(programContent.publishedAt))) ||
           currentUserRole === 'app-owner') && (
           <ProgramContentPlayer
             programContentId={programContentId}
@@ -262,7 +257,7 @@ const ProgramContentBlock: React.VFC<{
             }}
           />
         )
-      ) : hasPermission && programContent.contentType === 'ebook' ? (
+      ) : !!isEquityProgramContent && programContent.contentType === 'ebook' ? (
         <ProgramContentEbookReader
           setEbook={setEbook}
           programContentId={programContent.id}
@@ -273,73 +268,77 @@ const ProgramContentBlock: React.VFC<{
           onLocationChange={onEbookLocationChange}
         />
       ) : null}
-      {moment().isBefore(moment(programContent.publishedAt)) && hasPermission && currentUserRole !== 'app-owner' && (
-        <StyledUnpublishedBlock>
-          <StyledIcon as={LockIcon} className="mb-3" />
-          <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.theContentWillAt)}</p>
-          <p>
-            {`${moment(programContent.publishedAt).format('YYYY/MM/DD HH:mm')} ${formatMessage(
-              commonMessages.text.publish,
-            )}`}
-          </p>
-        </StyledUnpublishedBlock>
-      )}
-      {!includes(programContent.programContentBody?.type, ['ebook', 'practice', 'exercise', 'exam']) &&
-        programContent.videos[0]?.data?.source !== 'youtube' && (
-          <StyledContentBlock className="mb-3">
-            {isMobile &&
-            !isAndroid &&
-            enabledModules.background_mode &&
-            programContent.programContentBody?.type !== 'audio' ? (
-              <StyledTitleBlock>
-                <StyledMobileTitle className="mb-2">{programContent.title}</StyledMobileTitle>
-                <div className="d-flex justify-content-end">
-                  <span className="mr-2">
-                    {formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundMode)}
-                  </span>
-                  <Switch
-                    colorScheme="whatsapp"
-                    onChange={() => {
-                      if (isBackgroundMode) {
-                        changeBackgroundMode?.(false)
-                        changeGlobalPlayingState?.(false)
-                        close?.()
-                      }
-                      if (!isBackgroundMode && programContent) {
-                        setup?.({
-                          backgroundMode: true,
-                          title: programContent?.title || '',
-                          contentSectionTitle: programContent.contentSectionTitle || '',
-                          programId: programId,
-                          contentId: programContentId,
-                          contentType: programContent.contentType || '',
-                          videoId: programContent.videos[0]?.id,
-                          source: programContent.videos[0]?.options?.cloudflare
-                            ? 'cloudflare'
-                            : programContent.videos[0]?.data?.source,
-                          cloudfront: programContent.videos[0]?.options?.cloudfront,
-                        })
-                        changeBackgroundMode?.(true)
-                        changeGlobalPlayingState?.(true)
-                      }
-                    }}
-                    isChecked={isBackgroundMode}
-                  />
-                </div>
-              </StyledTitleBlock>
-            ) : (
-              <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
-            )}
-
-            {programContent.programContentBody &&
-              ((moment().isAfter(moment(programContent.publishedAt)) && hasPermission) ||
-                currentUserRole === 'app-owner') &&
-              !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
-                <BraftContent>{programContent.programContentBody.description}</BraftContent>
-              )}
-          </StyledContentBlock>
+      {!!isEquityProgramContent &&
+        moment().isBefore(moment(programContent.publishedAt)) &&
+        currentUserRole !== 'app-owner' && (
+          <StyledUnpublishedBlock>
+            <StyledIcon as={LockIcon} className="mb-3" />
+            <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.theContentWillAt)}</p>
+            <p>
+              {`${moment(programContent.publishedAt).format('YYYY/MM/DD HH:mm')} ${formatMessage(
+                commonMessages.text.publish,
+              )}`}
+            </p>
+          </StyledUnpublishedBlock>
         )}
+      {(!isEquityProgramContent ||
+        (!!isEquityProgramContent &&
+          !includes(programContent.programContentBody?.type, ['ebook', 'practice', 'exercise', 'exam']) &&
+          programContent.videos[0]?.data?.source !== 'youtube')) && (
+        <StyledContentBlock className="mb-3">
+          {isMobile &&
+          !isAndroid &&
+          enabledModules.background_mode &&
+          programContent.programContentBody?.type !== 'audio' ? (
+            <StyledTitleBlock>
+              <StyledMobileTitle className="mb-2">{programContent.title}</StyledMobileTitle>
+              <div className="d-flex justify-content-end">
+                <span className="mr-2">
+                  {formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundMode)}
+                </span>
+                <Switch
+                  colorScheme="whatsapp"
+                  onChange={() => {
+                    if (isBackgroundMode) {
+                      changeBackgroundMode?.(false)
+                      changeGlobalPlayingState?.(false)
+                      close?.()
+                    }
+                    if (!isBackgroundMode && !!isEquityProgramContent) {
+                      setup?.({
+                        backgroundMode: true,
+                        title: programContent?.title || '',
+                        contentSectionTitle: programContent.contentSectionTitle || '',
+                        programId: programId,
+                        contentId: programContentId,
+                        contentType: programContent.contentType || '',
+                        videoId: programContent.videos[0]?.id,
+                        source: programContent.videos[0]?.options?.cloudflare
+                          ? 'cloudflare'
+                          : programContent.videos[0]?.data?.source,
+                        cloudfront: programContent.videos[0]?.options?.cloudfront,
+                      })
+                      changeBackgroundMode?.(true)
+                      changeGlobalPlayingState?.(true)
+                    }
+                  }}
+                  isChecked={isBackgroundMode}
+                />
+              </div>
+            </StyledTitleBlock>
+          ) : (
+            <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
+          )}
+          {!!isEquityProgramContent &&
+            programContent.programContentBody &&
+            (moment().isAfter(moment(programContent.publishedAt)) || currentUserRole === 'app-owner') &&
+            !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
+              <BraftContent>{programContent.programContentBody.description}</BraftContent>
+            )}
+        </StyledContentBlock>
+      )}
       {enabledModules.practice &&
+        !!isEquityProgramContent &&
         programContent.programContentBody?.type === 'practice' &&
         (moment().isAfter(moment(programContent.publishedAt)) || currentUserRole === 'app-owner') && (
           <div className="mb-4">
@@ -354,16 +353,17 @@ const ProgramContentBlock: React.VFC<{
             />
           </div>
         )}
-      {/* // TODO: combine two modules in exam */}
+      {/* TODO: combine two modules in exam */}
       {(enabledModules.exercise || enabledModules.exam) &&
+        !!isEquityProgramContent &&
         (programContent.programContentBody?.type === 'exercise' ||
           programContent.programContentBody?.type === 'exam') &&
         (moment().isAfter(moment(programContent.publishedAt)) || currentUserRole === 'app-owner') && (
           <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
         )}
-      {!includes(programContent.programContentBody?.type, ['ebook']) &&
-        ((hasPermission && moment().isAfter(moment(programContent.publishedAt))) ||
-          currentUserRole === 'app-owner') && (
+      {!!isEquityProgramContent &&
+        !includes(programContent.programContentBody?.type, ['ebook']) &&
+        (moment().isAfter(moment(programContent.publishedAt)) || currentUserRole === 'app-owner') && (
           <ProgramContentTabs
             programId={programId}
             programRoles={programRoles}
@@ -371,66 +371,12 @@ const ProgramContentBlock: React.VFC<{
             issueEnabled={issueEnabled}
           />
         )}
-      {!includes(programContent.programContentBody?.type, ['practice', 'ebook']) && instructor && (
-        <ProgramContentCreatorBlock memberId={instructor.memberId} />
-      )}
+      {(!isEquityProgramContent ||
+        (!!isEquityProgramContent &&
+          !includes(programContent.programContentBody?.type, ['practice', 'ebook']) &&
+          instructor)) && <ProgramContentCreatorBlock memberId={instructor.memberId} />}
     </div>
   )
 }
-
-const useHasProgramContentPermission: (
-  programId: string,
-  programContentId: string,
-) => {
-  hasProgramContentPermission: boolean
-  isLoading: boolean
-} = (programId, programContentId) => {
-  const { currentMemberId, authToken } = useAuth()
-  const [hasProgramContentPermission, setHasProgramContentPermission] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const isUnmounted = useRef(false)
-
-  const fetch = useCallback(
-    async (source: CancelTokenSource) => {
-      if (currentMemberId && programId && programContentId) {
-        const route = `/programs/${programId}/contents/${programContentId}`
-        try {
-          const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
-            params: { memberId: currentMemberId },
-            headers: { authorization: `Bearer ${authToken}` },
-            cancelToken: source.token,
-          })
-
-          if (!isUnmounted.current) {
-            setHasProgramContentPermission(Object.keys(data).length > 0)
-            setIsLoading(false)
-          }
-        } catch (err) {
-          !axios.isCancel(err) && console.log(err)
-        }
-      } else {
-        setIsLoading(false)
-      }
-    },
-    [currentMemberId, programContentId, programId],
-  )
-
-  useEffect(() => {
-    const source = axios.CancelToken.source()
-
-    fetch(source)
-    return () => {
-      isUnmounted.current = true
-      source.cancel('component unmounted')
-    }
-  }, [fetch])
-
-  return {
-    hasProgramContentPermission,
-    isLoading,
-  }
-}
-
-export { useHasProgramContentPermission }
 
 export default ProgramContentBlock

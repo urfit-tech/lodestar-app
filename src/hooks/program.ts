@@ -3,17 +3,19 @@ import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum, uniq } from 'ramda'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import hasura from '../hasura'
 import { Category } from '../types/general'
 import {
   DisplayMode,
+  EquityProgram,
+  EquityPrograms,
   PeriodType,
   Program,
   ProgramBriefProps,
-  ProgramContent,
-  ProgramContentAttachmentProps,
   ProgramContentBodyProps,
+  ProgramContentMaterial,
+  ProgramContentResponse,
   ProgramPlan,
   ProgramRole,
   ProgramRoleName,
@@ -471,7 +473,7 @@ export const useProgram = (programId: string) => {
             contentSectionTitle: programContentSection.title,
             abstract: programContent.abstract || '',
             metadata: programContent.metadata,
-            pinned_status: programContent.pinned_status,
+            pinnedStatus: programContent.pinned_status,
             duration: programContent.duration,
             contentType:
               programContent.program_content_videos.length > 0
@@ -570,175 +572,74 @@ export const useProgramPlansEnrollmentsAggregateList = (programPlanIds: string[]
   }
 }
 
-export const GetProgramContent = gql`
-  query GetProgramContent($programContentId: uuid!) {
-    program_content_by_pk(id: $programContentId) {
-      id
-      title
-      abstract
-      created_at
-      published_at
-      display_mode
-      list_price
-      sale_price
-      sold_at
-      metadata
-      duration
-      pinned_status
-      program_content_section {
-        title
-        collapsed_status
-      }
-      program_content_plans {
-        id
-        program_plan {
-          id
-          title
-        }
-      }
-      program_content_body {
-        id
-        description
-        data
-        type
-      }
-      program_content_videos {
-        attachment {
-          id
-          size
-          options
-          data
-        }
-      }
-      program_content_audios {
-        data
-      }
-      program_content_attachments(where: { data: { _is_null: false } }) {
-        attachment_id
-        data
-        options
-        created_at
-      }
-      program_content_progress(order_by: { updated_at: desc }, limit: 1) {
-        last_progress
-      }
-    }
-  }
-`
-export const useProgramContent = (programContentId: string) => {
-  const { loading, error, data, refetch } = useQuery<hasura.GetProgramContent, hasura.GetProgramContentVariables>(
-    GetProgramContent,
-    { skip: !programContentId, variables: { programContentId }, notifyOnNetworkStatusChange: true },
-  )
+export const useProgramContentById = (programId: string, contentId: string) => {
+  const { authToken } = useAuth()
+  const [loadingProgramContent, setLoadingProgramContent] = useState(false)
+  const [programContent, setProgramContent] = useState<ProgramContentResponse>()
 
-  const programContent:
-    | (Omit<ProgramContent, 'ebook'> & {
-        programContentBody: ProgramContentBodyProps | null
-        attachments: ProgramContentAttachmentProps[]
-        contentSectionTitle: string
-      })
-    | null = useMemo(
-    () =>
-      !data?.program_content_by_pk
-        ? null
-        : {
-            id: data.program_content_by_pk.id,
-            title: data.program_content_by_pk.title,
-            contentSectionTitle: data.program_content_by_pk.program_content_section.title,
-            pinnedStatus: data.program_content_by_pk.pinned_status || false,
-            abstract: data.program_content_by_pk.abstract || '',
-            metadata: data.program_content_by_pk.metadata,
-            duration: data.program_content_by_pk.duration,
-            pinned_status: data.program_content_by_pk.pinned_status,
-            contentType: data.program_content_by_pk.program_content_body?.type || null,
-            publishedAt: data.program_content_by_pk.published_at
-              ? new Date(data.program_content_by_pk.published_at)
-              : null,
-            displayMode: data.program_content_by_pk.display_mode as DisplayMode,
-            listPrice: data.program_content_by_pk.list_price,
-            salePrice: data.program_content_by_pk.sale_price,
-            soldAt: data.program_content_by_pk.sold_at && new Date(data.program_content_by_pk.sold_at),
-            contentBodyId: data.program_content_by_pk.program_content_body?.id,
-            programContentBody: data.program_content_by_pk.program_content_body
-              ? {
-                  id: data.program_content_by_pk.program_content_body.id,
-                  type: data.program_content_by_pk.program_content_body.type || null,
-                  description: data.program_content_by_pk.program_content_body.description || '',
-                  data: data.program_content_by_pk.program_content_body.data,
-                }
-              : null,
-            videos: data.program_content_by_pk.program_content_videos.map(v => ({
-              id: v.attachment.id,
-              size: v.attachment.size,
-              options: v.attachment.options,
-              data: v.attachment.data,
-            })),
-            audios: data.program_content_by_pk.program_content_audios.map(v => ({
-              data: v.data,
-            })),
-            attachments: data.program_content_by_pk.program_content_attachments.map(u => ({
-              id: u.attachment_id,
-              data: u.data,
-              options: u.options,
-              createdAt: u.created_at,
-            })),
-            lastProgress: data.program_content_by_pk.program_content_progress[0]?.last_progress || 0,
-          },
-    [data],
-  )
-
-  return {
-    loadingProgramContent: loading,
-    errorProgramContent: error,
-    programContent,
-    refetchProgramContent: refetch,
-  }
-}
-
-export const useEnrolledProgramIds = (memberId: string) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GET_ENROLLED_PROGRAMS,
-    hasura.GET_ENROLLED_PROGRAMSVariables
-  >(
-    gql`
-      query GET_ENROLLED_PROGRAMS($memberId: String!) {
-        program_enrollment(where: { member_id: { _eq: $memberId } }, distinct_on: program_id) {
-          program_id
-        }
-        program_plan_enrollment(where: { member_id: { _eq: $memberId } }) {
-          program_plan {
-            id
-            program_id
+  useEffect(() => {
+    // TODO: Axios staring from v0.22.0 CancelToken deprecated
+    const CancelToken = axios.CancelToken
+    const source = CancelToken.source()
+    if (!authToken && contentId) {
+      setLoadingProgramContent(true)
+      const route = `/programs/${programId}/contents/${contentId}/trial`
+      const getProgramContent = async () => {
+        try {
+          const { data } = await axios.get<ProgramContentResponse>(
+            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            {
+              cancelToken: source.token,
+            },
+          )
+          setLoadingProgramContent(false)
+          setProgramContent(data)
+        } catch (thrown) {
+          if (axios.isCancel(thrown)) {
+            //TODO: This helps prevent axios cancel messages from appearing in devtool
+          } else {
+            console.error(thrown)
           }
         }
-        program_content_enrollment(where: { member_id: { _eq: $memberId } }, distinct_on: program_id) {
-          program_id
+      }
+      getProgramContent()
+    } else if (authToken && contentId) {
+      setLoadingProgramContent(true)
+      const route = `/programs/${programId}/contents/${contentId}`
+      const getProgramContent = async () => {
+        try {
+          const { data } = await axios.get<ProgramContentResponse>(
+            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            {
+              cancelToken: source.token,
+              headers: { authorization: `Bearer ${authToken}` },
+            },
+          )
+          setLoadingProgramContent(false)
+          setProgramContent(data)
+        } catch (thrown) {
+          if (axios.isCancel(thrown)) {
+            //TODO: This helps prevent axios cancel messages from appearing in devtool
+          } else {
+            console.error(thrown)
+          }
         }
       }
-    `,
-    {
-      variables: { memberId },
-      fetchPolicy: 'no-cache',
-    },
-  )
 
-  const { enrolledCards } = _useCardsByMemberId(memberId)
-  const { enrolledCardPrograms } = _useProgramByCardIds(enrolledCards)
+      getProgramContent()
+    }
 
-  const enrolledProgramIds = data
-    ? uniq([
-        ...data.program_enrollment.map(enrollment => enrollment.program_id),
-        ...data.program_plan_enrollment.map(enrollment => enrollment.program_plan?.program_id || ''),
-        ...data.program_content_enrollment.map(enrollment => enrollment.program_id),
-        ...enrolledCardPrograms,
-      ])
-    : []
+    return () => {
+      source.cancel()
+    }
+  }, [authToken, contentId, programId])
+
+  const isEquityProgramContent = programContent && programContent.isEquity
 
   return {
-    enrolledProgramIds,
-    error,
-    loading,
-    refetch,
+    programContent,
+    loadingProgramContent,
+    isEquityProgramContent,
   }
 }
 
@@ -796,6 +697,73 @@ const _useProgramByCardIds = (cardIds: string[]) => {
   }
 }
 
+export const useEquityPrograms = () => {
+  const { currentMemberId, authToken } = useAuth()
+  const [loadingEquityPrograms, setLoadingEquityPrograms] = useState(false)
+  const [equityPrograms, setEquityPrograms] = useState<EquityPrograms>()
+  useEffect(() => {
+    if (currentMemberId) {
+      setLoadingEquityPrograms(true)
+      const route = `/equity/programs`
+      const getEquityPrograms = async () => {
+        try {
+          const { data } = await axios.get<EquityPrograms>(
+            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            {
+              headers: { authorization: `Bearer ${authToken}` },
+            },
+          )
+          setLoadingEquityPrograms(false)
+          setEquityPrograms(data)
+        } catch (err) {
+          console.log(err)
+        }
+      }
+      getEquityPrograms()
+    }
+  }, [authToken, currentMemberId])
+
+  const equityProgramIds = equityPrograms ? equityPrograms.map(program => program.id) : []
+
+  return {
+    equityPrograms,
+    equityProgramIds,
+    loadingEquityPrograms,
+  }
+}
+
+export const useEquityProgramByProgramId = (programId: string) => {
+  const { currentMemberId, authToken } = useAuth()
+  const [loadingEquityProgram, setLoadingEquityProgram] = useState(false)
+  const [isEquityProgram, setIsEquityProgram] = useState(false)
+  useEffect(() => {
+    if (currentMemberId) {
+      setLoadingEquityProgram(true)
+      const route = `/programs/${programId}`
+      const getEquityProgram = async () => {
+        try {
+          const { data } = await axios.get<EquityProgram[]>(
+            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            {
+              headers: { authorization: `Bearer ${authToken}` },
+            },
+          )
+          setLoadingEquityProgram(false)
+          setIsEquityProgram(Object.keys(data).length !== 0)
+        } catch (err) {
+          console.log(err)
+        }
+      }
+      getEquityProgram()
+    }
+  }, [authToken, currentMemberId, programId])
+
+  return {
+    isEquityProgram,
+    loadingEquityProgram,
+  }
+}
+
 export const useEnrolledPlanIds = () => {
   const { currentMemberId } = useAuth()
   const { loading, data, error, refetch } = useQuery<
@@ -849,35 +817,40 @@ export const useProgramPlanEnrollment = (programPlanId: string) => {
   }
 }
 
-export const useProgramContentMaterial = (programContentId: string) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GET_PROGRAM_CONTENT_MATERIAL,
-    hasura.GET_PROGRAM_CONTENT_MATERIALVariables
-  >(
-    gql`
-      query GET_PROGRAM_CONTENT_MATERIAL($programContentId: uuid!) {
-        program_content_material(where: { program_content_id: { _eq: $programContentId } }) {
-          id
-          data
-          created_at
+export const useProgramContentMaterial = (programId: string) => {
+  const { authToken } = useAuth()
+  const [programContentMaterials, setProgramContentMaterials] = useState<ProgramContentMaterial[]>([])
+  const [errorProgramContentMaterials, setErrorProgramContentMaterials] = useState(false)
+  const [loadingProgramContentMaterials, setLoadingProgramContentMaterials] = useState(false)
+
+  useEffect(() => {
+    if (authToken) {
+      const route = `/programs/${programId}/materials`
+      setLoadingProgramContentMaterials(true)
+
+      const getProgramContentMaterialByProgramId = async () => {
+        try {
+          const { data } = await axios.get<ProgramContentMaterial[]>(
+            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            {
+              headers: { authorization: `Bearer ${authToken}` },
+            },
+          )
+          setProgramContentMaterials(data)
+          setLoadingProgramContentMaterials(false)
+        } catch (err) {
+          console.log(err)
+          setErrorProgramContentMaterials(true)
         }
       }
-    `,
-    { variables: { programContentId }, fetchPolicy: 'no-cache' },
-  )
-
-  const programContentMaterials = data?.program_content_material.map(material => {
-    return {
-      id: material.id,
-      data: material.data,
-      createdAt: new Date(material.created_at),
+      getProgramContentMaterialByProgramId()
     }
-  })
+  }, [authToken, programId])
+
   return {
-    loading,
-    error,
-    data: programContentMaterials,
-    refetch,
+    programContentMaterials,
+    loadingProgramContentMaterials,
+    errorProgramContentMaterials,
   }
 }
 
@@ -1098,7 +1071,7 @@ export const useRecentProgramContent = (memberId: string) => {
     loading || error || !data
       ? undefined
       : data?.program_content_progress.map(progress => {
-          const contentType = progress.program_content.program_content_body.type
+          const contentType = progress.program_content.program_content_body?.type
           const audiosLength = progress.program_content.program_content_audios.length
           const videosLength = progress.program_content.program_content_videos.length
           const contentVideo = progress.program_content.program_content_videos[0]
@@ -1130,10 +1103,12 @@ export const useRecentProgramContent = (memberId: string) => {
 export const useProgramContentEnrollment = (programId: string) => {
   const { currentMemberId, authToken } = useAuth()
   const [data, setData] = useState<{ programContentId: string; displayMode: DisplayMode }[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
-  const fetch = useCallback(async () => {
-    if (currentMemberId && programId) {
+  useEffect(() => {
+    const getProgramContentEnrollment = async () => {
       const route = `/programs/${programId}/contents`
+      setIsLoading(true)
       try {
         const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
           params: { memberId: currentMemberId },
@@ -1141,21 +1116,22 @@ export const useProgramContentEnrollment = (programId: string) => {
         })
 
         setData(data)
+        setIsLoading(false)
       } catch (err) {
         console.log(err)
       }
     }
-  }, [currentMemberId, programId])
-
-  useEffect(() => {
-    fetch()
-  }, [fetch])
+    if (currentMemberId && programId) {
+      getProgramContentEnrollment()
+    }
+  }, [authToken, currentMemberId, programId])
 
   return {
     programContentEnrollment: data.map(d => ({
       contentId: d.programContentId,
       displayMode: d.displayMode as DisplayMode,
     })),
+    loadingProgramContentEnrollment: isLoading,
   }
 }
 
