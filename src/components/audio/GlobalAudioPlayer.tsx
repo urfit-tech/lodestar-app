@@ -126,6 +126,7 @@ const GlobalAudioPlayer: React.VFC = () => {
                 contentType: programContent.contentType,
                 videoId: programContentVideo.id,
                 source: programContentVideo.options?.cloudflare ? 'cloudflare' : programContentVideo.data?.source,
+                cloudfront: programContentVideo.options?.cloudfront,
               })
             } else {
               close?.()

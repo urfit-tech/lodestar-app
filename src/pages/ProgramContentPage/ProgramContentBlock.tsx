@@ -268,71 +268,18 @@ const ProgramContentBlock: React.VFC<{
           onLocationChange={onEbookLocationChange}
         />
       ) : null}
-      {!!isEquityProgramContent && moment().isBefore(moment(programContent.publishedAt)) && hasPermission && currentUserRole !== 'app-owner' && (
-        <StyledUnpublishedBlock>
-          <StyledIcon as={LockIcon} className="mb-3" />
-          <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.theContentWillAt)}</p>
-          <p>
-            {`${moment(programContent.publishedAt).format('YYYY/MM/DD HH:mm')} ${formatMessage(
-              commonMessages.text.publish,
-            )}`}
-          </p>
-        </StyledUnpublishedBlock>
-      )}
-      {!includes(programContent.programContentBody?.type, ['ebook', 'practice', 'exercise', 'exam']) &&
-        programContent.videos[0]?.data?.source !== 'youtube' && (
-          <StyledContentBlock className="mb-3">
-            {isMobile &&
-            !isAndroid &&
-            enabledModules.background_mode &&
-            programContent.programContentBody?.type !== 'audio' ? (
-              <StyledTitleBlock>
-                <StyledMobileTitle className="mb-2">{programContent.title}</StyledMobileTitle>
-                <div className="d-flex justify-content-end">
-                  <span className="mr-2">
-                    {formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundMode)}
-                  </span>
-                  <Switch
-                    colorScheme="whatsapp"
-                    onChange={() => {
-                      if (isBackgroundMode) {
-                        changeBackgroundMode?.(false)
-                        changeGlobalPlayingState?.(false)
-                        close?.()
-                      }
-                      if (!isBackgroundMode && programContent) {
-                        setup?.({
-                          backgroundMode: true,
-                          title: programContent?.title || '',
-                          contentSectionTitle: programContent.contentSectionTitle || '',
-                          programId: programId,
-                          contentId: programContentId,
-                          contentType: programContent.contentType || '',
-                          videoId: programContent.videos[0]?.id,
-                          source: programContent.videos[0]?.options?.cloudflare
-                            ? 'cloudflare'
-                            : programContent.videos[0]?.data?.source,
-                          cloudfront: programContent.videos[0]?.options?.cloudfront,
-                        })
-                        changeBackgroundMode?.(true)
-                        changeGlobalPlayingState?.(true)
-                      }
-                    }}
-                    isChecked={isBackgroundMode}
-                  />
-                </div>
-              </StyledTitleBlock>
-            ) : (
-              <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
-            )}
-
-            {programContent.programContentBody &&
-              ((moment().isAfter(moment(programContent.publishedAt)) && hasPermission) ||
-                currentUserRole === 'app-owner') &&
-              !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
-                <BraftContent>{programContent.programContentBody.description}</BraftContent>
-              )}
-          </StyledContentBlock>
+      {!!isEquityProgramContent &&
+        moment().isBefore(moment(programContent.publishedAt)) &&
+        currentUserRole !== 'app-owner' && (
+          <StyledUnpublishedBlock>
+            <StyledIcon as={LockIcon} className="mb-3" />
+            <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.theContentWillAt)}</p>
+            <p>
+              {`${moment(programContent.publishedAt).format('YYYY/MM/DD HH:mm')} ${formatMessage(
+                commonMessages.text.publish,
+              )}`}
+            </p>
+          </StyledUnpublishedBlock>
         )}
       {(!isEquityProgramContent ||
         (!!isEquityProgramContent &&
@@ -369,6 +316,7 @@ const ProgramContentBlock: React.VFC<{
                         source: programContent.videos[0]?.options?.cloudflare
                           ? 'cloudflare'
                           : programContent.videos[0]?.data?.source,
+                        cloudfront: programContent.videos[0]?.options?.cloudfront,
                       })
                       changeBackgroundMode?.(true)
                       changeGlobalPlayingState?.(true)

@@ -127,7 +127,7 @@ export enum DisplayModeEnum {
 type Videos = {
   id: string
   size: number
-  options: { cloudflare?: object }
+  options: { cloudflare?: object; cloudfront?: object }
   data: { source?: string }
 }[]
 
