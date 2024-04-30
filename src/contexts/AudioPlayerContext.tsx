@@ -32,6 +32,7 @@ type AudioPlayerContextValue = {
     contentType?: string | null
     videoId?: string
     source?: string
+    cloudfront?: object
   }) => void
   setProgramId?: (programId: string) => void
 }
@@ -65,6 +66,7 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
     backgroundMode: boolean
     contentType: string
     source: string
+    cloudfront?: object
   } = localPlaying !== null && JSON.parse(localPlaying)
   const [visible, setVisible] = useState(playing.visible || false)
   const [programId, setProgramId] = useState(playing.programId || '')
@@ -72,6 +74,7 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
   const [isBackgroundMode, setIsBackgroundMode] = useState(playing.backgroundMode || false)
   const [contentType, setContentType] = useState(playing.contentType || null)
   const [source, setSource] = useState(playing.source || '')
+  const [cloudfrontPath, setCloudfrontPath] = useState(playing.cloudfront)
   const [videoId, setVideoId] = useState(playing.videoId || '')
   const [isPlaying, setIsPlaying] = useState(false)
   const [title, setTitle] = useState('')
@@ -90,7 +93,32 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
       if (source === 'azure') {
         setMimeType('application/x-mpegURL')
         setAudioUrl(`${source}(format=m3u8-cmaf)`)
-      } else if (source === 'cloudflare') {
+      }
+
+      if (cloudfrontPath) {
+        axios
+          .get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos/${videoId}/sign`, {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          })
+          .then(({ data }) => {
+            const {
+              videoSignedPaths: { hlsPath, dashPath, cloudfrontMigratedHlsPath },
+            } = data.result
+
+            setMimeType('application/x-mpegURL')
+            setAudioUrl(
+              hlsPath && dashPath
+                ? `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${hlsPath}`
+                : `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${cloudfrontMigratedHlsPath}`,
+            )
+          })
+
+        return
+      }
+
+      if (source === 'cloudflare') {
         axios
           .post(
             `${process.env.REACT_APP_API_BASE_ROOT}/videos/${videoId}/token`,
@@ -148,8 +176,17 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
           localStorage.setItem('audioPlayerVisibleState', 'close')
         },
         setup: options => {
-          const { title, contentSectionTitle, programId, contentId, backgroundMode, contentType, videoId, source } =
-            options
+          const {
+            title,
+            contentSectionTitle,
+            programId,
+            contentId,
+            backgroundMode,
+            contentType,
+            videoId,
+            source,
+            cloudfront,
+          } = options
           title && setTitle(title)
           contentSectionTitle && setContentSectionTitle(contentSectionTitle)
           programId && setProgramId(programId)
@@ -157,6 +194,7 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
           contentType && setContentType(contentType)
           videoId && setVideoId(videoId)
           source && setSource(source)
+          cloudfront && setCloudfrontPath(cloudfront)
           const playing = {
             backgroundMode,
             visible,
@@ -165,6 +203,7 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
             videoId,
             source,
             contentType,
+            cloudfront,
           }
           localStorage.setItem('playing', JSON.stringify(playing))
           localStorage.setItem('audioPlayerVisibleState', 'open')
