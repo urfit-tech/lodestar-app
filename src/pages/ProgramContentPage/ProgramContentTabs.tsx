@@ -41,12 +41,14 @@ const ProgramContentTabs: React.VFC<{
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
   const [activeKey, setActiveKey] = useState('issue')
-  const { data: materials } = useProgramContentMaterial(programContent.id)
+  const { programContentMaterials } = useProgramContentMaterial(programId)
+
+  const materials = programContentMaterials.filter(material => material.programContentId === programContent.id)
 
   let isIssueThreadVisible =
     programContent?.contentType === 'exercise' || programContent?.contentType === 'exam' ? false : issueEnabled
   const isPracticesVisible = enabledModules.practice && programContent.programContentBody?.type === 'practice'
-  const isMaterialVisible = materials ? materials.length !== 0 : false
+  const isMaterialVisible = materials.length !== 0
 
   useEffect(() => {
     if (isPracticesVisible) {
@@ -93,7 +95,7 @@ const ProgramContentTabs: React.VFC<{
       key: 'material',
       name: formatMessage(programMessages.tab.downloadMaterials),
       isVisible: isMaterialVisible,
-      content: <ProgramContentMaterialBlock programContentId={programContent.id} />,
+      content: <ProgramContentMaterialBlock programContentId={programContent.id} programId={programId} />,
     },
   ].filter(v => v.isVisible)
 

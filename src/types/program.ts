@@ -26,6 +26,28 @@ export type ProgramBriefProps = {
   editors?: string[]
 }
 
+export type EquityProgram = {
+  id: string
+  title: string
+  coverUrl: string | null
+  coverMobileUrl: string | null
+  coverThumbnailUrl: string | null
+  abstract: string | null
+}
+
+export type EquityPrograms = {
+  id: string
+  title: string
+  coverUrl: string | null
+  coverMobileUrl: string | null
+  coverThumbnailUrl: string | null
+  abstract: string | null
+  roles: ProgramRole[]
+  viewRate: number
+  lastViewedAt: Date
+  deliveredAt: Date
+}[]
+
 export type Program = ProgramBriefProps & {
   description: string | null
   coverVideoUrl: string | null
@@ -102,6 +124,13 @@ export enum DisplayModeEnum {
   payToWatch = 'payToWatch',
 }
 
+type Videos = {
+  id: string
+  size: number
+  options: { cloudflare?: object }
+  data: { source?: string }
+}[]
+
 export type ProgramContent = {
   id: string
   title: string
@@ -114,12 +143,40 @@ export type ProgramContent = {
   listPrice: number | null
   salePrice: number | null
   soldAt: Date | null
-  // materials?: ProgramContentMaterialProps[]
-  videos: { id: string; size: number; options: { cloudflare?: object }; data: { source?: string } }[]
+  videos: Videos
   audios: { data: object }[]
   contentBodyId: string
   ebook: ProgramContentEbook
-  pinned_status: boolean
+  pinnedStatus: boolean
+}
+
+type MetaData = {
+  private: boolean
+  difficulty: number
+  isCoverRequired: boolean
+}
+
+export type ProgramContentResponse = {
+  appId: string
+  id: string
+  title: string
+  abstract: string | null
+  contentBodyId: string
+  publishedAt: Date | null
+  duration: number | null
+  displayMode: DisplayMode
+  contentType: string | null
+  contentSectionTitle: string
+  audios: { data: object }[]
+  videos: Videos
+  attachments: ProgramContentAttachmentProps[]
+  programContentBody: ProgramContentBodyProps
+  metadata: MetaData | null
+  listPrice: number | null
+  salePrice: number | null
+  soldAt: Date | null
+  pinnedStatus: boolean
+  isEquity: boolean
 }
 
 export type ProgramContentBodyProps = {
@@ -133,6 +190,19 @@ export type ProgramContentMaterialProps = {
   id: string
   data: any
   createdAt: Date
+}
+
+export type ProgramContentMaterial = {
+  id: string
+  data: {
+    name: string
+    size: number
+    type: string
+    lastModified: number
+    url?: string
+  }
+  createdAt: Date
+  programContentId: string
 }
 
 export type ProgramContentAttachmentProps = {
