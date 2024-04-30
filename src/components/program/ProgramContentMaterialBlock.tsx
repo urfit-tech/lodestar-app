@@ -1,6 +1,7 @@
 import { AttachmentIcon } from '@chakra-ui/icons'
 import { IconButton, Progress, useToast } from '@chakra-ui/react'
 import { Spin } from 'antd'
+import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
@@ -9,6 +10,7 @@ import styled from 'styled-components'
 import { byteToSize, downloadFile, getFileDownloadableLink, getFileExtension, getFileName } from '../../helpers'
 import { useMutateMaterialAuditLog, useProgramContentMaterial } from '../../hooks/program'
 import { ReactComponent as DownloadIcon } from '../../images/download.svg'
+import { ProgramContentMaterial } from '../../types/program'
 import { BREAK_POINT } from '../common/Responsive'
 import programMessages from './translation'
 
@@ -49,22 +51,73 @@ const StyledDataSize = styled.span`
 `
 const ProgramContentMaterialBlock: React.VFC<{
   programContentId: string
-}> = ({ programContentId }) => {
+  programId: string
+}> = ({ programContentId, programId }) => {
   const toast = useToast()
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { authToken, currentMemberId } = useAuth()
-  const {
-    loading: loadingProgramContentMaterials,
-    error: errorProgramContentMaterials,
-    data: programContentMaterials,
-  } = useProgramContentMaterial(programContentId)
+  const { programContentMaterials, loadingProgramContentMaterials, errorProgramContentMaterials } =
+    useProgramContentMaterial(programId)
   const { insertMaterialAuditLog } = useMutateMaterialAuditLog()
   const [isDownloading, setIsDownloading] = useState<{ [key: string]: boolean }>({})
   const [downloadProgress, setDownloadProgress] = useState<{ [key: string]: number }>({})
 
   const charLimit = window.innerWidth >= BREAK_POINT ? 50 : 20
 
+  const handleDownloadMaterial = async (material: ProgramContentMaterial) => {
+    try {
+      const res = await insertMaterialAuditLog({
+        variables: {
+          data: { member_id: currentMemberId, target: material.id, action: 'download' },
+        },
+      })
+      if (res.data?.insert_material_audit_log_one?.id) {
+        const url = material.data.url && new URL(material.data.url)
+        if (url) {
+          window.open(material.data.url)
+          return
+        }
+        setIsDownloading(prev => ({ ...prev, [material.id]: true }))
+        try {
+          const materialLink = await getFileDownloadableLink(
+            `materials/${appId}/${programContentId}_${material.data.name}`,
+            authToken,
+          )
+
+          const response = await axios.get(materialLink, {
+            responseType: 'blob',
+            onDownloadProgress: progressEvent => {
+              const { loaded, total } = progressEvent
+              setDownloadProgress(prev => ({
+                ...prev,
+                [material.id]: Math.floor((loaded / total) * 100),
+              }))
+            },
+          })
+
+          if (response.data) {
+            downloadFile(material.data.name, { url: response.request.responseURL }).then(() => {
+              setIsDownloading(prev => ({ ...prev, [material.id]: false }))
+            })
+          }
+        } catch (error) {
+          if (process.env.NODE_ENV === 'development') {
+            console.error(error)
+          }
+          setIsDownloading(prev => ({ ...prev, [material.id]: false }))
+        }
+      }
+    } catch (error) {
+      toast({
+        title: 'Download material failed.',
+        status: 'error',
+        duration: 3000,
+        isClosable: false,
+        position: 'top',
+      })
+    }
+  }
   return (
     <>
       {loadingProgramContentMaterials ? (
@@ -80,86 +133,40 @@ const ProgramContentMaterialBlock: React.VFC<{
               name: material.data?.name || formatMessage(programMessages.ProgramContentMaterialBlock.attachment),
             },
           }))
-          .map(material => (
-            <StyledMaterial
-              key={material.id}
-              className="mb-3"
-              onClick={async () => {
-                await insertMaterialAuditLog({
-                  variables: {
-                    data: { member_id: currentMemberId, target: material.id, action: 'download' },
-                  },
-                })
-                  .then(async res => {
-                    if (res.data?.insert_material_audit_log_one?.id) {
-                      if (material.data.url) {
-                        window.open(material.data.url)
-                        return
-                      }
-                      setIsDownloading(prev => ({ ...prev, [material.id]: true }))
-                      const materialLink = await getFileDownloadableLink(
-                        `materials/${appId}/${programContentId}_${material.data.name}`,
-                        authToken,
-                      )
-                      const materialRequest = new Request(materialLink)
-                      try {
-                        const response = await fetch(materialRequest)
-                        response.url &&
-                          downloadFile(material.data.name, {
-                            url: response.url,
-                            onDownloadProgress: ({ loaded, total }) => {
-                              setDownloadProgress(prev => ({
-                                ...prev,
-                                [material.id]: Math.floor((loaded / total) * 100),
-                              }))
-                            },
-                          }).then(() => {
-                            setIsDownloading(prev => ({ ...prev, [material.id]: false }))
-                          })
-                      } catch (error) {
-                        process.env.NODE_ENV === 'development' && console.error(error)
-                      }
-                    }
-                  })
-                  .catch(error =>
-                    toast({
-                      title: error,
-                      status: 'error',
-                      duration: 3000,
-                      isClosable: false,
-                      position: 'top',
-                    }),
-                  )
-              }}
-            >
-              <div className="d-flex align-items-center justify-content-between">
-                <AttachmentIcon className="flex-shrink-0 mr-2" />
+          .map(
+            material =>
+              material.programContentId === programContentId && (
+                <StyledMaterial key={material.id} className="mb-3" onClick={() => handleDownloadMaterial(material)}>
+                  <div className="d-flex align-items-center justify-content-between">
+                    <AttachmentIcon className="flex-shrink-0 mr-2" />
+                    <StyledFileName className="flex-grow-1">
+                      <StyledDataName>
+                        {getFileName(material.data.name).length >= charLimit
+                          ? `${getFileName(material.data.name).substring(0, charLimit)}..`
+                          : getFileName(material.data.name).substring(0, charLimit)}
+                      </StyledDataName>
+                      <StyledFileExtension className="mr-2">{`.${getFileExtension(
+                        material.data.name,
+                      )}`}</StyledFileExtension>
+                      {material.data.size && (
+                        <StyledDataSize>{`(${byteToSize(material.data.size ?? 0)})`}</StyledDataSize>
+                      )}
+                    </StyledFileName>
 
-                <StyledFileName className="flex-grow-1">
-                  <StyledDataName>
-                    {getFileName(material.data.name).length >= charLimit
-                      ? `${getFileName(material.data.name).substring(0, charLimit)}..`
-                      : getFileName(material.data.name).substring(0, charLimit)}
-                  </StyledDataName>
-                  <StyledFileExtension className="mr-2">{`.${getFileExtension(
-                    material.data.name,
-                  )}`}</StyledFileExtension>
-                  {material.data.size && <StyledDataSize>{`(${byteToSize(material.data.size ?? 0)})`}</StyledDataSize>}
-                </StyledFileName>
-
-                <IconButton
-                  aria-label="download"
-                  variant="download"
-                  icon={<DownloadIcon />}
-                  isLoading={!!isDownloading[material.id]}
-                  className="flex-shrink-0"
-                />
-              </div>
-              {isDownloading[material.id] && (
-                <Progress value={downloadProgress[material.id] || 0} size="xs" colorScheme="green" />
-              )}
-            </StyledMaterial>
-          ))
+                    <IconButton
+                      aria-label="download"
+                      variant="download"
+                      icon={<DownloadIcon />}
+                      isLoading={!!isDownloading[material.id]}
+                      className="flex-shrink-0"
+                    />
+                  </div>
+                  {isDownloading[material.id] && (
+                    <Progress value={downloadProgress[material.id] || 0} size="xs" colorScheme="green" />
+                  )}
+                </StyledMaterial>
+              ),
+          )
       )}
     </>
   )
