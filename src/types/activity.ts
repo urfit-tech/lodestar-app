@@ -128,3 +128,41 @@ export type ActivitySessionTicketEnrollment = {
     activityCoverUrl: string | null
   }[]
 }
+
+export type MemberRightActivityTicketDetail = {
+  id: string
+  activity: {
+    id: string
+    title: string
+    coverUrl: string
+    categories: { id: string; name: string }[]
+    isParticipantsVisible: boolean
+  }
+}
+
+export type MemberRightActivitySession = {
+  id: string
+  startedAt: string
+  endedAt: string
+  location: string | null
+  description: string | null
+  threshold: string | null
+  onlineLink: string | null
+  title: string
+  maxAmount: { online: number; offline: number }
+  participants: { online: number; offline: number }
+  isEnrolled: boolean
+  type: 'both' | 'offline' | 'online'
+  attended: boolean
+}
+
+export type MemberRightActivityInvoice = {
+  name: string
+  email: string
+  phone: string
+  orderProductId: string
+}
+
+export type MemberRightActivityTicket = MemberRightActivityTicketDetail & { sessions: MemberRightActivitySession[] } & {
+  invoice: MemberRightActivityInvoice
+}
