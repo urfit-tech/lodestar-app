@@ -13,7 +13,11 @@ import DefaultLayout from '../../../components/layout/DefaultLayout'
 import MediaPlayerContext from '../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, handleError } from '../../../helpers'
-import { useEnrolledProgramIds, useProgram, useProgramPlansEnrollmentsAggregateList } from '../../../hooks/program'
+import {
+  useEquityProgramByProgramId,
+  useProgram,
+  useProgramPlansEnrollmentsAggregateList,
+} from '../../../hooks/program'
 import { useEnrolledProgramPackage } from '../../../hooks/programPackage'
 import ForbiddenPage from '../../ForbiddenPage'
 import LoadingPage from '../../LoadingPage'
@@ -62,7 +66,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
   const { loadingProgram, program, addProgramView } = useProgram(programId)
   const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
-  const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+  const { isEquityProgram, loadingEquityProgram } = useEquityProgramByProgramId(programId)
   const { loading: loadingProgramPlansEnrollmentsAggregateList, programPlansEnrollmentsAggregateList } =
     useProgramPlansEnrollmentsAggregateList(program?.plans.map(plan => plan.id) || [])
   const [isPlanListSticky, setIsPlanListSticky] = useState(false)
@@ -70,8 +74,6 @@ const SecondaryProgramPageContent: React.VFC = () => {
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const planListHeightRef = useRef<HTMLDivElement>(null)
-
-  const isEnrolled = enrolledProgramIds.includes(programId)
 
   try {
     const visitedPrograms = JSON.parse(sessionStorage.getItem('kolable.programs.visited') || '[]') as string[]
@@ -100,14 +102,14 @@ const SecondaryProgramPageContent: React.VFC = () => {
     }
   }, [loadingProgramPlansEnrollmentsAggregateList])
 
-  if (!loadingEnrolledProgramIds && !visitIntro && isEnrolled) {
+  if (!loadingEquityProgram && !visitIntro && isEquityProgram) {
     return <Redirect to={`/programs/${programId}/contents?back=${previousPage || `programs_${programId}`}`} />
   }
 
   if (
     loadingProgram ||
     enrolledProgramPackages.loading ||
-    loadingEnrolledProgramIds ||
+    loadingEquityProgram ||
     loadingProgramPlansEnrollmentsAggregateList
   ) {
     return <LoadingPage />
