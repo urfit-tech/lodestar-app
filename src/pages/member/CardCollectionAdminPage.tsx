@@ -81,6 +81,7 @@ const MembershipCardAdminBlock: React.VFC<{
         }}
         title={membershipCard.title}
         description={membershipCard.description}
+        id={membershipCard.id}
       />
     </StyledContainer>
   )
