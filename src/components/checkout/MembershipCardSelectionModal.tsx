@@ -82,6 +82,7 @@ const MembershipCardItem: React.VFC<{
   return (
     <StyledContainer>
       <MembershipCardBlock
+        id={membershipCardId}
         template={membershipCard.template}
         templateVars={{
           avatar: member.pictureUrl,

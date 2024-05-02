@@ -317,6 +317,7 @@ const ProgramContentBlock: React.VFC<{
                           source: programContent.videos[0]?.options?.cloudflare
                             ? 'cloudflare'
                             : programContent.videos[0]?.data?.source,
+                          cloudfront: programContent.videos[0]?.options?.cloudfront,
                         })
                         changeBackgroundMode?.(true)
                         changeGlobalPlayingState?.(true)

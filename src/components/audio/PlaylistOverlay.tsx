@@ -220,6 +220,7 @@ const PlayListItem: React.VFC<{
             programId,
             contentId,
             contentType: contentType || '',
+            cloudfront: videos[0]?.options?.cloudfront,
           })
         }
       }}

@@ -1049,7 +1049,7 @@ const useEbookBookmark = (programContentId: string, memberId: string | null) => 
         createdAt: new Date(bookmark.created_at),
         highlightContent: bookmark.highlight_content,
         chapter: bookmark.chapter,
-        href: bookmark.href,
+        href: bookmark.href ?? '',
         percentage: bookmark.percentage,
       }
     }) || []
