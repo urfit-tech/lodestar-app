@@ -30,8 +30,6 @@ type ProductType = 'ActivityTicket' | 'ProgramPlan' | 'ProgramPackagePlan' | 'Po
 const StyledTable = styled(ChakraTable)`
   && {
     font-size: 14px;
-    overflow-y: 'auto';
-    max-height: '300px';
   }
   a {
     color: #4c5b8f;
@@ -48,13 +46,6 @@ const StyledModalHeader = styled(ModalHeader)`
     font-size: 16px;
   }
 `
-
-const StyledModalBody = styled(ModalBody)`
-  && {
-    max-height: 150px;
-    overflow-y: auto;
-  }
-`
 const StyledTableTh = styled(Th)`
   && {
     font-size: 14px;
@@ -62,12 +53,6 @@ const StyledTableTh = styled(Th)`
     font-weight: bold;
   }
 `
-
-const StyledTableWrapper = styled.div`
-  max-height: 300px;
-  overflow-y: auto;
-`
-
 const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({ isOpen, onClose, title, id }) => {
   const { cards } = useMembershipCardTerms(id)
   const { formatMessage } = useIntl()
@@ -114,40 +99,38 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({ isO
         <StyledModalHeader>{formatMessage(commonMessages.MembershipCardTermsModal.discountTerms)}</StyledModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <StyledTableWrapper>
-            <StyledTable variant="simple">
-              <Thead>
-                <Tr>
-                  <StyledTableTh>{formatMessage(commonMessages.MembershipCardTermsModal.type)}</StyledTableTh>
-                  <StyledTableTh>{formatMessage(commonMessages.MembershipCardTermsModal.discountName)}</StyledTableTh>
-                  <StyledTableTh>{formatMessage(commonMessages.MembershipCardTermsModal.discountType)}</StyledTableTh>
+          <StyledTable variant="simple">
+            <Thead>
+              <Tr>
+                <StyledTableTh>{formatMessage(commonMessages.MembershipCardTermsModal.type)}</StyledTableTh>
+                <StyledTableTh>{formatMessage(commonMessages.MembershipCardTermsModal.discountName)}</StyledTableTh>
+                <StyledTableTh>{formatMessage(commonMessages.MembershipCardTermsModal.discountType)}</StyledTableTh>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {cards?.card_discounts?.map(discount => (
+                <Tr key={discount.id}>
+                  <Td>{renderProductType(discount?.product?.type)}</Td>
+                  <Td>
+                    <a
+                      href={generateProductLink({
+                        productName: discount?.product?.type,
+                        id: discount?.product?.details?.productId as string,
+                      })}
+                    >
+                      {discount?.product?.details?.productPlanName
+                        ? `${discount?.product?.details?.productName} - ${discount?.product?.details?.productPlanName}`
+                        : discount?.product?.details?.productName}
+                    </a>
+                  </Td>
+                  <Td>{renderDiscount(discount)}</Td>
                 </Tr>
-              </Thead>
-              <Tbody>
-                {cards?.card_discounts?.map(discount => (
-                  <Tr key={discount.id}>
-                    <Td>{renderProductType(discount?.product?.type)}</Td>
-                    <Td>
-                      <a
-                        href={generateProductLink({
-                          productName: discount?.product?.type,
-                          id: discount?.product?.details?.productId as string,
-                        })}
-                      >
-                        {discount?.product?.details?.productPlanName
-                          ? `${discount?.product?.details?.productName} - ${discount?.product?.details?.productPlanName}`
-                          : discount?.product?.details?.productName}
-                      </a>
-                    </Td>
-                    <Td>{renderDiscount(discount)}</Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </StyledTable>
-          </StyledTableWrapper>
+              ))}
+            </Tbody>
+          </StyledTable>
         </ModalBody>
         <StyledModalHeader>{formatMessage(commonMessages.MembershipCardTermsModal.usageDescription)}</StyledModalHeader>
-        <StyledModalBody>{cards?.description}</StyledModalBody>
+        <ModalBody>{cards?.description}</ModalBody>
       </ModalContent>
     </Modal>
   )
