@@ -143,85 +143,89 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
             return
           }
         }
-        register({
-          username: values.username.trim().toLowerCase(),
-          email: values.email.trim().toLowerCase(),
-          password: values.password,
-          isBusiness: isBusinessMember ?? false,
-        })
-          .then(async authToken => {
-            const decodedToken = parsePayload(authToken)
-            if (!decodedToken) {
-              throw new Error('no auth token')
-            }
-            const currentMemberId = decodedToken.sub
-            let pictureUrl = null
 
-            if (companyPictureFile) {
-              const avatarId = uuid()
-              const path = `avatars/${decodedToken.appId}/${currentMemberId}/${avatarId}`
-              pictureUrl = `https://${process.env.REACT_APP_S3_BUCKET}/${path}`
-              await uploadFile(path, companyPictureFile, authToken)
-            }
-
-            process.env.REACT_APP_GRAPHQL_PH_ENDPOINT &&
-              Axios.post(
-                process.env.REACT_APP_GRAPHQL_PH_ENDPOINT,
-                {
-                  query: `mutation UPDATE_MEMBER_INFO($memberId: String!, $setMember: member_set_input, $memberProperties: [member_property_insert_input!]!) {
-                    update_member(where: { id: { _eq: $memberId } }, _set: $setMember) {
-                      affected_rows
-                    }
-  
-                    insert_member_property(objects: $memberProperties) {
-                      affected_rows
-                    }
-                  }
-                  `,
-                  variables: {
-                    memberId: currentMemberId,
-                    setMember: isBusinessMember
-                      ? {
-                          picture_url: pictureUrl,
-                          abstract: signupInfos?.find(v => v.id === 'companyAbstract')?.value,
-                        }
-                      : {
-                          name: isBusinessMember
-                            ? signupInfos?.find(v => v.id === 'companyShortName')?.value
-                            : signupInfos?.find(v => v.id === 'name')?.value,
-                        },
-                    memberProperties: signupInfos
-                      ?.filter(v => v.id !== 'name' && v.id !== 'pictureUrl' && v.id !== 'companyAbstract')
-                      ?.map(v => ({
-                        member_id: currentMemberId,
-                        property_id: v.id,
-                        value: v?.value.toString() || '',
-                      })),
-                  },
-                },
-                { headers: { Authorization: `Bearer ${authToken}` } },
-              )
-            setVisible?.(false)
-            setIsBusinessMember?.(false)
+        try {
+          const authToken = await register({
+            username: values.username.trim().toLowerCase(),
+            email: values.email.trim().toLowerCase(),
+            password: values.password,
+            isBusiness: isBusinessMember ?? false,
           })
-          .catch((error: Error) => {
-            const code = error.message as keyof typeof codeMessages
-            if (process.env.NODE_ENV === 'development') {
-              message.error(formatMessage(codeMessages[code]))
-            } else {
-              switch (code) {
-                case 'E_USERNAME_EXISTS':
-                  message.error(formatMessage(authMessages.RegisterSection.usernameIsAlreadyRegistered))
-                  break
-                case 'E_EMAIL_EXISTS':
-                  message.error(formatMessage(authMessages.RegisterSection.emailIsAlreadyRegistered))
-                  break
-                default:
-                  message.error(formatMessage(authMessages.RegisterSection.registerFailed))
+
+          const decodedToken = parsePayload(authToken)
+          if (!decodedToken) {
+            throw new Error('no auth token')
+          }
+
+          const currentMemberId = decodedToken.sub
+          let pictureUrl = null
+          if (companyPictureFile) {
+            const avatarId = uuid()
+            const path = `avatars/${decodedToken.appId}/${currentMemberId}/${avatarId}`
+            pictureUrl = `https://${process.env.REACT_APP_S3_BUCKET}/${path}`
+            await uploadFile(path, companyPictureFile, authToken)
+          }
+
+          if (process.env.REACT_APP_GRAPHQL_PH_ENDPOINT) {
+            await Axios.post(
+              process.env.REACT_APP_GRAPHQL_PH_ENDPOINT,
+              {
+                query: `
+              mutation UPDATE_MEMBER_INFO($memberId: String!, $setMember: member_set_input, $memberProperties: [member_property_insert_input!]!) {
+                update_member(where: { id: { _eq: $memberId } }, _set: $setMember) {
+                  affected_rows
+                }
+                insert_member_property(objects: $memberProperties) {
+                  affected_rows
+                }
               }
+            `,
+                variables: {
+                  memberId: currentMemberId,
+                  setMember: isBusinessMember
+                    ? {
+                        picture_url: pictureUrl,
+                        abstract: signupInfos?.find(v => v.id === 'companyAbstract')?.value,
+                      }
+                    : {
+                        name: isBusinessMember
+                          ? signupInfos?.find(v => v.id === 'companyShortName')?.value
+                          : signupInfos?.find(v => v.id === 'name')?.value,
+                      },
+                  memberProperties: signupInfos
+                    ?.filter(v => v.id !== 'name' && v.id !== 'pictureUrl' && v.id !== 'companyAbstract')
+                    ?.map(v => ({
+                      member_id: currentMemberId,
+                      property_id: v.id,
+                      value: v?.value.toString() || '',
+                    })),
+                },
+              },
+              { headers: { Authorization: `Bearer ${authToken}` } },
+            )
+          }
+
+          setVisible?.(false)
+          setIsBusinessMember?.(false)
+        } catch (error: any) {
+          const code = error.message as keyof typeof codeMessages
+          if (process.env.NODE_ENV === 'development') {
+            message.error(formatMessage(codeMessages[code]))
+          } else {
+            switch (code) {
+              case 'E_USERNAME_EXISTS':
+                message.error(formatMessage(authMessages.RegisterSection.usernameIsAlreadyRegistered))
+                break
+              case 'E_EMAIL_EXISTS':
+                message.error(formatMessage(authMessages.RegisterSection.emailIsAlreadyRegistered))
+                break
+              default:
+                message.error(formatMessage(authMessages.RegisterSection.registerFailed))
             }
-          })
-          .finally(() => setLoading(false))
+          }
+        } finally {
+          setLoading(false)
+        }
       })
   }
 
