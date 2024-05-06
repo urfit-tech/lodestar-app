@@ -260,6 +260,8 @@ export const useProgram = (programId: string) => {
           is_countdown_timer_visible
           is_introduction_section_visible
           is_enrolled_count_visible
+          display_header
+          display_footer
           editors {
             member_id
           }
@@ -346,8 +348,12 @@ export const useProgram = (programId: string) => {
         }
       }
     `,
-    { skip: !programId, variables: { programId } },
+    { skip: !programId, variables: { programId }, fetchPolicy: 'no-cache' },
   )
+
+  console.log({
+    aaa: data,
+  })
   const { loading: loadingProgramPlans, data: programPlans } = useQuery<
     hasura.GetProgramPlans,
     hasura.GetProgramPlansVariables
@@ -416,6 +422,8 @@ export const useProgram = (programId: string) => {
       isIntroductionSectionVisible: data?.program_by_pk?.is_introduction_section_visible,
       tags: data?.program_by_pk?.program_tags.map(programTag => programTag.tag.name) || [],
       editors: data?.program_by_pk?.editors.map(v => v?.member_id || ''),
+      displayHeader: data?.program_by_pk?.display_header ?? true,
+      displayFooter: data?.program_by_pk?.display_footer ?? true,
       categories:
         data?.program_by_pk?.program_categories.map(programCategory => ({
           id: programCategory.category.id,

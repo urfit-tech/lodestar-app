@@ -59,6 +59,8 @@ export type Program = ProgramBriefProps & {
   categories: Category[]
   tags: string[]
   roles: ProgramRole[]
+  displayHeader: boolean
+  displayFooter: boolean
   plans: (ProgramPlan & {
     isSubscription: boolean
     groupBuyingPeople: number
