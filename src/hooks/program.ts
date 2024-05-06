@@ -351,9 +351,6 @@ export const useProgram = (programId: string) => {
     { skip: !programId, variables: { programId }, fetchPolicy: 'no-cache' },
   )
 
-  console.log({
-    aaa: data,
-  })
   const { loading: loadingProgramPlans, data: programPlans } = useQuery<
     hasura.GetProgramPlans,
     hasura.GetProgramPlansVariables
