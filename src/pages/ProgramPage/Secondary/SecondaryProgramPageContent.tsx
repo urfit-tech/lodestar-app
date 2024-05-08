@@ -21,9 +21,8 @@ import {
 import { useEnrolledProgramPackage } from '../../../hooks/programPackage'
 import ForbiddenPage from '../../ForbiddenPage'
 import LoadingPage from '../../LoadingPage'
-import ProgramContentListSection from '../Primary/ProgramContentListSection'
-import ProgramInstructorCollectionBlock from '../Primary/ProgramInstructorCollectionBlock'
 import ProgramPageHelmet from '../Primary/ProgramPageHelmet'
+import ProgramIntroTabs from './ProgramIntroTabs'
 import SecondaryProgramBanner from './SecondaryProgramBanner'
 import SecondaryProgramInfoCard from './SecondaryProgramInfoCard'
 import SecondaryProgramPlanCard from './SecondaryProgramPlanCard'
@@ -118,9 +117,6 @@ const SecondaryProgramPageContent: React.VFC = () => {
   if (!program) {
     return <ForbiddenPage />
   }
-
-  const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
-
   const isEnrolledByProgramPackage = !!enrolledProgramPackages.data.length
 
   const isDelivered = isEnrolledByProgramPackage
@@ -148,8 +144,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
               <ContentWrapper className="col-12 col-lg-8">
                 <SecondaryProgramInfoCard program={program} />
                 <BraftContent>{program.description}</BraftContent>
-                <ProgramInstructorCollectionBlock program={program} />
-                <ProgramContentListSection program={program} />
+                <ProgramIntroTabs program={program} />
               </ContentWrapper>
 
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">

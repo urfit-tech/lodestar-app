@@ -111,6 +111,7 @@ const SecondaryProgramBanner: React.VFC<{
   return (
     <Box overflow="hidden">
       <BlurredBanner
+        gradient={false}
         coverUrl={{ mobileUrl: program.coverMobileUrl || undefined, desktopUrl: program.coverUrl || undefined }}
         width={{ desktop: '700px', mobile: '400px' }}
       >

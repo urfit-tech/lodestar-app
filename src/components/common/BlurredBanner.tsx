@@ -30,23 +30,24 @@ const BlurredCover = styled.div<{ coverUrl?: { mobileUrl?: string; desktopUrl?: 
     background-image: url(${props => props.coverUrl?.desktopUrl || props.coverUrl?.mobileUrl});
   }
 `
-const ContentWrapper = styled.div`
+const ContentWrapper = styled.div<{ gradient?: boolean }>`
   position: relative;
-  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+  ${props => (props.gradient ? 'background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));' : '')}
   height: 100%;
 `
 
 const BlurredBanner: React.FC<{
   coverUrl?: { mobileUrl?: string; desktopUrl?: string }
   width?: { desktop: string; mobile: string }
-}> = ({ coverUrl, width, children }) => {
+  gradient?: boolean
+}> = ({ coverUrl, width, children, gradient = true }) => {
   return (
     <StyledWrapper width={width}>
       <BackgroundWrapper>
         <BlurredCover coverUrl={coverUrl} />
       </BackgroundWrapper>
 
-      <ContentWrapper>{children}</ContentWrapper>
+      <ContentWrapper gradient={gradient}>{children}</ContentWrapper>
     </StyledWrapper>
   )
 }

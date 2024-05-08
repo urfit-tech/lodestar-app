@@ -1,4 +1,4 @@
-import { Button, Icon } from '@chakra-ui/react'
+import { Icon } from '@chakra-ui/react'
 import CheckoutProductModal from 'lodestar-app-element/src/components/modals/CheckoutProductModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -68,14 +68,14 @@ const SecondaryPaymentButton: React.VFC<{
   return (
     <>
       {isProductInCart?.(type, target) ? (
-        <Button colorScheme="primary" isFullWidth onClick={() => history.push(`/cart`)}>
+        <SecondaryEnrollButton colorScheme="primary" isFullWidth onClick={() => history.push(`/cart`)}>
           {formatMessage(commonMessages.button.cart)}
-        </Button>
+        </SecondaryEnrollButton>
       ) : isSubscription ? (
         <CheckoutProductModal
           defaultProductId={`${type}_${target}`}
           renderTrigger={({ isLoading, onOpen }) => (
-            <Button
+            <StyleSecondaryCartButton
               variant="primary"
               isFullWidth
               isDisabled={isLoading || !isPublished}
@@ -86,7 +86,7 @@ const SecondaryPaymentButton: React.VFC<{
               }}
             >
               {formatMessage(commonMessages.button.subscribeNow)}
-            </Button>
+            </StyleSecondaryCartButton>
           )}
         />
       ) : currencyId === 'LSC' ? (
