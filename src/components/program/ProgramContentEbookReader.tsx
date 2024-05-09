@@ -154,8 +154,8 @@ const ProgramContentEbookReader: React.VFC<{
   const [currentPageBookmarkIds, setCurrentPageBookmarkIds] = useState<string[]>([])
   const [chapter, setChapter] = useState('')
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
-  const [ebookFontSize, setEbookFontSize] = useState(18)
-  const [ebookLineHeight, setEbookLineHeight] = useState(1.5)
+  const [ebookFontSize, setEbookFontSize] = useState(19)
+  const [ebookLineHeight, setEbookLineHeight] = useState(1.6)
   const [bookmarkData, setBookmarkData] = useState<BookmarkData>()
   const [toolbarVisible, setToolbarVisible] = useState(false)
   const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 })
@@ -570,6 +570,14 @@ const ProgramContentEbookReader: React.VFC<{
     setToolbarVisible(false)
   }
 
+  const initSetting = () => {
+    if (!rendition.current) return
+    rendition.current.themes.override('color', '#424242')
+    rendition.current.themes.override('background-color', '#ffffff')
+    rendition.current?.themes.override('font-size', `${ebookFontSize}px`)
+    rendition.current?.themes.override('line-height', ebookLineHeight.toString())
+  }
+
   return (
     <div>
       <EbookDeleteHighlightModal
@@ -727,13 +735,10 @@ const ProgramContentEbookReader: React.VFC<{
                         // Disable Chrome mobile's "tap to search" on a web app
                         body.setAttribute('tabindex', '-1')
                       })
-                    }
 
-                    // initial theme
-                    rendition.current.themes.override('color', '#424242')
-                    rendition.current.themes.override('background-color', '#ffffff')
-                    rendition.current?.themes.default({ p: { 'font-size': '18px!important' } })
-                    rendition.current?.themes.default({ p: { 'line-height': '1.5 !important' } })
+                      // initialize settings
+                      initSetting()
+                    }
 
                     rendition.current.on('mousedown', (event: MouseEvent) => {
                       isDragging.current = false
@@ -745,7 +750,6 @@ const ProgramContentEbookReader: React.VFC<{
 
                     rendition.current.on('resized', (size: { width: number; height: number }) => {
                       setReRenderHighlightQueue(prev => [...prev, `${size}`])
-                      console.log(`resized => width: ${size.width}, height: ${size.height}`)
                     })
 
                     rendition.current.on('selected', (cfiRange: string, contents: Contents) => {
@@ -809,6 +813,9 @@ const ProgramContentEbookReader: React.VFC<{
                       e.preventDefault()
                     })
                     contents.document.addEventListener('contextmenu', e => {
+                      e.preventDefault()
+                    })
+                    contents.document.addEventListener('dragstart', e => {
                       e.preventDefault()
                     })
                   }}
