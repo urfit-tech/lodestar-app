@@ -12,7 +12,7 @@ import { AuthModalContext } from '../../components/auth/AuthModal'
 import ProgramContentTrialModal from '../../components/program/ProgramContentTrialModal'
 import { durationFormatter, isMobile } from '../../helpers'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import { useEquityProgramByProgramId } from '../../hooks/program'
+import { useEnrolledProgramIds } from '../../hooks/program'
 import { BookIcon, MicrophoneIcon } from '../../images'
 import PinIcon from '../../images/pin-v-2.svg'
 import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
@@ -117,9 +117,11 @@ const ProgramContentListSection: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const theme = useAppTheme()
-  const { isAuthenticated } = useAuth()
+  const { currentMemberId, isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
-  const { isEquityProgram } = useEquityProgramByProgramId(program.id)
+  const { enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+
+  const isEnrolled = enrolledProgramIds.includes(program.id)
 
   const layoutContent = document.getElementById('layout-content')
 
@@ -149,7 +151,7 @@ const ProgramContentListSection: React.VFC<{
       title: programContentSection.title,
       description: programContentSection.description,
       collapsed_status: programContentSection.collapsed_status,
-      contents: isEquityProgram
+      contents: isEnrolled
         ? programContentSection.contents
         : programContentSection.contents.filter(programContent =>
             program.isIntroductionSectionVisible
@@ -161,7 +163,7 @@ const ProgramContentListSection: React.VFC<{
 
   function transformProgramContentSections(sections: typeof programContentSections) {
     return sections.reduce((acc: contentTitleCollapsedType, sec) => {
-      const isAllPinned = sec.contents.every(content => content.pinnedStatus)
+      const isAllPinned = sec.contents.every(content => content.pinned_status)
 
       acc[sec.id] = {
         isCollapsed: isAllPinned ? true : sec.collapsed_status,
@@ -232,9 +234,9 @@ const ProgramContentListSection: React.VFC<{
             <StyledPinnedIcon pin={isPinned} />
             <MobileProgramContentItem
               key={item.id}
-              isEnrolled={isEquityProgram}
+              isEnrolled={isEnrolled}
               onClick={() => {
-                if (isEquityProgram) {
+                if (isEnrolled) {
                   history.push(`/programs/${program.id}/contents/${item.id}?back=programs_${program.id}`)
                 } else if (item.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
                   const url = new URL(window.location.href)
@@ -254,7 +256,7 @@ const ProgramContentListSection: React.VFC<{
               <StyledDuration className="mt-2 d-flex align-items-center duration-text">
                 {(item.displayMode === DisplayModeEnum.trial ||
                   (item.displayMode === DisplayModeEnum.loginToTrial && isAuthenticated)) &&
-                !isEquityProgram ? (
+                !isEnrolled ? (
                   item.contentType === 'ebook' ? (
                     <StyledTag color={theme.colors.primary[500]}>
                       {formatMessage(productMessages.program.content.trial)}
@@ -307,9 +309,9 @@ const ProgramContentListSection: React.VFC<{
             <StyledPinnedIcon pin={isPinned} />
             <ProgramContentItem
               key={item.id}
-              isEnrolled={isEquityProgram}
+              isEnrolled={isEnrolled}
               onClick={() => {
-                if (isEquityProgram) {
+                if (isEnrolled) {
                   history.push(`/programs/${program.id}/contents/${item.id}?back=programs_${program.id}`)
                 } else if (item.displayMode === DisplayModeEnum.loginToTrial && !isAuthenticated) {
                   const url = new URL(window.location.href)
@@ -337,7 +339,7 @@ const ProgramContentListSection: React.VFC<{
               <StyledDuration>
                 {(item.displayMode === DisplayModeEnum.trial ||
                   (item.displayMode === DisplayModeEnum.loginToTrial && isAuthenticated)) &&
-                !isEquityProgram ? (
+                !isEnrolled ? (
                   item.contentType === 'ebook' ? (
                     <StyledTag color={theme.colors.primary[500]}>
                       {formatMessage(productMessages.program.content.trial)}
@@ -442,7 +444,7 @@ const ProgramContentListSection: React.VFC<{
                         </Collapse>
                         {(!getCollapsedSection(programContentSection.id) ||
                           !!getPinnedContent(programContentSection.id)) &&
-                          item.pinnedStatus && <ContentItem item={item} isPinned={true} />}
+                          item.pinned_status && <ContentItem item={item} isPinned={true} />}
                       </React.Fragment>
                     )
                   })}

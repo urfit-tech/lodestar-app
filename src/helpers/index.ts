@@ -479,7 +479,7 @@ export const getTrackingCookie = () => {
 const getLodestarRoute = (product: MemberPageProductType) => {
   switch (product) {
     case 'program':
-      return '/equity/programs'
+      return '/programs'
     case 'expiredProgram':
       return '/programs/expired'
     case 'programPackage':
