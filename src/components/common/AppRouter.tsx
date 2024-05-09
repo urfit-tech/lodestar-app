@@ -204,11 +204,6 @@ const defaultRoutesMap: RoutesMap = {
     pageName: 'ActivityPage',
   },
 
-  activity_ticket: {
-    path: '/activity_ticket/:activityTicketId',
-    pageName: 'ActivityTicketDetailsPage',
-  },
-
   // product - project
   project_collection: {
     path: '/projects',
