@@ -300,9 +300,13 @@ export const useUpdateAppointmentIssue = (orderProductId: string, options: any) 
 
 export const useCancelAppointment = (orderProductId: string, options: any) => {
   const [cancelAppointment] = useMutation<hasura.CANCEL_APPOINTMENT, hasura.CANCEL_APPOINTMENTVariables>(gql`
-    mutation CANCEL_APPOINTMENT($orderProductId: uuid!, $data: jsonb) {
+    mutation CANCEL_APPOINTMENT($orderProductId: uuid!, $data: jsonb, $meetId: uuid!) {
       update_order_product(where: { id: { _eq: $orderProductId } }, _set: { options: $data }) {
         affected_rows
+      }
+
+      update_meet_by_pk(pk_columns: { id: $meetId }, _set: { deleted_at: "now()" }) {
+        id
       }
     }
   `)
@@ -316,6 +320,7 @@ export const useCancelAppointment = (orderProductId: string, options: any) => {
           appointmentCanceledAt: new Date(),
           appointmentCanceledReason: reason,
         },
+        meetId: options.meetId,
       },
     })
 }
