@@ -5,8 +5,8 @@ import styled from 'styled-components'
 import { Program, ProgramRole } from '../../../../types/program'
 import CollapseContent from './CollapseContent'
 import CollapseContentCard from './CollapseContentCard'
-import RolePanel from './InstructorPanel'
-import RoleTab from './InstructorTab'
+import InstructorPanel from './InstructorPanel'
+import InstructorTab from './InstructorTab'
 
 const CollapseContentWrapper = styled(Box)`
   display: grid;
@@ -66,12 +66,12 @@ const SecondaryInstructorCollectionBlock: React.VFC<{
     <Tabs variant="unstyled">
       <TabList justifyContent="center" gap={8}>
         {instructors.map(instructor => (
-          <RoleTab key={instructor.name}>{instructor.name}</RoleTab>
+          <InstructorTab key={instructor.name}>{instructor.name}</InstructorTab>
         ))}
       </TabList>
       <TabPanels>
         {instructors.map(instructor => (
-          <RolePanel
+          <InstructorPanel
             key={instructor.name}
             instructorInfo={{
               instructorName: instructor.nameWithEnglish,
@@ -109,7 +109,7 @@ const SecondaryInstructorCollectionBlock: React.VFC<{
                 ))}
               </CollapseContentWrapper>
             </CollapseContent>
-          </RolePanel>
+          </InstructorPanel>
         ))}
       </TabPanels>
     </Tabs>

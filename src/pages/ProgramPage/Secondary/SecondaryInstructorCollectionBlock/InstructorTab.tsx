@@ -8,6 +8,8 @@ const InstructorTab: React.VFC<{ children: React.ReactElement | string }> = prop
       borderStyle="solid"
       borderColor="#ececec"
       borderWidth="1px"
+      fontWeight={500}
+      fontFamily="NotoSansCJKtc"
       _selected={{
         bg: '#21b1b1',
         color: 'white',

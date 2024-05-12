@@ -38,6 +38,9 @@ const TextWrapper = styled(Flex)`
     align-items: start;
   }
 `
+const StyledPanel = styled(TabPanel)`
+  padding-top: 0px !important;
+`
 
 const InstructorPanel: React.VFC<
   { instructorInfo: { instructorName: string; avatarUrl: string; instructorSubtitle: string } } & TabPanelProps
@@ -53,7 +56,7 @@ const InstructorPanel: React.VFC<
 
   const { instructorName, avatarUrl, instructorSubtitle } = instructorInfo
   return (
-    <TabPanel {...props}>
+    <StyledPanel {...props}>
       <AvatarBlock>
         <AvatarImage src={avatarUrl} size={128} />
         <TextWrapper>
@@ -62,7 +65,7 @@ const InstructorPanel: React.VFC<
         </TextWrapper>
       </AvatarBlock>
       {props.children}
-    </TabPanel>
+    </StyledPanel>
   )
 }
 export default InstructorPanel
