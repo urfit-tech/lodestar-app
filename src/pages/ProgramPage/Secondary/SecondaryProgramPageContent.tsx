@@ -22,6 +22,7 @@ import { useEnrolledProgramPackage } from '../../../hooks/programPackage'
 import ForbiddenPage from '../../ForbiddenPage'
 import LoadingPage from '../../LoadingPage'
 import ProgramPageHelmet from '../Primary/ProgramPageHelmet'
+import PreviewBlock from './PreviewBlock'
 import ProgramIntroTabs from './ProgramIntroTabs'
 import SecondaryProgramBanner from './SecondaryProgramBanner'
 import SecondaryProgramInfoCard from './SecondaryProgramInfoCard'
@@ -37,6 +38,7 @@ const ContentWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   row-gap: 3rem;
+  margin-bottom: 3rem;
 `
 
 const ProgramIntroBlock = styled.div`
@@ -145,6 +147,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
                 <SecondaryProgramInfoCard program={program} />
                 <BraftContent>{program.description}</BraftContent>
                 <ProgramIntroTabs program={program} />
+                <PreviewBlock program={program} />
               </ContentWrapper>
 
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
