@@ -1,4 +1,5 @@
 import { Flex, SkeletonCircle, SkeletonText, TabPanel, TabPanelProps, Text } from '@chakra-ui/react'
+import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
 import React from 'react'
 import styled from 'styled-components'
 import { AvatarImage } from '../../../../components/common/Image'
@@ -7,6 +8,13 @@ const AvatarBlock = styled.div`
   display: flex;
   margin: 24px 0px;
   gap: 24px;
+  flex-direction: column;
+  align-items: center;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    display: flex;
+    flex-direction: row;
+  }
 `
 
 const InstructorName = styled(Text)`
@@ -19,6 +27,16 @@ const InstructorSubtitle = styled(Text)`
   font-size: 16px;
   color: #21b1b1;
   font-weight: 500;
+`
+
+const TextWrapper = styled(Flex)`
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  @media (min-width: ${BREAK_POINT}px) {
+    justify-content: center;
+    align-items: start;
+  }
 `
 
 const InstructorPanel: React.VFC<
@@ -38,10 +56,10 @@ const InstructorPanel: React.VFC<
     <TabPanel {...props}>
       <AvatarBlock>
         <AvatarImage src={avatarUrl} size={128} />
-        <Flex justifyContent="center" align-items="start" spacing={1} flexDirection="column">
+        <TextWrapper>
           <InstructorName>{instructorName}</InstructorName>
           <InstructorSubtitle>{instructorSubtitle}</InstructorSubtitle>
-        </Flex>
+        </TextWrapper>
       </AvatarBlock>
       {props.children}
     </TabPanel>

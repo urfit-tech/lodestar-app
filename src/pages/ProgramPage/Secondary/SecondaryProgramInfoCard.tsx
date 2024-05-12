@@ -55,7 +55,7 @@ const SecondaryProgramInfoCard: React.FC<{
   )
 
   return (
-    <StyledCountBlock className="mb-5">
+    <StyledCountBlock>
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <CalendarIcon />
         <Title>預計開課</Title>
