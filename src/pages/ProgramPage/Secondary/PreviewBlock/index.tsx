@@ -31,6 +31,11 @@ const PreviewBlock: React.VFC<{
           ),
     )
     .flat()
+
+  if (trailProgramContents.length === 0) {
+    return null
+  }
+
   return (
     <Wrapper>
       <PreviewPlayer trailProgramContents={trailProgramContents} />
