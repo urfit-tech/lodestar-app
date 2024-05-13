@@ -135,19 +135,19 @@ const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCance
           <div className="quoteIcon">
             <FaQuoteLeft style={{ color: 'orange' }} />
           </div>
-        </div>
 
-        <div className="commentArea">
-          <h2>{text}</h2>
-          <p>註釋內容</p>
-          <Input.TextArea
-            rows={4}
-            value={annotation?.annotation || ''}
-            onChange={handleCommentChange}
-            onContextMenu={e => e.stopPropagation()}
-            onDragStart={e => e.stopPropagation()}
-            onCopy={e => e.stopPropagation()}
-          />
+          <div className="commentArea">
+            <h2>{text}</h2>
+            <p>註釋內容</p>
+            <Input.TextArea
+              rows={4}
+              value={annotation?.annotation || ''}
+              onChange={handleCommentChange}
+              onContextMenu={e => e.stopPropagation()}
+              onDragStart={e => e.stopPropagation()}
+              onCopy={e => e.stopPropagation()}
+            />
+          </div>
         </div>
       </div>
     </StyledCommentModal>
