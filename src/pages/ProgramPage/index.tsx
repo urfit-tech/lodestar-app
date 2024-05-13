@@ -178,7 +178,12 @@ const ProgramPageContent: React.VFC = () => {
     : false
 
   return (
-    <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
+    <DefaultLayout
+      white
+      footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}
+      noHeader={!program.displayHeader}
+      noFooter={!program.displayFooter}
+    >
       {!loadingApp && <ProgramPageHelmet program={program} />}
 
       <div>
