@@ -171,6 +171,7 @@ const ProgramContentEbookReader: React.VFC<{
   const [isRenditionReady, setIsRenditionReady] = useState(false)
   const [reRenderHighlightQueue, setReRenderHighlightQueue] = useState<string[]>([])
   const isDragging = useRef(false)
+  const [forceReapplyHighlight, setForceReapplyHighlight] = useState(false)
 
   const {
     error,
@@ -535,7 +536,7 @@ const ProgramContentEbookReader: React.VFC<{
 
   useEffect(() => {
     reapplyHighlightsAndAnnotations()
-  }, [ebookFontSize, ebookLineHeight, sliderValue, theme, ebookLineHeight])
+  }, [ebookFontSize, ebookLineHeight, sliderValue, theme, ebookLineHeight, forceReapplyHighlight])
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -825,6 +826,7 @@ const ProgramContentEbookReader: React.VFC<{
                 style={{ ...readerStyles.arrow, ...readerStyles.prev }}
                 onClick={async () => {
                   await rendition.current?.prev()
+                  setForceReapplyHighlight(!forceReapplyHighlight)
                 }}
               >
                 ‹
@@ -833,6 +835,7 @@ const ProgramContentEbookReader: React.VFC<{
                 style={{ ...readerStyles.arrow, ...readerStyles.next }}
                 onClick={async () => {
                   await rendition.current?.next()
+                  setForceReapplyHighlight(!forceReapplyHighlight)
                 }}
               >
                 ›
