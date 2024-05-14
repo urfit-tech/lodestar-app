@@ -589,21 +589,23 @@ export const useProgramContentById = (programId: string, contentId: string) => {
     setLoadingProgramContent(true)
     const route = `/programs/${programId}/contents/${contentId}`
     const getProgramContent = async () => {
-      try {
-        const { data } = await axios.get<ProgramContentResponse>(
-          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
-          {
-            cancelToken: source.token,
-            headers: authToken ? { authorization: `Bearer ${authToken}` } : null,
-          },
-        )
-        setLoadingProgramContent(false)
-        setProgramContent(data)
-      } catch (thrown) {
-        if (axios.isCancel(thrown)) {
-          //TODO: This helps prevent axios cancel messages from appearing in devtool
-        } else {
-          console.error(thrown)
+      if (programId && contentId && authToken) {
+        try {
+          const { data } = await axios.get<ProgramContentResponse>(
+            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            {
+              cancelToken: source.token,
+              headers: { authorization: `Bearer ${authToken}` },
+            },
+          )
+          setLoadingProgramContent(false)
+          setProgramContent(data)
+        } catch (thrown) {
+          if (axios.isCancel(thrown)) {
+            //TODO: This helps prevent axios cancel messages from appearing in devtool
+          } else {
+            console.error(thrown)
+          }
         }
       }
     }
