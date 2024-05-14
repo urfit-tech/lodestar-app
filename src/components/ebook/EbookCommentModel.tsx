@@ -7,6 +7,12 @@ import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
 import { BREAK_POINT } from '../common/Responsive'
 
 const StyledCommentModal = styled(Modal)`
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
   .ant-modal-content {
     max-width: 400px;
     /* height: 402px; */
@@ -117,18 +123,31 @@ const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCance
 
   return (
     <StyledCommentModal visible={visible} okText="儲存" onOk={handleOnOk} onCancel={onCancel}>
-      <div className="headerContainer">
-        <h1>畫線註釋</h1>
-      </div>
-      <div className="modelContainer">
-        <div className="quoteIcon">
-          <FaQuoteLeft style={{ color: 'orange' }} />
+      <div
+        onContextMenu={e => e.preventDefault()}
+        onDragStart={e => e.preventDefault()}
+        onCopy={e => e.preventDefault()}
+      >
+        <div className="headerContainer">
+          <h1>畫線註釋</h1>
         </div>
+        <div className="modelContainer">
+          <div className="quoteIcon">
+            <FaQuoteLeft style={{ color: 'orange' }} />
+          </div>
 
-        <div className="commentArea">
-          <h2>{text}</h2>
-          <p>註釋內容</p>
-          <Input.TextArea rows={4} value={annotation?.annotation || ''} onChange={handleCommentChange} />
+          <div className="commentArea">
+            <h2>{text}</h2>
+            <p>註釋內容</p>
+            <Input.TextArea
+              rows={4}
+              value={annotation?.annotation || ''}
+              onChange={handleCommentChange}
+              onContextMenu={e => e.stopPropagation()}
+              onDragStart={e => e.stopPropagation()}
+              onCopy={e => e.stopPropagation()}
+            />
+          </div>
         </div>
       </div>
     </StyledCommentModal>

@@ -193,7 +193,12 @@ const ProgramPageContent: React.VFC = () => {
   }
 
   return (
-    <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
+    <DefaultLayout
+      white
+      footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}
+      noHeader={!program.displayHeader}
+      noFooter={!program.displayFooter}
+    >
       {!loadingApp && <ProgramPageHelmet program={program} onLoaded={() => setMetaLoaded(true)} />}
       {resourceCollection[0] && metaLoaded && <Tracking.Detail resource={resourceCollection[0]} />}
 
