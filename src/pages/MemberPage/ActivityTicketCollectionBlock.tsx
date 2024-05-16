@@ -1,7 +1,6 @@
 import { HStack, Select, SkeletonText, useRadioGroup } from '@chakra-ui/react'
 import { List } from 'antd'
 import dayjs from 'dayjs'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useMemo, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -26,7 +25,6 @@ const ActivityTicketCollectionBlock: React.VFC<{
   const { formatMessage } = useIntl()
   const [isExpired, setIsExpired] = useState(false)
   const [displayType, setDisplayType] = useState<DisplayType>('session')
-  const { currentMemberId } = useAuth()
 
   const ticketIds = useMemo(() => {
     return Array.from(new Set(activityEnrollment.map(item => item.activityTicketId)))
@@ -105,7 +103,7 @@ const ActivityTicketCollectionBlock: React.VFC<{
       <List>
         {displayType === 'ticket'
           ? tickets.map(ticket => (
-              <Link to={`/activity_ticket/${ticket.id}?memberId=${currentMemberId}`} key={ticket.id}>
+              <Link to={`/activity_ticket/${ticket.id}`} key={ticket.id}>
                 <div className="mb-4">
                   <ActivityTicketItem
                     ticket={{
@@ -132,9 +130,7 @@ const ActivityTicketCollectionBlock: React.VFC<{
           : displayType === 'session'
           ? sessions.map(session => (
               <Link
-                to={`/activity_ticket/${session.ticket.id}?memberId=${currentMemberId}${
-                  session.id ? '&session=' + session.id : ''
-                }`}
+                to={`/activity_ticket/${session.ticket.id}${session.id ? '?session=' + session.id : ''}`}
                 key={session.id}
               >
                 <div className="mb-4">

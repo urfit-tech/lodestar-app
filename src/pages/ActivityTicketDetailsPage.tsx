@@ -72,19 +72,14 @@ const messages = defineMessages({
 const ActivityTicketDetailsPage = () => {
   const { activityTicketId } = useParams<{ activityTicketId: string; sessionId: string | undefined }>()
   const [session] = useQueryParam('session', StringParam)
-  const [memberId] = useQueryParam('memberId', StringParam)
-  const { activityTicketData, activityTicketDataLoading } = useMemberRightActivityTicket(
-    activityTicketId,
-    session,
-    memberId,
-  )
+  const { activityTicketData, activityTicketDataLoading } = useMemberRightActivityTicket(activityTicketId, session)
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   const { enabledModules } = useApp()
-  const { currentUserRole } = useAuth()
+  const { currentMemberId, currentUserRole } = useAuth()
   const [loading, setLoading] = useState(false)
   const { attendActivitySession } = useAttendSession()
-  const { attendance, refetchAttendance } = useActivityAttendance(memberId as string, activityTicketId)
+  const { attendance, refetchAttendance } = useActivityAttendance(currentMemberId as string, activityTicketId)
 
   const { formatMessage } = useIntl()
 
@@ -236,31 +231,26 @@ const ActivityTicketDetailsPage = () => {
                       </>
                     }
                     renderAttend={
-                      enabledModules.qrcode &&
-                      currentUserRole === 'app-owner' && (
-                        <Button
-                          colorScheme="primary"
-                          isFullWidth
-                          isLoading={loading}
-                          disabled={attendance[session.id]}
-                          onClick={() => {
-                            setLoading(true)
-                            attendActivitySession({
-                              variables: {
-                                orderProductId: invoice?.orderProductId,
-                                activitySessionId: session.id,
-                              },
-                            })
-                              .then(() => refetchAttendance())
-                              .catch(error => handleError(error))
-                              .finally(() => setLoading(false))
-                          }}
-                        >
-                          {attendance[session.id]
-                            ? formatMessage(messages.attended)
-                            : formatMessage(messages.attendNow)}
-                        </Button>
-                      )
+                      <Button
+                        colorScheme="primary"
+                        isFullWidth
+                        isLoading={loading}
+                        disabled={attendance[session.id]}
+                        onClick={() => {
+                          setLoading(true)
+                          attendActivitySession({
+                            variables: {
+                              orderProductId: invoice?.orderProductId,
+                              activitySessionId: session.id,
+                            },
+                          })
+                            .then(() => refetchAttendance())
+                            .catch(error => handleError(error))
+                            .finally(() => setLoading(false))
+                        }}
+                      >
+                        {attendance[session.id] ? formatMessage(messages.attended) : formatMessage(messages.attendNow)}
+                      </Button>
                     }
                   />
                 </div>

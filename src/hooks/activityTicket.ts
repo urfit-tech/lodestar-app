@@ -3,11 +3,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useCallback, useEffect, useState } from 'react'
 import { MemberRightActivityTicket } from '../types/activity'
 
-export const useMemberRightActivityTicket = (
-  activityTicketId: string,
-  sessionId: string | null | undefined,
-  memberId: string | undefined | null,
-) => {
+export const useMemberRightActivityTicket = (activityTicketId: string, sessionId: string | null | undefined) => {
   const { currentMemberId, authToken } = useAuth()
   const [data, setData] = useState<MemberRightActivityTicket | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
@@ -56,7 +52,6 @@ export const useMemberRightActivityTicket = (
           const response = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
             params: {
               activityTicketId: activityTicketId,
-              ...(memberId ? { memberId: memberId } : {}),
               ...(sessionId ? { sessionId: sessionId } : {}),
             },
             headers: { authorization: `Bearer ${authToken}` },
@@ -77,12 +72,12 @@ export const useMemberRightActivityTicket = (
         }
       }
     },
-    [currentMemberId, sessionId, authToken, memberId],
+    [currentMemberId, sessionId, authToken],
   )
 
   useEffect(() => {
     getMemberActivityTicketEquity(activityTicketId)
-  }, [activityTicketId, getMemberActivityTicketEquity, memberId])
+  }, [activityTicketId, getMemberActivityTicketEquity])
 
   return {
     activityTicketData: data,
