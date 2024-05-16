@@ -1,4 +1,4 @@
-import { Button, Icon } from '@chakra-ui/react'
+import { Button, Icon, Spinner } from '@chakra-ui/react'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -24,7 +24,6 @@ import {
 import { useEnrolledProgramPackage } from '../../../../hooks/programPackage'
 import { ReactComponent as PlayIcon } from '../../../../images/play-fill-icon.svg'
 import ForbiddenPage from '../../../ForbiddenPage'
-import LoadingPage from '../../../LoadingPage'
 import { CustomizeProgramBanner, PerpetualProgramBanner } from '../ProgramBanner'
 import ProgramBestReviewsCarousel from '../ProgramBestReviewsCarousel'
 import ProgramContentListSection from '../ProgramContentListSection'
@@ -74,6 +73,14 @@ const FixedBottomBlock = styled.div<{ bottomSpace?: string }>`
   right: 0;
   z-index: 999;
 `
+
+const StyledDiv = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 64px);
+`
+
 const StyledButtonWrapper = styled.div`
   padding: 0.5rem 0.75rem;
   background: white;
@@ -139,7 +146,13 @@ const PrimaryProgramPageContent: React.VFC = () => {
     loadingEquityProgram ||
     loadingProgramPlansEnrollmentsAggregateList
   ) {
-    return <LoadingPage />
+    return (
+      <DefaultLayout noFooter={true} noHeader={true}>
+        <StyledDiv className="loading">
+          <Spinner size="lg" />
+        </StyledDiv>
+      </DefaultLayout>
+    )
   }
 
   if (!program) {
@@ -159,7 +172,12 @@ const PrimaryProgramPageContent: React.VFC = () => {
     : false
 
   return (
-    <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
+    <DefaultLayout
+      white
+      footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}
+      noHeader={loadingProgram ? true : !program.displayHeader}
+      noFooter={loadingProgram ? true : !program.displayFooter}
+    >
       {!loadingApp && <ProgramPageHelmet program={program} />}
 
       <div>
