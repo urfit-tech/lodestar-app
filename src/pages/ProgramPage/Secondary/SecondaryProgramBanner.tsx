@@ -4,11 +4,11 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../../../components/common/Responsive'
 import { commonMessages } from '../../../helpers/translation'
-import { ReactComponent as ShareIcon } from '../../../images/icons-share-alt.svg'
 import { ReactComponent as PlayIcon } from '../../../images/play-fill.svg'
 import { Program } from '../../../types/program'
 import Banner from './Banner'
 import { SecondaryEnrollButton, SecondaryOutlineButton } from './SecondaryCTAButton'
+import SocialSharePopover from './SocialSharePopover'
 
 const ContentWrapper = styled.div`
   position: absolute;
@@ -121,7 +121,7 @@ const SecondaryProgramBanner: React.VFC<{
       >
         <StyledTitleBlock>
           <IconWrapper>
-            <ShareIcon />
+            <SocialSharePopover url={window.location.href} />
           </IconWrapper>
           <ContentWrapper>
             <WordingWrapper>
