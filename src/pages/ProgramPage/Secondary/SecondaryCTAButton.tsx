@@ -35,8 +35,11 @@ export const SecondaryCartButton = styled(Button)`
     font-weight: 600;
     border-radius: 21.5px;
     border: solid 1px #cdcdcd;
+    background: white;
+    color: #585858;
   }
   &&:hover {
     background: #585858;
+    color: white;
   }
 `

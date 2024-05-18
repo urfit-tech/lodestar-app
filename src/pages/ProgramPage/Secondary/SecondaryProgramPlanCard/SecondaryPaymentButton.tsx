@@ -19,7 +19,7 @@ import { commonMessages } from '../../../../helpers/translation'
 import { ProductType } from '../../../../types/product'
 import { SecondaryCartButton, SecondaryEnrollButton } from '../SecondaryCTAButton'
 
-const StyleSecondaryCartButton = styled(SecondaryCartButton)<{ line?: 'multiline' }>`
+const StyledSecondaryCartButton = styled(SecondaryCartButton)<{ line?: 'multiline' }>`
   span {
     display: none;
   }
@@ -75,8 +75,7 @@ const SecondaryPaymentButton: React.VFC<{
         <CheckoutProductModal
           defaultProductId={`${type}_${target}`}
           renderTrigger={({ isLoading, onOpen }) => (
-            <StyleSecondaryCartButton
-              variant="primary"
+            <StyledSecondaryCartButton
               isFullWidth
               isDisabled={isLoading || !isPublished}
               onClick={() => {
@@ -86,7 +85,7 @@ const SecondaryPaymentButton: React.VFC<{
               }}
             >
               {formatMessage(commonMessages.button.subscribeNow)}
-            </StyleSecondaryCartButton>
+            </StyledSecondaryCartButton>
           )}
         />
       ) : currencyId === 'LSC' ? (
@@ -94,8 +93,7 @@ const SecondaryPaymentButton: React.VFC<{
       ) : (
         <div className="d-flex flex-column">
           {!Number(settings['feature.cart.disable']) && (
-            <StyleSecondaryCartButton
-              variant="outlined"
+            <StyledSecondaryCartButton
               className="mr-2"
               line="multiline"
               isDisabled={!isPublished}
@@ -106,7 +104,7 @@ const SecondaryPaymentButton: React.VFC<{
             >
               <Icon as={AiOutlineShoppingCart} />
               <span className="ml-2">{formatMessage(commonMessages.button.addCart)}</span>
-            </StyleSecondaryCartButton>
+            </StyledSecondaryCartButton>
           )}
           <SecondaryEnrollButton
             isDisabled={!isPublished}

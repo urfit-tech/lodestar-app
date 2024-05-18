@@ -1,29 +1,33 @@
+import { Icon } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import queryString from 'query-string'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
-import { useIntl } from 'react-intl'
-import { Redirect, useLocation, useParams } from 'react-router-dom'
+import { defineMessage, useIntl } from 'react-intl'
+import { Link, Redirect, useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
-import { BREAK_POINT } from '../../../../components/common/Responsive'
+import Responsive, { BREAK_POINT } from '../../../../components/common/Responsive'
 import DefaultLayout from '../../../../components/layout/DefaultLayout'
 import MediaPlayerContext from '../../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, handleError } from '../../../../helpers'
+import { commonMessages } from '../../../../helpers/translation'
 import {
   useEquityProgramByProgramId,
   useProgram,
   useProgramPlansEnrollmentsAggregateList,
 } from '../../../../hooks/program'
 import { useEnrolledProgramPackage } from '../../../../hooks/programPackage'
+import { ReactComponent as PlayIcon } from '../../../../images/play-fill-icon.svg'
 import { DisplayModeEnum } from '../../../../types/program'
 import ForbiddenPage from '../../../ForbiddenPage'
 import LoadingPage from '../../../LoadingPage'
 import ProgramPageHelmet from '../../Primary/ProgramPageHelmet'
 import PreviewBlock from '../PreviewBlock'
 import ProgramIntroTabs from '../ProgramIntroTabs'
+import { SecondaryEnrollButton } from '../SecondaryCTAButton'
 import SecondaryProgramBanner from '../SecondaryProgramBanner'
 import SecondaryProgramInfoCard from '../SecondaryProgramInfoCard'
 import SecondaryProgramPlanCard from '../SecondaryProgramPlanCard'
@@ -62,6 +66,21 @@ const ProgramIntroBlock = styled.div`
     padding-top: 3.5rem;
     padding-bottom: 1rem;
   }
+`
+
+const FixedBottomBlock = styled.div<{ bottomSpace?: string }>`
+  margin: auto;
+  position: fixed;
+  width: 100%;
+  bottom: ${props => props.bottomSpace || 0};
+  left: 0;
+  right: 0;
+  z-index: 999;
+`
+
+const StyledButtonWrapper = styled.div`
+  padding: 0.5rem 0.75rem;
+  background: white;
 `
 
 const SecondaryProgramPageContent: React.VFC = () => {
@@ -213,6 +232,39 @@ const SecondaryProgramPageContent: React.VFC = () => {
           </div>
         </ProgramIntroBlock>
       </div>
+
+      {!isEnrolledByProgramPackage && (
+        <Responsive.Default>
+          <FixedBottomBlock bottomSpace={podcastPlayerVisible || mediaPlayerVisible ? '92px' : ''}>
+            {Number(settings['layout.program_page']) ? (
+              <StyledButtonWrapper>
+                <Link to={isEquityProgram ? `/programs/${program.id}/contents` : settings['link.program_page']}>
+                  <SecondaryEnrollButton isFullWidth leftIcon={<Icon as={PlayIcon} />}>
+                    {formatMessage(defineMessage({ id: 'common.ui.start', defaultMessage: '開始進行' }))}
+                  </SecondaryEnrollButton>
+                </Link>
+              </StyledButtonWrapper>
+            ) : isEquityProgram ? (
+              <StyledButtonWrapper>
+                <Link to={`${program.id}/contents`}>
+                  <SecondaryEnrollButton isFullWidth>
+                    {formatMessage(commonMessages.button.enter)}
+                  </SecondaryEnrollButton>
+                </Link>
+              </StyledButtonWrapper>
+            ) : (
+              <StyledButtonWrapper>
+                <SecondaryEnrollButton
+                  isFullWidth
+                  onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  {formatMessage(commonMessages.button.viewProject)}
+                </SecondaryEnrollButton>
+              </StyledButtonWrapper>
+            )}
+          </FixedBottomBlock>
+        </Responsive.Default>
+      )}
     </DefaultLayout>
   )
 }

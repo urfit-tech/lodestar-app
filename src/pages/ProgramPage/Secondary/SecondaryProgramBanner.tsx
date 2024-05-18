@@ -59,7 +59,6 @@ const EnrollButton = styled(SecondaryEnrollButton)`
     width: 140px;
     height: 45px;
     border-radius: 21.5px;
-    background-color: #ff2f1a;
     @media (min-width: ${BREAK_POINT}px) {
       width: 200px;
     }
