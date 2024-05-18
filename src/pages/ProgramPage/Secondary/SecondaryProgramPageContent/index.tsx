@@ -1,4 +1,3 @@
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import queryString from 'query-string'
@@ -34,8 +33,19 @@ const StyledIntroWrapper = styled.div`
     padding-left: 35px;
   `)}
 `
+const ProgramAbstract = styled.span`
+  font-size: 16px;
+  font-weight: 500;
+  display: inline-block;
+  width: 100%;
+`
+const VideoIframe = styled.iframe`
+  width: 100%;
+  height: 315px;
+`
 
 const ContentWrapper = styled.div`
+  height: 100%;
   display: grid;
   grid-template-columns: 1fr;
   row-gap: 3rem;
@@ -148,6 +158,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
     )
     .flat()
 
+  const testYoutubeVideo = 'https://www.youtube.com/embed/dQw4w9WgXcQ?si=bX981Ok7fCc5jQfp'
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
       {!loadingApp && <ProgramPageHelmet program={program} />}
@@ -167,7 +178,8 @@ const SecondaryProgramPageContent: React.VFC = () => {
             <div className="row">
               <ContentWrapper className="col-12 col-lg-8">
                 <SecondaryProgramInfoCard program={program} />
-                <BraftContent>{program.description}</BraftContent>
+                <ProgramAbstract>{program?.abstract}</ProgramAbstract>
+                <VideoIframe src={testYoutubeVideo} />
                 <ProgramIntroTabs program={program} />
                 <div ref={previewRef}>
                   <PreviewBlock trailProgramContents={trailProgramContents} />

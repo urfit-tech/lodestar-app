@@ -18,6 +18,7 @@ import PinIcon from '../../../images/pin-v-2.svg'
 import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../../types/program'
 
 const ProgramSectionBlock = styled.div`
+  height: 100%;
   margin-bottom: 1rem;
 `
 const ProgramSectionTitle = styled.h3`
@@ -105,7 +106,7 @@ const SecondaryProgramContentListSection: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const theme = useAppTheme()
-  const { currentMemberId, isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { isEquityProgram } = useEquityProgramByProgramId(program.id)
 
@@ -164,28 +165,12 @@ const SecondaryProgramContentListSection: React.VFC<{
     return Object.values(contentTitleCollapsed).every(val => val.isCollapsed === true)
   }
 
-  const checkAllPinned = (): boolean => {
-    return Object.values(contentTitleCollapsed).every(val => val.isAllPinned === true)
-  }
-
   const getCollapsedSection = (propName: string): boolean => {
     return contentTitleCollapsed.hasOwnProperty(propName) && contentTitleCollapsed[propName].isCollapsed
   }
 
   const getPinnedContent = (propName: string): boolean => {
     return contentTitleCollapsed.hasOwnProperty(propName) && contentTitleCollapsed[propName].isAllPinned
-  }
-
-  const toggleAllCollapsed = () => {
-    setContentTitleCollapsed(
-      Object.fromEntries(
-        Object.entries(contentTitleCollapsed).map(([key, value]) => [
-          key,
-          { ...value, isCollapsed: value.isAllPinned === false ? !allCollapsed : value.isCollapsed },
-        ]),
-      ),
-    )
-    setAllCollapsed(!allCollapsed)
   }
 
   const toggleContentCollapsed = (propName: string) => {
@@ -201,11 +186,6 @@ const SecondaryProgramContentListSection: React.VFC<{
   const [contentTitleCollapsed, setContentTitleCollapsed] = useState<contentTitleCollapsedType>(
     transformProgramContentSections(programContentSections),
   )
-  const [allCollapsed, setAllCollapsed] = useState(checkAllCollapsed())
-
-  useEffect(() => {
-    setAllCollapsed(checkAllCollapsed())
-  }, [contentTitleCollapsed])
 
   const ContentItem: React.VFC<{
     item: ProgramContent

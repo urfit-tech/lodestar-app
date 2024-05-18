@@ -17,18 +17,22 @@ const StyledPanel = styled(TabPanel)`
   }
 `
 
+const StyledTabList = styled(TabList)`
+  z-index: 10;
+`
+
 const ProgramIntroTabs: React.VFC<{
   program: Program & {
     roles: ProgramRole[]
   }
 }> = ({ program }) => {
   return (
-    <Tabs>
-      <TabList justifyContent="center">
+    <Tabs position="relative" width="100%">
+      <StyledTabList justifyContent="center">
         <ProgramIntroTab>簡介</ProgramIntroTab>
         <ProgramIntroTab>章節</ProgramIntroTab>
         <ProgramIntroTab>講師</ProgramIntroTab>
-      </TabList>
+      </StyledTabList>
 
       <TabPanels>
         <StyledPanel>

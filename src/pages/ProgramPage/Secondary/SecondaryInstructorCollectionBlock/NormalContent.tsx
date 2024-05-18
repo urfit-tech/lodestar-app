@@ -1,0 +1,26 @@
+import React from 'react'
+import styled from 'styled-components'
+
+const SectionBlock = styled.div`
+  margin-bottom: 2.5rem;
+`
+
+const SectionTitle = styled.h3`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #585858;
+  margin-bottom: 20px;
+`
+
+const NormalContent: React.VFC<{ children: React.ReactNode; title: string }> = ({ title, children }) => {
+  return (
+    <SectionBlock>
+      <SectionTitle>{title}</SectionTitle>
+      <React.Fragment>{children}</React.Fragment>
+    </SectionBlock>
+  )
+}
+export default NormalContent

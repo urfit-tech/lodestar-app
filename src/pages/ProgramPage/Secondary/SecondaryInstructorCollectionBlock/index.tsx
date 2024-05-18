@@ -7,6 +7,7 @@ import CollapseContent from './CollapseContent'
 import CollapseContentCard from './CollapseContentCard'
 import InstructorPanel from './InstructorPanel'
 import InstructorTab from './InstructorTab'
+import NormalContent from './NormalContent'
 
 const CollapseContentWrapper = styled(Box)`
   display: grid;
@@ -79,9 +80,9 @@ const SecondaryInstructorCollectionBlock: React.VFC<{
               instructorSubtitle: instructor.instructorSubtitle,
             }}
           >
-            <CollapseContent title="介紹">
+            <NormalContent title="介紹">
               <BraftContent>{'TODO: 介紹內容'}</BraftContent>
-            </CollapseContent>
+            </NormalContent>
             <CollapseContent title={`開設課程(${instructor.programs.length})`}>
               <CollapseContentWrapper>
                 {instructor.programs.map(program => (
