@@ -35,9 +35,9 @@ const SubTitle = styled(Text)`
   font-weight: bold;
 `
 
-const ControlButton = styled(Box)`
+const ControlButton = styled(Box)<{ disable: boolean }>`
   font-size: 14px;
-  color: #21b1b1;
+  color: ${props => (props.disable ? '#f7f8f8' : '#21b1b1')};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -70,9 +70,10 @@ const PreviewPlayer: React.VFC<{
     <>
       <HeaderWrapper>
         <ControlButton
+          disable={currentTrail === 0}
           cursor="pointer"
           onClick={() => {
-            if (currentTrail - 1 > 0) return
+            if (currentTrail === 0) return
             setCurrentTrail(c => c - 1)
           }}
         >
@@ -84,9 +85,10 @@ const PreviewPlayer: React.VFC<{
           <SubTitle>{contentSectionTitle}</SubTitle>
         </Box>
         <ControlButton
+          disable={currentTrail === trailProgramContents.length - 1}
           cursor="pointer"
           onClick={() => {
-            if (currentTrail + 1 >= trailProgramContents.length) return
+            if (currentTrail === trailProgramContents.length - 1) return
             setCurrentTrail(c => c + 1)
           }}
         >
@@ -98,7 +100,7 @@ const PreviewPlayer: React.VFC<{
         <ProgramContentPlayer programContentId={programContentId} />
       )}
       {programContent.programContentBody.type === 'audio' && (
-        <AudioPlayer title={programContent.title} audioUrl={audioUrl} mode="preview" autoPlay />
+        <AudioPlayer title={programContent.title} audioUrl={audioUrl} mode="preview" />
       )}
     </>
   )

@@ -9,20 +9,24 @@ const Wrapper = styled(Box)`
   border-radius: 8px;
   background: #f7f8f8;
   padding-bottom: 1rem;
+  :empty {
+    display: none;
+  }
 `
 
 const PreviewBlock: React.VFC<{
+  ref: React.RefObject<HTMLDivElement>
   trailProgramContents: (ProgramContent & {
     programId?: string
     contentSectionTitle?: string
   })[]
-}> = ({ trailProgramContents }) => {
+}> = ({ trailProgramContents, ref }) => {
   if (trailProgramContents.length === 0) {
     return null
   }
 
   return (
-    <Wrapper>
+    <Wrapper ref={ref}>
       <PreviewPlayer trailProgramContents={trailProgramContents} />
     </Wrapper>
   )

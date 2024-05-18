@@ -147,16 +147,17 @@ const SecondaryProgramPageContent: React.VFC = () => {
   const trailProgramContents = program.contentSections
     .filter(programContentSection => programContentSection.contents.length)
     .map(programContentSection =>
-      isEquityProgram
-        ? programContentSection.contents
-        : programContentSection.contents.filter(
-            programContent =>
-              program.isIntroductionSectionVisible &&
-              (programContent.displayMode === DisplayModeEnum.trial ||
-                programContent.displayMode === DisplayModeEnum.loginToTrial),
-          ),
+      programContentSection.contents
+        .filter(
+          programContent =>
+            programContent.displayMode === DisplayModeEnum.trial ||
+            programContent.displayMode === DisplayModeEnum.loginToTrial,
+        )
+        .filter(programContent => programContent.contentType === 'audio' || programContent.contentType === 'video'),
     )
     .flat()
+
+  console.log(trailProgramContents)
 
   const testYoutubeVideo = 'https://www.youtube.com/embed/dQw4w9WgXcQ?si=bX981Ok7fCc5jQfp'
   return (
@@ -181,9 +182,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
                 <ProgramAbstract>{program?.abstract}</ProgramAbstract>
                 <VideoIframe src={testYoutubeVideo} />
                 <ProgramIntroTabs program={program} />
-                <div ref={previewRef}>
-                  <PreviewBlock trailProgramContents={trailProgramContents} />
-                </div>
+                <PreviewBlock ref={previewRef} trailProgramContents={trailProgramContents} />
               </ContentWrapper>
 
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
