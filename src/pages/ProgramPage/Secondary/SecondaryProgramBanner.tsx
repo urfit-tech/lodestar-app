@@ -105,7 +105,8 @@ const SecondaryProgramBanner: React.VFC<{
   }
   isEnrolledByProgramPackage?: boolean
   isDelivered?: boolean
-}> = ({ program }) => {
+  hasTrail?: boolean
+}> = ({ program, hasTrail }) => {
   const { formatMessage } = useIntl()
   const testVideoUrl =
     'https://static.kolable.com/program_covers/cw/241a5e5d-5f1c-43ed-8e9e-15f6fedd8de0_video_1704882517657'
@@ -134,9 +135,13 @@ const SecondaryProgramBanner: React.VFC<{
             </WordingWrapper>
             <ButtonWrapper>
               <EnrollButton onClick={() => {}}>{formatMessage(commonMessages.ui.ctaButton)}</EnrollButton>
-              <PreviewButton colorScheme="outlined" onClick={() => {}} leftIcon={<PlayIcon />}>
-                {formatMessage(commonMessages.ui.previewButton)}
-              </PreviewButton>
+              {hasTrail ? (
+                <PreviewButton colorScheme="outlined" onClick={() => {}} leftIcon={<PlayIcon />}>
+                  {formatMessage(commonMessages.ui.previewButton)}
+                </PreviewButton>
+              ) : (
+                <div />
+              )}
             </ButtonWrapper>
           </ContentWrapper>
         </StyledTitleBlock>

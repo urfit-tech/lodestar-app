@@ -19,6 +19,7 @@ import {
   useProgramPlansEnrollmentsAggregateList,
 } from '../../../../hooks/program'
 import { useEnrolledProgramPackage } from '../../../../hooks/programPackage'
+import { DisplayModeEnum } from '../../../../types/program'
 import ForbiddenPage from '../../../ForbiddenPage'
 import LoadingPage from '../../../LoadingPage'
 import ProgramPageHelmet from '../../Primary/ProgramPageHelmet'
@@ -129,6 +130,20 @@ const SecondaryProgramPageContent: React.VFC = () => {
       )
     : false
 
+  const trailProgramContents = program.contentSections
+    .filter(programContentSection => programContentSection.contents.length)
+    .map(programContentSection =>
+      isEquityProgram
+        ? programContentSection.contents
+        : programContentSection.contents.filter(
+            programContent =>
+              program.isIntroductionSectionVisible &&
+              (programContent.displayMode === DisplayModeEnum.trial ||
+                programContent.displayMode === DisplayModeEnum.loginToTrial),
+          ),
+    )
+    .flat()
+
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
       {!loadingApp && <ProgramPageHelmet program={program} />}
@@ -138,6 +153,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
           program={program}
           isEnrolledByProgramPackage={isEnrolledByProgramPackage}
           isDelivered={isDelivered}
+          hasTrail={trailProgramContents?.length > 0}
         />
 
         <ProgramIntroBlock>
@@ -147,7 +163,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
                 <SecondaryProgramInfoCard program={program} />
                 <BraftContent>{program.description}</BraftContent>
                 <ProgramIntroTabs program={program} />
-                <PreviewBlock program={program} />
+                <PreviewBlock trailProgramContents={trailProgramContents} />
               </ContentWrapper>
 
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
