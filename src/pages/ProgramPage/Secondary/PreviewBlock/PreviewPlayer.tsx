@@ -1,9 +1,14 @@
 import { Box, Text } from '@chakra-ui/react'
 import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
-import React, { useState } from 'react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import React, { useEffect, useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
 import styled from 'styled-components'
+import AudioPlayer from '../../../../components/common/AudioPlayer'
 import ProgramContentPlayer from '../../../../components/program/ProgramContentPlayer'
+import { getFileDownloadableLink } from '../../../../helpers'
+import { useProgramContentById } from '../../../../hooks/program'
 import { ProgramContent } from '../../../../types/program'
 
 const HeaderWrapper = styled(Box)`
@@ -45,7 +50,22 @@ const PreviewPlayer: React.VFC<{
   })[]
 }> = ({ trailProgramContents }) => {
   const [currentTrail, setCurrentTrail] = useState<number>(0)
-  const { id: programContentId, contentSectionTitle } = trailProgramContents[currentTrail]
+  const { id: appId } = useApp()
+  const { authToken } = useAuth()
+  const { id: programContentId, contentSectionTitle, programId } = trailProgramContents[currentTrail]
+  const { programContent } = useProgramContentById(programId || '', programContentId)
+  const [audioUrl, setAudioUrl] = useState<string>()
+
+  useEffect(() => {
+    getFileDownloadableLink(`audios/${appId}/${programId}/${programContentId}`, authToken).then(url => {
+      setAudioUrl(url)
+    })
+  }, [appId, authToken, programContentId, programId])
+
+  if (!programContent) {
+    return null
+  }
+
   return (
     <>
       <HeaderWrapper>
@@ -74,7 +94,12 @@ const PreviewPlayer: React.VFC<{
           <FaChevronDown style={{ transform: 'rotate(270deg)' }} className="m-1" />
         </ControlButton>
       </HeaderWrapper>
-      <ProgramContentPlayer programContentId={programContentId} />
+      {programContent.programContentBody.type === 'video' && (
+        <ProgramContentPlayer programContentId={programContentId} />
+      )}
+      {programContent.programContentBody.type === 'audio' && (
+        <AudioPlayer title={programContent.title} audioUrl={audioUrl} mode="preview" autoPlay />
+      )}
     </>
   )
 }
