@@ -163,7 +163,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
       )
     : false
 
-  const trailProgramContents = program.contentSections
+  let trailProgramContents = program.contentSections
     .filter(programContentSection => programContentSection.contents.length)
     .map(programContentSection =>
       programContentSection.contents
@@ -175,6 +175,13 @@ const SecondaryProgramPageContent: React.VFC = () => {
         .filter(programContent => programContent.contentType === 'audio' || programContent.contentType === 'video'),
     )
     .flat()
+
+  // 如果沒有登入 只提供 trail
+  if (currentMemberId) {
+    trailProgramContents = trailProgramContents.filter(
+      trailProgramContent => trailProgramContent.displayMode === DisplayModeEnum.trial,
+    )
+  }
 
   const testYoutubeVideo = 'https://www.youtube.com/embed/dQw4w9WgXcQ?si=bX981Ok7fCc5jQfp'
   return (
