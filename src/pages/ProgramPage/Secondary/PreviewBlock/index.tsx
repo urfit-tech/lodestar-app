@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react'
-import React from 'react'
+import { forwardRef } from 'react'
 import styled from 'styled-components'
 import { ProgramContent } from '../../../../types/program'
 import PreviewPlayer from './PreviewPlayer'
@@ -14,22 +14,20 @@ const Wrapper = styled(Box)`
   }
 `
 
-const PreviewBlock: React.VFC<{
-  ref: React.RefObject<HTMLDivElement>
+interface Props {
   trailProgramContents: (ProgramContent & {
     programId?: string
     contentSectionTitle?: string
   })[]
-}> = ({ trailProgramContents, ref }) => {
-  if (trailProgramContents.length === 0) {
-    return null
-  }
+}
 
+export const PreviewBlock = forwardRef<HTMLDivElement, Props>((props, ref) => {
+  const { trailProgramContents } = props
   return (
     <Wrapper ref={ref}>
       <PreviewPlayer trailProgramContents={trailProgramContents} />
     </Wrapper>
   )
-}
+})
 
 export default PreviewBlock

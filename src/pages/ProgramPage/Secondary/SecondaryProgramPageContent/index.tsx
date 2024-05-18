@@ -158,6 +158,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
     .flat()
 
   console.log(trailProgramContents)
+  console.log(previewRef)
 
   const testYoutubeVideo = 'https://www.youtube.com/embed/dQw4w9WgXcQ?si=bX981Ok7fCc5jQfp'
   return (
