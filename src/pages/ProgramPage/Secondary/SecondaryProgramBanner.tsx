@@ -110,8 +110,12 @@ const SecondaryProgramBanner: React.VFC<{
   scrollToPlanBlock: () => void | undefined
 }> = ({ program, hasTrail, scrollToPreview, scrollToPlanBlock }) => {
   const { formatMessage } = useIntl()
+
+  // TODO: use program banner video
+
   const testVideoUrl =
     'https://static.kolable.com/program_covers/cw/241a5e5d-5f1c-43ed-8e9e-15f6fedd8de0_video_1704882517657'
+
   return (
     <Box overflow="hidden">
       <Banner
