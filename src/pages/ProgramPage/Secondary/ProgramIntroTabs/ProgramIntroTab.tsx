@@ -1,13 +1,14 @@
 import { Tab } from '@chakra-ui/react'
+import { colors } from '../style'
 
 const ProgramIntroTab: React.VFC<{ children: React.ReactElement | string }> = props => {
   return (
     <Tab
       fontWeight={500}
-      color="#585858"
+      color={colors.gray3}
       _selected={{
-        color: '#009d96 ',
-        borderColor: '#009d96',
+        color: colors.teal,
+        borderColor: colors.teal,
       }}
     >
       {props.children}

@@ -9,6 +9,7 @@ import { Program } from '../../../types/program'
 import Banner from './Banner'
 import { SecondaryEnrollButton, SecondaryOutlineButton } from './SecondaryCTAButton'
 import SocialSharePopover from './SocialSharePopover'
+import { colors } from './style'
 
 const ContentWrapper = styled.div`
   position: absolute;
@@ -31,7 +32,7 @@ const IconWrapper = styled.a`
 `
 
 const StyledInstructor = styled.h1`
-  color: white;
+  color: ${colors.white};
   font-size: 16px;
 `
 

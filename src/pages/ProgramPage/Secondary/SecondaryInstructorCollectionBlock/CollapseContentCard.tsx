@@ -1,6 +1,7 @@
 import { Box, Image } from '@chakra-ui/react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { colors } from '../style'
 
 const Card = styled(Link)`
   width: 98%;
@@ -12,10 +13,9 @@ const Card = styled(Link)`
   justify-content: start;
   align-items: center;
   padding: 12px;
-  font-family: NotoSansCJKtc;
   font-size: 16px;
   font-weight: 500;
-  color: #585858;
+  color: ${colors.gray1};
 `
 
 const ImageWrapper = styled(Box)`

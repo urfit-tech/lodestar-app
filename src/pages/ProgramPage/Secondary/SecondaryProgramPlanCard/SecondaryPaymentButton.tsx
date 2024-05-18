@@ -76,6 +76,7 @@ const SecondaryPaymentButton: React.VFC<{
           defaultProductId={`${type}_${target}`}
           renderTrigger={({ isLoading, onOpen }) => (
             <StyledSecondaryCartButton
+              colorScheme="outline"
               isFullWidth
               isDisabled={isLoading || !isPublished}
               onClick={() => {
@@ -94,6 +95,7 @@ const SecondaryPaymentButton: React.VFC<{
         <div className="d-flex flex-column">
           {!Number(settings['feature.cart.disable']) && (
             <StyledSecondaryCartButton
+              colorScheme="outline"
               className="mr-2"
               line="multiline"
               isDisabled={!isPublished}

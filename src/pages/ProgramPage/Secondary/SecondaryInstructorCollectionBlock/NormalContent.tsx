@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { colors } from '../style'
 
 const SectionBlock = styled.div`
   margin-bottom: 2.5rem;
@@ -11,7 +12,7 @@ const SectionTitle = styled.h3`
   align-items: center;
   font-size: 20px;
   font-weight: bold;
-  color: #585858;
+  color: ${colors.gray1};
   margin-bottom: 20px;
 `
 

@@ -15,6 +15,7 @@ import { commonMessages, productMessages } from '../../../../helpers/translation
 import { useEnrolledPlanIds } from '../../../../hooks/program'
 import { ProgramPlan } from '../../../../types/program'
 import { SecondaryCartButton, SecondaryEnrollButton } from '../SecondaryCTAButton'
+import { colors } from '../style'
 import SecondaryPaymentButton from './SecondaryPaymentButton'
 import SecondaryPriceLabel from './SecondaryPriceLabel'
 
@@ -27,7 +28,7 @@ const StyledAdminCard = styled(AdminCard)`
       letter-spacing: 0.2px;
       font-size: 16px;
       font-weight: bold;
-      color: #585858;
+      color: ${colors.gray1};
     }
   }
 `

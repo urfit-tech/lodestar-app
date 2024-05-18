@@ -1,5 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
-import { IconButton, useToast } from '@chakra-ui/react'
+import { useToast } from '@chakra-ui/react'
 import { Popover } from 'antd'
 import React, { useState } from 'react'
 import { AiOutlineLink } from 'react-icons/ai'
@@ -8,12 +8,6 @@ import { FacebookIcon, FacebookShareButton, LineIcon, LineShareButton } from 're
 import styled from 'styled-components'
 import { commonMessages } from '../../../helpers/translation'
 import { ReactComponent as ShareIcon } from '../../../images/icons-share-alt.svg'
-
-const StyledIconButton = styled(IconButton)`
-  border: 1px solid var(--gray);
-  border-radius: 50% !important;
-  background: white;
-`
 
 const StyledPopperContent = styled.div`
   padding: 11px 12px;

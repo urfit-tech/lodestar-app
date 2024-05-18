@@ -3,6 +3,7 @@ import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsi
 import React from 'react'
 import styled from 'styled-components'
 import { AvatarImage } from '../../../../components/common/Image'
+import { colors } from '../style'
 
 const AvatarBlock = styled.div`
   display: flex;
@@ -19,13 +20,13 @@ const AvatarBlock = styled.div`
 
 const InstructorName = styled(Text)`
   font-size: 24px;
-  color: #585858;
+  color: ${colors.gray1};
   font-weight: bold;
 `
 
 const InstructorSubtitle = styled(Text)`
   font-size: 16px;
-  color: #21b1b1;
+  color: ${colors.teal2};
   font-weight: 500;
 `
 

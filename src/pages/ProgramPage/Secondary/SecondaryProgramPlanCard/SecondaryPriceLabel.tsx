@@ -1,9 +1,10 @@
 import { Flex, Text } from '@chakra-ui/react'
 import { useCurrency } from 'lodestar-app-element/src/hooks/util'
 import styled from 'styled-components'
+import { colors } from '../style'
 
 const DisplayPrice = styled(Text)`
-  color: #ff2f1a;
+  color: ${colors.orange};
   letter-spacing: 0.23px;
   font-size: 28px;
   font-weight: bold;

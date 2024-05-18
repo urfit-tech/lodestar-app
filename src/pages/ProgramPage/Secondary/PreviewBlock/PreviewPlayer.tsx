@@ -10,6 +10,7 @@ import ProgramContentPlayer from '../../../../components/program/ProgramContentP
 import { getFileDownloadableLink } from '../../../../helpers'
 import { useProgramContentById } from '../../../../hooks/program'
 import { ProgramContent } from '../../../../types/program'
+import { colors } from '../style'
 
 const HeaderWrapper = styled(Box)`
   display: flex;
@@ -24,20 +25,20 @@ const HeaderWrapper = styled(Box)`
 
 const Title = styled(Text)`
   font-size: 24px;
-  font-color: #585858;
+  font-color: ${colors.teal};
   text-align: center;
   font-weight: bold;
 `
 const SubTitle = styled(Text)`
   font-size: 16px;
-  font-color: #585858;
+  font-color: ${colors.teal};
   text-align: center;
   font-weight: bold;
 `
 
 const ControlButton = styled(Box)<{ disable: boolean }>`
   font-size: 14px;
-  color: ${props => (props.disable ? '#f7f8f8' : '#21b1b1')};
+  color: ${props => (props.disable ? colors.teal3 : colors.teal2)};
   display: flex;
   justify-content: center;
   align-items: center;

@@ -31,6 +31,7 @@ import { SecondaryEnrollButton } from '../SecondaryCTAButton'
 import SecondaryProgramBanner from '../SecondaryProgramBanner'
 import SecondaryProgramInfoCard from '../SecondaryProgramInfoCard'
 import SecondaryProgramPlanCard from '../SecondaryProgramPlanCard'
+import { colors } from '../style'
 
 const StyledIntroWrapper = styled.div`
   ${desktopViewMixin(css`
@@ -60,7 +61,7 @@ const ProgramIntroBlock = styled.div`
   position: relative;
   padding-top: 2.5rem;
   padding-bottom: 6rem;
-  background: white;
+  background: ${colors.white};
 
   @media (min-width: ${BREAK_POINT}px) {
     padding-top: 3.5rem;
@@ -80,19 +81,18 @@ const FixedBottomBlock = styled.div<{ bottomSpace?: string }>`
 
 const StyledButtonWrapper = styled.div`
   padding: 0.5rem 0.75rem;
-  background: white;
+  background: ${colors.white};
 `
 
 const SecondaryProgramPageContent: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { pathname } = useLocation()
   const { currentMemberId } = useAuth()
   const location = useLocation()
   const params = queryString.parse(location.search)
   const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
   const [previousPage] = useQueryParam('back', StringParam)
   const { programId } = useParams<{ programId: string }>()
-  const { settings, enabledModules, loading: loadingApp } = useApp()
+  const { settings, loading: loadingApp } = useApp()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
   const { loadingProgram, program, addProgramView } = useProgram(programId)
@@ -175,9 +175,6 @@ const SecondaryProgramPageContent: React.VFC = () => {
         .filter(programContent => programContent.contentType === 'audio' || programContent.contentType === 'video'),
     )
     .flat()
-
-  console.log(trailProgramContents)
-  console.log(previewRef)
 
   const testYoutubeVideo = 'https://www.youtube.com/embed/dQw4w9WgXcQ?si=bX981Ok7fCc5jQfp'
   return (

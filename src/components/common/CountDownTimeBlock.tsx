@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
 import { useInterval } from '../../hooks/util'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
+import { colors } from '../../pages/ProgramPage/Secondary/style'
 import { BREAK_POINT } from './Responsive'
 
 const StyledDiscountDown = styled.span<{ secondary?: boolean }>`
@@ -23,7 +24,7 @@ const StyledNumberBlock = styled.span<{ secondary?: boolean }>`
   }
   ${props => (props.secondary ? 'font-weight: bold' : '')};
   .text-primary {
-    color: ${props => (props.secondary ? '#ff2f1a' : props => props.theme['@primary-color'])};
+    color: ${props => (props.secondary ? colors.orange : props => props.theme['@primary-color'])};
   }
 `
 

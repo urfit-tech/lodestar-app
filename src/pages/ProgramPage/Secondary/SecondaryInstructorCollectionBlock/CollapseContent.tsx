@@ -2,6 +2,7 @@ import { Collapse, IconButton } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
 import styled from 'styled-components'
+import { colors } from '../style'
 
 const CollapseSectionBlock = styled.div`
   margin-bottom: 2.5rem;
@@ -13,7 +14,7 @@ const SectionTitle = styled.h3`
   align-items: center;
   font-size: 20px;
   font-weight: bold;
-  color: #585858;
+  color: ${colors.gray1};
 `
 
 const CollapseContent: React.VFC<{ children: React.ReactNode; title: string }> = ({ title, children }) => {

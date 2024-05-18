@@ -1,4 +1,5 @@
 import { Tab } from '@chakra-ui/react'
+import { colors } from '../style'
 
 const InstructorTab: React.VFC<{ children: React.ReactElement | string }> = props => {
   return (
@@ -9,11 +10,10 @@ const InstructorTab: React.VFC<{ children: React.ReactElement | string }> = prop
       borderColor="#ececec"
       borderWidth="1px"
       fontWeight={500}
-      fontFamily="NotoSansCJKtc"
       _selected={{
-        bg: '#21b1b1',
-        color: 'white',
-        borderColor: '#21b1b1',
+        bg: colors.teal,
+        color: colors.white,
+        borderColor: colors.teal,
       }}
     >
       {props.children}

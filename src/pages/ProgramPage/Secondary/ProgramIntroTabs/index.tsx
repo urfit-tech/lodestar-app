@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { Program, ProgramRole } from '../../../../types/program'
 import SecondaryInstructorCollectionBlock from '../SecondaryInstructorCollectionBlock'
 import SecondaryProgramContentListSection from '../SecondaryProgramContentListSection'
+import { colors } from '../style'
 import ProgramIntroTab from './ProgramIntroTab'
 
 const StyledPanel = styled(TabPanel)`
@@ -21,7 +22,7 @@ const StyledTabList = styled(TabList)`
   z-index: 10;
   position: sticky;
   top: 0px;
-  background: white;
+  background: ${colors.white};
 `
 
 const ProgramIntroTabs: React.VFC<{

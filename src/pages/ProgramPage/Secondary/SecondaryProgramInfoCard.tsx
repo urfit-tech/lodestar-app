@@ -10,6 +10,7 @@ import { ReactComponent as ListCheckIcon } from '../../../images/list-check-o.sv
 import { ReactComponent as ListIcon } from '../../../images/list-o-program.svg'
 import { Category } from '../../../types/general'
 import { Program, ProgramContent, ProgramContentSection, ProgramPlan, ProgramRole } from '../../../types/program'
+import { colors } from './style'
 
 const StyledCountBlock = styled.div`
   text-align: center;
@@ -27,13 +28,13 @@ const StyledCountBlock = styled.div`
 const Title = styled.div`
   font-size: 16px;
   font-weight: bold;
-  color: #009d96;
+  color: ${colors.teal};
 `
 
 const Content = styled.div`
   font-size: 16px;
   font-weight: bold;
-  color: #4a4a4a;
+  color: ${colors.gray3};
 `
 
 const SecondaryProgramInfoCard: React.FC<{
