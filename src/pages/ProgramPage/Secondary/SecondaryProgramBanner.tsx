@@ -2,12 +2,12 @@ import { Box } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import BlurredBanner from '../../../components/common/BlurredBanner'
 import { BREAK_POINT } from '../../../components/common/Responsive'
 import { commonMessages } from '../../../helpers/translation'
 import { ReactComponent as ShareIcon } from '../../../images/icons-share-alt.svg'
 import { ReactComponent as PlayIcon } from '../../../images/play-fill.svg'
 import { Program } from '../../../types/program'
+import Banner from './Banner'
 import { SecondaryEnrollButton, SecondaryOutlineButton } from './SecondaryCTAButton'
 
 const ContentWrapper = styled.div`
@@ -107,13 +107,16 @@ const SecondaryProgramBanner: React.VFC<{
   isDelivered?: boolean
 }> = ({ program }) => {
   const { formatMessage } = useIntl()
-
+  const testVideoUrl =
+    'https://static.kolable.com/program_covers/cw/241a5e5d-5f1c-43ed-8e9e-15f6fedd8de0_video_1704882517657'
   return (
     <Box overflow="hidden">
-      <BlurredBanner
-        gradient={false}
-        coverUrl={{ mobileUrl: program.coverMobileUrl || undefined, desktopUrl: program.coverUrl || undefined }}
-        width={{ desktop: '700px', mobile: '400px' }}
+      <Banner
+        coverUrl={{
+          videoUrl: testVideoUrl,
+          mobileUrl: program.coverMobileUrl || undefined,
+          desktopUrl: program.coverUrl || undefined,
+        }}
       >
         <StyledTitleBlock>
           <IconWrapper>
@@ -137,7 +140,7 @@ const SecondaryProgramBanner: React.VFC<{
             </ButtonWrapper>
           </ContentWrapper>
         </StyledTitleBlock>
-      </BlurredBanner>
+      </Banner>
     </Box>
   )
 }
