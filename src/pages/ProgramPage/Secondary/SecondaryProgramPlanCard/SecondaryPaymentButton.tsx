@@ -12,11 +12,11 @@ import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { AuthModalContext } from '../../../../components/auth/AuthModal'
-import CoinCheckoutModal from '../../../../components/checkout/CoinCheckoutModal'
 import CartContext from '../../../../contexts/CartContext'
 import { camelCaseToSnake } from '../../../../helpers'
 import { commonMessages } from '../../../../helpers/translation'
 import { ProductType } from '../../../../types/product'
+import SecondaryCoinCheckoutModal from '../SecondaryCoinCheckoutModal'
 import { SecondaryCartButton, SecondaryEnrollButton } from '../SecondaryCTAButton'
 
 const StyledSecondaryCartButton = styled(SecondaryCartButton)<{ line?: 'multiline' }>`
@@ -90,7 +90,7 @@ const SecondaryPaymentButton: React.VFC<{
           )}
         />
       ) : currencyId === 'LSC' ? (
-        <CoinCheckoutModal productId={type + '_' + target} currencyId={currencyId} amount={price} />
+        <SecondaryCoinCheckoutModal productId={type + '_' + target} currencyId={currencyId} amount={price} />
       ) : (
         <div className="d-flex flex-column">
           {!Number(settings['feature.cart.disable']) && (
