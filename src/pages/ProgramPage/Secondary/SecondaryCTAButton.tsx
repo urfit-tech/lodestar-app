@@ -23,6 +23,9 @@ export const SecondaryOutlineButton = styled(Button)`
     border-radius: 21.5px;
     border: solid 1px #fff;
   }
+  &&:hover {
+    background: #585858;
+  }
 `
 
 export const SecondaryCartButton = styled(Button)`
@@ -32,5 +35,8 @@ export const SecondaryCartButton = styled(Button)`
     font-weight: 600;
     border-radius: 21.5px;
     border: solid 1px #cdcdcd;
+  }
+  &&:hover {
+    background: #585858;
   }
 `

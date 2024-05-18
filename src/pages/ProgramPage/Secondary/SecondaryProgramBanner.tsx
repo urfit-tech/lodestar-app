@@ -106,7 +106,9 @@ const SecondaryProgramBanner: React.VFC<{
   isEnrolledByProgramPackage?: boolean
   isDelivered?: boolean
   hasTrail?: boolean
-}> = ({ program, hasTrail }) => {
+  scrollToPreview: () => void | undefined
+  scrollToPlanBlock: () => void | undefined
+}> = ({ program, hasTrail, scrollToPreview, scrollToPlanBlock }) => {
   const { formatMessage } = useIntl()
   const testVideoUrl =
     'https://static.kolable.com/program_covers/cw/241a5e5d-5f1c-43ed-8e9e-15f6fedd8de0_video_1704882517657'
@@ -134,9 +136,9 @@ const SecondaryProgramBanner: React.VFC<{
               <StyledTitle className="text-start">{program.title}</StyledTitle>
             </WordingWrapper>
             <ButtonWrapper>
-              <EnrollButton onClick={() => {}}>{formatMessage(commonMessages.ui.ctaButton)}</EnrollButton>
+              <EnrollButton onClick={scrollToPlanBlock}>{formatMessage(commonMessages.ui.ctaButton)}</EnrollButton>
               {hasTrail ? (
-                <PreviewButton colorScheme="outlined" onClick={() => {}} leftIcon={<PlayIcon />}>
+                <PreviewButton colorScheme="outlined" onClick={scrollToPreview} leftIcon={<PlayIcon />}>
                   {formatMessage(commonMessages.ui.previewButton)}
                 </PreviewButton>
               ) : (

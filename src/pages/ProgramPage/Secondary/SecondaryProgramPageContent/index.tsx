@@ -76,6 +76,10 @@ const SecondaryProgramPageContent: React.VFC = () => {
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const planListHeightRef = useRef<HTMLDivElement>(null)
+  const previewRef = useRef<HTMLDivElement>(null)
+
+  const scrollToPreview = () => previewRef?.current?.scrollIntoView({ behavior: 'smooth' })
+  const scrollToPlanBlock = () => planBlockRef?.current?.scrollIntoView({ behavior: 'smooth' })
 
   try {
     const visitedPrograms = JSON.parse(sessionStorage.getItem('kolable.programs.visited') || '[]') as string[]
@@ -154,6 +158,8 @@ const SecondaryProgramPageContent: React.VFC = () => {
           isEnrolledByProgramPackage={isEnrolledByProgramPackage}
           isDelivered={isDelivered}
           hasTrail={trailProgramContents?.length > 0}
+          scrollToPreview={scrollToPreview}
+          scrollToPlanBlock={scrollToPlanBlock}
         />
 
         <ProgramIntroBlock>
@@ -163,7 +169,9 @@ const SecondaryProgramPageContent: React.VFC = () => {
                 <SecondaryProgramInfoCard program={program} />
                 <BraftContent>{program.description}</BraftContent>
                 <ProgramIntroTabs program={program} />
-                <PreviewBlock trailProgramContents={trailProgramContents} />
+                <div ref={previewRef}>
+                  <PreviewBlock trailProgramContents={trailProgramContents} />
+                </div>
               </ContentWrapper>
 
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
