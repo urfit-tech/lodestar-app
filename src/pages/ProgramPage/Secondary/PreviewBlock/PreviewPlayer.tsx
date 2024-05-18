@@ -1,4 +1,5 @@
 import { Box, Text } from '@chakra-ui/react'
+import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
 import React, { useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
 import styled from 'styled-components'
@@ -7,9 +8,13 @@ import { ProgramContent } from '../../../../types/program'
 
 const HeaderWrapper = styled(Box)`
   display: flex;
-  align-items: end;
+  align-items: start;
   justify-content: space-between;
   margin-bottom: 16px;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    align-items: end;
+  }
 `
 
 const Title = styled(Text)`
@@ -47,7 +52,6 @@ const PreviewPlayer: React.VFC<{
         <ControlButton
           cursor="pointer"
           onClick={() => {
-            console.log(currentTrail - 1)
             if (currentTrail - 1 > 0) return
             setCurrentTrail(c => c - 1)
           }}
