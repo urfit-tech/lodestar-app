@@ -81,7 +81,7 @@ const SecondaryInstructorCollectionBlock: React.VFC<{
             }}
           >
             <NormalContent title="介紹">
-              <BraftContent>{'TODO: 介紹內容'}</BraftContent>
+              <BraftContent>{'TODO: use member.description'}</BraftContent>
             </NormalContent>
             <CollapseContent title={`開設課程(${instructor.programs.length})`}>
               <CollapseContentWrapper>
