@@ -19,6 +19,9 @@ const StyledPanel = styled(TabPanel)`
 
 const StyledTabList = styled(TabList)`
   z-index: 10;
+  position: sticky;
+  top: 0px;
+  background: white;
 `
 
 const ProgramIntroTabs: React.VFC<{
