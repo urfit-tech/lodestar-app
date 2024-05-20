@@ -589,13 +589,13 @@ export const useProgramContentById = (programId: string, contentId: string) => {
     setLoadingProgramContent(true)
     const route = `/programs/${programId}/contents/${contentId}`
     const getProgramContent = async () => {
-      if (programId && contentId && authToken) {
+      if (programId && contentId) {
         try {
           const { data } = await axios.get<ProgramContentResponse>(
             `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
             {
               cancelToken: source.token,
-              headers: { authorization: `Bearer ${authToken}` },
+              headers: authToken ? { authorization: `Bearer ${authToken}` } : null,
             },
           )
           setLoadingProgramContent(false)
