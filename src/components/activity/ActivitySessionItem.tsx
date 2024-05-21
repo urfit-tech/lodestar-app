@@ -181,7 +181,7 @@ const ActivitySessionItem: React.VFC<{
           {session.threshold && (
             <span>
               {formatMessage(productMessages.activity.content.least)}
-              {session.threshold}
+              {isNaN(Number(session.threshold)) ? 'N/A' : Math.round(parseFloat(session.threshold))}
             </span>
           )}
         </div>
