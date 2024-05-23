@@ -10,6 +10,7 @@ const Wrapper = styled(Box)`
   border-radius: 8px;
   background: ${colors.teal3};
   padding-bottom: 1rem;
+  z-index: 0;
   :empty {
     display: none;
   }
