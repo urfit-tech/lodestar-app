@@ -691,6 +691,106 @@ export const useActivityTicket = (ticketId: string) => {
   }
 }
 
+export const GetActivityTicketsByIds = gql`
+  query GetActivityTicketsByIds($ids: [uuid!]!) {
+    activity_ticket(where: { id: { _in: $ids } }) {
+      id
+      title
+      description
+      is_published
+      started_at
+      ended_at
+      count
+      price
+      currency_id
+      activity_session_tickets(order_by: { activity_session: { started_at: asc } }) {
+        id
+        activity_session_type
+        activity_session {
+          id
+          title
+          description
+          location
+          online_link
+          started_at
+          ended_at
+          threshold
+        }
+      }
+      activity {
+        id
+        title
+        is_participants_visible
+        cover_url
+        published_at
+        activity_categories {
+          id
+          category {
+            id
+            name
+          }
+          position
+        }
+      }
+    }
+  }
+`
+
+export const useActivityTicketsByIds = (ids: string[]) => {
+  const uniqueIds = Array.from(new Set(ids))
+
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GetActivityTicketsByIds,
+    hasura.GetActivityTicketsByIdsVariables
+  >(GetActivityTicketsByIds, {
+    variables: { ids: uniqueIds },
+    skip: ids.length === 0,
+  })
+
+  const tickets =
+    data?.activity_ticket.map(ticket => ({
+      id: ticket.id,
+      title: ticket.title,
+      description: ticket.description || '',
+      isPublished: ticket.is_published,
+      startedAt: new Date(ticket.started_at),
+      endedAt: new Date(ticket.ended_at),
+      count: ticket.count,
+      price: ticket.price,
+      currencyId: ticket.currency_id,
+      sessions: ticket.activity_session_tickets.map(session => ({
+        id: session.activity_session.id,
+        title: session.activity_session.title,
+        description: session.activity_session.description || '',
+        location: session.activity_session.location || '',
+        onlineLink: session.activity_session.online_link || '',
+        startedAt: new Date(session.activity_session.started_at),
+        endedAt: new Date(session.activity_session.ended_at),
+        threshold: session.activity_session.threshold,
+        type: session.activity_session_type,
+        coverUrl: ticket.activity.cover_url || '',
+        activityTitle: ticket.activity.title,
+      })),
+      activity: {
+        id: ticket.activity.id,
+        title: ticket.activity.title,
+        coverUrl: ticket.activity.cover_url || '',
+        categories: ticket.activity.activity_categories.map(category => ({
+          id: category.id,
+          name: category.category.name,
+          position: category.position,
+        })),
+      },
+    })) || []
+
+  return {
+    loadingTickets: loading,
+    errorTickets: error,
+    tickets,
+    refetchTickets: refetch,
+  }
+}
+
 export const useActivityAttendance = (memberId: string, activityTicketId: string) => {
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_ACTIVITY_ATTENDANCE,
