@@ -45,7 +45,7 @@ const ControlButton = styled(Box)<{ disable: boolean }>`
 `
 
 const PreviewPlayer: React.VFC<{
-  trailProgramContents: (ProgramContent & {
+  trailProgramContents?: (ProgramContent & {
     programId?: string
     contentSectionTitle?: string
   })[]
@@ -53,8 +53,8 @@ const PreviewPlayer: React.VFC<{
   const [currentTrail, setCurrentTrail] = useState<number>(0)
   const { id: appId } = useApp()
   const { authToken } = useAuth()
-  const { id: programContentId, contentSectionTitle, programId } = trailProgramContents[currentTrail]
-  const { programContent } = useProgramContentById(programId || '', programContentId)
+  const { id: programContentId, contentSectionTitle, programId } = trailProgramContents?.[currentTrail] || {}
+  const { programContent } = useProgramContentById(programId || '', programContentId || '')
   const [audioUrl, setAudioUrl] = useState<string>()
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const PreviewPlayer: React.VFC<{
     })
   }, [appId, authToken, programContentId, programId])
 
-  if (!programContent) {
+  if (!programContent || !trailProgramContents || !programContentId) {
     return null
   }
 
