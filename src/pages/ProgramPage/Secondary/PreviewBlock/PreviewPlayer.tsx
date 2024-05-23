@@ -53,7 +53,12 @@ const PreviewPlayer: React.VFC<{
   const [currentTrail, setCurrentTrail] = useState<number>(0)
   const { id: appId } = useApp()
   const { authToken } = useAuth()
-  const { id: programContentId, contentSectionTitle, programId } = trailProgramContents?.[currentTrail] || {}
+  const {
+    id: programContentId,
+    contentSectionTitle,
+    contentType,
+    programId,
+  } = trailProgramContents?.[currentTrail] || {}
   const { programContent } = useProgramContentById(programId || '', programContentId || '')
   const [audioUrl, setAudioUrl] = useState<string>()
 
@@ -97,11 +102,9 @@ const PreviewPlayer: React.VFC<{
           <FaChevronDown style={{ transform: 'rotate(270deg)' }} className="m-1" />
         </ControlButton>
       </HeaderWrapper>
-      {programContent.programContentBody.type === 'video' && (
-        <ProgramContentPlayer programContentId={programContentId} />
-      )}
-      {programContent.programContentBody.type === 'audio' && (
-        <AudioPlayer title={programContent.title} audioUrl={audioUrl} mode="preview" />
+      {contentType === 'video' && <ProgramContentPlayer programContentId={programContentId} />}
+      {contentType === 'audio' && (
+        <AudioPlayer title={programContent.title} audioUrl={audioUrl} mode="preview" autoPlay={false} />
       )}
     </>
   )

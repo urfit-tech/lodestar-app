@@ -176,7 +176,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
     .flat()
 
   // 如果沒有登入 只提供 trail
-  if (currentMemberId) {
+  if (!currentMemberId) {
     trailProgramContents = trailProgramContents.filter(
       trailProgramContent => trailProgramContent.displayMode === DisplayModeEnum.trial,
     )
