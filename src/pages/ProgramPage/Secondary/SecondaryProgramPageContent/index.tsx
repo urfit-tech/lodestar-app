@@ -1,4 +1,4 @@
-import { Icon } from '@chakra-ui/react'
+import { Button, Icon } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import queryString from 'query-string'
@@ -27,7 +27,6 @@ import LoadingPage from '../../../LoadingPage'
 import ProgramPageHelmet from '../../Primary/ProgramPageHelmet'
 import PreviewBlock from '../PreviewBlock'
 import ProgramIntroTabs from '../ProgramIntroTabs'
-import { SecondaryEnrollButton } from '../SecondaryCTAButton'
 import SecondaryProgramBanner from '../SecondaryProgramBanner'
 import SecondaryProgramInfoCard from '../SecondaryProgramInfoCard'
 import SecondaryProgramPlanCard from '../SecondaryProgramPlanCard'
@@ -243,27 +242,28 @@ const SecondaryProgramPageContent: React.VFC = () => {
             {Number(settings['layout.program_page']) ? (
               <StyledButtonWrapper>
                 <Link to={isEquityProgram ? `/programs/${program.id}/contents` : settings['link.program_page']}>
-                  <SecondaryEnrollButton isFullWidth leftIcon={<Icon as={PlayIcon} />}>
+                  <Button isFullWidth leftIcon={<Icon as={PlayIcon} />}>
                     {formatMessage(defineMessage({ id: 'common.ui.start', defaultMessage: '開始進行' }))}
-                  </SecondaryEnrollButton>
+                  </Button>
                 </Link>
               </StyledButtonWrapper>
             ) : isEquityProgram ? (
               <StyledButtonWrapper>
                 <Link to={`${program.id}/contents`}>
-                  <SecondaryEnrollButton isFullWidth>
+                  <Button colorScheme="primary" isFullWidth>
                     {formatMessage(commonMessages.button.enter)}
-                  </SecondaryEnrollButton>
+                  </Button>
                 </Link>
               </StyledButtonWrapper>
             ) : (
               <StyledButtonWrapper>
-                <SecondaryEnrollButton
+                <Button
+                  colorScheme="primary"
                   isFullWidth
                   onClick={() => planBlockRef.current?.scrollIntoView({ behavior: 'smooth' })}
                 >
                   {formatMessage(commonMessages.button.viewProject)}
-                </SecondaryEnrollButton>
+                </Button>
               </StyledButtonWrapper>
             )}
           </FixedBottomBlock>
