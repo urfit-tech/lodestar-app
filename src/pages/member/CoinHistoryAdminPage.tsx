@@ -50,12 +50,13 @@ const StyledDescription = styled.div`
   color: var(--gray-dark);
   font-size: 12px;
 `
-const StyledLabel = styled.span<{ variant?: 'coin-log' | 'order-log' }>`
+const StyledLabel = styled.span<{ variant?: 'coin-log' | 'order-log'; amount?: number }>`
   padding: 0.125rem 0.5rem;
   color: white;
   font-size: 12px;
   border-radius: 11px;
-  background: ${props => (props.variant === 'coin-log' ? 'var(--success)' : 'var(--warning)')};
+  background: ${props =>
+    props.variant === 'coin-log' && props.amount && props.amount >= 0 ? 'var(--success)' : 'var(--warning)'};
   white-space: nowrap;
 `
 const StyledInactivatedItem = styled(StyledItem)`
@@ -172,7 +173,7 @@ const CoinHistoryCollectionTabs: React.VFC<{
                       </StyledDescription>
                     </div>
                     <div className="flex-shrink-0 ml-5">
-                      <StyledLabel variant="coin-log">
+                      <StyledLabel variant="coin-log" amount={coinLog.amount}>
                         {coinLog.amount > 0 && '+'}
                         {coinLog.amount} {coinUnit}
                       </StyledLabel>

@@ -1,18 +1,20 @@
-import { HStack, Select, useRadioGroup } from '@chakra-ui/react'
+import { HStack, Select, SkeletonText, useRadioGroup } from '@chakra-ui/react'
 import { List } from 'antd'
 import dayjs from 'dayjs'
-import React, { useState } from 'react'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import React, { useMemo, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import ActivitySessionCard from '../../components/activity/ActivitySessionCard'
 import ActivityTicketItem from '../../components/activity/ActivityTicketItem'
 import RadioCard from '../../components/RadioCard'
 import { commonMessages } from '../../helpers/translation'
+import { useActivityTicketsByIds } from '../../hooks/activity'
 import { ActivitySessionTicketEnrollment } from '../../types/activity'
 
 const messages = defineMessages({
-  displayTicket: { id: 'activity.select.option.displayTicket', defaultMessage: '顯示票券' },
-  displaySession: { id: 'activity.select.option.displaySession', defaultMessage: '顯示場次' },
+  displayTicket: { id: 'activity.select.option.displayTicket', defaultMessage: 'Display Ticket' },
+  displaySession: { id: 'activity.select.option.displaySession', defaultMessage: 'Display Session' },
 })
 
 type DisplayType = 'ticket' | 'session'
@@ -24,6 +26,13 @@ const ActivityTicketCollectionBlock: React.VFC<{
   const { formatMessage } = useIntl()
   const [isExpired, setIsExpired] = useState(false)
   const [displayType, setDisplayType] = useState<DisplayType>('session')
+  const { currentMemberId } = useAuth()
+
+  const ticketIds = useMemo(() => {
+    return Array.from(new Set(activityEnrollment.map(item => item.activityTicketId)))
+  }, [activityEnrollment])
+
+  const { tickets, loadingTickets } = useActivityTicketsByIds(ticketIds)
 
   const options = [formatMessage(commonMessages.status.participable), formatMessage(commonMessages.status.expired)]
 
@@ -41,6 +50,10 @@ const ActivityTicketCollectionBlock: React.VFC<{
 
   const group = getRootProps()
 
+  if (loadingTickets) {
+    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
+  }
+
   if (isError) {
     return (
       <div className="container py-3">
@@ -48,6 +61,26 @@ const ActivityTicketCollectionBlock: React.VFC<{
       </div>
     )
   }
+
+  const seenSessionIds = new Set()
+  const sessions = tickets
+    .filter(ticket => ticket.sessions.length > 0)
+    .flatMap(ticket => ticket.sessions.map(session => ({ ...session, ticket })))
+    .filter(session => {
+      if (seenSessionIds.has(session.id)) {
+        return false
+      }
+      seenSessionIds.add(session.id)
+
+      return isExpired
+        ? dayjs(session.endedAt).isBefore(dayjs())
+        : session.endedAt !== null && !dayjs(session.endedAt).isBefore(dayjs())
+    })
+    .sort((a, b) =>
+      isExpired
+        ? dayjs(b.endedAt).valueOf() - dayjs(a.endedAt).valueOf()
+        : dayjs(a.endedAt).valueOf() - dayjs(b.endedAt).valueOf(),
+    )
 
   return (
     <div className="container py-3">
@@ -71,44 +104,56 @@ const ActivityTicketCollectionBlock: React.VFC<{
       </div>
       <List>
         {displayType === 'ticket'
-          ? activityEnrollment.map(ticket => (
-            <Link to={`/orders/${ticket.orderId}/products/${ticket.orderProductId}`} key={ticket.orderProductId}>
-              <div className="mb-4">
-                <ActivityTicketItem ticketId={ticket.activityTicketId} />
-              </div>
-            </Link>
-          ))
-          : displayType === 'session' ? activityEnrollment
-            .flatMap(ticket => ticket.activitySession.map(session => ({ ...session, ticket })))
-            .filter(session => dayjs(session.endedAt).isBefore(dayjs()) === isExpired)
-            .sort((a, b) =>
-              isExpired
-                ? dayjs(b.endedAt).valueOf() - dayjs(a.endedAt).valueOf()
-                : dayjs(a.endedAt).valueOf() - dayjs(b.endedAt).valueOf(),
-            )
-            .map(session => {
-              return (
-                <Link
-                  to={`/orders/${session.ticket.orderId}/products/${session.ticket.orderProductId}?sessionId=${session.id}`}
-                  key={session.id}
-                >
-                  <div className="mb-4">
-                    <ActivitySessionCard
-                      session={{
+          ? tickets.map(ticket => (
+              <Link to={`/activity_ticket/${ticket.id}?memberId=${currentMemberId}`} key={ticket.id}>
+                <div className="mb-4">
+                  <ActivityTicketItem
+                    ticket={{
+                      id: ticket.id,
+                      activity: {
+                        title: ticket.activity.title,
+                        coverUrl: ticket.activity.coverUrl,
+                      },
+                      sessions: ticket.sessions.map(session => ({
                         id: session.id,
-                        location: session.location || '',
-                        onlineLink: session.onlineLink || '',
-                        activityTitle: session.activityTitle,
-                        title: session.title,
-                        coverUrl: session.activityCoverUrl,
-                        startedAt: session.startedAt,
                         endedAt: session.endedAt,
-                      }}
-                    />
-                  </div>
-                </Link>
-              )
-            }) : null}
+                        startedAt: session.startedAt,
+                        title: session.title,
+                        location: session.location,
+                        onlineLink: session.onlineLink,
+                        activityTitle: session.title,
+                        type: session.type,
+                      })),
+                    }}
+                  />
+                </div>
+              </Link>
+            ))
+          : displayType === 'session'
+          ? sessions.map(session => (
+              <Link
+                to={`/activity_ticket/${session.ticket.id}?memberId=${currentMemberId}${
+                  session.id ? '&session=' + session.id : ''
+                }`}
+                key={session.id}
+              >
+                <div className="mb-4">
+                  <ActivitySessionCard
+                    session={{
+                      id: session.id,
+                      location: session.location || '',
+                      onlineLink: session.onlineLink || '',
+                      activityTitle: session.activityTitle,
+                      title: session.title,
+                      coverUrl: session.coverUrl || '',
+                      startedAt: session.startedAt.toISOString(),
+                      endedAt: session.endedAt.toISOString(),
+                    }}
+                  />
+                </div>
+              </Link>
+            ))
+          : null}
       </List>
     </div>
   )

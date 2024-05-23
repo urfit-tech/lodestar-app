@@ -1,5 +1,4 @@
 import { Icon } from '@chakra-ui/react'
-import { Skeleton } from 'antd'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import moment from 'moment'
@@ -9,7 +8,6 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { dateRangeFormatter } from '../../helpers'
 import { activityMessages, commonMessages } from '../../helpers/translation'
-import { useActivityTicket } from '../../hooks/activity'
 import EmptyCover from '../../images/empty-cover.png'
 import { BREAK_POINT } from '../common/Responsive'
 
@@ -78,33 +76,56 @@ const StyledBadge = styled.span`
 `
 
 const ActivityTicketItem: React.VFC<{
-  ticketId: string
-}> = ({ ticketId }) => {
+  ticket: {
+    id: string
+    activity: {
+      title: string
+      coverUrl: string
+    }
+    sessions: {
+      id: string
+      endedAt: Date
+      startedAt: Date
+      title: string
+      location: string
+      onlineLink: string
+      activityTitle: string
+      type: string
+    }[]
+  }
+}> = ({ ticket }) => {
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
-  const { loadingTicket, errorTicket, ticket } = useActivityTicket(ticketId)
-
-  if (loadingTicket) {
-    return (
-      <StyledWrapper>
-        <Skeleton active avatar />
-      </StyledWrapper>
-    )
-  }
-
-  if (errorTicket || !ticket) {
-    return <StyledWrapper>{formatMessage(commonMessages.status.loadingError)}</StyledWrapper>
-  }
 
   const activity = ticket.activity
   const activitySessions = ticket.sessions
+
+  const seenSessionIds = new Set<string>()
+  const uniqueActivitySessions = activitySessions.reduce<
+    {
+      id: string
+      endedAt: Date
+      startedAt: Date
+      title: string
+      location: string
+      onlineLink: string
+      activityTitle: string
+      type: string
+    }[]
+  >((uniqueSessions, session) => {
+    if (!seenSessionIds.has(session.id)) {
+      seenSessionIds.add(session.id)
+      uniqueSessions.push(session)
+    }
+    return uniqueSessions
+  }, [])
 
   return (
     <StyledWrapper>
       <StyledDescription className="flex-grow-1">
         <StyledTitle className="mb-3">{activity.title}</StyledTitle>
 
-        {activitySessions.map(session => {
+        {uniqueActivitySessions.map(session => {
           const now = moment()
 
           return (
