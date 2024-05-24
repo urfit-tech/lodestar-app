@@ -167,6 +167,28 @@ const ProgramContentBlock: React.VFC<{
   ) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />
   }
+
+  const isProgramContentDisplay =
+    (!!isEquityProgramContent && moment().isAfter(moment(programContent.publishedAt))) ||
+    currentUserRole === 'app-owner'
+
+  const isProgramContentUnPublish =
+    !!isEquityProgramContent && moment().isBefore(moment(programContent.publishedAt)) && currentUserRole !== 'app-owner'
+
+  const isEquityVideoProgramContent =
+    isProgramContentDisplay &&
+    programContent.contentType === 'video' &&
+    (!isBackgroundMode || programContent.videos[0]?.data?.source === 'youtube')
+
+  const isEquityEbookProgramContent = isProgramContentDisplay && programContent.contentType === 'ebook'
+  const isEquityPracticeProgramContent =
+    isProgramContentDisplay && enabledModules.practice && programContent.programContentBody?.type === 'practice'
+
+  const isEquityExerciseOrExam =
+    isProgramContentDisplay &&
+    (enabledModules.exercise || enabledModules.exam) /* TODO: combine two modules in exam */ &&
+    (programContent.programContentBody?.type === 'exercise' || programContent.programContentBody?.type === 'exam')
+
   const insertProgramProgress = async (progress: number) => {
     try {
       const currentProgress = Math.ceil(progress * 20) / 20 // every 5% as a tick
@@ -225,9 +247,8 @@ const ProgramContentBlock: React.VFC<{
           )
         )}
       </div>
-      {!!isEquityProgramContent &&
-      moment().isBefore(moment(programContent.publishedAt)) &&
-      currentUserRole !== 'app-owner' ? (
+
+      {isProgramContentUnPublish && (
         <StyledUnpublishedBlock>
           <StyledIcon as={LockIcon} className="mb-3" />
           <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.theContentWillAt)}</p>
@@ -237,56 +258,53 @@ const ProgramContentBlock: React.VFC<{
             )}`}
           </p>
         </StyledUnpublishedBlock>
-      ) : (!!isEquityProgramContent && moment().isAfter(moment(programContent.publishedAt))) ||
-        currentUserRole === 'app-owner' ? (
-        programContent.contentType === 'video' ? (
-          (!isBackgroundMode || programContent.videos[0]?.data?.source === 'youtube') && (
-            <ProgramContentPlayer
-              programContentId={programContentId}
-              nextProgramContent={nextProgramContent}
-              onVideoEvent={e => {
-                if (Math.abs(e.videoState.endedAt - endedAtRef.current) >= 5) {
-                  insertPlayerEventLog({ ...e.videoState, startedAt: endedAtRef.current || e.videoState.startedAt })
-                  if (e.type === 'progress') {
-                    insertProgramProgress(e.progress)
-                  }
-                  endedAtRef.current = e.videoState.endedAt
-                }
-                if (e.type === 'ended') {
-                  insertPlayerEventLog({ ...e.videoState, startedAt: endedAtRef.current || e.videoState.startedAt })
-                  insertProgramProgress(1)?.then(() => refetchProgress())
-                }
-              }}
-            />
-          )
-        ) : programContent.contentType === 'ebook' ? (
-          <ProgramContentEbookReader
-            setEbook={setEbook}
-            programContentId={programContent.id}
-            isTrial={programContent.displayMode === 'trial'}
-            ebookCurrentToc={ebookCurrentToc}
-            onEbookCurrentTocChange={onEbookCurrentTocChange}
-            location={ebookLocation}
-            onLocationChange={onEbookLocationChange}
+      )}
+
+      {isEquityVideoProgramContent ? (
+        <ProgramContentPlayer
+          programContentId={programContentId}
+          nextProgramContent={nextProgramContent}
+          onVideoEvent={e => {
+            if (Math.abs(e.videoState.endedAt - endedAtRef.current) >= 5) {
+              insertPlayerEventLog({ ...e.videoState, startedAt: endedAtRef.current || e.videoState.startedAt })
+              if (e.type === 'progress') {
+                insertProgramProgress(e.progress)
+              }
+              endedAtRef.current = e.videoState.endedAt
+            }
+            if (e.type === 'ended') {
+              insertPlayerEventLog({ ...e.videoState, startedAt: endedAtRef.current || e.videoState.startedAt })
+              insertProgramProgress(1)?.then(() => refetchProgress())
+            }
+          }}
+        />
+      ) : isEquityEbookProgramContent ? (
+        <ProgramContentEbookReader
+          setEbook={setEbook}
+          programContentId={programContent.id}
+          isTrial={programContent.displayMode === 'trial'}
+          ebookCurrentToc={ebookCurrentToc}
+          onEbookCurrentTocChange={onEbookCurrentTocChange}
+          location={ebookLocation}
+          onLocationChange={onEbookLocationChange}
+        />
+      ) : isEquityPracticeProgramContent ? (
+        <div className="mb-4">
+          <PracticeDescriptionBlock
+            programContentId={programContentId}
+            isCoverRequired={!!programContent.metadata?.isCoverRequired}
+            title={programContent.title}
+            description={programContent.programContentBody?.description || ''}
+            duration={programContent.duration || 0}
+            score={programContent.metadata?.difficulty || 0}
+            attachments={programContent.attachments || []}
           />
-        ) : enabledModules.practice && programContent.programContentBody?.type === 'practice' ? (
-          <div className="mb-4">
-            <PracticeDescriptionBlock
-              programContentId={programContentId}
-              isCoverRequired={!!programContent.metadata?.isCoverRequired}
-              title={programContent.title}
-              description={programContent.programContentBody?.description || ''}
-              duration={programContent.duration || 0}
-              score={programContent.metadata?.difficulty || 0}
-              attachments={programContent.attachments || []}
-            />
-          </div>
-        ) : (enabledModules.exercise || enabledModules.exam) /* TODO: combine two modules in exam */ &&
-          (programContent.programContentBody?.type === 'exercise' ||
-            programContent.programContentBody?.type === 'exam') ? (
-          <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
-        ) : null
+        </div>
+      ) : isEquityExerciseOrExam ? (
+        <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
       ) : null}
+
+      {/* Background mode play video mark */}
       {!!isEquityProgramContent &&
         isBackgroundMode &&
         programContent.videos[0]?.data?.source !== 'youtube' &&
@@ -297,6 +315,7 @@ const ProgramContentBlock: React.VFC<{
             <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundModeDescription)}</p>
           </StyledBackgroundModeDescriptionBlock>
         )}
+
       {!!isEquityProgramContent &&
         !includes(programContent.programContentBody?.type, ['ebook', 'practice', 'exercise', 'exam']) &&
         programContent.videos[0]?.data?.source !== 'youtube' && (
@@ -319,7 +338,7 @@ const ProgramContentBlock: React.VFC<{
                         changeGlobalPlayingState?.(false)
                         close?.()
                       }
-                      if (!isBackgroundMode && !!isEquityProgramContent) {
+                      if (!isBackgroundMode && isProgramContentDisplay) {
                         setup?.({
                           backgroundMode: true,
                           title: programContent?.title || '',
@@ -344,25 +363,23 @@ const ProgramContentBlock: React.VFC<{
             ) : (
               <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
             )}
-            {!!isEquityProgramContent &&
+            {isProgramContentDisplay &&
               programContent.programContentBody &&
-              (moment().isAfter(moment(programContent.publishedAt)) || currentUserRole === 'app-owner') &&
               !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
                 <BraftContent>{programContent.programContentBody.description}</BraftContent>
               )}
           </StyledContentBlock>
         )}
-      {(!!isEquityProgramContent &&
-        !includes(programContent.programContentBody?.type, ['ebook']) &&
-        moment().isAfter(moment(programContent.publishedAt))) ||
-        (currentUserRole === 'app-owner' && (
-          <ProgramContentTabs
-            programId={programId}
-            programRoles={programRoles}
-            programContent={programContent}
-            issueEnabled={issueEnabled}
-          />
-        ))}
+
+      {isProgramContentDisplay && !includes(programContent.programContentBody?.type, ['ebook']) && (
+        <ProgramContentTabs
+          programId={programId}
+          programRoles={programRoles}
+          programContent={programContent}
+          issueEnabled={issueEnabled}
+        />
+      )}
+
       {!includes(programContent.programContentBody?.type, ['practice', 'ebook']) && instructor && (
         <ProgramContentCreatorBlock memberId={instructor.memberId} />
       )}
