@@ -7,7 +7,7 @@ import Cookies from 'js-cookie'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import moment from 'moment-timezone'
+import dayjs from 'dayjs'
 import { flatten, includes } from 'ramda'
 import React, { useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
@@ -134,7 +134,7 @@ const ProgramContentBlock: React.VFC<{
     !isEquityProgramContent ||
     (programContentBodyType &&
       ['text', 'practice', 'exam'].includes(programContentBodyType) &&
-      moment().isBefore(moment(programContent?.publishedAt))) ||
+      dayjs().isBefore(dayjs(programContent?.publishedAt))) ||
     programContent?.publishedAt === null
   )
 
@@ -169,11 +169,10 @@ const ProgramContentBlock: React.VFC<{
   }
 
   const isProgramContentDisplay =
-    (!!isEquityProgramContent && moment().isAfter(moment(programContent.publishedAt))) ||
-    currentUserRole === 'app-owner'
+    (!!isEquityProgramContent && dayjs().isAfter(dayjs(programContent.publishedAt))) || currentUserRole === 'app-owner'
 
   const isProgramContentUnPublish =
-    !!isEquityProgramContent && moment().isBefore(moment(programContent.publishedAt)) && currentUserRole !== 'app-owner'
+    !!isEquityProgramContent && dayjs().isBefore(dayjs(programContent.publishedAt)) && currentUserRole !== 'app-owner'
 
   const isEquityVideoProgramContent =
     isProgramContentDisplay &&
@@ -253,7 +252,7 @@ const ProgramContentBlock: React.VFC<{
           <StyledIcon as={LockIcon} className="mb-3" />
           <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.theContentWillAt)}</p>
           <p>
-            {`${moment(programContent.publishedAt).format('YYYY/MM/DD HH:mm')} ${formatMessage(
+            {`${dayjs(programContent.publishedAt).format('YYYY/MM/DD HH:mm')} ${formatMessage(
               commonMessages.text.publish,
             )}`}
           </p>
