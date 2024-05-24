@@ -357,7 +357,7 @@ export const useProgram = (programId: string) => {
   >(
     gql`
       query GetProgramPlans($programId: uuid!) {
-        program_plan(where: { program_id: { _eq: $programId } }, order_by: { created_at: asc }) {
+        program_plan(where: { program_id: { _eq: $programId } }, order_by: { position: asc }) {
           id
           type
           title
