@@ -41,6 +41,7 @@ const GlobalAudioPlayer: React.VFC = () => {
 
   const insertProgress = useInsertProgress(currentMemberId || '')
   const { program } = useProgram(programId)
+  const { currentUserRole } = useAuth()
   const { programContent, loadingProgramContent, isEquityProgramContent } = useProgramContentById(
     programId,
     programContentId,
@@ -96,7 +97,7 @@ const GlobalAudioPlayer: React.VFC = () => {
       setProgramId && setProgramId(programId)
       if (!loadingProgramContent && programContent) {
         const isPublish = dayjs().isSame(programContent.publishedAt) || dayjs().isAfter(programContent.publishedAt)
-        if (isPublish) {
+        if (isPublish || currentUserRole === 'app-owner') {
           if (!!isEquityProgramContent) {
             const programContentBodyType = programContent.programContentBody?.type
             if (programContentBodyType === 'audio' && programContent.audios.length !== 0) {
@@ -152,6 +153,7 @@ const GlobalAudioPlayer: React.VFC = () => {
     changeGlobalPlayingState,
     close,
     currentIndex,
+    currentUserRole,
     documentVisible,
     isBackgroundMode,
     isEquityProgramContent,
