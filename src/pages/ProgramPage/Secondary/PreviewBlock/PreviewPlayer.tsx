@@ -102,7 +102,7 @@ const PreviewPlayer: React.VFC<{
           <FaChevronDown style={{ transform: 'rotate(270deg)' }} className="m-1" />
         </ControlButton>
       </HeaderWrapper>
-      {contentType === 'video' && <ProgramContentPlayer programContentId={programContentId} />}
+      {contentType === 'video' && <ProgramContentPlayer programContentId={programContentId} autoPlay={false} />}
       {contentType === 'audio' && (
         <AudioPlayer title={programContent.title} audioUrl={audioUrl} mode="preview" autoPlay={false} />
       )}

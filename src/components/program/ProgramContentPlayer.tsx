@@ -90,13 +90,14 @@ type VideoEvent = {
 const ProgramContentPlayer: React.VFC<
   ReactPlayerProps & {
     programContentId: string
+    autoPlay?: boolean
     nextProgramContent?: {
       id: string
       title: string
     }
     onVideoEvent?: (event: VideoEvent) => void
   }
-> = ({ programContentId, nextProgramContent, onVideoEvent }) => {
+> = ({ programContentId, autoPlay, nextProgramContent, onVideoEvent }) => {
   const { formatMessage } = useIntl()
   const playerRef = useRef<ReactPlayer | null>(null)
   const lastEndedTime = useRef<number>(0)
@@ -242,6 +243,7 @@ const ProgramContentPlayer: React.VFC<
                 </StyledReactPlayerWrapper>
               ) : (
                 <VideoPlayer
+                  autoPlay={autoPlay}
                   loading={programContentVideo.loading}
                   error={programContentVideo.error}
                   sources={programContentVideo.sources}
