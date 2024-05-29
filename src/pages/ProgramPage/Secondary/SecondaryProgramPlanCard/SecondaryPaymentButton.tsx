@@ -68,7 +68,7 @@ const SecondaryPaymentButton: React.VFC<{
   return (
     <>
       {isProductInCart?.(type, target) ? (
-        <SecondaryEnrollButton colorScheme="primary" isFullWidth onClick={() => history.push(`/cart`)}>
+        <SecondaryEnrollButton isFullWidth onClick={() => history.push(`/cart`)}>
           {formatMessage(commonMessages.button.cart)}
         </SecondaryEnrollButton>
       ) : isSubscription ? (
