@@ -424,7 +424,7 @@ const AudioPlayer: React.VFC<{
           /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
             ? undefined
             : () => {
-                audioRef.current?.play()
+                autoPlay && audioRef.current?.play()
               }
         }
         autoPlay={autoPlay}
