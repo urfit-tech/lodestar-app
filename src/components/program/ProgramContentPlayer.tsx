@@ -4,11 +4,11 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import ReactPlayer, { ReactPlayerProps } from 'react-player'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { commonMessages, productMessages } from '../../helpers/translation'
-import { useProgramContent } from '../../hooks/program'
+import { useProgramContentById } from '../../hooks/program'
 import { ReactComponent as IconNext } from '../../images/icon-next.svg'
 import VideoPlayer from '../common/VideoPlayer'
 import programMessages from './translation'
@@ -101,7 +101,8 @@ const ProgramContentPlayer: React.VFC<
   const playerRef = useRef<ReactPlayer | null>(null)
   const lastEndedTime = useRef<number>(0)
   const { currentMember } = useAuth()
-  const { programContent } = useProgramContent(programContentId)
+  const { programId } = useParams<{ programId: string }>()
+  const { programContent } = useProgramContentById(programId, programContentId)
   const { loadingProgress, programContentProgress } = useContext(ProgressContext)
   const [isCoverShowing, setIsCoverShowing] = useState(false)
 

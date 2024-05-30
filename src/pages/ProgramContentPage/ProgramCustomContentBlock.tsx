@@ -13,9 +13,8 @@ import { BREAK_POINT } from '../../components/common/Responsive'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import { productMessages } from '../../helpers/translation'
-import { useProgramContent } from '../../hooks/program'
+import { useProgramContentById } from '../../hooks/program'
 import { ProgramContent, ProgramContentSection } from '../../types/program'
-import { useHasProgramContentPermission } from './ProgramContentBlock'
 
 const StyledUnPurchased = styled.div`
   color: ${props => props.theme['@primary-color']};
@@ -57,11 +56,10 @@ const ProgramCustomContentBlock: React.VFC<{
   const { loading: loadingApp } = useApp()
   const { authToken, permissions, currentMemberId, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
-  const { loadingProgramContent, programContent } = useProgramContent(programContentId)
-  const { hasProgramContentPermission } = useHasProgramContentPermission(programId, programContentId)
+  const { programContent, loadingProgramContent } = useProgramContentById(programId, programContentId)
   const endedAtRef = useRef(0)
   const hasPermission =
-    hasProgramContentPermission ||
+    programContent?.isEquity ||
     programContent?.displayMode === 'trial' ||
     (programContent?.displayMode === 'loginToTrial' && Boolean(currentMemberId && isAuthenticated))
 

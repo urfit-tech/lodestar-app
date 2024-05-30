@@ -34,6 +34,7 @@ type AudioPlayerContextValue = {
     source?: string
     cloudfront?: object
   }) => void
+  setProgramId?: (programId: string) => void
 }
 
 const defaultAudioPlayerContext: AudioPlayerContextValue = {
@@ -206,6 +207,9 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
           }
           localStorage.setItem('playing', JSON.stringify(playing))
           localStorage.setItem('audioPlayerVisibleState', 'open')
+        },
+        setProgramId: (programId: string) => {
+          setProgramId(programId)
         },
       }}
     >
