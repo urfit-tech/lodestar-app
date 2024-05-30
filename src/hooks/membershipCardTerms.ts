@@ -1,36 +1,13 @@
 import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { useCallback, useEffect, useState } from 'react'
 import hasura from '../hasura'
+import {
+  Card,
+  MembershipCardPlanDetails,
+  MembershipCardTermsProductType,
+  StrategyDiscount,
+} from '../types/membershipCard'
 import { executeQuery } from './util'
-
-type strategyDiscount = {
-  productId: string
-  queryClient: any
-  type?: string
-}
-
-type MembershipCardPlanDetails = {
-  productName: string
-  productPlanName?: string
-  productId: string
-} | null
-
-type CardDiscount = {
-  id: string
-  type: string
-  amount: number
-  product: {
-    type: string
-    details?: MembershipCardPlanDetails
-  }
-}
-
-type Card = {
-  id: string
-  title: string
-  description: string
-  cardDiscounts: CardDiscount[]
-}
 
 const GetCard = gql`
   query GetCard($cardId: uuid!) {
@@ -114,34 +91,49 @@ const GetProgramPlanByMembershipCardId = gql`
     }
   }
 `
-
+type MembershipCardEquityProgramPlanProduct = {
+  id: string
+  type: string
+  amount: number
+  product: {
+    type: MembershipCardTermsProductType
+    details: {
+      productName: string
+      productPlanName: string
+      productId: string
+    }
+  }
+}
 const fetchMembershipCardEquityProgramPlanProduct = async (queryClient: any, membershipCardId: string) => {
-  const data = await executeQuery(queryClient, {
+  const data: hasura.GetProgramPlanByMembershipCard = await executeQuery(queryClient, {
     query: GetProgramPlanByMembershipCardId,
     variables: { cardId: membershipCardId },
   })
+
   if (!data) return null
-  return data.program_plan.map((item: any) => {
+
+  const programPlan: MembershipCardEquityProgramPlanProduct[] = data.program_plan.map(programPlan => {
     return {
-      id: item.id,
+      id: programPlan.id,
       type: 'equity',
       amount: 1,
       product: {
         type: 'ProgramPlan',
         details: {
-          productName: item.program.title,
-          productPlanName: item.title,
-          productId: item.program.id,
+          productName: programPlan.program?.title,
+          productPlanName: programPlan.title,
+          productId: programPlan.program?.id,
         },
       },
     }
   })
+  return programPlan
 }
 
 // Strategy functions map
-const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<MembershipCardPlanDetails | null> } = {
+const strategyMap: { [key: string]: (discount: StrategyDiscount) => Promise<MembershipCardPlanDetails | null> } = {
   ActivityTicket: async discount => {
-    const data = await executeQuery(discount.queryClient, {
+    const data: hasura.GetActivityTicketTitle = await executeQuery(discount.queryClient, {
       query: GetActivityTicketTitle,
       variables: { id: discount.productId },
     })
@@ -152,7 +144,7 @@ const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<Memb
   },
 
   ProgramPlan: async discount => {
-    const data = await executeQuery(discount.queryClient, {
+    const data: hasura.GetProgramPlanInfo = await executeQuery(discount.queryClient, {
       query: GetProgramAndProgramPlanInfo,
       variables: { id: discount.productId },
     })
@@ -160,14 +152,14 @@ const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<Memb
     const programPlan = data.program_plan && data.program_plan[0] ? data.program_plan[0] : null
     if (!programPlan) return null
     return {
-      productName: programPlan.program.title,
+      productName: programPlan.program?.title,
       productPlanName: programPlan.title,
-      productId: programPlan.program.id,
+      productId: programPlan.program?.id,
     }
   },
 
   ProgramPackagePlan: async discount => {
-    const data = await executeQuery(discount.queryClient, {
+    const data: hasura.GetProgramPackageAndProgramPackagePlan = await executeQuery(discount.queryClient, {
       query: GetProgramPackageAndProgramPackagePlan,
       variables: { id: discount.productId },
     })
@@ -183,7 +175,7 @@ const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<Memb
   },
 
   PodcastProgram: async discount => {
-    const data = await executeQuery(discount.queryClient, {
+    const data: hasura.GetPodcastProgram = await executeQuery(discount.queryClient, {
       query: GetPodcastProgram,
       variables: { id: discount.productId },
     })
@@ -222,7 +214,7 @@ export const useMembershipCardTerms = (cardId: string) => {
             const details = await (strategyMap[discount.product.type] || strategyMap['default'])({
               productId: discount.product.target,
               queryClient,
-              type: discount.product.type,
+              type: discount.product.type as MembershipCardTermsProductType,
             })
 
             return {
@@ -230,7 +222,7 @@ export const useMembershipCardTerms = (cardId: string) => {
               type: discount.type,
               amount: discount.amount,
               product: {
-                type: discount.product.type,
+                type: discount.product.type as MembershipCardTermsProductType,
                 ...(details ? { details } : null),
               },
             }

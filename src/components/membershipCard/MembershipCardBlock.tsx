@@ -1,12 +1,12 @@
 import { Icon, useDisclosure } from '@chakra-ui/react'
+import dayjs from 'dayjs'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
-import moment from 'moment'
 import React from 'react'
 import { AiOutlineCalendar } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
-import MembershipCard from './MembershipCard'
+import MembershipCard from '../common/MembershipCard'
 import MembershipCardTermsModal from './MembershipCardTermsModal'
 
 const StyledCardContainer = styled.div`
@@ -47,8 +47,8 @@ const MembershipCardBlock: React.VFC<{
   expiredAt?: Date
   description?: string
   variant?: string
-  id: string
-}> = ({ template, templateVars, title, expiredAt, description, variant, id }) => {
+  membershipCardId: string
+}> = ({ template, templateVars, title, expiredAt, description, variant, membershipCardId }) => {
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -81,7 +81,7 @@ const MembershipCardBlock: React.VFC<{
             ? formatMessage(
                 { id: 'common.expiredTime', defaultMessage: '{expiredTime} 止' },
                 {
-                  expiredTime: moment(expiredAt).format('YYYY/MM/DD'),
+                  expiredTime: dayjs(expiredAt).format('YYYY/MM/DD'),
                 },
               )
             : formatMessage(commonMessages.content.noPeriod)}
@@ -91,7 +91,7 @@ const MembershipCardBlock: React.VFC<{
           {formatMessage(commonMessages.defaults.discountTerms)}
         </button>
       </StyledSubTitle>
-      <MembershipCardTermsModal id={id} title={title} isOpen={isOpen} onClose={onClose} />
+      <MembershipCardTermsModal membershipCardId={membershipCardId} title={title} isOpen={isOpen} onClose={onClose} />
     </div>
   )
 }
