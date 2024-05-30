@@ -1,5 +1,5 @@
 import { gql, useApolloClient, useQuery } from '@apollo/client'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import hasura from '../hasura'
 import { executeQuery } from './util'
 
@@ -29,12 +29,12 @@ type Card = {
   id: string
   title: string
   description: string
-  card_discounts: CardDiscount[]
+  cardDiscounts: CardDiscount[]
 }
 
-const GetCardQuery = gql`
-  query GetCard($id: uuid!) {
-    card(where: { id: { _eq: $id } }) {
+const GetCard = gql`
+  query GetCard($cardId: uuid!) {
+    card(where: { id: { _eq: $cardId } }) {
       id
       title
       description
@@ -52,7 +52,7 @@ const GetCardQuery = gql`
 `
 const GetActivityTicketTitle = gql`
   query GetActivityTicketTitle($id: uuid!) {
-    activity_ticket(where: { id: { _eq: $id } }) {
+    activity_ticket(where: { id: { _eq: $id }, is_published: { _eq: true } }) {
       title
       activity {
         id
@@ -63,7 +63,9 @@ const GetActivityTicketTitle = gql`
 
 const GetProgramAndProgramPlanInfo = gql`
   query GetProgramPlanInfo($id: uuid!) {
-    program_plan(where: { id: { _eq: $id } }) {
+    program_plan(
+      where: { id: { _eq: $id }, program: { published_at: { _is_null: false }, is_deleted: { _eq: false } } }
+    ) {
       title
       program {
         title
@@ -75,7 +77,7 @@ const GetProgramAndProgramPlanInfo = gql`
 
 const GetProgramPackageAndProgramPackagePlan = gql`
   query GetProgramPackageAndProgramPackagePlan($id: uuid!) {
-    program_package_plan(where: { id: { _eq: $id } }) {
+    program_package_plan(where: { id: { _eq: $id }, published_at: { _is_null: false } }) {
       title
       program_package {
         title
@@ -85,9 +87,9 @@ const GetProgramPackageAndProgramPackagePlan = gql`
   }
 `
 
-const GetPodcastProgramAndPlan = gql`
-  query GetPodcastProgramAndPlan($id: uuid!) {
-    podcast_program(where: { id: { _eq: $id } }) {
+const GetPodcastProgram = gql`
+  query GetPodcastProgram($id: uuid!) {
+    podcast_program(where: { id: { _eq: $id }, published_at: { _is_null: false } }) {
       title
       id
     }
@@ -95,8 +97,14 @@ const GetPodcastProgramAndPlan = gql`
 `
 
 const GetProgramPlanByMembershipCardId = gql`
-  query GetProgramPlanByMembershipCard($card_id: uuid!) {
-    program_plan(where: { card_id: { _eq: $card_id } }) {
+  query GetProgramPlanByMembershipCard($cardId: uuid!) {
+    program_plan(
+      where: {
+        card_products: { card_id: { _eq: $cardId } }
+        program: { published_at: { _is_null: false } }
+        is_deleted: { _eq: false }
+      }
+    ) {
       id
       title
       program {
@@ -110,7 +118,7 @@ const GetProgramPlanByMembershipCardId = gql`
 const fetchMembershipCardEquityProgramPlanProduct = async (queryClient: any, membershipCardId: string) => {
   const data = await executeQuery(queryClient, {
     query: GetProgramPlanByMembershipCardId,
-    variables: { card_id: membershipCardId },
+    variables: { cardId: membershipCardId },
   })
   if (!data) return null
   return data.program_plan.map((item: any) => {
@@ -176,7 +184,7 @@ const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<Memb
 
   PodcastProgram: async discount => {
     const data = await executeQuery(discount.queryClient, {
-      query: GetPodcastProgramAndPlan,
+      query: GetPodcastProgram,
       variables: { id: discount.productId },
     })
     if (!data) return null
@@ -194,59 +202,62 @@ const strategyMap: { [key: string]: (discount: strategyDiscount) => Promise<Memb
   },
 }
 
-export const useMembershipCardTerms = (id: string) => {
-  const [cards, setCards] = useState<Card>()
-  const { loading, error, data, refetch } = useQuery<hasura.GetCard, hasura.GetCardVariables>(GetCardQuery, {
-    variables: { id },
+export const useMembershipCardTerms = (cardId: string) => {
+  const [cardTerm, setCardTerm] = useState<Card>()
+  const { loading, error, data, refetch } = useQuery<hasura.GetCard, hasura.GetCardVariables>(GetCard, {
+    variables: { cardId },
   })
 
   const queryClient = useApolloClient()
+
+  const processCardDiscounts = useCallback(
+    async (cards: hasura.GetCard['card']) => {
+      const card = cards[0]
+      let processedCard: Card = {
+        id: card.id,
+        title: card.title,
+        description: card.description || '',
+        cardDiscounts: await Promise.all(
+          card.card_discounts.map(async discount => {
+            const details = await (strategyMap[discount.product.type] || strategyMap['default'])({
+              productId: discount.product.target,
+              queryClient,
+              type: discount.product.type,
+            })
+
+            return {
+              id: discount.id,
+              type: discount.type,
+              amount: discount.amount,
+              product: {
+                type: discount.product.type,
+                ...(details ? { details } : null),
+              },
+            }
+          }),
+        ),
+      }
+
+      const programPlanEquityData = await fetchMembershipCardEquityProgramPlanProduct(queryClient, card.id)
+
+      if (programPlanEquityData && programPlanEquityData.length > 0) {
+        processedCard = { ...processedCard, cardDiscounts: [...processedCard.cardDiscounts, ...programPlanEquityData] }
+      }
+
+      setCardTerm(processedCard)
+    },
+    [queryClient],
+  )
 
   useEffect(() => {
     if (data && data.card) {
       processCardDiscounts(data.card)
     }
-  }, [data])
-
-  const processCardDiscounts = async (cards: hasura.GetCard['card']) => {
-    const card = cards[0]
-    const processedCard = {
-      id: card.id,
-      title: card.title,
-      description: card.description,
-      card_discounts: await Promise.all(
-        card.card_discounts.map(async discount => {
-          const details = await (strategyMap[discount.product.type] || strategyMap['default'])({
-            productId: discount.product.target,
-            queryClient,
-            type: discount.product.type,
-          })
-
-          return {
-            id: discount.id,
-            type: discount.type,
-            amount: discount.amount,
-            product: {
-              type: discount.product.type,
-              ...(details ? { details } : {}),
-            },
-          }
-        }),
-      ),
-    }
-
-    const programPlanEquityData = await fetchMembershipCardEquityProgramPlanProduct(queryClient, card.id)
-
-    if (programPlanEquityData.length > 0) {
-      processedCard.card_discounts.push(...programPlanEquityData)
-    }
-
-    setCards(processedCard)
-  }
+  }, [data, processCardDiscounts])
 
   return {
     loading,
-    cards,
+    cardTerm,
     error,
     refetch,
   }

@@ -54,7 +54,7 @@ const StyledTableTh = styled(Th)`
   }
 `
 const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({ isOpen, onClose, title, id }) => {
-  const { cards } = useMembershipCardTerms(id)
+  const { cardTerm } = useMembershipCardTerms(id)
   const { formatMessage } = useIntl()
 
   const renderProductType = (productType: string) => {
@@ -94,7 +94,14 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({ isO
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
       <ModalOverlay />
-      <ModalContent maxW={{ base: '90%', sm: '70%', md: '60%', lg: '45%' }} pt="20px" pb="40px" py="30px">
+      <ModalContent
+        maxW={{ base: '90%', sm: '70%', md: '60%', lg: '45%' }}
+        pt="20px"
+        pb="40px"
+        py="30px"
+        maxH="100%"
+        overflow="scroll"
+      >
         <ModalHeader>{title}</ModalHeader>
         <StyledModalHeader>{formatMessage(commonMessages.MembershipCardTermsModal.discountTerms)}</StyledModalHeader>
         <ModalCloseButton />
@@ -108,29 +115,31 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({ isO
               </Tr>
             </Thead>
             <Tbody>
-              {cards?.card_discounts?.map(discount => (
-                <Tr key={discount.id}>
-                  <Td>{renderProductType(discount?.product?.type)}</Td>
-                  <Td>
-                    <a
-                      href={generateProductLink({
-                        productName: discount?.product?.type,
-                        id: discount?.product?.details?.productId as string,
-                      })}
-                    >
-                      {discount?.product?.details?.productPlanName
-                        ? `${discount?.product?.details?.productName} - ${discount?.product?.details?.productPlanName}`
-                        : discount?.product?.details?.productName}
-                    </a>
-                  </Td>
-                  <Td>{renderDiscount(discount)}</Td>
-                </Tr>
-              ))}
+              {cardTerm?.cardDiscounts
+                ?.filter(discount => !!discount.product.details)
+                .map(discount => (
+                  <Tr key={discount.id}>
+                    <Td>{renderProductType(discount?.product?.type)}</Td>
+                    <Td>
+                      <a
+                        href={generateProductLink({
+                          productName: discount?.product?.type,
+                          id: discount?.product?.details?.productId as string,
+                        })}
+                      >
+                        {discount?.product?.details?.productPlanName
+                          ? `${discount?.product?.details?.productName} - ${discount?.product?.details?.productPlanName}`
+                          : discount?.product?.details?.productName}
+                      </a>
+                    </Td>
+                    <Td>{renderDiscount(discount)}</Td>
+                  </Tr>
+                ))}
             </Tbody>
           </StyledTable>
         </ModalBody>
         <StyledModalHeader>{formatMessage(commonMessages.MembershipCardTermsModal.usageDescription)}</StyledModalHeader>
-        <ModalBody>{cards?.description}</ModalBody>
+        <ModalBody>{cardTerm?.description}</ModalBody>
       </ModalContent>
     </Modal>
   )
