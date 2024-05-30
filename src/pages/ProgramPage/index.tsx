@@ -19,7 +19,7 @@ import MediaPlayerContext from '../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, handleError, rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import { useEnrolledProgramIds, useProgram, useProgramPlansEnrollmentsAggregateList } from '../../hooks/program'
+import { useEquityProgramByProgramId, useProgram, useProgramPlansEnrollmentsAggregateList } from '../../hooks/program'
 import { useEnrolledProgramPackage } from '../../hooks/programPackage'
 import { ReactComponent as PlayIcon } from '../../images/play-fill-icon.svg'
 import ForbiddenPage from '../ForbiddenPage'
@@ -118,7 +118,7 @@ const ProgramPageContent: React.VFC = () => {
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
   const { loadingProgram, program, addProgramView } = useProgram(programId)
   const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
-  const { loading: loadingEnrolledProgramIds, enrolledProgramIds } = useEnrolledProgramIds(currentMemberId || '')
+  const { isEquityProgram, loadingEquityProgram } = useEquityProgramByProgramId(programId)
   const { loading: loadingProgramPlansEnrollmentsAggregateList, programPlansEnrollmentsAggregateList } =
     useProgramPlansEnrollmentsAggregateList(program?.plans.map(plan => plan.id) || [])
   const [isPlanListSticky, setIsPlanListSticky] = useState(false)
@@ -126,8 +126,6 @@ const ProgramPageContent: React.VFC = () => {
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const planListHeightRef = useRef<HTMLDivElement>(null)
-
-  const isEnrolled = enrolledProgramIds.includes(programId)
 
   try {
     const visitedPrograms = JSON.parse(sessionStorage.getItem('kolable.programs.visited') || '[]') as string[]
@@ -156,14 +154,14 @@ const ProgramPageContent: React.VFC = () => {
     }
   }, [loadingProgramPlansEnrollmentsAggregateList])
 
-  if (!loadingEnrolledProgramIds && !visitIntro && isEnrolled) {
+  if (!loadingEquityProgram && !visitIntro && isEquityProgram) {
     return <Redirect to={`/programs/${programId}/contents?back=${previousPage || `programs_${programId}`}`} />
   }
 
   if (
     loadingProgram ||
     enrolledProgramPackages.loading ||
-    loadingEnrolledProgramIds ||
+    loadingEquityProgram ||
     loadingProgramPlansEnrollmentsAggregateList
   ) {
     return (
@@ -202,7 +200,7 @@ const ProgramPageContent: React.VFC = () => {
 
       <div>
         {Number(settings['layout.program_page']) ? (
-          <CustomizeProgramBanner program={program} isEnrolled={isEnrolled} />
+          <CustomizeProgramBanner program={program} isEnrolled={isEquityProgram} />
         ) : (
           <PerpetualProgramBanner
             program={program}
@@ -339,13 +337,13 @@ const ProgramPageContent: React.VFC = () => {
           <FixedBottomBlock bottomSpace={podcastPlayerVisible || mediaPlayerVisible ? '92px' : ''}>
             {Number(settings['layout.program_page']) ? (
               <StyledButtonWrapper>
-                <Link to={isEnrolled ? `/programs/${program.id}/contents` : settings['link.program_page']}>
+                <Link to={isEquityProgram ? `/programs/${program.id}/contents` : settings['link.program_page']}>
                   <Button isFullWidth colorScheme="primary" leftIcon={<Icon as={PlayIcon} />}>
                     {formatMessage(defineMessage({ id: 'common.ui.start', defaultMessage: '開始進行' }))}
                   </Button>
                 </Link>
               </StyledButtonWrapper>
-            ) : isEnrolled ? (
+            ) : isEquityProgram ? (
               <StyledButtonWrapper>
                 <Link to={`${program.id}/contents`}>
                   <Button variant="primary" isFullWidth>
