@@ -105,10 +105,10 @@ const SecondaryProgramBanner: React.VFC<{
   }
   isEnrolledByProgramPackage?: boolean
   isDelivered?: boolean
-  hasTrail?: boolean
+  hasIntroductionVideo?: boolean
   scrollToPreview: () => void | undefined
   scrollToPlanBlock: () => void | undefined
-}> = ({ program, hasTrail, scrollToPreview, scrollToPlanBlock }) => {
+}> = ({ program, hasIntroductionVideo, scrollToPreview, scrollToPlanBlock }) => {
   const { formatMessage } = useIntl()
 
   // TODO: use program banner video
@@ -141,7 +141,7 @@ const SecondaryProgramBanner: React.VFC<{
             </WordingWrapper>
             <ButtonWrapper>
               <EnrollButton onClick={scrollToPlanBlock}>{formatMessage(commonMessages.ui.ctaButton)}</EnrollButton>
-              {hasTrail ? (
+              {hasIntroductionVideo ? (
                 <PreviewButton colorScheme="outlined" onClick={scrollToPreview} leftIcon={<PlayIcon />}>
                   {formatMessage(commonMessages.ui.previewButton)}
                 </PreviewButton>

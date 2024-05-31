@@ -182,7 +182,6 @@ const SecondaryProgramPageContent: React.VFC = () => {
     )
   }
 
-  const testYoutubeVideo = 'https://www.youtube.com/embed/dQw4w9WgXcQ?si=bX981Ok7fCc5jQfp'
   return (
     <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
       {!loadingApp && <ProgramPageHelmet program={program} />}
@@ -192,7 +191,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
           program={program}
           isEnrolledByProgramPackage={isEnrolledByProgramPackage}
           isDelivered={isDelivered}
-          hasTrail={trailProgramContents?.length > 0}
+          hasIntroductionVideo={!!program.coverVideoUrl}
           scrollToPreview={scrollToPreview}
           scrollToPlanBlock={scrollToPlanBlock}
         />
@@ -203,9 +202,13 @@ const SecondaryProgramPageContent: React.VFC = () => {
               <ContentWrapper className="col-12 col-lg-8">
                 <SecondaryProgramInfoCard program={program} />
                 <ProgramAbstract>{program?.abstract}</ProgramAbstract>
-                <VideoIframe src={testYoutubeVideo} />
+                {program.coverVideoUrl && (
+                  <div ref={previewRef}>
+                    <VideoIframe src={program.coverVideoUrl} />
+                  </div>
+                )}
                 <ProgramIntroTabs program={program} />
-                <PreviewBlock ref={previewRef} trailProgramContents={trailProgramContents} />
+                <PreviewBlock trailProgramContents={trailProgramContents} />
               </ContentWrapper>
 
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
