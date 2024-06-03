@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from 'react'
 import hasura from '../hasura'
 import {
   Card,
+  MembershipCardEquityProgramPlanProduct,
   MembershipCardPlanDetails,
-  MembershipCardTermsProductType,
   StrategyDiscount,
 } from '../types/membershipCard'
 import { executeQuery } from './util'
@@ -91,19 +91,7 @@ const GetProgramPlanByMembershipCardId = gql`
     }
   }
 `
-type MembershipCardEquityProgramPlanProduct = {
-  id: string
-  type: string
-  amount: number
-  product: {
-    type: MembershipCardTermsProductType
-    details: {
-      productName: string
-      productPlanName: string
-      productId: string
-    }
-  }
-}
+
 const fetchMembershipCardEquityProgramPlanProduct = async (queryClient: any, membershipCardId: string) => {
   const data: hasura.GetProgramPlanByMembershipCard = await executeQuery(queryClient, {
     query: GetProgramPlanByMembershipCardId,
@@ -214,7 +202,7 @@ export const useMembershipCardTerms = (cardId: string) => {
             const details = await (strategyMap[discount.product.type] || strategyMap['default'])({
               productId: discount.product.target,
               queryClient,
-              type: discount.product.type as MembershipCardTermsProductType,
+              type: discount.product.type,
             })
 
             return {
@@ -222,7 +210,7 @@ export const useMembershipCardTerms = (cardId: string) => {
               type: discount.type,
               amount: discount.amount,
               product: {
-                type: discount.product.type as MembershipCardTermsProductType,
+                type: discount.product.type,
                 ...(details ? { details } : null),
               },
             }

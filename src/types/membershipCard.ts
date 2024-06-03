@@ -9,6 +9,20 @@ export type MembershipCardTermsModalProps = {
 
 export type MembershipCardTermsProductType = 'ActivityTicket' | 'ProgramPlan' | 'ProgramPackagePlan' | 'PodcastProgram'
 
+export type MembershipCardEquityProgramPlanProduct = {
+  id: string
+  type: string
+  amount: number
+  product: {
+    type: string
+    details: {
+      productName: string
+      productPlanName: string
+      productId: string
+    }
+  }
+}
+
 export type StrategyDiscount = {
   productId: string
   queryClient: ApolloClient<object>
@@ -26,7 +40,7 @@ export type CardDiscount = {
   type: string
   amount: number
   product: {
-    type: MembershipCardTermsProductType
+    type: string
     details?: MembershipCardPlanDetails
   }
 }
