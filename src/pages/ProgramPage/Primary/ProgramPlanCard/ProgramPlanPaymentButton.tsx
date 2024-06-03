@@ -9,11 +9,11 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
-import CoinCheckoutModal from '../../../components/checkout/CoinCheckoutModal'
-import CartContext from '../../../contexts/CartContext'
-import { notEmpty } from '../../../helpers'
-import { commonMessages } from '../../../helpers/translation'
-import { ProgramPlan } from '../../../types/program'
+import CoinCheckoutModal from '../../../../components/checkout/CoinCheckoutModal'
+import CartContext from '../../../../contexts/CartContext'
+import { notEmpty } from '../../../../helpers'
+import { commonMessages } from '../../../../helpers/translation'
+import { ProgramPlan } from '../../../../types/program'
 
 const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
   span {

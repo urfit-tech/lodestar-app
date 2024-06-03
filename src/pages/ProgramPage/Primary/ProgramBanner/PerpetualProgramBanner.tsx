@@ -5,11 +5,11 @@ import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import BlurredBanner from '../../../components/common/BlurredBanner'
-import { BREAK_POINT } from '../../../components/common/Responsive'
-import VideoPlayer from '../../../components/common/VideoPlayer'
-import { commonMessages } from '../../../helpers/translation'
-import { Program } from '../../../types/program'
+import BlurredBanner from '../../../../components/common/BlurredBanner'
+import { BREAK_POINT } from '../../../../components/common/Responsive'
+import VideoPlayer from '../../../../components/common/VideoPlayer'
+import { commonMessages } from '../../../../helpers/translation'
+import { Program } from '../../../../types/program'
 
 const StyledTags = styled.div`
   margin-bottom: 1rem;

@@ -8,14 +8,14 @@ import { FaChevronDown } from 'react-icons/fa'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { AuthModalContext } from '../../components/auth/AuthModal'
-import ProgramContentTrialModal from '../../components/program/ProgramContentTrialModal'
-import { durationFormatter, isMobile } from '../../helpers'
-import { commonMessages, productMessages } from '../../helpers/translation'
-import { useEquityProgramByProgramId } from '../../hooks/program'
-import { BookIcon, MicrophoneIcon } from '../../images'
-import PinIcon from '../../images/pin-v-2.svg'
-import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../types/program'
+import { AuthModalContext } from '../../../components/auth/AuthModal'
+import ProgramContentTrialModal from '../../../components/program/ProgramContentTrialModal'
+import { durationFormatter, isMobile } from '../../../helpers'
+import { commonMessages, productMessages } from '../../../helpers/translation'
+import { useEquityProgramByProgramId } from '../../../hooks/program'
+import { BookIcon, MicrophoneIcon } from '../../../images'
+import PinIcon from '../../../images/pin-v-2.svg'
+import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../../types/program'
 
 const StyledTitle = styled.h2`
   display: flex;
@@ -117,7 +117,7 @@ const ProgramContentListSection: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const theme = useAppTheme()
-  const { isAuthenticated } = useAuth()
+  const { currentMemberId, isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { isEquityProgram } = useEquityProgramByProgramId(program.id)
 

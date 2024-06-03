@@ -2,11 +2,11 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import moment from 'moment'
 import { useContext } from 'react'
-import PageHelmet from '../../components/common/PageHelmet'
-import LocaleContext from '../../contexts/LocaleContext'
-import { getBraftContent, getOgLocale } from '../../helpers'
-import { useProductReviews, useReviewAggregate } from '../../hooks/review'
-import { Program } from '../../types/program'
+import PageHelmet from '../../../components/common/PageHelmet'
+import LocaleContext from '../../../contexts/LocaleContext'
+import { getBraftContent, getOgLocale } from '../../../helpers'
+import { useProductReviews, useReviewAggregate } from '../../../hooks/review'
+import { Program } from '../../../types/program'
 
 const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentProps<typeof PageHelmet>, 'onLoaded'>> =
   ({ program, onLoaded }) => {
