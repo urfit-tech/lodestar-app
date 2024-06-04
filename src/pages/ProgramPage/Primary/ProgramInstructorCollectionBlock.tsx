@@ -2,11 +2,11 @@ import { SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import CreatorCard from '../../components/common/CreatorCard'
-import { StyledDivider } from '../../components/review/ReviewCollectionBlock'
-import { productMessages } from '../../helpers/translation'
-import { usePublicMember } from '../../hooks/member'
-import { Program, ProgramRole } from '../../types/program'
+import CreatorCard from '../../../components/common/CreatorCard'
+import { StyledDivider } from '../../../components/review/ReviewCollectionBlock'
+import { productMessages } from '../../../helpers/translation'
+import { usePublicMember } from '../../../hooks/member'
+import { Program, ProgramRole } from '../../../types/program'
 
 const StyledTitle = styled.h2`
   font-size: 24px;

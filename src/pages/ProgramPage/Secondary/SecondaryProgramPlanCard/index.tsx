@@ -1,37 +1,34 @@
-import { Button } from '@chakra-ui/react'
+import { Divider } from '@chakra-ui/react'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import CheckoutProductModal from 'lodestar-app-element/src/components/modals/CheckoutProductModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useProductGiftPlan } from 'lodestar-app-element/src/hooks/giftPlan'
 import React, { useContext } from 'react'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { AuthModalContext } from '../../../components/auth/AuthModal'
-import AdminCard from '../../../components/common/AdminCard'
-import CountDownTimeBlock from '../../../components/common/CountDownTimeBlock'
-import GiftPlanTag from '../../../components/common/GiftPlanTag'
-import PaymentButton from '../../../components/common/PaymentButton'
-import { commonMessages, productMessages } from '../../../helpers/translation'
-import { useEnrolledPlanIds } from '../../../hooks/program'
-import { ProgramPlan } from '../../../types/program'
+import { AuthModalContext } from '../../../../components/auth/AuthModal'
+import AdminCard from '../../../../components/common/AdminCard'
+import CountDownTimeBlock from '../../../../components/common/CountDownTimeBlock'
+import { commonMessages, productMessages } from '../../../../helpers/translation'
+import { useEnrolledPlanIds } from '../../../../hooks/program'
+import { ProgramPlan } from '../../../../types/program'
+import { SecondaryCartButton, SecondaryEnrollButton } from '../SecondaryCTAButton'
+import { colors } from '../style'
+import SecondaryPaymentButton from './SecondaryPaymentButton'
+import SecondaryPriceLabel from './SecondaryPriceLabel'
 
 const StyledAdminCard = styled(AdminCard)`
   color: ${props => props.theme['@label-color']};
-
+  border-radius: 4px;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.15);
   header {
-    margin-bottom: 20px;
-    border-bottom: solid 1px #cdcdcd;
-    padding-bottom: 20px;
-
     h2.title {
-      margin: 0 0 20px;
       letter-spacing: 0.2px;
       font-size: 16px;
       font-weight: bold;
+      color: ${colors.gray1};
     }
   }
 `
@@ -42,24 +39,25 @@ const StyledPriceBlock = styled.div`
 `
 
 const StyledCountDownBlock = styled.div`
-  margin-top: 20px;
-  span {
-    font-size: 14px;
-  }
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
 `
 const StyledBraftContent = styled.div`
+  margin-top: 12px;
   margin-bottom: 12px;
   font-size: 14px;
 `
 
 const StyledEnrollment = styled.div`
+  margin-top: 12px;
   color: var(--black-45);
   text-align: right;
   font-size: 14px;
   letter-spacing: 0.18px;
 `
 
-const ProgramPlanCard: React.VFC<{
+const SecondaryProgramPlanCard: React.VFC<{
   programId: string
   programPlan: ProgramPlan & {
     isSubscription: boolean
@@ -73,12 +71,11 @@ const ProgramPlanCard: React.VFC<{
   const history = useHistory()
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
-  const { productGiftPlan } = useProductGiftPlan(`ProgramPlan_${programPlan?.id}`)
   const { enabledModules } = useApp()
 
   const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds()
 
-  const { salePrice, listPrice, discountDownPrice, periodType, periodAmount, currency, isSubscription } = programPlan
+  const { salePrice, listPrice, discountDownPrice, currency, isSubscription } = programPlan
   const currencyId = currency.id || 'TWD'
   const isOnSale = (programPlan.soldAt?.getTime() || 0) > Date.now()
   const enrolled = enrolledProgramIds.includes(programPlan.id)
@@ -87,23 +84,22 @@ const ProgramPlanCard: React.VFC<{
     <StyledAdminCard key={programPlan.id}>
       <header>
         <h2 className="title">{programPlan.title}</h2>
+        <Divider my="12px" />
         <StyledPriceBlock>
-          <PriceLabel
-            variant="full-detail"
+          <SecondaryPriceLabel
             listPrice={listPrice}
             salePrice={isOnSale ? salePrice : undefined}
             downPrice={discountDownPrice}
-            periodAmount={periodAmount}
-            periodType={periodType}
             currencyId={currencyId}
           />
-          {productGiftPlan.id && <GiftPlanTag />}
         </StyledPriceBlock>
-        {programPlan.isCountdownTimerVisible && programPlan.soldAt && isOnSale && (
-          <StyledCountDownBlock>
-            <CountDownTimeBlock expiredAt={programPlan?.soldAt} />
-          </StyledCountDownBlock>
-        )}
+        <StyledCountDownBlock>
+          <CountDownTimeBlock
+            secondary
+            renderIcon={() => <div />}
+            expiredAt={new Date(new Date().getFullYear(), 6, 24)} //TODO: Remove mock data
+          />
+        </StyledCountDownBlock>
       </header>
       <StyledBraftContent>
         <BraftContent>{programPlan.description}</BraftContent>
@@ -115,24 +111,15 @@ const ProgramPlanCard: React.VFC<{
         )}
       </StyledBraftContent>
       {isProgramSoldOut ? (
-        <Button isFullWidth isDisabled>
-          {formatMessage(commonMessages.button.soldOut)}
-        </Button>
+        <SecondaryEnrollButton isDisabled>{formatMessage(commonMessages.button.soldOut)}</SecondaryEnrollButton>
       ) : enrolled ? (
-        <Button
-          variant="outline"
-          colorScheme="primary"
-          isFullWidth
-          onClick={() => history.push(`/programs/${programId}/contents?back=programs_${programId}`)}
-        >
+        <SecondaryCartButton onClick={() => history.push(`/programs/${programId}/contents?back=programs_${programId}`)}>
           {formatMessage(commonMessages.button.enter)}
-        </Button>
+        </SecondaryCartButton>
       ) : programPlan.isSubscription ? (
         <CheckoutProductModal
           renderTrigger={({ isLoading, onOpen, isSubscription }) => (
-            <Button
-              colorScheme="primary"
-              isFullWidth
+            <SecondaryEnrollButton
               isDisabled={(isAuthenticated && isLoading) || !programPlan.publishedAt}
               onClick={() => {
                 if (!isAuthenticated) {
@@ -155,7 +142,7 @@ const ProgramPlanCard: React.VFC<{
               {isSubscription
                 ? formatMessage(commonMessages.button.subscribeNow)
                 : formatMessage(commonMessages.ui.purchase)}
-            </Button>
+            </SecondaryEnrollButton>
           )}
           defaultProductId={`ProgramPlan_${programPlan.id}`}
           warningText={
@@ -168,9 +155,7 @@ const ProgramPlanCard: React.VFC<{
         <CheckoutProductModal
           defaultProductId={`ProgramPlan_${programPlan.id}`}
           renderTrigger={({ isLoading, onOpen }) => (
-            <Button
-              colorScheme="primary"
-              isFullWidth
+            <SecondaryEnrollButton
               isDisabled={(isAuthenticated && isLoading) || !programPlan.publishedAt}
               onClick={() => {
                 if (!isAuthenticated) {
@@ -191,12 +176,12 @@ const ProgramPlanCard: React.VFC<{
               }}
             >
               {formatMessage(commonMessages.ui.groupBuy)}
-            </Button>
+            </SecondaryEnrollButton>
           )}
         />
       ) : (
         <>
-          <PaymentButton
+          <SecondaryPaymentButton
             type="ProgramPlan"
             target={programPlan.id}
             price={isOnSale && salePrice ? salePrice : listPrice}
@@ -210,4 +195,4 @@ const ProgramPlanCard: React.VFC<{
   )
 }
 
-export default ProgramPlanCard
+export default SecondaryProgramPlanCard

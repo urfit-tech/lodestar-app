@@ -103,6 +103,8 @@ export const commonMessages = {
     groupBuy: { id: 'common.ui.groupBuy', defaultMessage: '立即團購' },
     switch: { id: 'common.ui.switch', defaultMessage: '切換' },
     checkPlease: { id: 'common.ui.checkPlease', defaultMessage: '請勾選' },
+    ctaButton: { id: 'common.ui.ctaButton', defaultMessage: 'join class' },
+    previewButton: { id: 'common.ui.previewButton', defaultMessage: 'preview class' },
   }),
   title: defineMessages({
     addCourse: { id: 'common.title.course', defaultMessage: '開設課程' },
@@ -766,6 +768,7 @@ export const activityMessages = {
   text: defineMessages({
     live: { id: 'activity.ui.live', defaultMessage: '線上直播' },
     liveLink: { id: 'activity.text.liveLink', defaultMessage: '直播連結' },
+    people: { id: 'activity.text.people', defaultMessage: 'people' },
   }),
 }
 

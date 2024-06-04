@@ -182,6 +182,7 @@ const ActivitySessionItem: React.VFC<{
             <span>
               {formatMessage(productMessages.activity.content.least)}
               {isNaN(Number(session.threshold)) ? 'N/A' : Math.round(parseFloat(session.threshold))}
+              {formatMessage(activityMessages.text.people)}
             </span>
           )}
         </div>
