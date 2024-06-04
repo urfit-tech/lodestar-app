@@ -766,6 +766,7 @@ export const activityMessages = {
   text: defineMessages({
     live: { id: 'activity.ui.live', defaultMessage: '線上直播' },
     liveLink: { id: 'activity.text.liveLink', defaultMessage: '直播連結' },
+    people: { id: 'activity.text.people', defaultMessage: 'people' },
   }),
 }
 
