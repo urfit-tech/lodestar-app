@@ -7,7 +7,7 @@ import { useEnrolledMembershipCards, useMembershipCard } from '../../hooks/card'
 import { useMember } from '../../hooks/member'
 import { MemberProps } from '../../types/member'
 import CommonModal from '../common/CommonModal'
-import MembershipCardBlock from '../common/MembershipCardBlock'
+import MembershipCardBlock from '../membershipCard/MembershipCardBlock'
 
 const StyledContainer = styled.div`
   margin-bottom: 0.75rem;
@@ -82,7 +82,7 @@ const MembershipCardItem: React.VFC<{
   return (
     <StyledContainer>
       <MembershipCardBlock
-        id={membershipCardId}
+        membershipCardId={membershipCardId}
         template={membershipCard.template}
         templateVars={{
           avatar: member.pictureUrl,

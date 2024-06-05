@@ -69,21 +69,6 @@ const commonMessages = {
         'To provide you with the best website experience and to avoid limited website functionality, it is recommended not to use the browser within an app, but rather to open the website through the default browser.',
     },
   }),
-  MembershipCardTermsModal: defineMessages({
-    ActivityTicket: { id: 'common.membershipCardTerm.activityTicket', defaultMessage: '活動' },
-    ProgramPlan: { id: 'common.membershipCardTerm.program', defaultMessage: '課程' },
-    ProgramPackagePlan: { id: 'common.membershipCardTerm.programPackage', defaultMessage: '課程組合' },
-    PodcastProgram: { id: 'common.membershipCardTerm.podcastProgram', defaultMessage: '廣播' },
-    cashDiscount: { id: 'common.membershipCardTerm.cashDiscount', defaultMessage: '折抵金額' },
-    percentageDiscount: { id: 'common.membershipCardTerm.percentageDiscount', defaultMessage: '折抵比例' },
-    generalDiscount: { id: 'common.membershipCardTerm.generalDiscount', defaultMessage: '折抵' },
-    type: { id: 'common.membershipCardTerm.type', defaultMessage: '類型' },
-    discountName: { id: 'common.membershipCardTerm.discountName', defaultMessage: '名稱' },
-    discountType: { id: 'common.membershipCardTerm.discountType', defaultMessage: '優惠類型' },
-    equityType: { id: 'common.membershipCardTerm.equityType', defaultMessage: '權益開通' },
-    usageDescription: { id: 'common.membershipCardTerm.usageDescription', defaultMessage: '使用描述' },
-    discountTerms: { id: 'common.membershipCardTerm.discountTerms', defaultMessage: '優惠條件' },
-  }),
 }
 
 export default commonMessages
