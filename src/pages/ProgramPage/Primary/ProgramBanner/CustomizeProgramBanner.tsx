@@ -6,11 +6,11 @@ import { defineMessage, useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import Responsive, { BREAK_POINT } from '../../../components/common/Responsive'
-import VideoPlayer from '../../../components/common/VideoPlayer'
-import { ReactComponent as PlayIcon } from '../../../images/play-fill-icon.svg'
-import { ReactComponent as StarIcon } from '../../../images/star-current-color.svg'
-import { Program } from '../../../types/program'
+import Responsive, { BREAK_POINT } from '../../../../components/common/Responsive'
+import VideoPlayer from '../../../../components/common/VideoPlayer'
+import { ReactComponent as PlayIcon } from '../../../../images/play-fill-icon.svg'
+import { ReactComponent as StarIcon } from '../../../../images/star-current-color.svg'
+import { Program } from '../../../../types/program'
 
 const StyledTitle = styled.h1`
   margin: 0;

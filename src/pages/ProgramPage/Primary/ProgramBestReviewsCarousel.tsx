@@ -6,11 +6,11 @@ import moment from 'moment'
 import { useState } from 'react'
 import { defineMessage, useIntl } from 'react-intl'
 import styled from 'styled-components'
-import MemberAvatar from '../../components/common/MemberAvatar'
-import StarRating from '../../components/common/StarRating'
-import { StyledDivider } from '../../components/review/ReviewCollectionBlock'
-import hasura from '../../hasura'
-import { ReviewProps } from '../../types/review'
+import MemberAvatar from '../../../components/common/MemberAvatar'
+import StarRating from '../../../components/common/StarRating'
+import { StyledDivider } from '../../../components/review/ReviewCollectionBlock'
+import hasura from '../../../hasura'
+import { ReviewProps } from '../../../types/review'
 
 const StyledTitle = styled.h2`
   font-size: 24px;
