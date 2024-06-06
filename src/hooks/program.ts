@@ -2,7 +2,7 @@ import { gql, QueryHookOptions, useMutation, useQuery } from '@apollo/client'
 import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { sum, uniq } from 'ramda'
+import { sum } from 'ramda'
 import { useEffect, useMemo, useState } from 'react'
 import hasura from '../hasura'
 import { Category } from '../types/general'
@@ -621,60 +621,6 @@ export const useProgramContentById = (programId: string, contentId: string) => {
     programContent,
     loadingProgramContent,
     isEquityProgramContent,
-  }
-}
-
-const _useCardsByMemberId = (memberId: string) => {
-  const { loading, error, data, refetch } = useQuery(
-    gql`
-      query useCardsByMemberId($memberId: String!) {
-        card_enrollment(where: { member_id: { _eq: $memberId } }, distinct_on: card_id) {
-          card_id
-        }
-      }
-    `,
-    {
-      variables: { memberId },
-      fetchPolicy: 'no-cache',
-    },
-  )
-
-  const enrolledCards = data
-    ? uniq([...data.card_enrollment.map((enrollment: { card_id: any }) => enrollment.card_id)])
-    : []
-
-  return {
-    enrolledCards,
-    error,
-    loading,
-    refetch,
-  }
-}
-
-const _useProgramByCardIds = (cardIds: string[]) => {
-  const { loading, error, data, refetch } = useQuery(
-    gql`
-      query useProgramByCardIds($cardIds: [uuid!]) {
-        program_plan(where: { card_id: { _in: $cardIds } }, distinct_on: program_id) {
-          program_id
-        }
-      }
-    `,
-    {
-      variables: { cardIds },
-      fetchPolicy: 'no-cache',
-    },
-  )
-
-  const enrolledCardPrograms = data
-    ? uniq([...data.program_plan.map((enrollment: { program_id: any }) => enrollment.program_id)])
-    : []
-
-  return {
-    enrolledCardPrograms,
-    error,
-    loading,
-    refetch,
   }
 }
 
