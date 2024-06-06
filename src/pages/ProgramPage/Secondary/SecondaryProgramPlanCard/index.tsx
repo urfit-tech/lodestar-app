@@ -1,8 +1,9 @@
-import { Divider } from '@chakra-ui/react'
+import { Divider, Flex } from '@chakra-ui/react'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import CheckoutProductModal from 'lodestar-app-element/src/components/modals/CheckoutProductModal'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useProductGiftPlan } from 'lodestar-app-element/src/hooks/giftPlan'
 import React, { useContext } from 'react'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
@@ -11,6 +12,7 @@ import styled from 'styled-components'
 import { AuthModalContext } from '../../../../components/auth/AuthModal'
 import AdminCard from '../../../../components/common/AdminCard'
 import CountDownTimeBlock from '../../../../components/common/CountDownTimeBlock'
+import GiftPlanTag from '../../../../components/common/GiftPlanTag'
 import { commonMessages, productMessages } from '../../../../helpers/translation'
 import { useEnrolledPlanIds } from '../../../../hooks/program'
 import { ProgramPlan } from '../../../../types/program'
@@ -74,8 +76,9 @@ const SecondaryProgramPlanCard: React.VFC<{
   const { enabledModules } = useApp()
 
   const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds()
+  const { productGiftPlan } = useProductGiftPlan(`ProgramPlan_${programPlan?.id}`)
 
-  const { salePrice, listPrice, discountDownPrice, currency, isSubscription } = programPlan
+  const { salePrice, listPrice, currency, isSubscription, periodType, periodAmount } = programPlan
   const currencyId = currency.id || 'TWD'
   const isOnSale = (programPlan.soldAt?.getTime() || 0) > Date.now()
   const enrolled = enrolledProgramIds.includes(programPlan.id)
@@ -85,31 +88,35 @@ const SecondaryProgramPlanCard: React.VFC<{
       <header>
         <h2 className="title">{programPlan.title}</h2>
         <Divider my="12px" />
-        <StyledPriceBlock>
-          <SecondaryPriceLabel
-            listPrice={listPrice}
-            salePrice={isOnSale ? salePrice : undefined}
-            downPrice={discountDownPrice}
-            currencyId={currencyId}
-          />
-        </StyledPriceBlock>
-        <StyledCountDownBlock>
-          <CountDownTimeBlock
-            secondary
-            renderIcon={() => <div />}
-            expiredAt={new Date(new Date().getFullYear(), 6, 24)} //TODO: Remove mock data
-          />
-        </StyledCountDownBlock>
+        <Flex flexDirection="column" alignItems="center">
+          <StyledPriceBlock>
+            <SecondaryPriceLabel
+              listPrice={listPrice}
+              salePrice={isOnSale ? salePrice : null}
+              periodType={periodType}
+              periodAmount={periodAmount}
+              currencyId={currencyId}
+            />
+          </StyledPriceBlock>
+          {productGiftPlan.id && <GiftPlanTag color={colors.orange} />}
+        </Flex>
+        {programPlan.isCountdownTimerVisible && programPlan.soldAt && isOnSale && (
+          <StyledCountDownBlock>
+            <CountDownTimeBlock secondary renderIcon={() => <div />} expiredAt={programPlan?.soldAt} />
+          </StyledCountDownBlock>
+        )}
       </header>
+
       <StyledBraftContent>
         <BraftContent>{programPlan.description}</BraftContent>
-        {programPlan.isParticipantsVisible && enrollmentCount && (
+        {programPlan.isParticipantsVisible && !!enrollmentCount && (
           <StyledEnrollment>
             <span className="mr-2">{enrollmentCount}</span>
             <span>{formatMessage(commonMessages.unit.people)}</span>
           </StyledEnrollment>
         )}
       </StyledBraftContent>
+
       {isProgramSoldOut ? (
         <SecondaryEnrollButton isDisabled>{formatMessage(commonMessages.button.soldOut)}</SecondaryEnrollButton>
       ) : enrolled ? (

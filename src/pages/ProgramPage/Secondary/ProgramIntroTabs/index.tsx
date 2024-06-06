@@ -3,7 +3,8 @@ import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsi
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import React from 'react'
 import styled from 'styled-components'
-import { Program, ProgramRole } from '../../../../types/program'
+import { useEquityProgramByProgramId } from '../../../../hooks/program'
+import { DisplayModeEnum, Program, ProgramRole } from '../../../../types/program'
 import SecondaryInstructorCollectionBlock from '../SecondaryInstructorCollectionBlock'
 import SecondaryProgramContentListSection from '../SecondaryProgramContentListSection'
 import { colors } from '../style'
@@ -30,6 +31,23 @@ const ProgramIntroTabs: React.VFC<{
     roles: ProgramRole[]
   }
 }> = ({ program }) => {
+  const { isEquityProgram } = useEquityProgramByProgramId(program.id)
+  const programContentSections = program.contentSections
+    .filter(programContentSection => programContentSection.contents.length)
+    .map(programContentSection => ({
+      id: programContentSection.id,
+      title: programContentSection.title,
+      description: programContentSection.description,
+      collapsedStatus: programContentSection.collapsedStatus,
+      contents: isEquityProgram
+        ? programContentSection.contents
+        : programContentSection.contents.filter(programContent =>
+            program.isIntroductionSectionVisible
+              ? programContent
+              : programContent.displayMode === DisplayModeEnum.trial ||
+                programContent.displayMode === DisplayModeEnum.loginToTrial,
+          ),
+    }))
   return (
     <Tabs position="relative" width="100%">
       <StyledTabList justifyContent="center">
@@ -43,7 +61,11 @@ const ProgramIntroTabs: React.VFC<{
           <BraftContent>{program.description}</BraftContent>
         </StyledPanel>
         <StyledPanel>
-          <SecondaryProgramContentListSection program={program} />
+          <SecondaryProgramContentListSection
+            program={program}
+            programContentSections={programContentSections}
+            isEquityProgram={isEquityProgram}
+          />
         </StyledPanel>
         <StyledPanel>
           <SecondaryInstructorCollectionBlock program={program} />

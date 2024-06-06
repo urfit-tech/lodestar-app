@@ -1,6 +1,8 @@
 import { Flex, Text } from '@chakra-ui/react'
+import ShortenPeriodTypeLabel from 'lodestar-app-element/src/components/labels/ShortenPeriodTypeLabel'
 import { useCurrency } from 'lodestar-app-element/src/hooks/util'
 import styled from 'styled-components'
+import { PeriodType } from '../../../../types/program'
 import { colors } from '../style'
 
 const DisplayPrice = styled(Text)`
@@ -18,16 +20,37 @@ const DeletePrice = styled(Text)`
 const SecondaryPriceLabel: React.VFC<{
   listPrice: number
   salePrice: number | null | undefined
-  downPrice: number
   currencyId: string
-}> = ({ salePrice, listPrice, downPrice, currencyId }) => {
+  periodType?: PeriodType
+  periodAmount?: number | null
+}> = ({ salePrice, listPrice, currencyId, periodAmount, periodType }) => {
   const { formatCurrency } = useCurrency(currencyId)
-  const displayPrice = downPrice || salePrice || listPrice
-  const deletePrice = salePrice || listPrice
+
+  const periodElem = !!periodType && (
+    <>
+      {` / ${periodAmount && periodAmount > 1 ? periodAmount : ''}`}
+      <ShortenPeriodTypeLabel periodType={periodType} withQuantifier={!!periodAmount && periodAmount > 1} />
+    </>
+  )
+
   return (
     <Flex flexDirection="column" w="100%" align="center">
-      <DisplayPrice>{formatCurrency(displayPrice)}</DisplayPrice>
-      {deletePrice !== displayPrice && <DeletePrice as="del">{formatCurrency(deletePrice)}</DeletePrice>}
+      {salePrice === null ? (
+        <DisplayPrice>
+          {formatCurrency(listPrice)}
+          {periodElem}
+        </DisplayPrice>
+      ) : (
+        <>
+          <DisplayPrice>
+            {formatCurrency(Number(salePrice))}
+            {periodElem}
+          </DisplayPrice>
+          <DeletePrice as="del">
+            {formatCurrency(listPrice)} {periodElem}
+          </DeletePrice>
+        </>
+      )}
     </Flex>
   )
 }
