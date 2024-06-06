@@ -1,6 +1,5 @@
 import { gql, QueryHookOptions, useMutation, useQuery } from '@apollo/client'
 import axios from 'axios'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
 import { useEffect, useMemo, useState } from 'react'
@@ -387,17 +386,6 @@ export const useProgram = (programId: string) => {
     `,
     { skip: !programId, variables: { programId } },
   )
-
-  const { enabledModules } = useApp()
-
-  const allowedModulesArray = ['exercise', 'exam', 'practice']
-
-  const getModulePermission = (moduleType: string | null): boolean => {
-    if (moduleType === null || !allowedModulesArray.includes(moduleType)) {
-      return true
-    }
-    return enabledModules[moduleType as keyof typeof enabledModules] === true
-  }
 
   const program: (Program & { duration: number | null; score: number | null }) | null = useMemo(() => {
     return {
