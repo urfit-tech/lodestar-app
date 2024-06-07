@@ -48,7 +48,6 @@ export const usePublishedProgramCollection = (options?: {
           list_price
           sale_price
           sold_at
-
           program_categories {
             id
             category {
@@ -61,6 +60,9 @@ export const usePublishedProgramCollection = (options?: {
             id
             name
             member_id
+            member {
+              name
+            }
           }
           program_plans(where: { published_at: { _lte: "now()" } }, order_by: { created_at: asc }) {
             id
@@ -144,7 +146,6 @@ export const usePublishedProgramCollection = (options?: {
             isSubscription: program.is_subscription,
             isSoldOut: program.is_sold_out,
             isPrivate: program.is_private,
-
             listPrice: program.list_price,
             salePrice: program.sale_price,
             soldAt: program.sold_at && new Date(program.sold_at),
@@ -158,7 +159,7 @@ export const usePublishedProgramCollection = (options?: {
               id: programRole.id,
               name: programRole.name as ProgramRoleName,
               memberId: programRole.member_id,
-              memberName: programRole.member_id,
+              memberName: programRole?.member?.name || '',
             })),
             plans: program.program_plans.map(programPlan => ({
               id: programPlan.id,
@@ -261,6 +262,15 @@ export const useProgram = (programId: string) => {
           is_enrolled_count_visible
           display_header
           display_footer
+          program_layout_template_configs(where: { is_active: { _eq: true } }) {
+            id
+            program_layout_template_id
+            module_data
+            program_layout_template {
+              id
+              variant
+            }
+          }
           editors {
             member_id
           }
@@ -283,6 +293,12 @@ export const useProgram = (programId: string) => {
             id
             name
             member_id
+            member {
+              name
+              description
+              abstract
+              picture_url
+            }
           }
           program_review_score {
             score
@@ -409,6 +425,11 @@ export const useProgram = (programId: string) => {
       editors: data?.program_by_pk?.editors.map(v => v?.member_id || ''),
       displayHeader: data?.program_by_pk?.display_header ?? true,
       displayFooter: data?.program_by_pk?.display_footer ?? true,
+      programLayoutTemplateId:
+        data?.program_by_pk?.program_layout_template_configs[0]?.program_layout_template_id || undefined,
+      moduleData: data?.program_by_pk?.program_layout_template_configs[0]?.module_data,
+      programLayoutTemplateVariant:
+        data?.program_by_pk?.program_layout_template_configs[0]?.program_layout_template?.variant,
       categories:
         data?.program_by_pk?.program_categories.map(programCategory => ({
           id: programCategory.category.id,
@@ -419,7 +440,10 @@ export const useProgram = (programId: string) => {
           id: programRole.id,
           name: programRole.name as ProgramRoleName,
           memberId: programRole.member_id,
-          memberName: programRole.member_id,
+          memberName: programRole?.member?.name || '',
+          pictureUrl: programRole?.member?.picture_url || '',
+          abstract: programRole?.member?.abstract || '',
+          description: programRole?.member?.description || '',
         })) || [],
       plans:
         programPlans?.program_plan.map(programPlan => ({
@@ -458,7 +482,7 @@ export const useProgram = (programId: string) => {
           id: programContentSection.id,
           title: programContentSection.title,
           description: programContentSection.description || '',
-          collapsed_status: programContentSection.collapsed_status,
+          collapsedStatus: programContentSection.collapsed_status,
           contents: programContentSection.program_contents.map(programContent => ({
             id: programContent.id,
             title: programContent.title,

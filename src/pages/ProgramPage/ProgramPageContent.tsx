@@ -1,7 +1,7 @@
 import PrimaryProgramPageContent from './Primary/PrimaryProgramPageContent'
 import SecondaryProgramContent from './Secondary/SecondaryProgramPageContent'
 
-const ProgramPageContent: React.FC<{ variant: string }> = ({ variant }) => {
+const ProgramPageContent: React.FC<{ variant: string | null | undefined }> = ({ variant }) => {
   switch (variant) {
     case 'primary':
       return <PrimaryProgramPageContent />

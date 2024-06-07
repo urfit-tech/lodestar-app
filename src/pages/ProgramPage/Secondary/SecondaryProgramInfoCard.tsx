@@ -1,4 +1,4 @@
-import { sum } from 'ramda'
+import dayjs from 'dayjs'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -49,37 +49,25 @@ const SecondaryProgramInfoCard: React.FC<{
 }> = ({ program }) => {
   const { formatMessage } = useIntl()
 
-  const totalDuration = sum(
-    program.contentSections?.map(programContentSection =>
-      sum(programContentSection.contents.map(programContent => programContent.duration || 0) || []),
-    ) || [],
-  )
-
   return (
     <StyledCountBlock>
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <CalendarIcon />
         <Title>預計開課</Title>
-        <Content>
-          {Math.floor(totalDuration / 60)}
-          {formatMessage(commonMessages.unit.min)}
-        </Content>
+        <Content>{dayjs(program.moduleData.expectedStartDate.value).format('YYYY/MM/DD')}</Content>
       </div>
 
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <TimeoverIcon />
         <Title>預計時長</Title>
-        <Content>
-          {Math.floor(totalDuration / 60)}
-          {formatMessage(commonMessages.unit.min)}
-        </Content>
+        <Content>{program.moduleData.expectedDuration.value}</Content>
       </div>
 
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <ListIcon />
         <Title>預計章節</Title>
         <Content>
-          {program.contentSections.filter(programContentSection => programContentSection.contents.length).length}
+          {program.moduleData.expectedSections.value}
           {formatMessage(commonMessages.unit.chapter)}
         </Content>
       </div>
@@ -87,10 +75,7 @@ const SecondaryProgramInfoCard: React.FC<{
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <ListCheckIcon />
         <Title>全數上架</Title>
-        <Content>
-          {Math.floor(totalDuration / 60)}
-          {formatMessage(commonMessages.unit.min)}
-        </Content>
+        <Content>{dayjs(program.moduleData.completeRelease.value).format('YYYY/MM/DD')}</Content>
       </div>
     </StyledCountBlock>
   )

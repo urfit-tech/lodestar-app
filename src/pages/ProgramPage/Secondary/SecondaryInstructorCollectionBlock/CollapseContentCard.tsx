@@ -1,15 +1,17 @@
-import { Box, Image } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { ProgramCover } from '../../../../components/common/Image'
 import { colors } from '../style'
 
-const Card = styled(Link)`
+const StyledCard = styled(Link)`
   width: 98%;
   height: 85px;
   border-radius: 4px;
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
   background-color: #fff;
   display: flex;
+  gap: 16px;
   justify-content: start;
   align-items: center;
   padding: 12px;
@@ -20,7 +22,6 @@ const Card = styled(Link)`
 
 const ImageWrapper = styled(Box)`
   width: 100px;
-  height: 60px;
   border-radius: 4px;
 `
 
@@ -30,12 +31,12 @@ const CollapseContentCard: React.VFC<{ href: string; imgSrc?: string; children: 
   href,
 }) => {
   return (
-    <Card to={href}>
+    <StyledCard to={href}>
       <ImageWrapper>
-        <Image src={imgSrc} />
+        <ProgramCover width="100%" height="100%" paddingTop="calc(100% * 9/16)" src={imgSrc} shape="rounded" />
       </ImageWrapper>
       {children}
-    </Card>
+    </StyledCard>
   )
 }
 

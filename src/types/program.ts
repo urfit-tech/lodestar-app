@@ -61,6 +61,14 @@ export type Program = ProgramBriefProps & {
   roles: ProgramRole[]
   displayHeader: boolean
   displayFooter: boolean
+  programLayoutTemplateId: string
+  moduleData: {
+    [key: string]: {
+      id: string
+      value: string
+    }
+  }
+  programLayoutTemplateVariant?: string | null | undefined
   plans: (ProgramPlan & {
     isSubscription: boolean
     groupBuyingPeople: number
@@ -85,6 +93,9 @@ export type ProgramRole = {
   name: ProgramRoleName
   memberId: string
   memberName: string
+  pictureUrl?: string
+  abstract?: string
+  description?: string
   createdAt?: Date
 }
 
@@ -113,8 +124,21 @@ export type ProgramContentSection = {
   id: string
   title: string
   description: string | null
-  collapsed_status: boolean
+  collapsedStatus: boolean
   // materialsCount?: number
+}
+
+export type ProgramContentSectionType = {
+  contentSections: (ProgramContentSection & {
+    contents: ProgramContent[]
+  })[]
+}
+
+export type contentTitleCollapsedType = {
+  [key: string]: {
+    isCollapsed: boolean
+    isAllPinned: boolean
+  }
 }
 
 export type DisplayMode = keyof typeof DisplayModeEnum
