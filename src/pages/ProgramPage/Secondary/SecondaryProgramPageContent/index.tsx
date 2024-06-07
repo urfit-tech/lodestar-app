@@ -37,18 +37,18 @@ const StyledIntroWrapper = styled.div`
     padding-left: 35px;
   `)}
 `
-const ProgramAbstract = styled.span`
+const StyledProgramAbstract = styled.span`
   font-size: 16px;
   font-weight: 500;
   display: inline-block;
   width: 100%;
 `
-const VideoIframe = styled.iframe`
+const StyledVideoIframe = styled.iframe`
   width: 100%;
   height: 315px;
 `
 
-const ContentWrapper = styled.div`
+const StyledContentWrapper = styled.div`
   height: 100%;
   display: grid;
   grid-template-columns: 1fr;
@@ -56,7 +56,7 @@ const ContentWrapper = styled.div`
   margin-bottom: 3rem;
 `
 
-const ProgramIntroBlock = styled.div`
+const StyledProgramIntroBlock = styled.div`
   position: relative;
   padding-top: 2.5rem;
   padding-bottom: 6rem;
@@ -68,7 +68,7 @@ const ProgramIntroBlock = styled.div`
   }
 `
 
-const FixedBottomBlock = styled.div<{ bottomSpace?: string }>`
+const StyledFixedBottomBlock = styled.div<{ bottomSpace?: string }>`
   margin: auto;
   position: fixed;
   width: 100%;
@@ -183,7 +183,12 @@ const SecondaryProgramPageContent: React.VFC = () => {
   }
 
   return (
-    <DefaultLayout white footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}>
+    <DefaultLayout
+      white
+      footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}
+      noHeader={loadingProgram ? true : !program.displayHeader}
+      noFooter={loadingProgram ? true : !program.displayFooter}
+    >
       {!loadingApp && <ProgramPageHelmet program={program} />}
 
       <div>
@@ -196,20 +201,20 @@ const SecondaryProgramPageContent: React.VFC = () => {
           scrollToPlanBlock={scrollToPlanBlock}
         />
 
-        <ProgramIntroBlock>
+        <StyledProgramIntroBlock>
           <div className="container">
             <div className="row">
-              <ContentWrapper className="col-12 col-lg-8">
+              <StyledContentWrapper className="col-12 col-lg-8">
                 <SecondaryProgramInfoCard program={program} />
-                <ProgramAbstract>{program?.abstract}</ProgramAbstract>
+                <StyledProgramAbstract>{program?.abstract}</StyledProgramAbstract>
                 {program.coverVideoUrl && (
                   <div ref={previewRef}>
-                    <VideoIframe src={program.coverVideoUrl} />
+                    <StyledVideoIframe src={program.coverVideoUrl} />
                   </div>
                 )}
                 <ProgramIntroTabs program={program} />
                 <PreviewBlock trailProgramContents={trailProgramContents} />
-              </ContentWrapper>
+              </StyledContentWrapper>
 
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
                 <div
@@ -236,12 +241,12 @@ const SecondaryProgramPageContent: React.VFC = () => {
               </StyledIntroWrapper>
             </div>
           </div>
-        </ProgramIntroBlock>
+        </StyledProgramIntroBlock>
       </div>
 
       {!isEnrolledByProgramPackage && (
         <Responsive.Default>
-          <FixedBottomBlock bottomSpace={podcastPlayerVisible || mediaPlayerVisible ? '92px' : ''}>
+          <StyledFixedBottomBlock bottomSpace={podcastPlayerVisible || mediaPlayerVisible ? '92px' : ''}>
             {Number(settings['layout.program_page']) ? (
               <StyledButtonWrapper>
                 <Link to={isEquityProgram ? `/programs/${program.id}/contents` : settings['link.program_page']}>
@@ -269,7 +274,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
                 </Button>
               </StyledButtonWrapper>
             )}
-          </FixedBottomBlock>
+          </StyledFixedBottomBlock>
         </Responsive.Default>
       )}
     </DefaultLayout>

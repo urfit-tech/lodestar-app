@@ -148,7 +148,7 @@ const ProgramContentListSection: React.VFC<{
       id: programContentSection.id,
       title: programContentSection.title,
       description: programContentSection.description,
-      collapsed_status: programContentSection.collapsed_status,
+      collapsedStatus: programContentSection.collapsedStatus,
       contents: isEquityProgram
         ? programContentSection.contents
         : programContentSection.contents.filter(programContent =>
@@ -164,7 +164,7 @@ const ProgramContentListSection: React.VFC<{
       const isAllPinned = sec.contents.every(content => content.pinnedStatus)
 
       acc[sec.id] = {
-        isCollapsed: isAllPinned ? true : sec.collapsed_status,
+        isCollapsed: isAllPinned ? true : sec.collapsedStatus,
         isAllPinned: isAllPinned,
       }
 

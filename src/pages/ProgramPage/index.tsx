@@ -5,6 +5,7 @@ import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
+import { useProgram } from '../../hooks/program'
 import ProgramPageContent from './ProgramPageContent'
 
 const ProgramPage: React.VFC = () => {
@@ -13,6 +14,7 @@ const ProgramPage: React.VFC = () => {
   const tracking = useTracking()
   const { programId } = useParams<{ programId: string }>()
   const { id: appId } = useApp()
+  const { program } = useProgram(programId)
   const { isAuthenticating } = useAuth()
   const { loading: loadingResourceCollection, resourceCollection } = useResourceCollection(
     [`${appId}:program:${programId}`],
@@ -26,7 +28,7 @@ const ProgramPage: React.VFC = () => {
     }
   }, [resourceCollection, tracking, pageFrom, utmSource, isAuthenticating, loadingResourceCollection])
 
-  return <ProgramPageContent variant="secondary" />
+  return <ProgramPageContent variant={program?.programLayoutTemplateVariant} />
 }
 
 export default ProgramPage
