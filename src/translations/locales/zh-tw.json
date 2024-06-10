@@ -674,6 +674,9 @@
   "common.unit.currency": "元",
   "common.unit.min": "分",
   "common.unit.month": "月",
+  "common.unit.week": "週",
+  "common.unit.day": "天",
+  "common.unit.monthWithQuantifier": "個月",
   "common.unit.people": "{projectType} {count, plural, one {人} other {人}}",
   "common.unit.piece": "張",
   "common.unit.unknown": "未知週期",
@@ -1172,7 +1175,6 @@
   "program.ui.uploadByMe": "我要上傳",
   "program.ui.view": "查看",
   "program.ui.viewOwnPractice": "查看我的作業",
-  
   "programPackage.label.availableForLimitTime": "可觀看 {amount} {unit}",
   "programPackage.label.decorationPart1": "課程",
   "programPackage.label.decorationPart2": "組合",
