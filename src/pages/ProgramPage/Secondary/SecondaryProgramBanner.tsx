@@ -111,16 +111,11 @@ const SecondaryProgramBanner: React.VFC<{
 }> = ({ program, hasIntroductionVideo, scrollToPreview, scrollToPlanBlock }) => {
   const { formatMessage } = useIntl()
 
-  // TODO: use program banner video
-
-  const testVideoUrl =
-    'https://static.kolable.com/program_covers/cw/241a5e5d-5f1c-43ed-8e9e-15f6fedd8de0_video_1704882517657'
-
   return (
     <Box overflow="hidden">
       <Banner
         coverUrl={{
-          videoUrl: testVideoUrl,
+          videoUrl: program.coverType.includes('video') && !!program.coverUrl ? program.coverUrl : undefined,
           mobileUrl: program.coverMobileUrl || undefined,
           desktopUrl: program.coverUrl || undefined,
         }}

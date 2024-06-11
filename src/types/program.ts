@@ -50,6 +50,8 @@ export type EquityPrograms = {
 
 export type Program = ProgramBriefProps & {
   description: string | null
+  coverType: string
+  mobileCoverType: string
   coverVideoUrl: string | null
   metaTag: MetaTag
   isIssuesOpen: boolean

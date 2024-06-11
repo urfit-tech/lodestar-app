@@ -48,26 +48,27 @@ const SecondaryProgramInfoCard: React.FC<{
   }
 }> = ({ program }) => {
   const { formatMessage } = useIntl()
-
+  const expectedStartDate = program.moduleData?.expectedStartDate?.value
+  const completeRelease = program.moduleData?.completeRelease?.value
   return (
     <StyledCountBlock>
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <CalendarIcon />
         <Title>預計開課</Title>
-        <Content>{dayjs(program.moduleData.expectedStartDate.value).format('YYYY/MM/DD')}</Content>
+        <Content>{expectedStartDate ? dayjs(expectedStartDate).format('YYYY/MM/DD') : '-'}</Content>
       </div>
 
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <TimeoverIcon />
         <Title>預計時長</Title>
-        <Content>{program.moduleData.expectedDuration.value}</Content>
+        <Content>{program.moduleData?.expectedDuration?.value || '-'}</Content>
       </div>
 
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <ListIcon />
         <Title>預計章節</Title>
         <Content>
-          {program.moduleData.expectedSections.value}
+          {program.moduleData?.expectedSections?.value || '-'}
           {formatMessage(commonMessages.unit.chapter)}
         </Content>
       </div>
@@ -75,7 +76,7 @@ const SecondaryProgramInfoCard: React.FC<{
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <ListCheckIcon />
         <Title>全數上架</Title>
-        <Content>{dayjs(program.moduleData.completeRelease.value).format('YYYY/MM/DD')}</Content>
+        <Content>{completeRelease ? dayjs(completeRelease).format('YYYY/MM/DD') : '-'}</Content>
       </div>
     </StyledCountBlock>
   )
