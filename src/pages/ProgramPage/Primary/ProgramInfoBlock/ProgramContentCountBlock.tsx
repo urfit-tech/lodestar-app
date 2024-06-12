@@ -2,8 +2,8 @@ import { sum } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { commonMessages } from '../../../helpers/translation'
-import { Program, ProgramContent, ProgramContentSection } from '../../../types/program'
+import { commonMessages } from '../../../../helpers/translation'
+import { Program, ProgramContent, ProgramContentSection } from '../../../../types/program'
 
 const StyledCountBlock = styled.div`
   text-align: center;
