@@ -10,6 +10,7 @@ import LocaleContext from '../../contexts/LocaleContext'
 import { isIOS, isMobile } from '../../helpers'
 
 type VideoJsPlayerProps = {
+  autoPlay?: boolean
   loading?: boolean
   error?: string | null
   sources: { src: string; type: string; withCredentials?: boolean }[]
@@ -36,6 +37,7 @@ type VideoJsPlayerProps = {
 }
 const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
   const playerRef = useRef<VideoJsPlayer | null>(null)
+  const { autoPlay = true } = props // if autoPlay is null or undefined => autoPlay is true
   const { currentLocale } = useContext(LocaleContext)
   const { enabledModules } = useApp()
   const videoOptions: VideoJsPlayerOptions = {
@@ -53,7 +55,7 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
     language: currentLocale,
     playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4],
     poster: props.poster,
-    autoplay: true,
+    autoplay: autoPlay,
     responsive: true,
     fluid: true,
     plugins: {
@@ -202,7 +204,7 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
             })
           }
         }}
-        autoPlay
+        autoPlay={autoPlay}
         controls
       ></video>
     </div>
