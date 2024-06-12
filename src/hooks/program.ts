@@ -262,6 +262,8 @@ export const useProgram = (programId: string) => {
           is_enrolled_count_visible
           display_header
           display_footer
+          cover_type
+          mobile_cover_type
           program_layout_template_configs(where: { is_active: { _eq: true } }) {
             id
             program_layout_template_id
@@ -406,6 +408,8 @@ export const useProgram = (programId: string) => {
   const program: (Program & { duration: number | null; score: number | null }) | null = useMemo(() => {
     return {
       id: data?.program_by_pk?.id,
+      coverType: data?.program_by_pk?.cover_type || 'image',
+      mobileCoverType: data?.program_by_pk?.mobile_cover_type || 'image',
       coverUrl: data?.program_by_pk?.cover_url || null,
       coverMobileUrl: data?.program_by_pk?.cover_mobile_url || null,
       coverThumbnailUrl: data?.program_by_pk?.cover_thumbnail_url || null,
