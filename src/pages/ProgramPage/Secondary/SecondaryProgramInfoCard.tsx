@@ -61,15 +61,30 @@ const SecondaryProgramInfoCard: React.FC<{
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <TimeoverIcon />
         <Title>預計時長</Title>
-        <Content>{program.moduleData?.expectedDuration?.value || '-'}</Content>
+        <Content>
+          {program.moduleData?.expectedDuration?.value ? (
+            <>
+              {program.moduleData?.expectedDuration?.value}
+              {formatMessage(commonMessages.unit.minute)}
+            </>
+          ) : (
+            '-'
+          )}
+        </Content>
       </div>
 
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <ListIcon />
         <Title>預計章節</Title>
         <Content>
-          {program.moduleData?.expectedSections?.value || '-'}
-          {formatMessage(commonMessages.unit.chapter)}
+          {program.moduleData?.expectedSections?.value ? (
+            <>
+              {program.moduleData?.expectedSections?.value}
+              {formatMessage(commonMessages.unit.chapter)}
+            </>
+          ) : (
+            '-'
+          )}
         </Content>
       </div>
 
