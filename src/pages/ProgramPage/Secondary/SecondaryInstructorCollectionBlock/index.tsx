@@ -16,26 +16,30 @@ const SecondaryInstructorCollectionBlock: React.VFC<{
   return (
     <Tabs variant="unstyled">
       <TabList justifyContent="center" gap={8}>
-        {program.roles.map(instructor => (
-          <InstructorTab key={instructor.id}>{instructor.memberName}</InstructorTab>
-        ))}
+        {program.roles
+          .filter(role => role.name === 'instructor')
+          .map(instructor => (
+            <InstructorTab key={instructor.id}>{instructor.memberName}</InstructorTab>
+          ))}
       </TabList>
       <TabPanels>
-        {program.roles.map(instructor => (
-          <InstructorPanel
-            key={instructor.id}
-            instructorInfo={{
-              instructorName: instructor.memberName,
-              avatarUrl: instructor.pictureUrl || '',
-              instructorSubtitle: instructor.abstract || '',
-            }}
-          >
-            <NormalContent title="介紹">
-              <BraftContent>{instructor.description}</BraftContent>
-            </NormalContent>
-            <CollapseContentBlock creatorId={instructor.memberId} />
-          </InstructorPanel>
-        ))}
+        {program.roles
+          .filter(role => role.name === 'instructor')
+          .map(instructor => (
+            <InstructorPanel
+              key={instructor.id}
+              instructorInfo={{
+                instructorName: instructor.memberName,
+                avatarUrl: instructor.pictureUrl || '',
+                instructorSubtitle: instructor.abstract || '',
+              }}
+            >
+              <NormalContent title="介紹">
+                <BraftContent>{instructor.description}</BraftContent>
+              </NormalContent>
+              <CollapseContentBlock creatorId={instructor.memberId} />
+            </InstructorPanel>
+          ))}
       </TabPanels>
     </Tabs>
   )
