@@ -84,12 +84,13 @@ const DefaultFooter: React.VFC = () => {
         <div className="blank" />
         <div className="cwCopyrightBlock">
           <StyledCopyright className="copyright">
-            客服專線：
-            <a href="tel:0226620332">(02) 2662-0332</a> /<a href="mailto:bill@cw.com.tw"> bill@cw.com.tw</a>
+            聯絡客服：
+            <a href="https://member.cwg.tw/contact">https://member.cwg.tw/contact</a>
           </StyledCopyright>
           <StyledCopyright className="copyright">
             課程團購洽詢：
-            <a href="tel:0226620332">(02) 2662-0332</a> /<a href="mailto:bill@cw.com.tw"> bill@cw.com.tw</a>
+            <a href="tel:0226620332">(02) 2662-0332 </a>
+            轉9再轉1(週一~週五09:00~17:30)
           </StyledCopyright>
           <StyledCopyright className="copyright">
             {/* Copyright © {new Date().getFullYear()} {name} All rights reserved */}
