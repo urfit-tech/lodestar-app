@@ -82,7 +82,7 @@ const ProgramCustomContentBlock: React.VFC<{
       return
     }
 
-    insertProgress(programContentId, {
+    insertProgress(programId, programContentId, {
       progress: 1,
       lastProgress: 1,
     }).then(() => refetchProgress())
@@ -91,6 +91,7 @@ const ProgramCustomContentBlock: React.VFC<{
     insertProgress,
     loadingProgramContent,
     programContentBodyType,
+    programId,
     programContentId,
     refetchProgress,
   ])
@@ -101,7 +102,7 @@ const ProgramCustomContentBlock: React.VFC<{
   const insertProgramProgress = async (progress: number) => {
     try {
       const currentProgress = Math.ceil(progress * 20) / 20 // every 5% as a tick
-      return await insertProgress(programContentId, {
+      return await insertProgress(programId, programContentId, {
         progress: currentProgress > 1 ? 1 : Math.max(currentProgress, initialProgress),
         lastProgress: progress,
       })

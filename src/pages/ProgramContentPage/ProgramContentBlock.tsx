@@ -3,11 +3,11 @@ import { Icon, LockIcon } from '@chakra-ui/icons'
 import { Button, SkeletonText, Switch } from '@chakra-ui/react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
+import dayjs from 'dayjs'
 import Cookies from 'js-cookie'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import dayjs from 'dayjs'
 import { flatten, includes } from 'ramda'
 import React, { useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
@@ -143,13 +143,14 @@ const ProgramContentBlock: React.VFC<{
       return
     }
 
-    insertProgress(programContentId, {
+    insertProgress(programId, programContentId, {
       progress: 1,
       lastProgress: 1,
     }).then(() => refetchProgress())
   }, [
     loadingProgramContent,
     programContentBodyType,
+    programId,
     programContentId,
     currentMemberId,
     isAuthenticated,
@@ -191,7 +192,7 @@ const ProgramContentBlock: React.VFC<{
   const insertProgramProgress = async (progress: number) => {
     try {
       const currentProgress = Math.ceil(progress * 20) / 20 // every 5% as a tick
-      await insertProgress(programContentId, {
+      await insertProgress(programId, programContentId, {
         progress: currentProgress > 1 ? 1 : Math.max(currentProgress, initialProgress),
         lastProgress: progress,
       })

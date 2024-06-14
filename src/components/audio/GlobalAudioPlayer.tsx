@@ -178,7 +178,7 @@ const GlobalAudioPlayer: React.VFC = () => {
   }) => {
     try {
       const currentProgress = Math.ceil(progress * 20) / 20 // every 5% as a tick
-      await insertProgress(programContentId, {
+      await insertProgress(programId, programContentId, {
         progress: currentProgress > 1 ? 1 : Math.max(currentProgress, initialProgress),
         lastProgress: progress,
       })

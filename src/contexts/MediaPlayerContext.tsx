@@ -57,7 +57,7 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
       const initialProgress =
         programContentProgress?.find(progress => progress.programContentId === currentResource?.target)?.progress || 0
       const currentProgress = Math.ceil(progress * 20) / 20 // every 5% as a tick
-      return await insertProgress?.(currentResource.target, {
+      return await insertProgress?.(currentResource?.options?.programId, currentResource.target, {
         progress: currentProgress > 1 ? 1 : Math.max(currentProgress, initialProgress),
         lastProgress: progress,
       }).catch(() => {})

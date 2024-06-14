@@ -1,4 +1,5 @@
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
+import axios from 'axios'
 import { flatten, sum } from 'ramda'
 import React, { createContext, useMemo } from 'react'
 import hasura from '../hasura'
@@ -15,6 +16,7 @@ type ProgressProps = {
   }[]
   refetchProgress?: () => void
   insertProgress?: (
+    programId: string,
     programContentId: string,
     options: {
       progress: number
@@ -47,42 +49,27 @@ export const ProgressProvider: React.FC<{
 }
 
 export const useInsertProgress = (memberId: string) => {
-  const [insertProgramContentProgress] = useMutation<
-    hasura.INSERT_PROGRAM_CONTENT_PROGRESS,
-    hasura.INSERT_PROGRAM_CONTENT_PROGRESSVariables
-  >(gql`
-    mutation INSERT_PROGRAM_CONTENT_PROGRESS(
-      $memberId: String!
-      $programContentId: uuid!
-      $progress: numeric!
-      $lastProgress: numeric!
-    ) {
-      insert_program_content_progress(
-        objects: {
-          member_id: $memberId
-          program_content_id: $programContentId
-          progress: $progress
-          last_progress: $lastProgress
-        }
-        on_conflict: {
-          constraint: program_content_progress_member_id_program_content_id_key
-          update_columns: [progress, last_progress]
-        }
-      ) {
-        affected_rows
-      }
+  const insertProgress: ProgressProps['insertProgress'] = async (
+    programId,
+    programContentId,
+    { progress, lastProgress },
+  ) => {
+    try {
+      const response = await axios.post(
+        `https://1b1b9af5-897a-4a28-bdaa-15dad4d6cb42.mock.pstmn.io/programs/${programId}/content/${programContentId}/track-process`,
+        {
+          memberId,
+          programContentId,
+          progress,
+          lastProgress,
+        },
+      )
+      return response.data
+    } catch (error) {
+      console.error('Failed to insert progress:', error)
+      throw error
     }
-  `)
-
-  const insertProgress: ProgressProps['insertProgress'] = (programContentId, { progress, lastProgress }) =>
-    insertProgramContentProgress({
-      variables: {
-        memberId,
-        programContentId,
-        progress,
-        lastProgress,
-      },
-    })
+  }
 
   return insertProgress
 }
