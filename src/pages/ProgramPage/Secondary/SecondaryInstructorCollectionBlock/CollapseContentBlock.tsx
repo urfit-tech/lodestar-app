@@ -26,41 +26,47 @@ const CollapseContentBlock: React.FC<{ creatorId: string }> = ({ creatorId }) =>
   const { posts } = usePostPreviewCollection({ authorId: creatorId })
   return (
     <>
-      <CollapseContent title={`開設課程(${programs.length})`}>
-        <StyledCollapseContentWrapper>
-          {programs.map(program => (
-            <CollapseContentCard
-              imgSrc={program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover}
-              href={`/program/${program.id}`}
-              key={program.id}
-            >
-              {program.title}
-            </CollapseContentCard>
-          ))}
-        </StyledCollapseContentWrapper>
-      </CollapseContent>
-      <CollapseContent title={`廣播頻道(${podcastPrograms.length})`}>
-        <StyledCollapseContentWrapper>
-          {podcastPrograms.map(podcast => (
-            <CollapseContentCard
-              imgSrc={podcast.coverUrl || EmptyCover}
-              href={`/podcast/${podcast.id}`}
-              key={podcast.id}
-            >
-              {podcast.title}
-            </CollapseContentCard>
-          ))}
-        </StyledCollapseContentWrapper>
-      </CollapseContent>
-      <CollapseContent title={`媒體文章(${posts.length})`}>
-        <StyledCollapseContentWrapper>
-          {posts.map(post => (
-            <CollapseContentCard imgSrc={post.coverUrl || EmptyCover} href={`/posts/${post.id}`} key={post.id}>
-              {post.title}
-            </CollapseContentCard>
-          ))}
-        </StyledCollapseContentWrapper>
-      </CollapseContent>
+      {programs.length !== 0 && (
+        <CollapseContent title={`開設課程(${programs.length})`}>
+          <StyledCollapseContentWrapper>
+            {programs.map(program => (
+              <CollapseContentCard
+                imgSrc={program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover}
+                href={`/program/${program.id}`}
+                key={program.id}
+              >
+                {program.title}
+              </CollapseContentCard>
+            ))}
+          </StyledCollapseContentWrapper>
+        </CollapseContent>
+      )}
+      {podcastPrograms.length !== 0 && (
+        <CollapseContent title={`廣播頻道(${podcastPrograms.length})`}>
+          <StyledCollapseContentWrapper>
+            {podcastPrograms.map(podcast => (
+              <CollapseContentCard
+                imgSrc={podcast.coverUrl || EmptyCover}
+                href={`/podcast/${podcast.id}`}
+                key={podcast.id}
+              >
+                {podcast.title}
+              </CollapseContentCard>
+            ))}
+          </StyledCollapseContentWrapper>
+        </CollapseContent>
+      )}
+      {posts.length !== 0 && (
+        <CollapseContent title={`媒體文章(${posts.length})`}>
+          <StyledCollapseContentWrapper>
+            {posts.map(post => (
+              <CollapseContentCard imgSrc={post.coverUrl || EmptyCover} href={`/posts/${post.id}`} key={post.id}>
+                {post.title}
+              </CollapseContentCard>
+            ))}
+          </StyledCollapseContentWrapper>
+        </CollapseContent>
+      )}
     </>
   )
 }

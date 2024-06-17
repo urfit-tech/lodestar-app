@@ -420,8 +420,9 @@ export const commonMessages = {
   }),
   unit: defineMessages({
     min: { id: 'common.unit.min', defaultMessage: '分' },
-    content: { id: 'product.program.content.content', defaultMessage: '內容' },
-    chapter: { id: 'product.program.content.chapter', defaultMessage: '章節' },
+    minute: { id: 'common.unit.minute', defaultMessage: '分鐘' },
+    content: { id: 'common.unit.content', defaultMessage: '內容' },
+    chapter: { id: 'common.unit.chapter', defaultMessage: '章節' },
     piece: { id: 'common.unit.piece', defaultMessage: '張' },
     perDay: { id: 'common.unit.day.per', defaultMessage: '每天' },
     perWeek: { id: 'common.unit.week.per', defaultMessage: '每週' },

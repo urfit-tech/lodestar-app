@@ -23,12 +23,6 @@ const HeaderWrapper = styled(Box)`
   }
 `
 
-const Title = styled(Text)`
-  font-size: 24px;
-  font-color: ${colors.teal};
-  text-align: center;
-  font-weight: bold;
-`
 const SubTitle = styled(Text)`
   font-size: 16px;
   font-color: ${colors.teal};
@@ -87,7 +81,6 @@ const PreviewPlayer: React.VFC<{
           上一則
         </ControlButton>
         <Box>
-          <Title>試看</Title>
           <SubTitle>{contentSectionTitle}</SubTitle>
         </Box>
         <ControlButton
