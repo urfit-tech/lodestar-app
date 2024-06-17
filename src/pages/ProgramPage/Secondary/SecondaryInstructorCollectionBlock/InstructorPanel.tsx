@@ -43,6 +43,10 @@ const StyledPanel = styled(TabPanel)`
   padding-top: 0px !important;
 `
 
+const AvatarContainer = styled.div`
+  flex-shrink: 0;
+`
+
 const InstructorPanel: React.VFC<
   { instructorInfo: { instructorName: string; avatarUrl: string; instructorSubtitle: string } } & TabPanelProps
 > = ({ instructorInfo, ...props }) => {
@@ -59,7 +63,9 @@ const InstructorPanel: React.VFC<
   return (
     <StyledPanel {...props}>
       <AvatarBlock>
-        <AvatarImage src={avatarUrl} size={128} />
+        <AvatarContainer>
+          <AvatarImage src={avatarUrl} size={128} />
+        </AvatarContainer>
         <TextWrapper>
           <InstructorName>{instructorName}</InstructorName>
           <InstructorSubtitle>{instructorSubtitle}</InstructorSubtitle>
