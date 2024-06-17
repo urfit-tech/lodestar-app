@@ -210,7 +210,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
                 <SecondaryProgramInfoCard program={program} />
                 <StyledProgramAbstract>{program?.abstract}</StyledProgramAbstract>
                 {program.coverVideoUrl && (
-                  <StyledPlayer>
+                  <StyledPlayer ref={previewRef}>
                     {program.coverVideoUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
                       <video
                         controlsList="nodownload"
