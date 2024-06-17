@@ -5,10 +5,12 @@ import queryString from 'query-string'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessage, useIntl } from 'react-intl'
+import ReactPlayer from 'react-player'
 import { Link, Redirect, useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import Responsive, { BREAK_POINT } from '../../../../components/common/Responsive'
+import VideoPlayer from '../../../../components/common/VideoPlayer'
 import DefaultLayout from '../../../../components/layout/DefaultLayout'
 import MediaPlayerContext from '../../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../../contexts/PodcastPlayerContext'
@@ -43,7 +45,7 @@ const StyledProgramAbstract = styled.span`
   display: inline-block;
   width: 100%;
 `
-const StyledVideoIframe = styled.iframe`
+const StyledPlayer = styled.div`
   width: 100%;
   height: 315px;
 `
@@ -208,9 +210,27 @@ const SecondaryProgramPageContent: React.VFC = () => {
                 <SecondaryProgramInfoCard program={program} />
                 <StyledProgramAbstract>{program?.abstract}</StyledProgramAbstract>
                 {program.coverVideoUrl && (
-                  <div ref={previewRef}>
-                    <StyledVideoIframe src={program.coverVideoUrl} />
-                  </div>
+                  <StyledPlayer>
+                    {program.coverVideoUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
+                      <video
+                        controlsList="nodownload"
+                        className="smartvideo"
+                        src={program.coverVideoUrl}
+                        controls
+                        autoPlay
+                        style={{ width: '100%', height: '100%' }}
+                      />
+                    ) : program.coverVideoUrl.includes('streaming.media.azure.net') ? (
+                      <VideoPlayer
+                        sources={[
+                          { type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' },
+                          { type: 'application/x-mpegURL', src: program.coverVideoUrl + '(format=m3u8-cmaf)' },
+                        ]}
+                      />
+                    ) : (
+                      <ReactPlayer url={program.coverVideoUrl} width="100%" height="100%" controls />
+                    )}
+                  </StyledPlayer>
                 )}
                 <ProgramIntroTabs program={program} />
                 <PreviewBlock trailProgramContents={trailProgramContents} />
