@@ -37,7 +37,6 @@ type VideoJsPlayerProps = {
 }
 const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
   const playerRef = useRef<VideoJsPlayer | null>(null)
-  const { autoPlay = true } = props // if autoPlay is null or undefined => autoPlay is true
   const { currentLocale } = useContext(LocaleContext)
   const { enabledModules } = useApp()
   const videoOptions: VideoJsPlayerOptions = {
@@ -55,7 +54,7 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
     language: currentLocale,
     playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4],
     poster: props.poster,
-    autoplay: autoPlay,
+    autoplay: props.autoPlay,
     responsive: true,
     fluid: true,
     plugins: {
@@ -157,14 +156,6 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
     }
   }
 
-  const handleOnLoadedData = () => {
-    if (!playerRef.current) {
-      return
-    }
-
-    setCaption(playerRef.current)
-  }
-
   // Dispose the Video.js player when the functional component unmounts
   useEffect(() => {
     const player = playerRef.current
@@ -212,7 +203,7 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
             })
           }
         }}
-        autoPlay={autoPlay}
+        autoPlay={props.autoPlay}
         controls
       ></video>
     </div>
