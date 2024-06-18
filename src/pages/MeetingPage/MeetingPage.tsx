@@ -44,10 +44,21 @@ const MeetingPage = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const categoryCheckboxes = JSON.parse(settings['custom.meeting_page']).categoryCheckboxes as CategoryCheckboxes // array of checkboxes
+  let categoryCheckboxes: CategoryCheckboxes = []
+  try {
+    categoryCheckboxes = JSON.parse(settings['custom.meeting_page']).categoryCheckboxes as CategoryCheckboxes // array of checkboxes
+  } catch (error) {
+    categoryCheckboxes = []
+  }
+
   // custom property default values
-  const propertyDefaultValue = JSON.parse(settings['custom.meeting_page']).propertyDefaultValue as {
-    [key: string]: string
+  let propertyDefaultValue: { [key: string]: string } = {}
+  try {
+    propertyDefaultValue = JSON.parse(settings['custom.meeting_page']).propertyDefaultValue as {
+      [key: string]: string
+    }
+  } catch (error) {
+    propertyDefaultValue = {}
   }
 
   const { data: memberData, loading } = useQuery<hasura.GetMemberByUsername, hasura.GetMemberByUsernameVariables>(
