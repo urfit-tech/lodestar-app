@@ -91,7 +91,7 @@ const MeetingPage = () => {
       new Set(formEntries.filter(entry => entry[0] === 'field').flatMap(entry => entry[1].toString().split('/'))),
     )
     const timeslots = formEntries.filter(entry => entry[0] === 'timeslot').map(entry => entry[1])
-    const adPropertyValues = propertyDefaultValue['廣告素材'].replace(/{領域}/g, uniqueFields.join('+'))
+    const adPropertyValues = (propertyDefaultValue['廣告素材'] || '').replace(/{領域}/g, uniqueFields.join('+'))
     const landingPage = Cookies.get('landing') // setting from backend
 
     if (categoryCheckboxes.length !== 0 && uniqueFields.length === 0) {
