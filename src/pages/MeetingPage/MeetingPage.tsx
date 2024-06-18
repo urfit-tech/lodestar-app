@@ -94,7 +94,7 @@ const MeetingPage = () => {
     const adPropertyValues = propertyDefaultValue['廣告素材'].replace(/{領域}/g, uniqueFields.join('+'))
     const landingPage = Cookies.get('landing') // setting from backend
 
-    if (uniqueFields.length === 0) {
+    if (categoryCheckboxes.length !== 0 && uniqueFields.length === 0) {
       alert('「有興趣了解領域」為必填')
       setIsSubmitting(false)
       return
@@ -176,21 +176,23 @@ const MeetingPage = () => {
           <FormLabel>Email</FormLabel>
           <Input required name="email" type="email" placeholder="Email" />
         </FormControl>
-        <FormControl className="mb-3" isRequired>
-          <FormLabel>有興趣了解領域</FormLabel>
-          <CheckboxGroup colorScheme="primary">
-            <Stack>
-              {categoryCheckboxes.map(checkbox => (
-                <Checkbox name="field" value={checkbox.value} key={checkbox.id}>
-                  <Badge className="mr-1" variant="outline" colorScheme="primary">
-                    {checkbox.title}
-                  </Badge>
-                  {checkbox.description}
-                </Checkbox>
-              ))}
-            </Stack>
-          </CheckboxGroup>
-        </FormControl>
+        {categoryCheckboxes.length !== 0 ? (
+          <FormControl className="mb-3" isRequired>
+            <FormLabel>有興趣了解領域</FormLabel>
+            <CheckboxGroup colorScheme="primary">
+              <Stack>
+                {categoryCheckboxes.map(checkbox => (
+                  <Checkbox name="field" value={checkbox.value} key={checkbox.id}>
+                    <Badge className="mr-1" variant="outline" colorScheme="primary">
+                      {checkbox.title}
+                    </Badge>
+                    {checkbox.description}
+                  </Checkbox>
+                ))}
+              </Stack>
+            </CheckboxGroup>
+          </FormControl>
+        ) : null}
         <FormControl className="mb-3" isRequired>
           <FormLabel>方便聯繫時段</FormLabel>
           <CheckboxGroup colorScheme="primary">
