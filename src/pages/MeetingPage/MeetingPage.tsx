@@ -64,6 +64,7 @@ const MeetingPage = () => {
   const { data: memberData, loading } = useQuery<hasura.GetMemberByUsername, hasura.GetMemberByUsernameVariables>(
     GetMemberByUsername,
     {
+      skip: !managerUsername,
       variables: { appId, username: managerUsername },
     },
   )
