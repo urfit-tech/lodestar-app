@@ -17,6 +17,8 @@ type TargetProps = {
   title: string
   isSubscription: boolean
   coverUrl?: string | null
+  coverType?: string | null
+  coverThumbnailUrl?: string | null
   listPrice?: number
   isOnSale?: boolean
   salePrice?: number
@@ -56,6 +58,8 @@ export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Da
         productType: 'ProgramPlan',
         title: `${data.program_plan_by_pk.program?.title || ''} - ${data.program_plan_by_pk.title || ''}`,
         coverUrl: data.program_plan_by_pk.program?.cover_url || undefined,
+        coverType: data.program_plan_by_pk.program?.cover_type || undefined,
+        coverThumbnailUrl: data.program_plan_by_pk.program?.cover_thumbnail_url || undefined,
         listPrice: data.program_plan_by_pk.list_price,
         isOnSale: data.program_plan_by_pk.sold_at
           ? new Date(data.program_plan_by_pk.sold_at).getTime() > Date.now()
@@ -213,6 +217,8 @@ const GET_PRODUCT_SIMPLE = gql`
         id
         title
         cover_url
+        cover_thumbnail_url
+        cover_type
         program_categories(order_by: { position: asc }) {
           id
           category {

@@ -1,6 +1,7 @@
 import { Spinner } from '@chakra-ui/react'
 import { Typography } from 'antd'
 import { CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
 import moment from 'moment'
 import React from 'react'
@@ -12,7 +13,6 @@ import { useSimpleProduct } from '../../hooks/common'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProductType } from '../../types/product'
 import { CustomRatioImage } from './Image'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 
 const StyledCoverImage = styled.img`
   width: 64px;
@@ -98,6 +98,8 @@ const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quan
   const {
     title,
     coverUrl,
+    coverType,
+    coverThumbnailUrl,
     listPrice,
     salePrice,
     discountDownPrice,
@@ -108,6 +110,8 @@ const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quan
     isSubscription,
   } = target
 
+  const imageUrl = coverType === 'image' ? coverUrl || EmptyCover : coverThumbnailUrl || EmptyCover
+
   switch (variant) {
     case 'simple':
       return (
@@ -115,7 +119,7 @@ const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quan
           <StyledTitle level={2} ellipsis={{ rows: 2 }} className="flex-grow-1 m-0 mr-5">
             {title}
           </StyledTitle>
-          <StyledCoverImage src={coverUrl || EmptyCover} alt={id} className="flex-shrink-0" />
+          <StyledCoverImage src={imageUrl} alt={id} className="flex-shrink-0" />
         </>
       )
     case 'coupon-product':
@@ -130,13 +134,7 @@ const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quan
     case 'simpleCartProduct':
       return (
         <div className="d-flex align-items-center justify-content-between">
-          <CustomRatioImage
-            width="4rem"
-            ratio={2 / 3}
-            src={coverUrl || EmptyCover}
-            shape="rounded"
-            className="flex-shrink-0 mr-3"
-          />
+          <CustomRatioImage width="4rem" ratio={2 / 3} src={imageUrl} shape="rounded" className="flex-shrink-0 mr-3" />
           <div className="flex-grow-1">
             <Typography.Paragraph ellipsis={{ rows: 2 }} className="mb-0">
               {title}
@@ -160,13 +158,7 @@ const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quan
                 ).format('HH:mm')} - ${moment(endedAt).format('HH:mm')}`}</StyledPeriod>
               )}
             </StyledTitle>
-            <CustomRatioImage
-              width="88px"
-              ratio={3 / 4}
-              src={coverUrl || EmptyCover}
-              shape="rounded"
-              className="flex-shrink-0"
-            />
+            <CustomRatioImage width="88px" ratio={3 / 4} src={imageUrl} shape="rounded" className="flex-shrink-0" />
           </div>
           {typeof listPrice == 'number' && (
             <PriceLabel
@@ -202,13 +194,7 @@ const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quan
 
   return (
     <div className="d-flex align-items-center justify-content-start">
-      <CustomRatioImage
-        width="64px"
-        ratio={3 / 4}
-        src={coverUrl || EmptyCover}
-        shape="rounded"
-        className="flex-shrink-0 mr-3"
-      />
+      <CustomRatioImage width="64px" ratio={3 / 4} src={imageUrl} shape="rounded" className="flex-shrink-0 mr-3" />
       <div className="flex-grow-1">
         <StyledProductType>
           <ProductTypeLabel productType={productType} />
