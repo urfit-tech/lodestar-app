@@ -264,7 +264,7 @@ export const MemberAdminMenu: React.VFC<
       key: 'customer_support_link',
       item: (
         // <Menu.Item key="_blank" data-href={settings['customer_support_link']}>
-        <Menu.Item key="_blank_customer_support_link" data-href="mailto:bill@cw.com.tw">
+        <Menu.Item key="_blank_customer_support_link" data-href="https://member.cwg.tw/contact">
           <Icon as={CommentsIcon} className="mr-2" />
           {formatMessage(commonMessages.content.contact)}
         </Menu.Item>
