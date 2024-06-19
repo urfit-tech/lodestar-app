@@ -1,9 +1,18 @@
 import { Box } from '@chakra-ui/react'
-import React from 'react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { handleError, notEmpty } from 'lodestar-app-element/src/helpers'
+import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../../../components/common/Responsive'
+import CartContext from '../../../contexts/CartContext'
+import { camelCaseToSnake } from '../../../helpers'
 import { commonMessages } from '../../../helpers/translation'
+import { useEnrolledPlanIds } from '../../../hooks/program'
 import { ReactComponent as PlayIcon } from '../../../images/play-fill.svg'
 import { Program } from '../../../types/program'
 import Banner from './Banner'
@@ -110,6 +119,31 @@ const SecondaryProgramBanner: React.VFC<{
   scrollToPlanBlock: () => void | undefined
 }> = ({ program, hasIntroductionVideo, scrollToPreview, scrollToPlanBlock }) => {
   const { formatMessage } = useIntl()
+  const tracking = useTracking()
+  const history = useHistory()
+  const { enabledModules, id: appId } = useApp()
+  const { addCartProduct } = useContext(CartContext)
+  const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds()
+  const firstPurchaseProgramPlan = program.plans.filter(programPlan => {
+    return (
+      programPlan.publishedAt &&
+      !enrolledProgramIds.includes(programPlan.id) &&
+      !programPlan.isSubscription &&
+      !(enabledModules.group_buying && programPlan.groupBuyingPeople > 1)
+    )
+  })?.[0]
+  const type = 'ProgramPlan'
+  const target = firstPurchaseProgramPlan?.id
+  const { resourceCollection } = useResourceCollection([`${appId}:${camelCaseToSnake(type)}:${target}`])
+  const sessionStorageKey = `lodestar.sharing_code.${type}_${target}`
+  const [sharingCode = window.sessionStorage.getItem(sessionStorageKey)] = useQueryParam('sharing', StringParam)
+  sharingCode && window.sessionStorage.setItem(sessionStorageKey, sharingCode)
+  const handleAddCart = () => {
+    return addCartProduct?.(type, target, {
+      from: window.location.pathname,
+      sharingCode,
+    }).catch(handleError)
+  }
 
   return (
     <Box overflow="hidden">
@@ -135,7 +169,19 @@ const SecondaryProgramBanner: React.VFC<{
               <StyledTitle className="text-start">{program.title}</StyledTitle>
             </WordingWrapper>
             <ButtonWrapper>
-              <EnrollButton onClick={scrollToPlanBlock}>{formatMessage(commonMessages.ui.ctaButton)}</EnrollButton>
+              {firstPurchaseProgramPlan && (
+                <EnrollButton
+                  onClick={() => {
+                    const resource = resourceCollection?.find(notEmpty)
+                    resource && tracking.addToCart(resource, { direct: true })
+                    handleAddCart()?.then(() => {
+                      history.push('/cart?direct=true', { productUrn: resource?.urn })
+                    })
+                  }}
+                >
+                  {formatMessage(commonMessages.ui.ctaButton)}
+                </EnrollButton>
+              )}
               {hasIntroductionVideo ? (
                 <PreviewButton colorScheme="outlined" onClick={scrollToPreview} leftIcon={<PlayIcon />}>
                   {formatMessage(commonMessages.ui.previewButton)}

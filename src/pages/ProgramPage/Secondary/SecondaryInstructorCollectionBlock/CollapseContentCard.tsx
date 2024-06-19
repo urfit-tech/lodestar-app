@@ -23,6 +23,7 @@ const StyledCard = styled(Link)`
 const ImageWrapper = styled(Box)`
   width: 100px;
   border-radius: 4px;
+  flex-shrink: 0;
 `
 
 const CollapseContentCard: React.VFC<{ href: string; imgSrc?: string; children: React.ReactNode | string }> = ({
