@@ -78,6 +78,7 @@ export type Program = ProgramBriefProps & {
   contentSections: (ProgramContentSection & {
     contents: (ProgramContent & { programId?: string; contentSectionTitle?: string })[]
   })[]
+  tags: string[]
 }
 
 export type ProgramPreview = {
@@ -279,7 +280,7 @@ export type ProgramContentLog = {
 
 export type ProgramEnrollment = Pick<
   Program,
-  'id' | 'abstract' | 'coverMobileUrl' | 'coverUrl' | 'roles' | 'title' | 'coverThumbnailUrl'
+  'id' | 'abstract' | 'coverMobileUrl' | 'coverUrl' | 'roles' | 'title' | 'coverThumbnailUrl' | 'tags'
 > & {
   viewRate: number
   deliveredAt: Date | null

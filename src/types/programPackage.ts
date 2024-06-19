@@ -8,6 +8,7 @@ export type ProgramPackageProps = {
   description: string | null
   metaTag?: MetaTag
   publishedAt: Date | null
+  tags: string[]
 }
 
 export type ProgramPackagePlanProps = {
@@ -38,7 +39,7 @@ export type ProgramPackage = ProgramPackageProps & {
   plans: ProgramPackagePlanProps[]
 }
 
-export type ProgramPackageEnrollment = Pick<ProgramPackageProps, 'id' | 'coverUrl' | 'title'> & {
+export type ProgramPackageEnrollment = Pick<ProgramPackageProps, 'id' | 'coverUrl' | 'title' |'tags'> & {
   viewRate: number
   deliveredAt: Date | null
   lastViewedAt: Date | null

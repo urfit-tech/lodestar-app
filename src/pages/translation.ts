@@ -10,6 +10,10 @@ const pageMessages = {
   AppPage: defineMessages({
     logoutAlert: { id: 'page.AppPage.logoutAlert', defaultMessage: '您已被登出，目前有其他裝置登入這組帳號' },
   }),
+  // MemberPage
+  MemberPage: defineMessages({
+    ebook: { id: 'page.MemberPage.ebook', defaultMessage: '我的書籍' },
+  }),
   // ProgramContentPage
   ProgramContentPage: defineMessages({
     foo: { id: 'page.ProgramContentPage.foo', defaultMessage: 'Foo Message' },

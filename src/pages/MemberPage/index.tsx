@@ -18,6 +18,7 @@ import ProjectPlanCollectionBlock from '../../containers/project/ProjectPlanColl
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useMemberPageEnrollmentsCounts, useProductEnrollment } from '../../hooks/common'
 import { usePublicMember } from '../../hooks/member'
+import pageMessages from '../translation'
 import ActivityTicketCollectionBlock from './ActivityTicketCollectionBlock'
 import AppointmentPlanCollectionBlock from './AppointmentPlanCollectionBlock'
 import PodcastProgramCollectionBlock from './PodcastProgramCollectionBlock'
@@ -68,6 +69,7 @@ const MemberPage: React.VFC = () => {
   } = useMemberPageEnrollmentsCounts(memberId)
   const [activeKey, setActiveKey] = useQueryParam('tabkey', StringParam)
   const [programTab, setProgramTab] = useState('program')
+  const [programEbookTab, setProgramEbookTab] = useState('programEbook')
 
   const {
     data: programEnrollment,
@@ -99,9 +101,28 @@ const MemberPage: React.VFC = () => {
     loading: activityEnrollmentLoading,
     error: activityEnrollmentError,
   } = useProductEnrollment('activity', memberId)
-  const totalProgramCounts = programEnrollment.length + expiredProgramEnrollment.length
-  const totalProgramPackageCounts = programPackageEnrollment.length + expiredProgramPackageEnrollment.length
   let content = null
+  const ebookText = '電子書'
+  const ebookProgramCounts = programEnrollment.filter(v => v.tags.includes(ebookText)).length
+  const ebookProgramPackageCounts = programPackageEnrollment.filter(v => v.tags.includes(ebookText)).length
+  const totalProgramExcludeEbookCounts =
+    programEnrollment.filter(v => !v.tags.includes(ebookText)).length +
+    expiredProgramEnrollment.filter(v => !v.tags.includes(ebookText)).length
+  const totalProgramPackageExcludeEbookCounts =
+    programPackageEnrollment.filter(v => !v.tags.includes(ebookText)).length +
+    expiredProgramPackageEnrollment.filter(v => !v.tags.includes(ebookText)).length
+
+  const programExcludedEbookEnrollment = programEnrollment.filter(v => !v.tags.includes(ebookText))
+  const programPackageExcludedEbookEnrollment = programPackageEnrollment.filter(v => !v.tags.includes(ebookText))
+  const expiredProgramPackageExcludedEbookEnrollment = expiredProgramPackageEnrollment.filter(
+    v => !v.tags.includes(ebookText),
+  )
+  const expiredProgramExcludedEbookEnrollment = expiredProgramEnrollment.filter(v => !v.tags.includes(ebookText))
+
+  const ebookProgramEnrollment = programEnrollment.filter(v => v.tags.includes(ebookText))
+  const ebookProgramPackageEnrollment = programPackageEnrollment.filter(v => v.tags.includes(ebookText))
+  const expiredEbookProgramEnrollment = expiredProgramEnrollment.filter(v => v.tags.includes(ebookText))
+  const expiredEbookProgramPackageEnrollment = expiredProgramPackageEnrollment.filter(v => v.tags.includes(ebookText))
 
   if (memberId === 'currentMemberId' && isAuthenticated) {
     return <Redirect to={`/members/${currentMemberId}`} />
@@ -122,34 +143,36 @@ const MemberPage: React.VFC = () => {
       isVisible: currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PROGRAM_INFO),
       content: (
         <>
-          {!programEnrollmentLoading && totalProgramCounts === 0 && totalProgramPackageCounts === 0 && (
-            <div className="container py-3">
-              <p>{formatMessage(productMessages.program.content.noProgram)}</p>
-            </div>
-          )}
-          {totalProgramCounts > 0 && programTab === 'program' && (
+          {!programEnrollmentLoading &&
+            totalProgramExcludeEbookCounts === 0 &&
+            totalProgramPackageExcludeEbookCounts === 0 && (
+              <div className="container py-3">
+                <p>{formatMessage(productMessages.program.content.noProgram)}</p>
+              </div>
+            )}
+          {totalProgramExcludeEbookCounts > 0 && programTab === 'program' && (
             <EnrolledProgramCollectionBlock
               memberId={memberId}
               onProgramTabClick={tab => setProgramTab(tab)}
               programTab={programTab}
-              programEnrollment={programEnrollment}
-              expiredProgramEnrollment={expiredProgramEnrollment}
-              totalProgramPackageCounts={totalProgramPackageCounts}
-              totalProgramCounts={totalProgramCounts}
+              programEnrollment={programExcludedEbookEnrollment}
+              expiredProgramEnrollment={expiredProgramExcludedEbookEnrollment}
+              totalProgramCounts={totalProgramExcludeEbookCounts}
+              totalProgramPackageCounts={totalProgramPackageExcludeEbookCounts}
               loading={programEnrollmentLoading || expiredProgramEnrollmentLoading}
               isError={Boolean(programEnrollmentError) || Boolean(expiredProgramEnrollmentError)}
             />
           )}
-          {((totalProgramCounts === 0 && totalProgramPackageCounts > 0) ||
-            (totalProgramCounts > 0 && programTab === 'programPackage')) && (
+          {((totalProgramExcludeEbookCounts === 0 && totalProgramPackageExcludeEbookCounts > 0) ||
+            (totalProgramExcludeEbookCounts > 0 && programTab === 'programPackage')) && (
             <ProgramPackageCollectionBlock
               memberId={memberId}
               onProgramTabClick={tab => setProgramTab(tab)}
               programTab={programTab}
-              programPackageEnrollment={programPackageEnrollment}
-              expiredProgramPackageEnrollment={expiredProgramPackageEnrollment}
-              totalProgramPackageCounts={totalProgramPackageCounts}
-              totalProgramCounts={totalProgramCounts}
+              programPackageEnrollment={programPackageExcludedEbookEnrollment}
+              expiredProgramPackageEnrollment={expiredProgramPackageExcludedEbookEnrollment}
+              totalProgramCounts={totalProgramExcludeEbookCounts}
+              totalProgramPackageCounts={totalProgramPackageExcludeEbookCounts}
               loading={programPackageEnrollmentLoading || expiredProgramPackageEnrollmentLoading}
               isError={Boolean(programPackageEnrollmentError) || Boolean(expiredProgramPackageEnrollmentError)}
             />
@@ -188,6 +211,42 @@ const MemberPage: React.VFC = () => {
           loading={podcastEnrollmentLoading}
           isError={Boolean(podcastEnrollmentError)}
         />
+      ),
+    },
+    {
+      key: 'programEbook',
+      name: formatMessage(pageMessages.MemberPage.ebook),
+      isVisible: ebookProgramCounts > 0 || ebookProgramPackageCounts > 0,
+      content: (
+        <>
+          {ebookProgramCounts > 0 && programEbookTab === 'programEbook' && (
+            <EnrolledProgramCollectionBlock
+              memberId={memberId}
+              onProgramTabClick={tab => setProgramEbookTab(tab)}
+              programTab={programEbookTab}
+              programEnrollment={ebookProgramEnrollment}
+              expiredProgramEnrollment={expiredEbookProgramEnrollment}
+              totalProgramCounts={ebookProgramCounts}
+              totalProgramPackageCounts={ebookProgramPackageCounts}
+              loading={programEnrollmentLoading || expiredProgramEnrollmentLoading}
+              isError={Boolean(programEnrollmentError) || Boolean(expiredProgramEnrollmentError)}
+            />
+          )}
+          {((ebookProgramCounts === 0 && ebookProgramPackageCounts > 0) ||
+            (ebookProgramCounts > 0 && programEbookTab === 'programPackageEbook')) && (
+            <ProgramPackageCollectionBlock
+              memberId={memberId}
+              onProgramTabClick={tab => setProgramEbookTab(tab)}
+              programTab={programEbookTab}
+              programPackageEnrollment={ebookProgramPackageEnrollment}
+              expiredProgramPackageEnrollment={expiredEbookProgramPackageEnrollment}
+              totalProgramCounts={ebookProgramCounts}
+              totalProgramPackageCounts={ebookProgramPackageCounts}
+              loading={programPackageEnrollmentLoading || expiredProgramPackageEnrollmentLoading}
+              isError={Boolean(programPackageEnrollmentError) || Boolean(expiredProgramPackageEnrollmentError)}
+            />
+          )}
+        </>
       ),
     },
     {
