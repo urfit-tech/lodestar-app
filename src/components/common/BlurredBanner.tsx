@@ -30,7 +30,7 @@ const BlurredCover = styled.div<{ coverUrl?: { mobileUrl?: string; desktopUrl?: 
     background-image: url(${props => props.coverUrl?.desktopUrl || props.coverUrl?.mobileUrl});
   }
 `
-const ContentWrapper = styled.div`
+const ContentWrapper = styled.div<{ gradient?: boolean }>`
   position: relative;
   background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
   height: 100%;

@@ -90,13 +90,15 @@ type VideoEvent = {
 const ProgramContentPlayer: React.VFC<
   ReactPlayerProps & {
     programContentId: string
+    autoPlay?: boolean
     nextProgramContent?: {
       id: string
       title: string
     }
     onVideoEvent?: (event: VideoEvent) => void
   }
-> = ({ programContentId, nextProgramContent, onVideoEvent }) => {
+> = ({ programContentId, autoPlay = true, nextProgramContent, onVideoEvent }) => {
+  // if autoPlay is null or undefined => autoPlay is true
   const { formatMessage } = useIntl()
   const playerRef = useRef<ReactPlayer | null>(null)
   const lastEndedTime = useRef<number>(0)
@@ -135,14 +137,13 @@ const ProgramContentPlayer: React.VFC<
                 <StyledReactPlayerWrapper>
                   <ReactPlayer
                     ref={playerRef}
-                    playing={true}
                     url={programContentVideo.sources.find(source => source.type === 'video/vnd.youtube.yt')?.src}
                     controls
                     progressInterval={5000}
                     config={{
                       youtube: {
                         playerVars: {
-                          autoplay: 1,
+                          autoplay: autoPlay ? 1 : 0,
                           rel: 0,
                         },
                       },
@@ -242,6 +243,7 @@ const ProgramContentPlayer: React.VFC<
                 </StyledReactPlayerWrapper>
               ) : (
                 <VideoPlayer
+                  autoPlay={autoPlay}
                   loading={programContentVideo.loading}
                   error={programContentVideo.error}
                   sources={programContentVideo.sources}

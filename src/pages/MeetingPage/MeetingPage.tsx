@@ -44,15 +44,27 @@ const MeetingPage = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const categoryCheckboxes = JSON.parse(settings['custom.meeting_page']).categoryCheckboxes as CategoryCheckboxes // array of checkboxes
+  let categoryCheckboxes: CategoryCheckboxes = []
+  try {
+    categoryCheckboxes = JSON.parse(settings['custom.meeting_page']).categoryCheckboxes as CategoryCheckboxes // array of checkboxes
+  } catch (error) {
+    categoryCheckboxes = []
+  }
+
   // custom property default values
-  const propertyDefaultValue = JSON.parse(settings['custom.meeting_page']).propertyDefaultValue as {
-    [key: string]: string
+  let propertyDefaultValue: { [key: string]: string } = {}
+  try {
+    propertyDefaultValue = JSON.parse(settings['custom.meeting_page']).propertyDefaultValue as {
+      [key: string]: string
+    }
+  } catch (error) {
+    propertyDefaultValue = {}
   }
 
   const { data: memberData, loading } = useQuery<hasura.GetMemberByUsername, hasura.GetMemberByUsernameVariables>(
     GetMemberByUsername,
     {
+      skip: !managerUsername,
       variables: { appId, username: managerUsername },
     },
   )
@@ -79,10 +91,10 @@ const MeetingPage = () => {
       new Set(formEntries.filter(entry => entry[0] === 'field').flatMap(entry => entry[1].toString().split('/'))),
     )
     const timeslots = formEntries.filter(entry => entry[0] === 'timeslot').map(entry => entry[1])
-    const adPropertyValues = propertyDefaultValue['廣告素材'].replace(/{領域}/g, uniqueFields.join('+'))
+    const adPropertyValues = (propertyDefaultValue['廣告素材'] || '').replace(/{領域}/g, uniqueFields.join('+'))
     const landingPage = Cookies.get('landing') // setting from backend
 
-    if (uniqueFields.length === 0) {
+    if (categoryCheckboxes.length !== 0 && uniqueFields.length === 0) {
       alert('「有興趣了解領域」為必填')
       setIsSubmitting(false)
       return
@@ -164,21 +176,23 @@ const MeetingPage = () => {
           <FormLabel>Email</FormLabel>
           <Input required name="email" type="email" placeholder="Email" />
         </FormControl>
-        <FormControl className="mb-3" isRequired>
-          <FormLabel>有興趣了解領域</FormLabel>
-          <CheckboxGroup colorScheme="primary">
-            <Stack>
-              {categoryCheckboxes.map(checkbox => (
-                <Checkbox name="field" value={checkbox.value} key={checkbox.id}>
-                  <Badge className="mr-1" variant="outline" colorScheme="primary">
-                    {checkbox.title}
-                  </Badge>
-                  {checkbox.description}
-                </Checkbox>
-              ))}
-            </Stack>
-          </CheckboxGroup>
-        </FormControl>
+        {categoryCheckboxes.length !== 0 ? (
+          <FormControl className="mb-3" isRequired>
+            <FormLabel>有興趣了解領域</FormLabel>
+            <CheckboxGroup colorScheme="primary">
+              <Stack>
+                {categoryCheckboxes.map(checkbox => (
+                  <Checkbox name="field" value={checkbox.value} key={checkbox.id}>
+                    <Badge className="mr-1" variant="outline" colorScheme="primary">
+                      {checkbox.title}
+                    </Badge>
+                    {checkbox.description}
+                  </Checkbox>
+                ))}
+              </Stack>
+            </CheckboxGroup>
+          </FormControl>
+        ) : null}
         <FormControl className="mb-3" isRequired>
           <FormLabel>方便聯繫時段</FormLabel>
           <CheckboxGroup colorScheme="primary">

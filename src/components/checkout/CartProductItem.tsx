@@ -77,7 +77,20 @@ const CartProductItem: React.VFC<{
   }
 
   const [productType] = id.split('_') as [ProductType]
-  const { title, coverUrl, isOnSale, listPrice, salePrice, isLimited, isPhysical, currencyId } = target
+  const {
+    title,
+    coverUrl,
+    coverType,
+    coverThumbnailUrl,
+    isOnSale,
+    listPrice,
+    salePrice,
+    isLimited,
+    isPhysical,
+    currencyId,
+  } = target
+
+  const imageUrl = coverType === 'image' ? coverUrl || EmptyCover : coverThumbnailUrl || EmptyCover
 
   const trackCartItem = (currentQuantity: number, nextQuantity: number) => {
     if (currentQuantity < nextQuantity) {
@@ -96,7 +109,7 @@ const CartProductItem: React.VFC<{
       <CustomRatioImage
         width="5rem"
         ratio={2 / 3}
-        src={coverUrl || EmptyCover}
+        src={imageUrl}
         shape="rounded"
         className="flex-shrink-0 mr-3"
         disabled={buyableQuantity === 0}

@@ -10,6 +10,7 @@ import LocaleContext from '../../contexts/LocaleContext'
 import { isIOS, isMobile } from '../../helpers'
 
 type VideoJsPlayerProps = {
+  autoPlay?: boolean
   loading?: boolean
   error?: string | null
   sources: { src: string; type: string; withCredentials?: boolean }[]
@@ -53,7 +54,7 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
     language: currentLocale,
     playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4],
     poster: props.poster,
-    autoplay: true,
+    autoplay: props.autoPlay,
     responsive: true,
     fluid: true,
     plugins: {
@@ -147,14 +148,6 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
     }
   }
 
-  const handleOnLoadedData = () => {
-    if (!playerRef.current) {
-      return
-    }
-
-    setCaption(playerRef.current)
-  }
-
   // Dispose the Video.js player when the functional component unmounts
   useEffect(() => {
     const player = playerRef.current
@@ -202,7 +195,7 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
             })
           }
         }}
-        autoPlay
+        autoPlay={props.autoPlay}
         controls
       ></video>
     </div>
