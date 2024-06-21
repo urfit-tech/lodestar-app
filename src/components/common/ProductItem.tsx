@@ -110,7 +110,7 @@ const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quan
     isSubscription,
   } = target
 
-  const imageUrl = coverType === 'image' ? coverUrl || EmptyCover : coverThumbnailUrl || EmptyCover
+  const imageUrl = coverType === 'video' ? coverThumbnailUrl || EmptyCover : coverUrl || EmptyCover
 
   switch (variant) {
     case 'simple':
