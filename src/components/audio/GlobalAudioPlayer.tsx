@@ -196,6 +196,7 @@ const GlobalAudioPlayer: React.VFC = () => {
       playbackRate: number
       startedAt: number
       endedAt: number
+      progress: number
     }
   }) => {
     try {
@@ -327,6 +328,7 @@ const GlobalAudioPlayer: React.VFC = () => {
                   playbackRate,
                   startedAt: endedAtRef.current || startedAt,
                   endedAt,
+                  progress: e.progress,
                 },
               })
               if (e.type === 'progress') {
@@ -346,6 +348,7 @@ const GlobalAudioPlayer: React.VFC = () => {
                   playbackRate,
                   startedAt: endedAtRef.current || startedAt,
                   endedAt,
+                  progress: 1,
                 },
               })
               insertProgramProgress({

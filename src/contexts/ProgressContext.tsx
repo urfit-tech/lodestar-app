@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
 import axios from 'axios'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten, sum } from 'ramda'
 import React, { createContext, useMemo } from 'react'
 import hasura from '../hasura'
@@ -49,6 +50,7 @@ export const ProgressProvider: React.FC<{
 }
 
 export const useInsertProgress = (memberId: string) => {
+  const { authToken } = useAuth()
   const insertProgress: ProgressProps['insertProgress'] = async (
     programId,
     programContentId,
@@ -56,12 +58,13 @@ export const useInsertProgress = (memberId: string) => {
   ) => {
     try {
       const response = await axios.post(
-        `https://1b1b9af5-897a-4a28-bdaa-15dad4d6cb42.mock.pstmn.io/programs/${programId}/content/${programContentId}/track-process`,
+        `http://localhost:8081/api/v2/programs/${programId}/content/${programContentId}/track-process`,
         {
-          memberId,
-          programContentId,
           progress,
           lastProgress,
+        },
+        {
+          headers: { authorization: `Bearer ${authToken}` },
         },
       )
       return response.data

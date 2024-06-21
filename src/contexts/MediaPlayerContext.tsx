@@ -100,7 +100,12 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
     }
   }, [currentResource?.options?.contentType, currentResource?.options?.programId, currentResource?.target])
 
-  const insertPlayerEventLog = async (data: { playbackRate: number; startedAt: number; endedAt: number }) => {
+  const insertPlayerEventLog = async (data: {
+    playbackRate: number
+    startedAt: number
+    endedAt: number
+    progress: number
+  }) => {
     try {
       currentResource &&
         (await axios.post(
@@ -163,14 +168,22 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
             }
             onAudioEvent={e => {
               if (Math.abs(e.audioState.endedAt - endedAtRef.current) >= 5) {
-                insertPlayerEventLog({ ...e.audioState, startedAt: endedAtRef.current || e.audioState.startedAt })
+                insertPlayerEventLog({
+                  ...e.audioState,
+                  startedAt: endedAtRef.current || e.audioState.startedAt,
+                  progress: e.progress,
+                })
                 if (e.type === 'progress') {
                   insertProgramProgress(e.progress)
                 }
                 endedAtRef.current = e.audioState.endedAt
               }
               if (e.type === 'ended') {
-                insertPlayerEventLog({ ...e.audioState, startedAt: endedAtRef.current || e.audioState.startedAt })
+                insertPlayerEventLog({
+                  ...e.audioState,
+                  startedAt: endedAtRef.current || e.audioState.startedAt,
+                  progress: e.progress,
+                })
                 insertProgramProgress(1)?.then(() => refetchProgress())
               }
             }}
