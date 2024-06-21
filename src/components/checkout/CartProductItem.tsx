@@ -90,7 +90,7 @@ const CartProductItem: React.VFC<{
     currencyId,
   } = target
 
-  const imageUrl = coverType === 'image' ? coverUrl || EmptyCover : coverThumbnailUrl || EmptyCover
+  const imageUrl = coverType === 'video' ? coverThumbnailUrl || EmptyCover : coverUrl || EmptyCover
 
   const trackCartItem = (currentQuantity: number, nextQuantity: number) => {
     if (currentQuantity < nextQuantity) {
