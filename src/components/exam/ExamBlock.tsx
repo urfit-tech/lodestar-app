@@ -9,8 +9,9 @@ import { useEffect, useRef, useState } from 'react'
 import { AiOutlineClockCircle } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { useInsertProgress } from '../../contexts/ProgressContext'
 import { useExamExaminableTimeLimit, useExamMemberTimeLimit } from '../../hooks/exam'
-import { useMutateExercise } from '../../hooks/program'
+import { useMutateExercise, useProgramProgress } from '../../hooks/program'
 import { ReactComponent as routeErrorIcon } from '../../images/404.svg'
 import { Exam, ExercisePublic, Question } from '../../types/exam'
 import AdminCard from '../common/AdminCard'
@@ -63,6 +64,7 @@ const ExamBlock: React.VFC<{
     | 'isAvailableToGoBack'
     | 'isAvailableToRetry'
   > & { questions: Question[] }
+  programId: string
   programContentId: string
   nextProgramContentId?: string
   title: string
@@ -81,6 +83,7 @@ const ExamBlock: React.VFC<{
   errorExamId,
   exam,
   programContentId,
+  programId,
   nextProgramContentId,
   title,
   isTaken,
@@ -98,6 +101,7 @@ const ExamBlock: React.VFC<{
   const { currentMemberId } = useAuth()
   const examBeganAt = useRef<Moment | null>(null)
   const examFinishedAt = useRef<Moment | null>(null)
+  const insertProgress = useInsertProgress(currentMemberId || '')
 
   const [currentExerciseId, setCurrentExerciseId] = useState<string>()
   const [starting, setStarting] = useState(false)
@@ -117,6 +121,7 @@ const ExamBlock: React.VFC<{
     error: errorProductDeliveredAt,
     productDeliveredAt,
   } = useExamExaminableTimeLimit(programContentId, currentMemberId || '')
+  const { programContentProgress } = useProgramProgress([programContentId])
 
   useEffect(() => {
     if (errorExamId || errorExam || errorExtraExpiredAt || errorProductDeliveredAt) {
@@ -200,6 +205,16 @@ const ExamBlock: React.VFC<{
         isFinal && onRefetchSpecificExercise?.()
         isFinal && onRefetchExercisePublic?.()
         isFinal && setStatus('result')
+      })
+      .then(() => {
+        console.log('programContentProgressprogramContentProgress', programContentProgress)
+        const totalGainedPoints = questions.reduce((sum, question) => sum + (question.gainedPoints || 0), 0)
+        console.log('totalGainedPoints', totalGainedPoints)
+        console.log('passingScore', exam.passingScore)
+        insertProgress(programId, programContentId, {
+          progress: totalGainedPoints > exam.passingScore ? 1 : 0.5,
+          lastProgress: totalGainedPoints > exam.passingScore ? 1 : 0.5,
+        })
       })
       .catch(error => handleError(error))
   }

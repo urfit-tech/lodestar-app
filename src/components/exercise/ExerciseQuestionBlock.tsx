@@ -135,13 +135,11 @@ const ExerciseQuestionBlock: React.VFC<
       <StyledQuestionCount>
         {index + 1}/{questions.length}
       </StyledQuestionCount>
-
       <StyledQuestion className="mb-4">
         <StyledBraftContentContainer font={activeQuestion.font}>
           <BraftContent>{activeQuestion.description}</BraftContent>
         </StyledBraftContentContainer>
       </StyledQuestion>
-
       <StyledQuestionsContainer className={activeQuestion.layout === 'grid' ? 'layout_grid' : ''}>
         {activeQuestion.choices.map((choice, i, choices) => (
           <ExerciseQuestionButton
@@ -158,7 +156,6 @@ const ExerciseQuestionBlock: React.VFC<
           </ExerciseQuestionButton>
         ))}
       </StyledQuestionsContainer>
-
       {showDetail && (
         <StyledDetail className="mb-4">
           {activeQuestion.choices.every(choice => choice.isCorrect === choice.isSelected) ? (
