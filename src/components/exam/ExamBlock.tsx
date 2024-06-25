@@ -1,6 +1,7 @@
 import { ApolloError } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
 import { Spinner } from '@chakra-ui/react'
+import { max } from 'lodash'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import moment, { Moment } from 'moment'
@@ -207,12 +208,11 @@ const ExamBlock: React.VFC<{
         isFinal && setStatus('result')
       })
       .then(() => {
-        console.log('programContentProgressprogramContentProgress', programContentProgress)
+        const existProgramContent = programContentProgress?.find(content => content.contentId === programContentId)
         const totalGainedPoints = questions.reduce((sum, question) => sum + (question.gainedPoints || 0), 0)
-        console.log('totalGainedPoints', totalGainedPoints)
-        console.log('passingScore', exam.passingScore)
+
         insertProgress(programId, programContentId, {
-          progress: totalGainedPoints > exam.passingScore ? 1 : 0.5,
+          progress: max([existProgramContent?.progress ?? 0.5, totalGainedPoints > exam.passingScore ? 1 : 0.5]),
           lastProgress: totalGainedPoints > exam.passingScore ? 1 : 0.5,
         })
       })

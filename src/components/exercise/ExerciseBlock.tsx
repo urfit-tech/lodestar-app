@@ -1,4 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
+import { max } from 'lodash'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import moment, { Moment } from 'moment'
@@ -134,13 +135,13 @@ const ExerciseBlock: React.VFC<{
     })
       .then(() => setStatus('result'))
       .then(() => {
-        console.log('programContentProgressprogramContentProgress', programContentProgress)
+        const existProgramContent = programContentProgress?.find(content => content.contentId === programContentId)
         const totalGainedPoints = questions.reduce((sum, question) => sum + (question.gainedPoints || 0), 0)
-        console.log('totalGainedPoints', totalGainedPoints)
-        // insertProgress(programId, programContentId, {
-        //   progress: totalGainedPoints > passingScore ? 1 : 0.5,
-        //   lastProgress: totalGainedPoints > passingScore ? 1 : 0.5,
-        // })
+
+        insertProgress(programId, programContentId, {
+          progress: max([existProgramContent?.progress ?? 0.5, totalGainedPoints > passingScore ? 1 : 0.5]),
+          lastProgress: totalGainedPoints > passingScore ? 1 : 0.5,
+        })
       })
       .catch(error => handleError(error))
   }
