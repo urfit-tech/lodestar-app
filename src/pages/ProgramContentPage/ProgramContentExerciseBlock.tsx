@@ -58,7 +58,7 @@ const ProgramContentExerciseBlock: React.VFC<{
     return (
       <ExerciseBlock
         id={programContent.programContentBody.id}
-        programId={programId}
+        programId={programId || ''}
         programContentId={programContent.id}
         title={programContent.title}
         nextProgramContentId={nextProgramContentId}
@@ -112,7 +112,7 @@ const ProgramContentExerciseBlock: React.VFC<{
         errorExam={errorExam}
         errorExamId={errorExamId}
         exam={exam}
-        programId={programId}
+        programId={programId || ''}
         programContentId={programContent.id}
         nextProgramContentId={nextProgramContentId}
         title={programContent.title}
