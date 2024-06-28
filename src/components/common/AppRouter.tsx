@@ -18,6 +18,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/',
     pageName: 'HomePage',
   },
+  additionalForm: {
+    path: '/chailease/additional-form',
+    pageName: 'AdditionalFormPage',
+  },
   // meeting
   meetsUs: {
     path: '/meets/us',
