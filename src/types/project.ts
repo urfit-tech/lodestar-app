@@ -25,6 +25,7 @@ export type ProjectPlanBasicProps = {
   listPrice: number
   salePrice: number | null
   soldAt: Date | null
+  currencyId?: string
   discountDownPrice: number
 
   createdAt: Date
