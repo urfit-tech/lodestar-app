@@ -233,7 +233,9 @@ const SecondaryProgramPageContent: React.VFC = () => {
                   </StyledPlayer>
                 )}
                 <ProgramIntroTabs program={program} />
-                <PreviewBlock trailProgramContents={trailProgramContents} />
+                {trailProgramContents.length === 0 ? (
+                  <PreviewBlock trailProgramContents={trailProgramContents} />
+                ) : null}
               </StyledContentWrapper>
 
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
