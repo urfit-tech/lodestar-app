@@ -1,12 +1,9 @@
-import { Collapse, IconButton } from '@chakra-ui/react'
+import { Box, Collapse, IconButton } from '@chakra-ui/react'
+import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import React, { useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
 import styled from 'styled-components'
 import { colors } from '../style'
-
-const CollapseSectionBlock = styled.div`
-  margin-bottom: 2.5rem;
-`
 
 const SectionTitle = styled.h3`
   display: flex;
@@ -18,10 +15,12 @@ const SectionTitle = styled.h3`
 `
 
 const CollapseContent: React.VFC<{ children: React.ReactNode; title: string }> = ({ title, children }) => {
+  const { theme } = useAppTheme()
   const [show, setShow] = useState<boolean>(false)
   const handleToggle = () => setShow(!show)
+
   return (
-    <CollapseSectionBlock>
+    <Box mb="2.5rem" bg={theme.colors.primary[500]}>
       <SectionTitle>
         {title}
         <IconButton
@@ -45,7 +44,7 @@ const CollapseContent: React.VFC<{ children: React.ReactNode; title: string }> =
           {children}
         </Collapse>
       </React.Fragment>
-    </CollapseSectionBlock>
+    </Box>
   )
 }
 export default CollapseContent
