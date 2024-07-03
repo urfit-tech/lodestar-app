@@ -35,12 +35,12 @@ interface Props {
 export const PreviewBlock = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const { trialProgramContents } = props
   return (
-    <div>
+    <Box mt="2.5rem">
       <Title>試看/試聽</Title>
       <Wrapper ref={ref}>
         <PreviewPlayer trialProgramContents={trialProgramContents} />
       </Wrapper>
-    </div>
+    </Box>
   )
 })
 
