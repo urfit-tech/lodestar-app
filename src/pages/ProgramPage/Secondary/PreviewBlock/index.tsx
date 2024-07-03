@@ -26,19 +26,19 @@ const Wrapper = styled(Box)`
 `
 
 interface Props {
-  trailProgramContents: (ProgramContent & {
+  trialProgramContents: (ProgramContent & {
     programId?: string
     contentSectionTitle?: string
   })[]
 }
 
 export const PreviewBlock = forwardRef<HTMLDivElement, Props>((props, ref) => {
-  const { trailProgramContents } = props
+  const { trialProgramContents } = props
   return (
     <div>
       <Title>試看/試聽</Title>
       <Wrapper ref={ref}>
-        <PreviewPlayer trailProgramContents={trailProgramContents} />
+        <PreviewPlayer trialProgramContents={trialProgramContents} />
       </Wrapper>
     </div>
   )

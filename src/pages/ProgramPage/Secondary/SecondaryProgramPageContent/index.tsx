@@ -164,7 +164,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
       )
     : false
 
-  let trailProgramContents = program.contentSections
+  let trialProgramContents = program.contentSections
     .filter(programContentSection => programContentSection.contents.length)
     .map(programContentSection =>
       programContentSection.contents
@@ -177,10 +177,10 @@ const SecondaryProgramPageContent: React.VFC = () => {
     )
     .flat()
 
-  // 如果沒有登入 只提供 trail
+  // 如果沒有登入 只提供 trial
   if (!currentMemberId) {
-    trailProgramContents = trailProgramContents.filter(
-      trailProgramContent => trailProgramContent.displayMode === DisplayModeEnum.trial,
+    trialProgramContents = trialProgramContents.filter(
+      trialProgramContent => trialProgramContent.displayMode === DisplayModeEnum.trial,
     )
   }
 
@@ -233,8 +233,8 @@ const SecondaryProgramPageContent: React.VFC = () => {
                   </StyledPlayer>
                 )}
                 <ProgramIntroTabs program={program} />
-                {trailProgramContents.length === 0 ? (
-                  <PreviewBlock trailProgramContents={trailProgramContents} />
+                {trialProgramContents.length === 0 ? (
+                  <PreviewBlock trialProgramContents={trialProgramContents} />
                 ) : null}
               </StyledContentWrapper>
 

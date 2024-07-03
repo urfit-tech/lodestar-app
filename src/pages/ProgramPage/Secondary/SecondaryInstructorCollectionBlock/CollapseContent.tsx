@@ -1,4 +1,4 @@
-import { Flex, Box, Collapse, IconButton, Heading } from '@chakra-ui/react'
+import { Flex, Box, Collapse, IconButton } from '@chakra-ui/react'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import React, { useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
