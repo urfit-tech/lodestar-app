@@ -1,28 +1,26 @@
-import { Box, Collapse, IconButton } from '@chakra-ui/react'
+import { Flex, Box, Collapse, IconButton, Heading } from '@chakra-ui/react'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import React, { useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
-import styled from 'styled-components'
-import { colors } from '../style'
-
-const SectionTitle = styled.h3`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 20px;
-  font-weight: bold;
-  color: ${colors.gray1};
-`
 
 const CollapseContent: React.VFC<{ children: React.ReactNode; title: string }> = ({ title, children }) => {
-  const  theme  = useAppTheme()
+  const theme = useAppTheme()
   const [show, setShow] = useState<boolean>(false)
   const handleToggle = () => setShow(!show)
 
   return (
-    <Box mb="2.5rem" bg={theme.colors.primary[500]}>
-      <SectionTitle>
-        {title}
+    <Box fontSize="20px" fontWeight="bold" mb="2.5rem">
+      <Flex
+        as="h3"
+        w="100%"
+        justifyContent="space-between"
+        alignItems="center"
+        color="#fff"
+        bg={theme.colors.primary[500]}
+        borderRadius="4px"
+        flex=""
+      >
+        <Box m="12px">{title}</Box>
         <IconButton
           icon={
             <div>
@@ -36,9 +34,8 @@ const CollapseContent: React.VFC<{ children: React.ReactNode; title: string }> =
           aria-label="Rotate Icon"
           variant="ghost"
           onClick={() => handleToggle()}
-        ></IconButton>
-      </SectionTitle>
-
+        />
+      </Flex>
       <React.Fragment>
         <Collapse in={show} transition={{ exit: { delay: 1 }, enter: { duration: 0.5 } }}>
           {children}
