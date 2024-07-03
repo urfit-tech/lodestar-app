@@ -15,7 +15,7 @@ const SectionTitle = styled.h3`
 `
 
 const CollapseContent: React.VFC<{ children: React.ReactNode; title: string }> = ({ title, children }) => {
-  const { theme } = useAppTheme()
+  const  theme  = useAppTheme()
   const [show, setShow] = useState<boolean>(false)
   const handleToggle = () => setShow(!show)
 
