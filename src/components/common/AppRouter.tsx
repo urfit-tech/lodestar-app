@@ -113,6 +113,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/members/:memberId/contracts/:memberContractId',
     pageName: 'ContractPage',
   },
+  member_contract_deal: {
+    path: '/members/:memberId/contracts/:memberContractId/deal',
+    pageName: 'ContractDealPage',
+  },
 
   order_task: {
     path: '/tasks/order/:taskId',
