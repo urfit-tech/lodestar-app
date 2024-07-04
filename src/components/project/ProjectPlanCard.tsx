@@ -1,3 +1,5 @@
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -7,9 +9,7 @@ import EmptyCover from '../../images/empty-cover.png'
 import { PeriodType } from '../../types/program'
 import { ProjectPlanProps } from '../../types/project'
 import PaymentButton from '../common/PaymentButton'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ShortenPeriodTypeLabel from '../common/ShortenPeriodTypeLabel'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const messages = defineMessages({
   limited: { id: 'product.project.text.limited', defaultMessage: '限量' },
@@ -89,6 +89,7 @@ const ProjectPlanCard: React.VFC<
   buyableQuantity,
   projectPlanEnrollmentCount,
   publishedAt,
+  currencyId,
 }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
@@ -107,6 +108,7 @@ const ProjectPlanCard: React.VFC<
               variant="full-detail"
               listPrice={listPrice}
               salePrice={isOnSale ? salePrice : undefined}
+              currencyId={currencyId}
               downPrice={isSubscription && discountDownPrice > 0 ? discountDownPrice : undefined}
               periodAmount={periodAmount}
               periodType={periodType ? (periodType as PeriodType) : undefined}
@@ -143,6 +145,7 @@ const ProjectPlanCard: React.VFC<
             <PaymentButton
               type="ProjectPlan"
               target={id}
+              currencyId={currencyId}
               price={isOnSale && salePrice ? salePrice : listPrice}
               isSubscription={isSubscription}
               isPublished={!!publishedAt}

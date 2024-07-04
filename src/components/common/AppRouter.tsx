@@ -22,6 +22,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/chailease/additional-form',
     pageName: 'AdditionalFormPage',
   },
+  additionalFormCompleted: {
+    path: '/chailease/additional-form/completed',
+    pageName: 'CompletedPage',
+  },
   // meeting
   meetsUs: {
     path: '/meets/us',
@@ -33,7 +37,7 @@ const defaultRoutesMap: RoutesMap = {
   },
   meetsCompleted: {
     path: '/meets/us/completed',
-    pageName: 'MeetingCompletedPage',
+    pageName: 'CompletedPage',
   },
   // system
   error: {
