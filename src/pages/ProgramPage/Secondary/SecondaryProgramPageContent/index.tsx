@@ -44,6 +44,7 @@ const StyledProgramAbstract = styled.span`
   font-weight: 500;
   display: inline-block;
   width: 100%;
+  white-space: pre-line;
 `
 const StyledPlayer = styled.div`
   width: 100%;
