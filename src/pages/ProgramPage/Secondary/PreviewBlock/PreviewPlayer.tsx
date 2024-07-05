@@ -39,11 +39,11 @@ const ControlButton = styled(Box)<{ disable: boolean }>`
 `
 
 const PreviewPlayer: React.VFC<{
-  trialProgramContents?: (ProgramContent & {
+  trialProgramContentMedias?: (ProgramContent & {
     programId?: string
     contentSectionTitle?: string
   })[]
-}> = ({ trialProgramContents }) => {
+}> = ({ trialProgramContentMedias }) => {
   const [currentTrial, setCurrentTrial] = useState<number>(0)
   const { id: appId } = useApp()
   const { authToken } = useAuth()
@@ -52,7 +52,7 @@ const PreviewPlayer: React.VFC<{
     contentSectionTitle,
     contentType,
     programId,
-  } = trialProgramContents?.[currentTrial] || {}
+  } = trialProgramContentMedias?.[currentTrial] || {}
   const { programContent } = useProgramContentById(programId || '', programContentId || '')
   const [audioUrl, setAudioUrl] = useState<string>()
 
@@ -62,7 +62,7 @@ const PreviewPlayer: React.VFC<{
     })
   }, [appId, authToken, programContentId, programId])
 
-  if (!programContent || !trialProgramContents || !programContentId) {
+  if (!programContent || !trialProgramContentMedias || !programContentId) {
     return null
   }
 
@@ -84,10 +84,10 @@ const PreviewPlayer: React.VFC<{
           <SubTitle>{contentSectionTitle}</SubTitle>
         </Box>
         <ControlButton
-          disable={currentTrial === trialProgramContents.length - 1}
+          disable={currentTrial === trialProgramContentMedias.length - 1}
           cursor="pointer"
           onClick={() => {
-            if (currentTrial === trialProgramContents.length - 1) return
+            if (currentTrial === trialProgramContentMedias.length - 1) return
             setCurrentTrial(c => c + 1)
           }}
         >

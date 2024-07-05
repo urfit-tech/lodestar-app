@@ -164,7 +164,18 @@ const SecondaryProgramPageContent: React.VFC = () => {
       )
     : false
 
-  let trialProgramContents = program.contentSections
+  const trialProgramContents = program.contentSections
+    .filter(programContentSection => programContentSection.contents.length)
+    .map(programContentSection =>
+      programContentSection.contents.filter(
+        programContent =>
+          programContent.displayMode === DisplayModeEnum.trial ||
+          programContent.displayMode === DisplayModeEnum.loginToTrial,
+      ),
+    )
+    .flat()
+
+  let trialProgramContentMedias = program.contentSections
     .filter(programContentSection => programContentSection.contents.length)
     .map(programContentSection =>
       programContentSection.contents
@@ -179,7 +190,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
 
   // 如果沒有登入 只提供 trial
   if (!currentMemberId) {
-    trialProgramContents = trialProgramContents.filter(
+    trialProgramContentMedias = trialProgramContentMedias.filter(
       trialProgramContent => trialProgramContent.displayMode === DisplayModeEnum.trial,
     )
   }
@@ -233,8 +244,8 @@ const SecondaryProgramPageContent: React.VFC = () => {
                   </StyledPlayer>
                 )}
                 <ProgramIntroTabs program={program} />
-                {trialProgramContents.length === 0 ? (
-                  <PreviewBlock trialProgramContents={trialProgramContents} />
+                {trialProgramContentMedias.length !== 0 ? (
+                  <PreviewBlock trialProgramContentMedias={trialProgramContentMedias} />
                 ) : null}
               </StyledContentWrapper>
 
