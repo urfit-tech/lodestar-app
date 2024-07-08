@@ -9,7 +9,7 @@ const CollapseContent: React.VFC<{ children: React.ReactNode; title: string }> =
   const handleToggle = () => setShow(!show)
 
   return (
-    <Box fontSize="20px" fontWeight="bold">
+    <Box fontSize="20px" fontWeight="bold" mb="12px">
       <Flex
         as="h3"
         w="100%"
