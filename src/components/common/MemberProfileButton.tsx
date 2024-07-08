@@ -106,9 +106,9 @@ export const CollapseNavLinks: React.VFC<{ nav: AppNavProps }> = ({ nav }) => {
                       {navListItem}
                     </a>
                   ) : (
-                    <Link key={subNav.id} to={subNav.href}>
+                    <a key={subNav.id} href={subNav.href} target="_blank" rel="noopener noreferrer">
                       {navListItem}
-                    </Link>
+                    </a>
                   )}
                 </Box>
               )
