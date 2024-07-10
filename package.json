@@ -15,7 +15,8 @@
     "trans:extract": "babel --config-file ./.intl.babelrc ./src/extracted > /dev/null",
     "trans:manage": "node manageTranslations.js",
     "trans:clean": "rm -rf ./src/extracted",
-    "trans": "npm run trans:clean && npm run trans:compile && npm run trans:extract && npm run trans:manage && npm run trans:clean"
+    "trans": "npm run trans:clean && npm run trans:compile && npm run trans:extract && npm run trans:manage && npm run trans:clean",
+    "cypress:open": "cypress open"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -168,7 +169,8 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^3.3.0",
     "@graphql-codegen/client-preset": "^3.0.0",
-    "@oclif/core": "^1.0.11"
+    "@oclif/core": "^1.0.11",
+    "cypress": "12.17.4"
   },
   "resolutions": {
     "@craftjs/utils": "0.1.0-beta.20",
