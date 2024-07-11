@@ -82,7 +82,7 @@ const ProgramCustomContentBlock: React.VFC<{
       return
     }
 
-    insertProgress(programId, programContentId, {
+    insertProgress(programContentId, {
       progress: 1,
       lastProgress: 1,
     }).then(() => refetchProgress())
@@ -91,7 +91,6 @@ const ProgramCustomContentBlock: React.VFC<{
     insertProgress,
     loadingProgramContent,
     programContentBodyType,
-    programId,
     programContentId,
     refetchProgress,
   ])
@@ -102,7 +101,7 @@ const ProgramCustomContentBlock: React.VFC<{
   const insertProgramProgress = async (progress: number) => {
     try {
       const currentProgress = Math.ceil(progress * 20) / 20 // every 5% as a tick
-      return await insertProgress(programId, programContentId, {
+      return await insertProgress(programContentId, {
         progress: currentProgress > 1 ? 1 : Math.max(currentProgress, initialProgress),
         lastProgress: progress,
       })
@@ -111,12 +110,7 @@ const ProgramCustomContentBlock: React.VFC<{
     }
   }
 
-  const insertPlayerEventLog = async (data: {
-    playbackRate: number
-    startedAt: number
-    endedAt: number
-    progress: number
-  }) => {
+  const insertPlayerEventLog = async (data: { playbackRate: number; startedAt: number; endedAt: number }) => {
     try {
       await axios.post(
         `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
@@ -156,11 +150,7 @@ const ProgramCustomContentBlock: React.VFC<{
             nextProgramContent={nextProgramContent}
             onVideoEvent={e => {
               if (Math.abs(e.videoState.endedAt - endedAtRef.current) >= 5) {
-                insertPlayerEventLog({
-                  ...e.videoState,
-                  startedAt: endedAtRef.current || e.videoState.startedAt,
-                  progress: e.progress,
-                })
+                insertPlayerEventLog({ ...e.videoState, startedAt: endedAtRef.current || e.videoState.startedAt })
                 if (e.type === 'progress') {
                   insertProgramProgress(e.progress)
                 }
@@ -168,11 +158,7 @@ const ProgramCustomContentBlock: React.VFC<{
                 endedAtRef.current = e.videoState.endedAt
               }
               if (e.type === 'ended') {
-                insertPlayerEventLog({
-                  ...e.videoState,
-                  startedAt: endedAtRef.current || e.videoState.startedAt,
-                  progress: e.progress,
-                })
+                insertPlayerEventLog({ ...e.videoState, startedAt: endedAtRef.current || e.videoState.startedAt })
                 insertProgramProgress(1)?.then(() => refetchProgress())
               }
             }}

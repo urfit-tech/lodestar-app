@@ -1,6 +1,4 @@
-import { gql, useQuery } from '@apollo/client'
-import axios from 'axios'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { flatten, sum } from 'ramda'
 import React, { createContext, useMemo } from 'react'
 import hasura from '../hasura'
@@ -17,7 +15,6 @@ type ProgressProps = {
   }[]
   refetchProgress?: () => void
   insertProgress?: (
-    programId: string,
     programContentId: string,
     options: {
       progress: number
@@ -50,29 +47,42 @@ export const ProgressProvider: React.FC<{
 }
 
 export const useInsertProgress = (memberId: string) => {
-  const { authToken } = useAuth()
-  const insertProgress: ProgressProps['insertProgress'] = async (
-    programId,
-    programContentId,
-    { progress, lastProgress },
-  ) => {
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/programs/${programId}/content/${programContentId}/track-process`,
-        {
-          progress,
-          lastProgress,
-        },
-        {
-          headers: { authorization: `Bearer ${authToken}` },
-        },
-      )
-      return response.data
-    } catch (error) {
-      console.error('Failed to insert progress:', error)
-      throw error
+  const [insertProgramContentProgress] = useMutation<
+    hasura.INSERT_PROGRAM_CONTENT_PROGRESS,
+    hasura.INSERT_PROGRAM_CONTENT_PROGRESSVariables
+  >(gql`
+    mutation INSERT_PROGRAM_CONTENT_PROGRESS(
+      $memberId: String!
+      $programContentId: uuid!
+      $progress: numeric!
+      $lastProgress: numeric!
+    ) {
+      insert_program_content_progress(
+        objects: {
+          member_id: $memberId
+          program_content_id: $programContentId
+          progress: $progress
+          last_progress: $lastProgress
+        }
+        on_conflict: {
+          constraint: program_content_progress_member_id_program_content_id_key
+          update_columns: [progress, last_progress]
+        }
+      ) {
+        affected_rows
+      }
     }
-  }
+  `)
+
+  const insertProgress: ProgressProps['insertProgress'] = (programContentId, { progress, lastProgress }) =>
+    insertProgramContentProgress({
+      variables: {
+        memberId,
+        programContentId,
+        progress,
+        lastProgress,
+      },
+    })
 
   return insertProgress
 }
