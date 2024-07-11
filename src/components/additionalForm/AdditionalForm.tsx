@@ -66,6 +66,19 @@ const AdditionalForm = () => {
       files.length === 0 ||
       !currentMemberId
     ) {
+      const requiredFields = [
+        { field: cardImageFile, name: '證件上傳' },
+        { field: credentialImageFile, name: '證明上傳' },
+        { field: bankBookImageFile, name: '存摺封面' },
+        { field: files.length > 0, name: '財力證明電子對帳單、交易明細' },
+      ]
+      const missingFields = requiredFields.filter(({ field }) => !field)
+
+      if (missingFields.length > 0) {
+        const errorMessages: string = missingFields.map(({ name }) => name).join(', ')
+        window.alert(`缺少${errorMessages}請重新確認`)
+        return
+      }
       return
     }
 
