@@ -18,6 +18,14 @@ const defaultRoutesMap: RoutesMap = {
     path: '/',
     pageName: 'HomePage',
   },
+  additionalForm: {
+    path: '/chailease/additional-form',
+    pageName: 'AdditionalFormPage',
+  },
+  additionalFormCompleted: {
+    path: '/chailease/additional-form/completed',
+    pageName: 'CompletedPage',
+  },
   // meeting
   meetsUs: {
     path: '/meets/us',
@@ -29,7 +37,7 @@ const defaultRoutesMap: RoutesMap = {
   },
   meetsCompleted: {
     path: '/meets/us/completed',
-    pageName: 'MeetingCompletedPage',
+    pageName: 'CompletedPage',
   },
   // system
   error: {
@@ -108,6 +116,10 @@ const defaultRoutesMap: RoutesMap = {
   member_contract: {
     path: '/members/:memberId/contracts/:memberContractId',
     pageName: 'ContractPage',
+  },
+  member_contract_deal: {
+    path: '/members/:memberId/contracts/:memberContractId/deal',
+    pageName: 'ContractDealPage',
   },
 
   order_task: {

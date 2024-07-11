@@ -44,6 +44,7 @@ const StyledProgramAbstract = styled.span`
   font-weight: 500;
   display: inline-block;
   width: 100%;
+  white-space: pre-line;
 `
 const StyledPlayer = styled.div`
   width: 100%;
@@ -164,7 +165,18 @@ const SecondaryProgramPageContent: React.VFC = () => {
       )
     : false
 
-  let trailProgramContents = program.contentSections
+  const trialProgramContents = program.contentSections
+    .filter(programContentSection => programContentSection.contents.length)
+    .map(programContentSection =>
+      programContentSection.contents.filter(
+        programContent =>
+          programContent.displayMode === DisplayModeEnum.trial ||
+          programContent.displayMode === DisplayModeEnum.loginToTrial,
+      ),
+    )
+    .flat()
+
+  let trialProgramContentMedias = program.contentSections
     .filter(programContentSection => programContentSection.contents.length)
     .map(programContentSection =>
       programContentSection.contents
@@ -177,10 +189,10 @@ const SecondaryProgramPageContent: React.VFC = () => {
     )
     .flat()
 
-  // 如果沒有登入 只提供 trail
+  // 如果沒有登入 只提供 trial
   if (!currentMemberId) {
-    trailProgramContents = trailProgramContents.filter(
-      trailProgramContent => trailProgramContent.displayMode === DisplayModeEnum.trial,
+    trialProgramContentMedias = trialProgramContentMedias.filter(
+      trialProgramContent => trialProgramContent.displayMode === DisplayModeEnum.trial,
     )
   }
 
@@ -233,7 +245,9 @@ const SecondaryProgramPageContent: React.VFC = () => {
                   </StyledPlayer>
                 )}
                 <ProgramIntroTabs program={program} />
-                <PreviewBlock trailProgramContents={trailProgramContents} />
+                {trialProgramContentMedias.length !== 0 ? (
+                  <PreviewBlock trialProgramContentMedias={trialProgramContentMedias} />
+                ) : null}
               </StyledContentWrapper>
 
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">

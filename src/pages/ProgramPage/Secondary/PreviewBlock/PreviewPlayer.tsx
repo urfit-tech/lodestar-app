@@ -39,12 +39,12 @@ const ControlButton = styled(Box)<{ disable: boolean }>`
 `
 
 const PreviewPlayer: React.VFC<{
-  trailProgramContents?: (ProgramContent & {
+  trialProgramContentMedias?: (ProgramContent & {
     programId?: string
     contentSectionTitle?: string
   })[]
-}> = ({ trailProgramContents }) => {
-  const [currentTrail, setCurrentTrail] = useState<number>(0)
+}> = ({ trialProgramContentMedias }) => {
+  const [currentTrial, setCurrentTrial] = useState<number>(0)
   const { id: appId } = useApp()
   const { authToken } = useAuth()
   const {
@@ -52,7 +52,7 @@ const PreviewPlayer: React.VFC<{
     contentSectionTitle,
     contentType,
     programId,
-  } = trailProgramContents?.[currentTrail] || {}
+  } = trialProgramContentMedias?.[currentTrial] || {}
   const { programContent } = useProgramContentById(programId || '', programContentId || '')
   const [audioUrl, setAudioUrl] = useState<string>()
 
@@ -62,7 +62,7 @@ const PreviewPlayer: React.VFC<{
     })
   }, [appId, authToken, programContentId, programId])
 
-  if (!programContent || !trailProgramContents || !programContentId) {
+  if (!programContent || !trialProgramContentMedias || !programContentId) {
     return null
   }
 
@@ -70,11 +70,11 @@ const PreviewPlayer: React.VFC<{
     <>
       <HeaderWrapper>
         <ControlButton
-          disable={currentTrail === 0}
+          disable={currentTrial === 0}
           cursor="pointer"
           onClick={() => {
-            if (currentTrail === 0) return
-            setCurrentTrail(c => c - 1)
+            if (currentTrial === 0) return
+            setCurrentTrial(c => c - 1)
           }}
         >
           <FaChevronDown style={{ transform: 'rotate(90deg)' }} className="m-1" />
@@ -84,11 +84,11 @@ const PreviewPlayer: React.VFC<{
           <SubTitle>{contentSectionTitle}</SubTitle>
         </Box>
         <ControlButton
-          disable={currentTrail === trailProgramContents.length - 1}
+          disable={currentTrial === trialProgramContentMedias.length - 1}
           cursor="pointer"
           onClick={() => {
-            if (currentTrail === trailProgramContents.length - 1) return
-            setCurrentTrail(c => c + 1)
+            if (currentTrial === trialProgramContentMedias.length - 1) return
+            setCurrentTrial(c => c + 1)
           }}
         >
           下一則
