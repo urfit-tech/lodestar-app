@@ -41,7 +41,7 @@ const ProjectPage: React.VFC = () => {
   const { loadingProject, errorProject, project } = useProject(projectId)
   const { id: appId } = useApp()
   const { resourceCollection } = useResourceCollection([`${appId}:project:${projectId}`], true)
-
+ 
   useEffect(() => {
     if (project) {
       project.projectPlans?.forEach((projectPlan, index) => {

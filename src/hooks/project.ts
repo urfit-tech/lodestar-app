@@ -236,6 +236,7 @@ export const useProject = (projectId: string) => {
             list_price
             sale_price
             sold_at
+            currency_id
             discount_down_price
             created_at
             is_participants_visible
@@ -313,6 +314,7 @@ export const useProject = (projectId: string) => {
             listPrice: projectPlan.list_price,
             salePrice: projectPlan.sale_price,
             soldAt: projectPlan.sold_at ? new Date(projectPlan.sold_at) : null,
+            currencyId: projectPlan.currency_id,
             discountDownPrice: projectPlan.discount_down_price,
             createdAt: new Date(projectPlan.created_at),
             isParticipantsVisible: projectPlan.is_participants_visible,

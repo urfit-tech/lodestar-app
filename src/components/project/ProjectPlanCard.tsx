@@ -89,6 +89,7 @@ const ProjectPlanCard: React.VFC<
   buyableQuantity,
   projectPlanEnrollmentCount,
   publishedAt,
+  currencyId,
 }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
@@ -107,6 +108,7 @@ const ProjectPlanCard: React.VFC<
               variant="full-detail"
               listPrice={listPrice}
               salePrice={isOnSale ? salePrice : undefined}
+              currencyId={currencyId}
               downPrice={isSubscription && discountDownPrice > 0 ? discountDownPrice : undefined}
               periodAmount={periodAmount}
               periodType={periodType ? (periodType as PeriodType) : undefined}
@@ -143,6 +145,7 @@ const ProjectPlanCard: React.VFC<
             <PaymentButton
               type="ProjectPlan"
               target={id}
+              currencyId={currencyId}
               price={isOnSale && salePrice ? salePrice : listPrice}
               isSubscription={isSubscription}
               isPublished={!!publishedAt}
