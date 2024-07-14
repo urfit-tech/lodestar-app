@@ -1,6 +1,9 @@
 import { gql, useQuery } from '@apollo/client'
+import axios from 'axios'
 import { max, min } from 'lodash'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten, uniq } from 'ramda'
+import { useCallback, useEffect, useState } from 'react'
 import hasura from '../hasura'
 import {
   MerchandiseBriefProps,
@@ -129,43 +132,50 @@ export const useMerchandiseCollection = (options?: {
 }
 
 export const useMerchandiseSpecQuantity = (merchandiseSpecId: string) => {
-  const { loading, error, data, refetch } = useQuery<
-    hasura.GET_MERCHANDISE_SPEC_QUANTITY,
-    hasura.GET_MERCHANDISE_SPEC_QUANTITYVariables
-  >(
-    gql`
-      query GET_MERCHANDISE_SPEC_QUANTITY($merchandiseSpecId: uuid!) {
-        merchandise_spec_by_pk(id: $merchandiseSpecId) {
-          id
-          title
-          list_price
-          sale_price
-          quota
-          merchandise_spec_inventory_status {
-            buyable_quantity
-          }
-        }
+  const { authToken } = useAuth()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<any>()
+  const [data, setData] = useState<MerchandiseSpecProps | null>(null)
+
+  const refetchMerchandiseSpec = useCallback(async () => {
+    if (merchandiseSpecId) {
+      const route = `/merchandise-spec/${merchandiseSpecId}/inventory/status`
+      setLoading(true)
+      try {
+        const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+          headers: { authorization: `Bearer ${authToken}` },
+        })
+
+        setData(
+          !data.result
+            ? null
+            : {
+                id: data.result.id,
+                title: data.result.title,
+                listPrice: Number(data.result.listPrice),
+                salePrice: Number(data.result.salePrice),
+                quota: Number(data.result.quota),
+                buyableQuantity: Number(data.result.merchandiseSpecInventoryStatus.buyableQuantity),
+              },
+        )
+      } catch (err) {
+        console.log(err)
+        setError(err)
+      } finally {
+        setLoading(false)
       }
-    `,
-    { variables: { merchandiseSpecId } },
-  )
-  const merchandiseSpec: MerchandiseSpecProps | null =
-    loading || error || !data || !data.merchandise_spec_by_pk
-      ? null
-      : {
-          id: data?.merchandise_spec_by_pk?.id,
-          title: data?.merchandise_spec_by_pk?.title,
-          listPrice: data?.merchandise_spec_by_pk?.list_price,
-          salePrice: data?.merchandise_spec_by_pk?.sale_price,
-          quota: data?.merchandise_spec_by_pk?.quota,
-          buyableQuantity: data?.merchandise_spec_by_pk?.merchandise_spec_inventory_status?.buyable_quantity,
-        }
+    }
+  }, [merchandiseSpecId])
+
+  useEffect(() => {
+    refetchMerchandiseSpec()
+  }, [refetchMerchandiseSpec])
 
   return {
     loadingMerchandiseSpec: loading,
     errorMerchandiseSpec: error,
-    merchandiseSpec,
-    refetchMerchandiseSpec: refetch,
+    merchandiseSpec: data,
+    refetchMerchandiseSpec,
   }
 }
 
