@@ -2,6 +2,7 @@ import { gql, useMutation } from '@apollo/client'
 import { Card, Checkbox, Typography } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox/Checkbox'
 import Axios from 'axios'
+import Embedded from 'lodestar-app-element/src/components/common/Embedded'
 import moment from 'moment'
 import { render } from 'mustache'
 import React, { useEffect, useState } from 'react'
@@ -76,7 +77,9 @@ const ContractPage: React.VFC = () => {
   }
 
   const handleCheck = (e: CheckboxChangeEvent) => {
-    if (e.target.checked && window.confirm('同意後無法修改')) {
+    if (sessionStorage.getItem(`${memberContractId}.ready`) !== 'true') {
+      alert('有欄位未確認，請確認')
+    } else if (e.target.checked && window.confirm('同意後無法修改')) {
       agreeMemberContract({
         variables: {
           memberContractId,
@@ -98,14 +101,12 @@ const ContractPage: React.VFC = () => {
       <StyledSection className="container">
         <StyledTitle level={1}>{'線上課程服務約款'}</StyledTitle>
         <StyledCard>
-          <div
-            dangerouslySetInnerHTML={{
-              __html: render(memberContract.contract.template, {
-                ...memberContract.values,
-                startedAt: memberContract.values?.startedAt ? dateFormatter(memberContract.values.startedAt) : '',
-                endedAt: memberContract.values?.endedAt ? dateFormatter(memberContract.values.endedAt) : '',
-              }),
-            }}
+          <Embedded
+            iframe={render(memberContract.contract.template, {
+              ...memberContract.values,
+              startedAt: memberContract.values?.startedAt ? dateFormatter(memberContract.values.startedAt) : '',
+              endedAt: memberContract.values?.endedAt ? dateFormatter(memberContract.values.endedAt) : '',
+            })}
           />
         </StyledCard>
 
