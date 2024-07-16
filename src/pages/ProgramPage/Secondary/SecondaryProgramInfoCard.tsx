@@ -37,6 +37,13 @@ const Content = styled.div`
   color: ${colors.gray3};
 `
 
+const layoutTemplateConfigMap: Record<string, string> = {
+  expectedSections: '2d668b9d-9fd5-47a4-9fef-b24184287233',
+  completeRelease: 'e687ae28-27f0-4f92-aa23-3194704b6d8b',
+  expectedStartDate: '45ed6a40-bcb1-d478-88b6-a16ef3db1c92',
+  expectedDuration: 'f3150ae5-9937-7244-f98b-2cb9401736d4',
+}
+
 const SecondaryProgramInfoCard: React.FC<{
   program: Program & {
     roles: ProgramRole[]
@@ -48,8 +55,11 @@ const SecondaryProgramInfoCard: React.FC<{
   }
 }> = ({ program }) => {
   const { formatMessage } = useIntl()
-  const expectedStartDate = program.moduleData?.expectedStartDate?.value
-  const completeRelease = program.moduleData?.completeRelease?.value
+  const expectedStartDate = program.moduleData?.[layoutTemplateConfigMap.expectedStartDate]
+  const completeRelease = program.moduleData?.[layoutTemplateConfigMap.completeRelease]
+  const expectedDuration = program.moduleData?.[layoutTemplateConfigMap.expectedDuration]
+  const expectedSections = program.moduleData?.[layoutTemplateConfigMap.expectedSections]
+
   return (
     <StyledCountBlock>
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
@@ -62,9 +72,9 @@ const SecondaryProgramInfoCard: React.FC<{
         <TimeoverIcon />
         <Title>預計時長</Title>
         <Content>
-          {program.moduleData?.expectedDuration?.value ? (
+          {expectedDuration ? (
             <>
-              {program.moduleData?.expectedDuration?.value}
+              {expectedDuration}
               {formatMessage(commonMessages.unit.minute)}
             </>
           ) : (
@@ -77,9 +87,9 @@ const SecondaryProgramInfoCard: React.FC<{
         <ListIcon />
         <Title>預計章節</Title>
         <Content>
-          {program.moduleData?.expectedSections?.value ? (
+          {expectedSections ? (
             <>
-              {program.moduleData?.expectedSections?.value}
+              {expectedSections}
               {formatMessage(commonMessages.unit.chapter)}
             </>
           ) : (
