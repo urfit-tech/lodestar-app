@@ -264,7 +264,8 @@ export const useProgram = (programId: string) => {
           display_footer
           cover_type
           mobile_cover_type
-          program_layout_template_configs(where: { is_active: { _eq: true } }) {
+          activated_layout_template_config_id
+          program_layout_template_config {
             id
             program_layout_template_id
             module_data
@@ -430,10 +431,10 @@ export const useProgram = (programId: string) => {
       displayHeader: data?.program_by_pk?.display_header ?? true,
       displayFooter: data?.program_by_pk?.display_footer ?? true,
       programLayoutTemplateId:
-        data?.program_by_pk?.program_layout_template_configs[0]?.program_layout_template_id || undefined,
-      moduleData: data?.program_by_pk?.program_layout_template_configs[0]?.module_data,
+        data?.program_by_pk?.program_layout_template_config?.program_layout_template_id || undefined,
+      moduleData: data?.program_by_pk?.program_layout_template_config?.module_data,
       programLayoutTemplateVariant:
-        data?.program_by_pk?.program_layout_template_configs[0]?.program_layout_template?.variant,
+        data?.program_by_pk?.program_layout_template_config?.program_layout_template?.variant,
       categories:
         data?.program_by_pk?.program_categories.map(programCategory => ({
           id: programCategory.category.id,
