@@ -28,7 +28,7 @@ const ProgramPage: React.VFC = () => {
     }
   }, [resourceCollection, tracking, pageFrom, utmSource, isAuthenticating, loadingResourceCollection])
 
-  return <ProgramPageContent variant={program?.programLayoutTemplateVariant} />
+  return <ProgramPageContent layoutTemplateVariant={program?.programLayoutTemplateVariant} />
 }
 
 export default ProgramPage

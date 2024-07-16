@@ -64,12 +64,7 @@ export type Program = ProgramBriefProps & {
   displayHeader: boolean
   displayFooter: boolean
   programLayoutTemplateId: string
-  moduleData: {
-    [key: string]: {
-      id: string
-      value: string
-    }
-  }
+  moduleData: Record<string, any>
   programLayoutTemplateVariant?: string | null | undefined
   plans: (ProgramPlan & {
     isSubscription: boolean
