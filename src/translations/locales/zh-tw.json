@@ -1129,6 +1129,8 @@
   "program.ProgramContentMenu.totalAmount": "共 {count} 題",
   "program.ProgramContentMenu.unit": "單元排序",
   "program.ProgramContentNoAuthBlock.noAuth": "沒有此頁瀏覽權限",
+  "program.ProgramContentEbookReader.trialCompleted": "試閱完畢",
+  "program.ProgramContentEbookReader.trialCompletedMessage": "後面內容更精彩，立即購買完整版",
   "program.ProgramContentPlayer.next": "接下來",
   "program.ProgramDisplayedListItem.expiredAt": "到期",
   "program.ProgramSelector.allPrograms": "全部課程",

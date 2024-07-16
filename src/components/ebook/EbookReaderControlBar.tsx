@@ -39,12 +39,15 @@ export const EbookReaderControlBar: React.VFC<{
   programContentHighlights: Array<Highlight>
   fontSize: number
   lineHeight: number
+  ebookTrialPercentage: number
+  isTrial: boolean
   refetchBookmark: () => void
   rendition: React.MutableRefObject<Rendition | undefined>
   onLocationChange: (loc: string) => void
   onFontSizeChange: React.Dispatch<React.SetStateAction<number>>
   onLineHeightChange: React.Dispatch<React.SetStateAction<number>>
   onSliderValueChange: React.Dispatch<React.SetStateAction<number>>
+  onModalStateChange: React.Dispatch<React.SetStateAction<string | null>>
   sliderValue: number
   onThemeChange: (theme: 'light' | 'dark') => void
   currentThemeData: { color: string; backgroundColor: string }
@@ -61,7 +64,10 @@ export const EbookReaderControlBar: React.VFC<{
   lineHeight,
   rendition,
   sliderValue,
+  ebookTrialPercentage,
+  isTrial,
   onSliderValueChange,
+  onModalStateChange,
   refetchBookmark,
   onLocationChange,
   onFontSizeChange,
@@ -76,15 +82,16 @@ export const EbookReaderControlBar: React.VFC<{
   const [showTooltip, setShowTooltip] = useState(false)
   const [isFocus, setFocus] = useState(false)
 
-  const sliderOnChangeEnd = async () => {
+  const handleSliderChange = async (value: number) => {
     if (!isFocus) {
       return
     }
-    if (sliderValue === undefined || sliderValue === 0 || !rendition.current) {
+    if (value === undefined || value === 0 || !rendition.current) {
       // go to cover page
       rendition.current?.display()
     } else {
-      const cfi = rendition.current.book.locations.cfiFromPercentage(sliderValue / 100)
+      onSliderValueChange(value)
+      const cfi = rendition.current.book.locations.cfiFromPercentage(value / 100)
       onLocationChange(cfi)
     }
 
@@ -122,8 +129,13 @@ export const EbookReaderControlBar: React.VFC<{
               setFocus(true)
             }}
             onTouchEnd={() => setShowTooltip(false)}
-            onChangeEnd={() => sliderOnChangeEnd()}
-            onChange={v => onSliderValueChange(v)}
+            onChange={v => {
+              if (isTrial && v >= ebookTrialPercentage) {
+                onModalStateChange('trialComplete')
+              } else {
+                handleSliderChange(v)
+              }
+            }}
             focusThumbOnChange={false}
             step={0.00001}
             max={100}

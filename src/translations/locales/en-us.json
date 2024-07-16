@@ -1130,6 +1130,8 @@
   "program.ProgramContentMenu.unit": "單元排序",
   "program.ProgramContentNoAuthBlock.noAuth": "沒有此頁瀏覽權限",
   "program.ProgramContentPlayer.next": "接下來",
+  "program.ProgramContentEbookReader.trialCompleted": "Trial Read Completed",
+  "program.ProgramContentEbookReader.trialCompletedMessage": "The following content will be more exciting, buy the full version now.",
   "program.ProgramDisplayedListItem.expiredAt": "到期",
   "program.ProgramSelector.allPrograms": "全部課程",
   "program.label.cover": "Cover Image",
