@@ -1,23 +1,27 @@
 import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
-import { Flex, Spinner } from '@chakra-ui/react'
+import { Box, Button, Flex, Spinner, Text } from '@chakra-ui/react'
 import axios from 'axios'
 import { inRange } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { EpubView, ReactReaderStyle } from 'react-reader'
 import styled from 'styled-components'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
-import { useEbookHighlight } from '../../hooks/ebookHighlight'
+import { commonMessages } from '../../helpers/translation'
+import { useEbookHighlight, useGetEbookTrialPercentage } from '../../hooks/ebook'
 import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
+import CommonModal from '../common/CommonModal'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
 import EbookCommentModal from '../ebook/EbookCommentModel'
 import EbookDeleteHighlightModal from '../ebook/EbookDeleteCommentModel'
 import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
 import EbookTextSelectionToolbar from '../ebook/EbookTextSelectionToolbar'
 import { decryptData } from './decryptUtils'
+import programMessages from './translation'
 import type { NavItem, Rendition, Book, Location, Contents } from 'epubjs'
 
 const ReaderBookmark = styled.div`
@@ -122,6 +126,8 @@ export type Bookmark = {
   percentage: number
 }
 
+const isSafari = /Safari/.test(navigator.userAgent)
+
 const ProgramContentEbookReader: React.VFC<{
   programContentId: string
   isTrial: boolean
@@ -146,10 +152,16 @@ const ProgramContentEbookReader: React.VFC<{
   const toc = useRef<NavItem[]>([])
   const { refetchProgress } = useContext(ProgressContext)
   const { programContentBookmarks, refetch: refetchBookmark } = useEbookBookmark(programContentId, currentMemberId)
+  const { highlights, saveHighlight, setHighlights, getHighLightData, deleteHighlight, updateHighlight } =
+    useEbookHighlight()
+  const ebookTrialPercentage = useGetEbookTrialPercentage(programContentId)
+  const { formatMessage } = useIntl()
   const { upsertProgramContentEbookTocProgress, updateProgramContentEbookTocProgressFinishedAt } =
     useMutationProgramContentEbookTocProgress()
 
   const [sliderValue, setSliderValue] = useState<number>(0)
+  const [modalState, setModalState] = useState<'trialComplete' | null | string>(null)
+  const [isTrialCompleted, setIsTrialCompleted] = useState(false)
   const [isLocationGenerated, setIsLocationGenerated] = useState<boolean>(false)
   const [currentPageBookmarkIds, setCurrentPageBookmarkIds] = useState<string[]>([])
   const [chapter, setChapter] = useState('')
@@ -170,50 +182,35 @@ const ProgramContentEbookReader: React.VFC<{
   const [openDeleteHighlightModel, setDeleteHighlightModel] = useState(false)
   const [isRenditionReady, setIsRenditionReady] = useState(false)
   const [reRenderHighlightQueue, setReRenderHighlightQueue] = useState<string[]>([])
-  const isDragging = useRef(false)
   const [forceReapplyHighlight, setForceReapplyHighlight] = useState(false)
-
-  const {
-    error,
-    highlights,
-    saveHighlight,
-    setHighlights,
-    getHighLightData,
-    markColorAnnotationAsMarked,
-    markUnderLineAnnotationAsMarked,
-    deleteHighlight,
-    updateHighlight,
-  } = useEbookHighlight()
-
   const [annotation, setAnnotation] = useState<Highlight | null>(null)
-
   const [highlightToDelete, setHighlightToDelete] = useState<Highlight | null>(null)
+
+  const isDragging = useRef(false)
   const originalNextRef = useRef<(() => Promise<void>) | undefined>()
   const originalPrevRef = useRef<(() => Promise<void>) | undefined>()
 
-  const updateNavigation = () => {
-    if (rendition.current) {
-      if (openCommentModel) {
-        rendition.current.next = () => {
-          return Promise.resolve()
-        }
-        rendition.current.prev = () => {
-          return Promise.resolve()
-        }
-      } else {
-        if (typeof originalNextRef.current === 'function') {
-          rendition.current.next = originalNextRef.current
-        }
-        if (typeof originalPrevRef.current === 'function') {
-          rendition.current.prev = originalPrevRef.current
-        }
+  if (rendition.current) {
+    if (!!openCommentModel || !isLocationGenerated) {
+      rendition.current.next = () => {
+        return Promise.resolve()
+      }
+      rendition.current.prev = () => {
+        return Promise.resolve()
+      }
+    } else if (!!isTrialCompleted) {
+      rendition.current.next = () => {
+        return Promise.resolve()
+      }
+    } else {
+      if (typeof originalNextRef.current === 'function') {
+        rendition.current.next = originalNextRef.current
+      }
+      if (typeof originalPrevRef.current === 'function') {
+        rendition.current.prev = originalPrevRef.current
       }
     }
   }
-
-  useEffect(() => {
-    updateNavigation()
-  }, [openCommentModel])
 
   const showCommentModal = (cfiRange: string | null, id: string | null = null) => {
     let highlightToComment
@@ -580,7 +577,18 @@ const ProgramContentEbookReader: React.VFC<{
   }
 
   return (
-    <div>
+    <Box height={{ base: `${!!isSafari ? '90vh' : '100vh'}`, md: '85vh' }}>
+      <CommonModal
+        isCentered
+        isOpen={modalState === 'trialComplete'}
+        title={formatMessage(programMessages.ProgramContentEbookReader.trialCompleted)}
+        onClose={() => {
+          setModalState(null)
+        }}
+        renderFooter={() => <Button colorScheme="primary">{formatMessage(commonMessages.ui.purchase)}</Button>}
+      >
+        <Text marginTop="16px">{formatMessage(programMessages.ProgramContentEbookReader.trialCompletedMessage)}</Text>
+      </CommonModal>
       <EbookDeleteHighlightModal
         visible={openDeleteHighlightModel}
         onOk={() => {
@@ -612,7 +620,7 @@ const ProgramContentEbookReader: React.VFC<{
         />
       ) : null}
       {source ? (
-        <div style={{ height: '85vh' }}>
+        <Box height={{ base: `${!!isSafari ? '78%' : '90%'}`, md: '100%' }}>
           <div style={readerStyles.container}>
             <div style={readerStyles.readerArea}>
               <div style={readerStyles.reader}>
@@ -631,8 +639,17 @@ const ProgramContentEbookReader: React.VFC<{
                     // reRenderAnnotation()
 
                     if (start && end && rendition.current) {
+                      const sliderPercentage = start.percentage * 100
+                      setIsTrialCompleted(false)
+                      setSliderValue(sliderPercentage)
+                      if (isTrial && sliderPercentage >= ebookTrialPercentage) {
+                        setModalState('trialComplete')
+                        setIsTrialCompleted(true)
+                      } else {
+                        setIsTrialCompleted(false)
+                        setSliderValue(sliderPercentage)
+                      }
                       setToolbarVisible(false)
-                      setSliderValue(start.percentage * 100)
                       // if this page is end page, set slider value to 100
                       if (atEnd) {
                         setSliderValue(100)
@@ -725,8 +742,6 @@ const ProgramContentEbookReader: React.VFC<{
 
                       originalNextRef.current = rendition.current.next.bind(rendition.current)
                       originalPrevRef.current = rendition.current.prev.bind(rendition.current)
-
-                      updateNavigation()
 
                       rendition.current.spread('auto')
 
@@ -826,6 +841,7 @@ const ProgramContentEbookReader: React.VFC<{
                 style={{ ...readerStyles.arrow, ...readerStyles.prev }}
                 onClick={async () => {
                   await rendition.current?.prev()
+                  setIsTrialCompleted(false)
                   setForceReapplyHighlight(!forceReapplyHighlight)
                 }}
               >
@@ -834,15 +850,19 @@ const ProgramContentEbookReader: React.VFC<{
               <button
                 style={{ ...readerStyles.arrow, ...readerStyles.next }}
                 onClick={async () => {
-                  await rendition.current?.next()
-                  setForceReapplyHighlight(!forceReapplyHighlight)
+                  if (isTrialCompleted) {
+                    setModalState('trialComplete')
+                  } else {
+                    await rendition.current?.next()
+                    setForceReapplyHighlight(!forceReapplyHighlight)
+                  }
                 }}
               >
                 ›
               </button>
             </div>
           </div>
-        </div>
+        </Box>
       ) : (
         <Flex height="85vh" justifyContent="center" alignItems="center">
           <Spinner />
@@ -852,7 +872,10 @@ const ProgramContentEbookReader: React.VFC<{
         <EbookReaderControlBar
           isLocationGenerated={isLocationGenerated}
           sliderValue={sliderValue}
+          onModalStateChange={setModalState}
           onSliderValueChange={setSliderValue}
+          ebookTrialPercentage={ebookTrialPercentage}
+          isTrial={isTrial}
           rendition={rendition}
           chapter={chapter}
           programContentBookmarks={programContentBookmarks}
@@ -871,7 +894,7 @@ const ProgramContentEbookReader: React.VFC<{
           showCommentModal={showCommentModal}
         />
       ) : null}
-    </div>
+    </Box>
   )
 }
 

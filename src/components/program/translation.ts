@@ -48,6 +48,13 @@ const programMessages = {
   ProgramSelector: defineMessages({
     allPrograms: { id: 'program.ProgramSelector.allPrograms', defaultMessage: '全部課程' },
   }),
+  ProgramContentEbookReader: defineMessages({
+    trialCompleted: { id: 'program.ProgramContentEbookReader.trialCompleted', defaultMessage: 'Trial Read Completed' },
+    trialCompletedMessage: {
+      id: 'program.ProgramContentEbookReader.trialCompletedMessage',
+      defaultMessage: 'The following content is more exciting, buy the full version now.',
+    },
+  }),
 }
 
 export default programMessages
