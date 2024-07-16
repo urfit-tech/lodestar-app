@@ -64,7 +64,7 @@ const SecondaryProgramInfoCard: React.FC<{
     <StyledCountBlock>
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <CalendarIcon />
-        <Title>預計開課</Title>
+        <Title data-testid="expectedStartDate">預計開課</Title>
         <Content>{expectedStartDate ? dayjs(expectedStartDate).format('YYYY/MM/DD') : '-'}</Content>
       </div>
 
