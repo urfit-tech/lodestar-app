@@ -1,4 +1,6 @@
+import { gql, useQuery } from '@apollo/client'
 import { useCallback, useState } from 'react'
+import hasura from '../hasura'
 import {
   DeleteEbookHighlightRequestDto,
   Highlight,
@@ -167,4 +169,25 @@ export const useEbookHighlight = () => {
     deleteHighlight,
     updateHighlight,
   }
+}
+
+export const useGetEbookTrialPercentage = (programContentId: string) => {
+  const { data } = useQuery<hasura.GetEbookTrialPercentage, hasura.GetEbookTrialPercentageVariables>(
+    gql`
+      query GetEbookTrialPercentage($programContentId: uuid!) {
+        program_content_ebook(where: { program_content_id: { _eq: $programContentId } }) {
+          id
+          trial_percentage
+        }
+      }
+    `,
+    {
+      variables: {
+        programContentId,
+      },
+    },
+  )
+
+  const ebookTrialPercentage = data?.program_content_ebook[0].trial_percentage || 0
+  return ebookTrialPercentage
 }

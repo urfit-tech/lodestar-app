@@ -42,7 +42,7 @@ const StyledMobileProgramContentItem = styled.div<{ isEnrolled: boolean }>`
   }
 `
 
-const ProgramContentItem = styled(StyledMobileProgramContentItem)<{ isEnrolled: boolean }>`
+const StyledProgramContentItem = styled(StyledMobileProgramContentItem)<{ isEnrolled: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -83,6 +83,10 @@ const SecondaryProgramContentListItem: React.VFC<{
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
 
+  const isEbookTrial =
+    (item.contentType === 'ebook' && item.displayMode === DisplayModeEnum.trial) ||
+    item.displayMode === DisplayModeEnum.loginToTrial
+
   useEffect(() => {
     const autoScroll = setTimeout(() => {
       const url = new URL(window.location.href)
@@ -121,7 +125,7 @@ const SecondaryProgramContentListItem: React.VFC<{
                 url.searchParams.set('programContentId', item.id)
                 window.history.pushState({}, '', url.toString())
                 setAuthModalVisible?.(true)
-              } else if (item.contentType === 'ebook' && item.displayMode === DisplayModeEnum.trial) {
+              } else if (isEbookTrial) {
                 history.push(`/programs/${program.id}/contents/${item.id}?back=programs_${program.id}`)
               }
             }}
@@ -184,9 +188,9 @@ const SecondaryProgramContentListItem: React.VFC<{
       ) : (
         <div style={{ position: 'relative' }}>
           <StyledPinnedIcon pin={isPinned} />
-          <ProgramContentItem
+          <StyledProgramContentItem
             key={item.id}
-            isEnrolled={isEquityProgram}
+            isEnrolled={isEquityProgram || isEbookTrial}
             onClick={() => {
               if (isEquityProgram) {
                 history.push(`/programs/${program.id}/contents/${item.id}?back=programs_${program.id}`)
@@ -196,7 +200,7 @@ const SecondaryProgramContentListItem: React.VFC<{
                 url.searchParams.set('programContentId', item.id)
                 window.history.pushState({}, '', url.toString())
                 setAuthModalVisible?.(true)
-              } else if (item.contentType === 'ebook' && item.displayMode === DisplayModeEnum.trial) {
+              } else if (isEbookTrial) {
                 history.push(`/programs/${program.id}/contents/${item.id}?back=programs_${program.id}`)
               }
             }}
@@ -255,7 +259,7 @@ const SecondaryProgramContentListItem: React.VFC<{
               </span>
               {durationFormatter(item.duration) || ''}
             </StyledDuration>
-          </ProgramContentItem>
+          </StyledProgramContentItem>
         </div>
       )}
     </>
