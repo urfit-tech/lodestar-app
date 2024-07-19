@@ -138,32 +138,30 @@ export const useMerchandiseSpecQuantity = (merchandiseSpecId: string) => {
   const [data, setData] = useState<MerchandiseSpecProps | null>(null)
 
   const refetchMerchandiseSpec = useCallback(async () => {
-    if (merchandiseSpecId) {
-      const route = `/merchandise-spec/${merchandiseSpecId}/inventory/status`
-      setLoading(true)
-      try {
-        const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
-          headers: { authorization: `Bearer ${authToken}` },
-        })
+    const route = `/merchandise-spec/${merchandiseSpecId}/inventory/status`
+    setLoading(true)
+    try {
+      const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+        headers: { authorization: `Bearer ${authToken}` },
+      })
 
-        setData(
-          !data.result
-            ? null
-            : {
-                id: data.result.id,
-                title: data.result.title,
-                listPrice: Number(data.result.listPrice),
-                salePrice: Number(data.result.salePrice),
-                quota: Number(data.result.quota),
-                buyableQuantity: Number(data.result.merchandiseSpecInventoryStatus.buyableQuantity),
-              },
-        )
-      } catch (err) {
-        console.log(err)
-        setError(err)
-      } finally {
-        setLoading(false)
-      }
+      setData(
+        !data.result
+          ? null
+          : {
+              id: data.result.id,
+              title: data.result.title,
+              listPrice: Number(data.result.listPrice),
+              salePrice: Number(data.result.salePrice),
+              quota: Number(data.result.quota),
+              buyableQuantity: Number(data.result?.merchandiseSpecInventoryStatus?.buyableQuantity),
+            },
+      )
+    } catch (err) {
+      console.log(err)
+      setError(err)
+    } finally {
+      setLoading(false)
     }
   }, [merchandiseSpecId])
 

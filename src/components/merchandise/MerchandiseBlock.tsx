@@ -280,8 +280,16 @@ const MerchandiseBlock: React.VFC<{
         )}
 
         {withPaymentButton ? (
-          merchandiseSpec && (
-            <MerchandisePaymentButton merchandise={merchandise} merchandiseSpec={merchandiseSpec} quantity={quantity} />
+          loadingMerchandiseSpec ? (
+            <Spinner />
+          ) : (
+            merchandiseSpec && (
+              <MerchandisePaymentButton
+                merchandise={merchandise}
+                merchandiseSpec={merchandiseSpec}
+                quantity={quantity}
+              />
+            )
           )
         ) : (
           <StyledButtonBlock>
