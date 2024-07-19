@@ -128,15 +128,18 @@ export const CartProvider: React.FC = ({ children }) => {
           updateCartProducts({
             variables: {
               memberId: currentMemberId,
-              cartProductObjects: filteredProducts.map(product => {
-                const tracking = product?.options?.tracking || {}
-                return {
-                  app_id: appId,
-                  member_id: currentMemberId,
-                  product_id: product.productId,
-                  options: { tracking },
-                }
-              }),
+              cartProductObjects: Array.from(new Set(filteredProducts.map(product => product.productId))).map(
+                productId => {
+                  const product = filteredProducts.find(p => p.productId === productId)
+                  const tracking = product?.options?.tracking || {}
+                  return {
+                    app_id: appId,
+                    member_id: currentMemberId,
+                    product_id: productId,
+                    options: { tracking },
+                  }
+                },
+              ),
             },
           }).catch(() => {})
         })
@@ -249,13 +252,7 @@ const GET_CART_PRODUCT_COLLECTION = gql`
     $localProductIds: [String!]!
     $merchandiseSpecIds: [uuid!]!
   ) {
-    cart_product(
-      where: {
-        app_id: { _eq: $appId }
-        member_id: { _eq: $memberId }
-        product: { id: { _in: $productIds }, product_owner: { member: { app_id: { _eq: $appId } } } }
-      }
-    ) {
+    cart_product(where: { app_id: { _eq: $appId }, member_id: { _eq: $memberId } }) {
       id
       product {
         id
