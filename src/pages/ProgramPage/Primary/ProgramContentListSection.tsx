@@ -117,7 +117,7 @@ const ProgramContentListSection: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const theme = useAppTheme()
-  const { currentMemberId, isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { isEquityProgram } = useEquityProgramByProgramId(program.id)
 
