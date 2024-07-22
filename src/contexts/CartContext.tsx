@@ -11,6 +11,15 @@ import { useMember } from '../hooks/member'
 import { CartProductProps } from '../types/checkout'
 import { ProductType } from '../types/product'
 
+enum cartOperation {
+  INIT,
+  REMOVE_ITEM,
+  ADD_CART_PRODUCT,
+  UPDATE_PLURAL_CART_PRODUCT_QUANTITY,
+  REMOVE_CART_PRODUCTS,
+  CLEAR_CART,
+}
+
 const CartContext = React.createContext<{
   cartProducts: CartProductProps[]
   isProductInCart?: (productType: ProductType, productTarget: string) => boolean
@@ -53,23 +62,14 @@ export const CartProvider: React.FC = ({ children }) => {
 
   // sync cart products: save to localStorage & update to remote
   const syncCartProducts = useCallback(
-    (
-      operation:
-        | 'init'
-        | 'removeItem'
-        | 'addCartProduct'
-        | 'updatePluralCartProductQuantity'
-        | 'removeCartProducts'
-        | 'clearCart',
-    ) => {
-      console.log('syncCartProducts call', operation)
+    (operation: cartOperation) => {
       const cachedCartProducts = getLocalCartProducts()
       const cartProductOptions: { [ProductId: string]: any } = {}
       cachedCartProducts.forEach(cartProduct => {
         cartProductOptions[cartProduct.productId] = cartProduct.options
       })
 
-      const query = createQuery({ removeItem: operation === 'removeCartProducts' })
+      const query = createGetCartProductOperationQuery({ operation })
 
       apolloClient
         .query<hasura.GET_CART_PRODUCT_COLLECTION, hasura.GET_CART_PRODUCT_COLLECTIONVariables>({
@@ -160,7 +160,7 @@ export const CartProvider: React.FC = ({ children }) => {
 
   // init state
   useEffect(() => {
-    syncCartProducts('init')
+    syncCartProducts(cartOperation.INIT)
   }, [syncCartProducts])
 
   return (
@@ -217,8 +217,7 @@ export const CartProvider: React.FC = ({ children }) => {
           }
           newCartProducts.push(newCartProduct)
           localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProducts))
-          console.log('addCartProduct syncCartProducts call')
-          syncCartProducts('addCartProduct')
+          syncCartProducts(cartOperation.ADD_CART_PRODUCT)
         },
         updatePluralCartProductQuantity: async (productId: string, quantity: number) => {
           const cachedCartProducts = getLocalCartProducts()
@@ -235,21 +234,16 @@ export const CartProvider: React.FC = ({ children }) => {
           )
 
           localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProducts))
-          console.log('updatePluralCartProductQuantity syncCartProducts call')
-          syncCartProducts('updatePluralCartProductQuantity')
+          syncCartProducts(cartOperation.UPDATE_PLURAL_CART_PRODUCT_QUANTITY)
         },
         removeCartProducts: async (productIds: string[]) => {
-          console.log('removeCartProducts')
           const cachedCartProducts = getLocalCartProducts()
           const newCartProduct = cachedCartProducts.filter(cartProduct => !productIds.includes(cartProduct.productId))
-          console.log('newCartProduct', newCartProduct)
           localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProduct))
-          console.log('removeCartProducts syncCartProducts call')
-          syncCartProducts('removeCartProducts')
+          syncCartProducts(cartOperation.REMOVE_CART_PRODUCTS)
         },
         clearCart: async () => {
           localStorage.removeItem('kolable.cart._products')
-          console.log('clearCart syncCartProducts call')
           setCartProducts([])
           currentMemberId && updateCartProducts({ variables: { memberId: currentMemberId, cartProductObjects: [] } })
         },
@@ -260,11 +254,11 @@ export const CartProvider: React.FC = ({ children }) => {
   )
 }
 
-const createQuery = ({ removeItem = false }: { removeItem: boolean }) => {
-  console.log({ removeItem })
-  const productIdsCondition = removeItem
-    ? `product: { id: { _in: $productIds }, product_owner: { member: { app_id: { _eq: $appId } } } }`
-    : ''
+const createGetCartProductOperationQuery = ({ operation }: { operation: cartOperation }) => {
+  const productIdsCondition =
+    operation === cartOperation.REMOVE_CART_PRODUCTS
+      ? `product: { id: { _in: $productIds }, product_owner: { member: { app_id: { _eq: $appId } } } }`
+      : ''
 
   return `
     query GET_CART_PRODUCT_COLLECTION(
