@@ -1,18 +1,19 @@
-import { Flex, Text } from '@chakra-ui/react'
+import { Box, Flex, Text } from '@chakra-ui/react'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import ShortenPeriodTypeLabel from 'lodestar-app-element/src/components/labels/ShortenPeriodTypeLabel'
 import { useCurrency } from 'lodestar-app-element/src/hooks/util'
 import styled from 'styled-components'
 import { PeriodType } from '../../../../types/program'
 import { colors } from '../style'
 
-const DisplayPrice = styled(Text)`
+const StyledDisplayPrice = styled(Text)`
   color: ${colors.orange};
   letter-spacing: 0.23px;
   font-size: 28px;
   font-weight: bold;
 `
-const DeletePrice = styled(Text)`
-  color: rgba(0, 0, 0, 0.45);
+
+const StyledPriceDescription = styled(Box)`
   letter-spacing: 0.18px;
   font-size: 14px;
 `
@@ -23,7 +24,23 @@ const SecondaryPriceLabel: React.VFC<{
   currencyId: string
   periodType?: PeriodType
   periodAmount?: number | null
-}> = ({ salePrice, listPrice, currencyId, periodAmount, periodType }) => {
+  salePricePrefix?: string
+  salePriceSuffix?: string
+  listPricePrefix?: string
+  listPriceSuffix?: string
+  priceDescription?: string
+}> = ({
+  salePrice,
+  listPrice,
+  listPriceSuffix,
+  listPricePrefix,
+  salePricePrefix,
+  salePriceSuffix,
+  priceDescription,
+  currencyId,
+  periodAmount,
+  periodType,
+}) => {
   const { formatCurrency } = useCurrency(currencyId)
 
   const periodElem = !!periodType && (
@@ -36,19 +53,34 @@ const SecondaryPriceLabel: React.VFC<{
   return (
     <Flex flexDirection="column" w="100%" align="center">
       {salePrice === null ? (
-        <DisplayPrice>
-          {formatCurrency(listPrice)}
-          {periodElem}
-        </DisplayPrice>
+        <>
+          <StyledDisplayPrice>
+            {listPricePrefix}
+            {formatCurrency(listPrice)}
+            {listPriceSuffix}
+            {periodElem}
+          </StyledDisplayPrice>
+          <StyledPriceDescription>
+            <BraftContent>{priceDescription}</BraftContent>
+          </StyledPriceDescription>
+        </>
       ) : (
         <>
-          <DisplayPrice>
+          <StyledDisplayPrice>
+            {salePricePrefix}
             {formatCurrency(Number(salePrice))}
+            {salePriceSuffix}
             {periodElem}
-          </DisplayPrice>
-          <DeletePrice as="del">
-            {formatCurrency(listPrice)} {periodElem}
-          </DeletePrice>
+          </StyledDisplayPrice>
+          <StyledPriceDescription>
+            <Text as="del">
+              {listPricePrefix}
+              {formatCurrency(listPrice)}
+              {listPriceSuffix}
+              {periodElem}
+            </Text>
+            <BraftContent>{priceDescription}</BraftContent>
+          </StyledPriceDescription>
         </>
       )}
     </Flex>

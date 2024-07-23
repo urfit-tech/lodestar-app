@@ -1,17 +1,14 @@
 import { Button, Icon } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import queryString from 'query-string'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessage, useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
-import { Link, Redirect, useLocation, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import Responsive, { BREAK_POINT } from '../../../../components/common/Responsive'
 import VideoPlayer from '../../../../components/common/VideoPlayer'
-import DefaultLayout from '../../../../components/layout/DefaultLayout'
 import MediaPlayerContext from '../../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, handleError } from '../../../../helpers'
@@ -24,9 +21,6 @@ import {
 import { useEnrolledProgramPackage } from '../../../../hooks/programPackage'
 import { ReactComponent as PlayIcon } from '../../../../images/play-fill-icon.svg'
 import { DisplayModeEnum } from '../../../../types/program'
-import ForbiddenPage from '../../../ForbiddenPage'
-import LoadingPage from '../../../LoadingPage'
-import ProgramPageHelmet from '../../Primary/ProgramPageHelmet'
 import PreviewBlock from '../PreviewBlock'
 import ProgramIntroTabs from '../ProgramIntroTabs'
 import SecondaryProgramBanner from '../SecondaryProgramBanner'
@@ -89,23 +83,18 @@ const StyledButtonWrapper = styled.div`
 const SecondaryProgramPageContent: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
-  const location = useLocation()
-  const params = queryString.parse(location.search)
-  const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
-  const [previousPage] = useQueryParam('back', StringParam)
   const { programId } = useParams<{ programId: string }>()
-  const { settings, loading: loadingApp } = useApp()
+  const { settings } = useApp()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
-  const { loadingProgram, program, addProgramView } = useProgram(programId)
-  const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
-  const { isEquityProgram, loadingEquityProgram } = useEquityProgramByProgramId(programId)
+  const { program, addProgramView } = useProgram(programId)
+  const { data: enrolledProgramPackages } = useEnrolledProgramPackage(currentMemberId || '', { programId })
+  const { isEquityProgram } = useEquityProgramByProgramId(programId)
   const { loading: loadingProgramPlansEnrollmentsAggregateList, programPlansEnrollmentsAggregateList } =
     useProgramPlansEnrollmentsAggregateList(program?.plans.map(plan => plan.id) || [])
   const [isPlanListSticky, setIsPlanListSticky] = useState(false)
 
   const planBlockRef = useRef<HTMLDivElement | null>(null)
-  const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const planListHeightRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
 
@@ -124,12 +113,6 @@ const SecondaryProgramPageContent: React.VFC = () => {
   }
 
   useEffect(() => {
-    if (customerReviewBlockRef.current && params.moveToBlock === 'customer-review') {
-      setTimeout(() => customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' }), 1000)
-    }
-  }, [customerReviewBlockRef, params])
-
-  useEffect(() => {
     ReactGA.ga('send', 'pageview')
   }, [])
 
@@ -139,42 +122,15 @@ const SecondaryProgramPageContent: React.VFC = () => {
     }
   }, [loadingProgramPlansEnrollmentsAggregateList])
 
-  if (!loadingEquityProgram && !visitIntro && isEquityProgram) {
-    return <Redirect to={`/programs/${programId}/contents?back=${previousPage || `programs_${programId}`}`} />
-  }
-
-  if (
-    loadingProgram ||
-    enrolledProgramPackages.loading ||
-    loadingEquityProgram ||
-    loadingProgramPlansEnrollmentsAggregateList
-  ) {
-    return <LoadingPage />
-  }
-
-  if (!program) {
-    return <ForbiddenPage />
-  }
-  const isEnrolledByProgramPackage = !!enrolledProgramPackages.data.length
+  const isEnrolledByProgramPackage = !!enrolledProgramPackages.length
 
   const isDelivered = isEnrolledByProgramPackage
-    ? enrolledProgramPackages.data.some(programPackage =>
+    ? enrolledProgramPackages.some(programPackage =>
         programPackage.enrolledPlans.some(plan => !plan.isTempoDelivery)
           ? true
           : programPackage.programs.some(program => program.id === programId && program.isDelivered),
       )
     : false
-
-  const trialProgramContents = program.contentSections
-    .filter(programContentSection => programContentSection.contents.length)
-    .map(programContentSection =>
-      programContentSection.contents.filter(
-        programContent =>
-          programContent.displayMode === DisplayModeEnum.trial ||
-          programContent.displayMode === DisplayModeEnum.loginToTrial,
-      ),
-    )
-    .flat()
 
   let trialProgramContentMedias = program.contentSections
     .filter(programContentSection => programContentSection.contents.length)
@@ -197,14 +153,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
   }
 
   return (
-    <DefaultLayout
-      white
-      footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}
-      noHeader={loadingProgram ? true : !program.displayHeader}
-      noFooter={loadingProgram ? true : !program.displayFooter}
-    >
-      {!loadingApp && <ProgramPageHelmet program={program} />}
-
+    <>
       <div>
         <SecondaryProgramBanner
           program={program}
@@ -311,7 +260,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
           </StyledFixedBottomBlock>
         </Responsive.Default>
       )}
-    </DefaultLayout>
+    </>
   )
 }
 

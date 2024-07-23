@@ -1,4 +1,6 @@
 import React from 'react'
+import { Program, ProgramContentSectionType } from '../../types/program'
+import EbookProgramPageContent from './Ebook/EbookProgramPageContent'
 import PrimaryProgramPageContent from './Primary/PrimaryProgramPageContent'
 import SecondaryProgramContent from './Secondary/SecondaryProgramPageContent'
 
@@ -9,13 +11,14 @@ class ProgramPageContentFactory {
     this._type = layoutTemplateVariant || 'default'
   }
 
-  public createContent(): JSX.Element {
+  public createContent(program: Program & ProgramContentSectionType): JSX.Element {
     const ContentComponent = this._getContentComponent()
-    return <ContentComponent />
+    return <ContentComponent program={program} />
   }
 
-  private _getContentComponent(): React.ComponentType<{}> {
-    const contentMap: Record<string, React.ComponentType<{}>> = {
+  private _getContentComponent(): React.ComponentType<{ program: Program & ProgramContentSectionType }> {
+    const contentMap: Record<string, React.ComponentType<{ program: Program & ProgramContentSectionType }>> = {
+      ebook: EbookProgramPageContent,
       secondary: SecondaryProgramContent,
       default: PrimaryProgramPageContent,
     }
@@ -23,11 +26,12 @@ class ProgramPageContentFactory {
   }
 }
 
-const ProgramPageContent: React.FC<{ layoutTemplateVariant: string | null | undefined }> = ({
-  layoutTemplateVariant,
-}) => {
+const ProgramPageContent: React.FC<{
+  layoutTemplateVariant: string | null | undefined
+  program: Program & ProgramContentSectionType
+}> = ({ layoutTemplateVariant, program }) => {
   const contentfactory = new ProgramPageContentFactory(layoutTemplateVariant)
-  return contentfactory.createContent()
+  return contentfactory.createContent(program)
 }
 
 export default ProgramPageContent
