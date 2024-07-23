@@ -78,7 +78,19 @@ const SecondaryProgramPlanCard: React.VFC<{
   const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds()
   const { productGiftPlan } = useProductGiftPlan(`ProgramPlan_${programPlan?.id}`)
 
-  const { salePrice, listPrice, currency, isSubscription, periodType, periodAmount } = programPlan
+  const {
+    salePrice,
+    listPrice,
+    currency,
+    isSubscription,
+    periodType,
+    periodAmount,
+    salePricePrefix,
+    salePriceSuffix,
+    listPricePrefix,
+    listPriceSuffix,
+    priceDescription,
+  } = programPlan
   const currencyId = currency.id || 'TWD'
   const isOnSale = (programPlan.soldAt?.getTime() || 0) > Date.now()
   const enrolled = enrolledProgramIds.includes(programPlan.id)
@@ -96,6 +108,11 @@ const SecondaryProgramPlanCard: React.VFC<{
               periodType={periodType}
               periodAmount={periodAmount}
               currencyId={currencyId}
+              salePricePrefix={salePricePrefix}
+              salePriceSuffix={salePriceSuffix}
+              listPricePrefix={listPricePrefix}
+              listPriceSuffix={listPriceSuffix}
+              priceDescription={priceDescription}
             />
           </StyledPriceBlock>
           {productGiftPlan.id && <GiftPlanTag color={colors.orange} />}
