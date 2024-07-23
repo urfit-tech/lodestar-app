@@ -43,3 +43,12 @@ export type ProgramPackageEnrollment = Pick<ProgramPackageProps, 'id' | 'coverUr
   deliveredAt: Date | null
   lastViewedAt: Date | null
 }
+
+export type EnrolledProgramPackages = {
+  id: string
+  coverUrl: string | undefined
+  title: string
+  enrolledPlans: { id: string; isTempoDelivery: boolean }[]
+  programs: { id: string; isDelivered: boolean }[]
+  totalDuration: number
+}[]

@@ -400,13 +400,18 @@ export const useProgram = (programId: string) => {
           auto_renewed
           is_countdown_timer_visible
           group_buying_people
+          sale_price_prefix
+          sale_price_suffix
+          list_price_prefix
+          list_price_suffix
+          price_description
         }
       }
     `,
     { skip: !programId, variables: { programId } },
   )
 
-  const program: (Program & { duration: number | null; score: number | null }) | null = useMemo(() => {
+  const program: Program | null = useMemo(() => {
     return {
       id: data?.program_by_pk?.id,
       coverType: data?.program_by_pk?.cover_type || 'image',
@@ -476,6 +481,11 @@ export const useProgram = (programId: string) => {
           publishedAt: programPlan.published_at,
           isCountdownTimerVisible: programPlan.is_countdown_timer_visible,
           groupBuyingPeople: programPlan.group_buying_people || 1,
+          salePricePrefix: programPlan.sale_price_prefix || undefined,
+          salePriceSuffix: programPlan.sale_price_suffix || undefined,
+          listPricePrefix: programPlan.list_price_prefix || undefined,
+          listPriceSuffix: programPlan.list_price_suffix || undefined,
+          priceDescription: programPlan.price_description || undefined,
           // enrollmentCount:
           //   programPlanEnrollmentsAggregateData?.program_plan.find(v => v.id === programPlan.id)
           //     ?.program_plan_enrollments_aggregate.aggregate?.count || 0,
