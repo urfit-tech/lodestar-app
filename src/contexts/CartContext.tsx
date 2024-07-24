@@ -1,10 +1,10 @@
-import { gql, useApolloClient, useMutation } from '@apollo/client'
+import { ApolloClient, gql, useApolloClient, useMutation } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { getConversionApiData } from 'lodestar-app-element/src/helpers/conversionApi'
 import { ConversionApiContent, ConversionApiEvent } from 'lodestar-app-element/src/types/conversionApi'
 import { uniqBy } from 'ramda'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import hasura from '../hasura'
 import { getTrackingCookie } from '../helpers'
 import { useMember } from '../hooks/member'
@@ -18,6 +18,209 @@ enum cartOperation {
   UPDATE_PLURAL_CART_PRODUCT_QUANTITY,
   REMOVE_CART_PRODUCTS,
   CLEAR_CART,
+}
+
+class CartSync {
+  private apolloClient: ApolloClient<any>
+  private appId: string
+  private currentMemberId: string | null
+  private updateCartProducts: (variables: any) => Promise<any>
+
+  constructor(
+    apolloClient: ApolloClient<any>,
+    appId: string,
+    currentMemberId: string | null,
+    updateCartProducts: (variables: any) => Promise<any>,
+  ) {
+    this.apolloClient = apolloClient
+    this.appId = appId
+    this.currentMemberId = currentMemberId
+    this.updateCartProducts = updateCartProducts
+  }
+
+  public async syncCartProducts(operation: cartOperation) {
+    const cachedCartProducts = this.getLocalCartProducts()
+    const cartProductOptions = this.restructureCachedCartProducts(cachedCartProducts)
+
+    const data = await this.fetchRemoteCartProducts(operation, cachedCartProducts)
+    const cartProducts = this.mergeLocalAndRemoteCartProducts({ data, cachedCartProducts, cartProductOptions })
+    const filteredProducts = this.removePhaseOutCartProducts(cartProducts)
+
+    this.updateLocalCache(filteredProducts)
+
+    if (!this.currentMemberId) {
+      return
+    }
+
+    try {
+      await this.updateCartProducts({
+        variables: {
+          memberId: this.currentMemberId,
+          cartProductObjects: filteredProducts.map(product => {
+            const tracking = product?.options?.tracking || {}
+            return {
+              app_id: this.appId,
+              member_id: this.currentMemberId,
+              product_id: product.productId,
+              options: { tracking },
+            }
+          }),
+        },
+      })
+
+      return filteredProducts
+    } catch (error) {}
+  }
+
+  private getLocalCartProducts(): CartProductProps[] {
+    let cachedCartProducts: CartProductProps[]
+    try {
+      localStorage.removeItem('kolable.cart')
+      localStorage.removeItem('kolable.cart.products')
+      cachedCartProducts = JSON.parse(localStorage.getItem('kolable.cart._products') || '[]')
+    } catch (error) {
+      cachedCartProducts = []
+    }
+    return cachedCartProducts
+  }
+
+  private restructureCachedCartProducts(cachedCartProducts: CartProductProps[]): { [ProductId: string]: any } {
+    return cachedCartProducts.reduce((options, cartProduct) => {
+      options[cartProduct.productId] = cartProduct.options
+      return options
+    }, {} as { [ProductId: string]: any })
+  }
+
+  private createGetCartProductOperationQuery(operation: cartOperation): string {
+    const productIdsCondition =
+      operation === cartOperation.REMOVE_CART_PRODUCTS
+        ? `product: { id: { _in: $productIds }, product_owner: { member: { app_id: { _eq: $appId } } } }`
+        : ''
+
+    return `
+      query GET_CART_PRODUCT_COLLECTION(
+        $appId: String!
+        $memberId: String!
+        $productIds: [String!]
+        $localProductIds: [String!]!
+        $merchandiseSpecIds: [uuid!]!
+      ) {
+        cart_product(
+          where: {
+            app_id: { _eq: $appId }
+            member_id: { _eq: $memberId }
+            ${productIdsCondition}
+          }
+        ) {
+          id
+          product {
+            id
+            type
+            product_owner {
+              member_id
+            }
+            product_enrollments(where: { member_id: { _eq: $memberId } }) {
+              member_id
+              is_physical
+            }
+          }
+        }
+        product(where: { id: { _in: $localProductIds } }) {
+          id
+          type
+          product_enrollments(where: { member_id: { _eq: $memberId } }) {
+            member_id
+            is_physical
+          }
+        }
+        merchandise_spec(where: { id: { _in: $merchandiseSpecIds } }) {
+          id
+          merchandise {
+            id
+            member_shop_id
+          }
+        }
+      }
+    `
+  }
+
+  private async fetchRemoteCartProducts(operation: cartOperation, cachedCartProducts: any[]) {
+    const query = this.createGetCartProductOperationQuery(operation)
+
+    const { data } = await this.apolloClient.query({
+      query: gql`
+        ${query}
+      `,
+      variables: {
+        appId: this.appId,
+        memberId: this.currentMemberId || '',
+        productIds: cachedCartProducts.map(cartProduct => cartProduct.productId),
+        localProductIds: cachedCartProducts.map(cartProduct => cartProduct.productId),
+        merchandiseSpecIds: cachedCartProducts
+          .filter(cartProduct => cartProduct.productId.startsWith('MerchandiseSpec_'))
+          .map(cartProduct => cartProduct.productId.replace('MerchandiseSpec_', '')),
+      },
+      fetchPolicy: 'no-cache',
+    })
+
+    return data
+  }
+
+  private mergeLocalAndRemoteCartProducts({
+    data,
+    cachedCartProducts,
+    cartProductOptions,
+  }: {
+    data: hasura.GET_CART_PRODUCT_COLLECTION
+    cachedCartProducts: any[]
+    cartProductOptions: { [ProductId: string]: any }
+  }) {
+    return uniqBy(
+      cartProduct => cartProduct.productId,
+      [
+        ...data.cart_product.map(cartProduct => ({
+          productId: cartProduct.product.id,
+          shopId: cartProduct.product.id.startsWith('MerchandiseSpec_')
+            ? data.merchandise_spec.find(v => v.id === cartProduct.product.id.replace('MerchandiseSpec_', ''))
+                ?.merchandise.member_shop_id || ''
+            : '',
+          enrollments: cartProduct.product.product_enrollments.map(enrollment => ({
+            memberId: enrollment.member_id || null,
+            isPhysical: enrollment.is_physical || false,
+          })),
+          options: cartProductOptions[cartProduct.product.id],
+        })),
+        ...cachedCartProducts.map(cartProduct => ({
+          ...cartProduct,
+          shopId: cartProduct.productId.startsWith('MerchandiseSpec_')
+            ? data.merchandise_spec.find(v => v.id === cartProduct.productId.replace('MerchandiseSpec_', ''))
+                ?.merchandise.member_shop_id || ''
+            : '',
+          enrollments: data.product
+            .find(product => product.id === cartProduct.productId)
+            ?.product_enrollments.map(enrollment => ({
+              memberId: enrollment.member_id || null,
+              isPhysical: enrollment.is_physical || false,
+            })),
+        })),
+      ],
+    )
+  }
+
+  private removePhaseOutCartProducts(cartProducts: CartProductProps[]) {
+    return cartProducts.filter(
+      cartProduct =>
+        cartProduct.productId.startsWith('Program_') === false &&
+        (cartProduct.enrollments
+          ? cartProduct.enrollments.length === 0 ||
+            cartProduct.enrollments.map(enrollment => enrollment.isPhysical).includes(true)
+          : false),
+    )
+  }
+
+  private updateLocalCache(filteredProducts: CartProductProps[]) {
+    localStorage.setItem('kolable.cart._products', JSON.stringify(filteredProducts))
+  }
 }
 
 const CartContext = React.createContext<{
@@ -47,6 +250,10 @@ export const CartProvider: React.FC = ({ children }) => {
 
   const [cartProducts, setCartProducts] = useState<CartProductProps[]>([])
 
+  const cartSync = useMemo(() => {
+    return new CartSync(apolloClient, appId, currentMemberId, updateCartProducts)
+  }, [apolloClient, appId, currentMemberId, updateCartProducts])
+
   const getLocalCartProducts = () => {
     let cachedCartProducts: CartProductProps[]
     try {
@@ -62,100 +269,11 @@ export const CartProvider: React.FC = ({ children }) => {
 
   // sync cart products: save to localStorage & update to remote
   const syncCartProducts = useCallback(
-    (operation: cartOperation) => {
-      const cachedCartProducts = getLocalCartProducts()
-      const cartProductOptions: { [ProductId: string]: any } = {}
-      cachedCartProducts.forEach(cartProduct => {
-        cartProductOptions[cartProduct.productId] = cartProduct.options
-      })
-
-      const query = createGetCartProductOperationQuery({ operation })
-
-      apolloClient
-        .query<hasura.GET_CART_PRODUCT_COLLECTION, hasura.GET_CART_PRODUCT_COLLECTIONVariables>({
-          query: gql`
-            ${query}
-          `,
-          variables: {
-            appId,
-            memberId: currentMemberId || '',
-            productIds: cachedCartProducts.map(cartProduct => cartProduct.productId),
-            localProductIds: cachedCartProducts.map(cartProduct => cartProduct.productId),
-            merchandiseSpecIds: cachedCartProducts
-              .filter(cartProduct => cartProduct.productId.startsWith('MerchandiseSpec_'))
-              .map(cartProduct => cartProduct.productId.replace('MerchandiseSpec_', '')),
-          },
-          fetchPolicy: 'no-cache',
-        })
-        .then(({ data }) => {
-          const cartProducts: CartProductProps[] = uniqBy(
-            cartProduct => cartProduct.productId,
-            [
-              // remote cart product
-              ...data.cart_product.map(cartProduct => ({
-                productId: cartProduct.product.id,
-                shopId: cartProduct.product.id.startsWith('MerchandiseSpec_')
-                  ? data.merchandise_spec.find(v => v.id === cartProduct.product.id.replace('MerchandiseSpec_', ''))
-                      ?.merchandise.member_shop_id || ''
-                  : '',
-                enrollments: cartProduct.product.product_enrollments.map(enrollment => ({
-                  memberId: enrollment.member_id || null,
-                  isPhysical: enrollment.is_physical || false,
-                })),
-                options: cartProductOptions[cartProduct.product.id],
-              })),
-              // local cart product
-              ...cachedCartProducts.map(cartProduct => ({
-                ...cartProduct,
-
-                shopId: cartProduct.productId.startsWith('MerchandiseSpec_')
-                  ? data.merchandise_spec.find(v => v.id === cartProduct.productId.replace('MerchandiseSpec_', ''))
-                      ?.merchandise.member_shop_id || ''
-                  : '',
-                enrollments: data.product
-                  .find(product => product.id === cartProduct.productId)
-                  ?.product_enrollments.map(enrollment => ({
-                    memberId: enrollment.member_id || null,
-                    isPhysical: enrollment.is_physical || false,
-                  })),
-              })),
-            ],
-          )
-
-          const filteredProducts = cartProducts.filter(
-            cartProduct =>
-              cartProduct.productId.startsWith('Program_') === false &&
-              (cartProduct.enrollments
-                ? cartProduct.enrollments.length === 0 ||
-                  cartProduct.enrollments.map(enrollment => enrollment.isPhysical).includes(true)
-                : false),
-          )
-
-          localStorage.setItem('kolable.cart._products', JSON.stringify(filteredProducts))
-          setCartProducts(filteredProducts)
-
-          if (!currentMemberId) {
-            return
-          }
-
-          updateCartProducts({
-            variables: {
-              memberId: currentMemberId,
-              cartProductObjects: filteredProducts.map(product => {
-                const tracking = product?.options?.tracking || {}
-                return {
-                  app_id: appId,
-                  member_id: currentMemberId,
-                  product_id: product.productId,
-                  options: { tracking },
-                }
-              }),
-            },
-          }).catch(() => {})
-        })
-        .catch(() => {})
+    async (operation: cartOperation) => {
+      const filteredProducts = await cartSync.syncCartProducts(operation)
+      setCartProducts(filteredProducts || [])
     },
-    [apolloClient, appId, currentMemberId, updateCartProducts],
+    [cartSync],
   )
 
   // init state
@@ -252,59 +370,6 @@ export const CartProvider: React.FC = ({ children }) => {
       {children}
     </CartContext.Provider>
   )
-}
-
-const createGetCartProductOperationQuery = ({ operation }: { operation: cartOperation }) => {
-  const productIdsCondition =
-    operation === cartOperation.REMOVE_CART_PRODUCTS
-      ? `product: { id: { _in: $productIds }, product_owner: { member: { app_id: { _eq: $appId } } } }`
-      : ''
-
-  return `
-    query GET_CART_PRODUCT_COLLECTION(
-      $appId: String!
-      $memberId: String!
-      $productIds: [String!]
-      $localProductIds: [String!]!
-      $merchandiseSpecIds: [uuid!]!
-    ) {
-      cart_product(
-        where: {
-          app_id: { _eq: $appId }
-          member_id: { _eq: $memberId }
-          ${productIdsCondition}
-        }
-      ) {
-        id
-        product {
-          id
-          type
-          product_owner {
-            member_id
-          }
-          product_enrollments(where: { member_id: { _eq: $memberId } }) {
-            member_id
-            is_physical
-          }
-        }
-      }
-      product(where: { id: { _in: $localProductIds } }) {
-        id
-        type
-        product_enrollments(where: { member_id: { _eq: $memberId } }) {
-          member_id
-          is_physical
-        }
-      }
-      merchandise_spec(where: { id: { _in: $merchandiseSpecIds } }) {
-        id
-        merchandise {
-          id
-          member_shop_id
-        }
-      }
-    }
-  `
 }
 
 const UPDATE_CART_PRODUCTS = gql`
