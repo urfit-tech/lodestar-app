@@ -1,5 +1,5 @@
 import { Collapse, IconButton } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
 import styled from 'styled-components'
 import {
@@ -48,6 +48,26 @@ const checkAllPinned = (contentTitleCollapsed: contentTitleCollapsedType): boole
   return Object.values(contentTitleCollapsed).every(val => val.isAllPinned === true)
 }
 
+const transformProgramContentSections = (
+  sections: (ProgramContentSection & {
+    contents: ProgramContent[] & {
+      programId?: string | undefined
+      contentSectionTitle?: string | undefined
+    }
+  })[],
+) => {
+  return sections.reduce((acc: contentTitleCollapsedType, sec) => {
+    const isAllPinned = sec.contents.every(content => content.pinnedStatus)
+
+    acc[sec.id] = {
+      isCollapsed: isAllPinned ? true : sec.collapsedStatus,
+      isAllPinned: isAllPinned,
+    }
+
+    return acc
+  }, {})
+}
+
 const SecondaryProgramContentListSection: React.VFC<{
   program: Program & ProgramContentSectionType
   programContentSections: (ProgramContentSection & {
@@ -58,32 +78,14 @@ const SecondaryProgramContentListSection: React.VFC<{
   })[]
   isEquityProgram: boolean
 }> = ({ program, programContentSections, isEquityProgram }) => {
-  const [contentTitleCollapsed, setContentTitleCollapsed] = useState<contentTitleCollapsedType>(
-    transformProgramContentSections(programContentSections),
-  )
+  const [contentTitleCollapsed, setContentTitleCollapsed] = useState<contentTitleCollapsedType>({})
   const [allCollapsed, setAllCollapsed] = useState(checkAllCollapsed(contentTitleCollapsed))
 
-  function transformProgramContentSections(
-    sections: (ProgramContentSection & {
-      contents: ProgramContent[] & {
-        programId?: string | undefined
-        contentSectionTitle?: string | undefined
-      }
-    })[],
-  ) {
-    return sections.reduce((acc: contentTitleCollapsedType, sec) => {
-      const isAllPinned = sec.contents.every(content => content.pinnedStatus)
+  useEffect(() => {
+    setContentTitleCollapsed(transformProgramContentSections(programContentSections))
+  }, [programContentSections])
 
-      acc[sec.id] = {
-        isCollapsed: isAllPinned ? true : sec.collapsedStatus,
-        isAllPinned: isAllPinned,
-      }
-
-      return acc
-    }, {})
-  }
-
-  const toggleAllCollapsed = () => {
+  const handleToggleAllCollapsed = () => {
     setContentTitleCollapsed(
       Object.fromEntries(
         Object.entries(contentTitleCollapsed).map(([key, value]) => [
@@ -95,14 +97,16 @@ const SecondaryProgramContentListSection: React.VFC<{
     setAllCollapsed(!allCollapsed)
   }
 
-  const toggleContentCollapsed = (propName: string) => {
-    setContentTitleCollapsed({
+  const handleToggleContentCollapsed = (propName: string) => {
+    const newContentTitleCollapsed = {
       ...contentTitleCollapsed,
       [propName]: {
         ...contentTitleCollapsed[propName],
         isCollapsed: !contentTitleCollapsed[propName].isCollapsed,
       },
-    })
+    }
+    setContentTitleCollapsed(newContentTitleCollapsed)
+    setAllCollapsed(checkAllCollapsed(newContentTitleCollapsed))
   }
 
   return (
@@ -110,7 +114,7 @@ const SecondaryProgramContentListSection: React.VFC<{
       {programContentSections.some(programContentSection => programContentSection.contents.length > 0) && (
         <>
           {!checkAllPinned(contentTitleCollapsed) && (
-            <StyleAllCollapsed onClick={() => !checkAllPinned(contentTitleCollapsed) && toggleAllCollapsed()}>
+            <StyleAllCollapsed onClick={() => !checkAllPinned(contentTitleCollapsed) && handleToggleAllCollapsed()}>
               {allCollapsed ? '全部收合' : '全部展開'}
               <IconButton
                 icon={<FaChevronDown style={{ transform: allCollapsed ? 'rotate(0deg)' : 'rotate(270deg)' }} />}
@@ -141,8 +145,8 @@ const SecondaryProgramContentListSection: React.VFC<{
                         }
                         aria-label="Rotate Icon"
                         variant="ghost"
-                        onClick={() => toggleContentCollapsed(programContentSection.id)}
-                      ></IconButton>
+                        onClick={() => handleToggleContentCollapsed(programContentSection.id)}
+                      />
                     )}
                   </ProgramSectionTitle>
 
