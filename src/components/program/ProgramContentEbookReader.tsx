@@ -1,5 +1,5 @@
 import { gql, useApolloClient, useMutation, useQuery } from '@apollo/client'
-import { Box, Button, Flex, Spinner, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Link, Spinner, Text } from '@chakra-ui/react'
 import axios from 'axios'
 import { inRange } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -8,6 +8,7 @@ import { handleError } from 'lodestar-app-element/src/helpers'
 import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { EpubView, ReactReaderStyle } from 'react-reader'
+import { useParams } from 'react-router'
 import styled from 'styled-components'
 import { ProgressContext } from '../../contexts/ProgressContext'
 import hasura from '../../hasura'
@@ -146,6 +147,7 @@ const ProgramContentEbookReader: React.VFC<{
   isTrial,
 }) => {
   const { currentMemberId, authToken } = useAuth()
+  const { programId } = useParams<{ programId: string }>()
   const [source, setSource] = useState<ArrayBuffer | null>(null)
   const apolloClient = useApolloClient()
   const rendition = useRef<Rendition | undefined>(undefined)
@@ -585,7 +587,11 @@ const ProgramContentEbookReader: React.VFC<{
         onClose={() => {
           setModalState(null)
         }}
-        renderFooter={() => <Button colorScheme="primary">{formatMessage(commonMessages.ui.purchase)}</Button>}
+        renderFooter={() => (
+          <Link href={`/programs/${programId}?visitIntro=1`}>
+            <Button colorScheme="primary">{formatMessage(commonMessages.ui.purchase)}</Button>
+          </Link>
+        )}
       >
         <Text marginTop="16px">{formatMessage(programMessages.ProgramContentEbookReader.trialCompletedMessage)}</Text>
       </CommonModal>

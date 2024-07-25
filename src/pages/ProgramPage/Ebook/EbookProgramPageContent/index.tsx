@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Link, Text } from '@chakra-ui/react'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { desktopViewMixin } from 'lodestar-app-element/src/helpers'
 import { useContext, useEffect, useRef, useState } from 'react'
@@ -94,6 +94,17 @@ const EbookProgramPageContent: React.VFC<{
     }
   }, [loadingProgramPlansEnrollmentsAggregateList])
 
+  const hasEbookTrialSection = program.contentSections.find(section =>
+    section.contents.some(content => {
+      const isTrial = content?.displayMode === 'trial' || content?.displayMode === 'loginToTrial'
+      return isTrial && content.contentType === 'ebook'
+    }),
+  )
+  const ebookTrialContent = hasEbookTrialSection?.contents.find(content => {
+    const isTrial = content?.displayMode === 'trial' || content?.displayMode === 'loginToTrial'
+    return isTrial && content.contentType === 'ebook'
+  })
+
   return (
     <div>
       <StyledProgramIntroBlock>
@@ -106,7 +117,9 @@ const EbookProgramPageContent: React.VFC<{
                     <Image src={coverUrl || ''} alt="cover" />
                   </Box>
                   <Flex alignItems="center" gridGap="2" width="100%">
-                    <StyledButton>試閱</StyledButton>
+                    <Link href={`/programs/${program.id}/contents/${ebookTrialContent?.id}`} width="100%">
+                      <StyledButton>試閱</StyledButton>
+                    </Link>
                     <Box width="20%" display="flex" justifyContent="center">
                       <SocialSharePopover url={window.location.href}>
                         <FaShareAlt color="#9b9b9b" fontSize="20px" />
