@@ -1,14 +1,16 @@
 import { Button, Icon } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import queryString from 'query-string'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessage, useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import Responsive, { BREAK_POINT } from '../../../../components/common/Responsive'
 import VideoPlayer from '../../../../components/common/VideoPlayer'
+import ReviewCollectionBlock from '../../../../components/review/ReviewCollectionBlock'
 import MediaPlayerContext from '../../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, handleError } from '../../../../helpers'
@@ -82,9 +84,12 @@ const StyledButtonWrapper = styled.div`
 
 const SecondaryProgramPageContent: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { currentMemberId } = useAuth()
   const { programId } = useParams<{ programId: string }>()
-  const { settings } = useApp()
+  const { pathname, search } = useLocation()
+  const params = queryString.parse(search)
+
+  const { currentMemberId } = useAuth()
+  const { settings, enabledModules } = useApp()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
   const { program, addProgramView } = useProgram(programId)
@@ -97,6 +102,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const planListHeightRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
+  const customerReviewBlockRef = useRef<HTMLDivElement>(null)
 
   const scrollToPreview = () => previewRef?.current?.scrollIntoView({ behavior: 'smooth' })
   const scrollToPlanBlock = () => planBlockRef?.current?.scrollIntoView({ behavior: 'smooth' })
@@ -115,6 +121,12 @@ const SecondaryProgramPageContent: React.VFC = () => {
   useEffect(() => {
     ReactGA.ga('send', 'pageview')
   }, [])
+
+  useEffect(() => {
+    if (customerReviewBlockRef.current && params.moveToBlock === 'customer-review') {
+      setTimeout(() => customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' }), 1000)
+    }
+  }, [customerReviewBlockRef, params])
 
   useEffect(() => {
     if (!loadingProgramPlansEnrollmentsAggregateList) {
@@ -197,6 +209,11 @@ const SecondaryProgramPageContent: React.VFC = () => {
                 {trialProgramContentMedias.length !== 0 ? (
                   <PreviewBlock trialProgramContentMedias={trialProgramContentMedias} />
                 ) : null}
+                {enabledModules.customer_review && (
+                  <div id="customer-review" ref={customerReviewBlockRef}>
+                    <ReviewCollectionBlock path={pathname} targetId={programId} />
+                  </div>
+                )}
               </StyledContentWrapper>
 
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
