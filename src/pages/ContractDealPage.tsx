@@ -38,19 +38,15 @@ const DealComponent: React.FC<{
     options: {},
   })
   useEffect(() => {
-    placeOrder(
-      'perpetual',
-      {
-        name: 'logan本尊',
-        email: 'logan@urfit.com.tw',
-        phone: '091231231',
-      },
-      {
-        gateway: 'spgateway',
-        method: 'credit',
-      },
-    ).then(({ orderId, paymentNo, payToken }) => {
-      history.push(paymentNo ? `/payments/${paymentNo}?token=${payToken}` : `/orders/${orderId}?tracking=1`)
+    placeOrder('perpetual', memberContract.values.invoice, {
+      gateway: 'spgateway',
+      method: 'credit',
+    }).then(({ orderId, paymentNo, payToken }) => {
+      memberContract.values.paymentOptions.paymentMethod === '藍新'
+        ? history.push(paymentNo ? `/payments/${paymentNo}?token=${payToken}` : `/orders/${orderId}?tracking=1`)
+        : memberContract.values.paymentOptions.paymentMethod === '匯款'
+        ? history.push(`/orders/${orderId}?method=bankTransfer`)
+        : history.goBack()
     })
   }, [])
 

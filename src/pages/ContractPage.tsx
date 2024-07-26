@@ -63,7 +63,7 @@ const StyledSection = styled.section`
 
 const ContractPage: React.VFC = () => {
   const { isAuthenticating } = useAuth()
-  const { memberContractId } = useParams<{ memberId: string; memberContractId: string }>()
+  const { memberContractId, memberId } = useParams<{ memberId: string; memberContractId: string }>()
   const [agreedIp, setAgreedIpAddress] = useState('unknown')
   const {
     memberContract,
@@ -95,7 +95,7 @@ const ContractPage: React.VFC = () => {
           },
         },
       })
-        .then(() => refetchMemberContract())
+        .then(() => (window.location.href = `/members/${memberId}/contracts/${memberContractId}/deal`))
         .catch(handleError)
     }
   }

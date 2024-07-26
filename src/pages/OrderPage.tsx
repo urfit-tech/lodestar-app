@@ -1,9 +1,10 @@
 import { gql, useQuery } from '@apollo/client'
-import { Button, Icon, Typography } from 'antd'
+import { Button, Dropdown, Icon, Input, Menu, message, Typography } from 'antd'
+import axios from 'axios'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { notEmpty } from 'lodestar-app-element/src/helpers'
+import { handleError, notEmpty } from 'lodestar-app-element/src/helpers'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
@@ -16,7 +17,7 @@ import AdminCard from '../components/common/AdminCard'
 import PageHelmet from '../components/common/PageHelmet'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
-import { commonMessages } from '../helpers/translation'
+import { codeMessages, commonMessages } from '../helpers/translation'
 import LoadingPage from './LoadingPage'
 import NotFoundPage from './NotFoundPage'
 
@@ -34,9 +35,10 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
   const location = useLocation()
   const history = useHistory()
   const [withTracking] = useQueryParam('tracking', BooleanParam)
+  const [method] = useQueryParam('method', StringParam)
   const [errorCode] = useQueryParam('code', StringParam)
   const { settings, id: appId, loading: isAppLoading } = useApp()
-  const { currentMemberId, isAuthenticating } = useAuth()
+  const { currentMemberId, isAuthenticating, authToken } = useAuth()
   const { loading: isOrderLoading, data } = useQuery<
     hasura.PH_GET_ORDERS_PRODUCT,
     hasura.PH_GET_ORDERS_PRODUCTVariables
@@ -204,6 +206,28 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                     </Link>
                   </div>
                 </>
+              ) : method === 'bankTransfer' ? (
+                <>
+                  <Icon
+                    className="mb-5"
+                    type="clock-circle"
+                    theme="twoTone"
+                    twoToneColor="#6299ff"
+                    style={{ fontSize: '4rem' }}
+                  />
+                  <Typography.Title level={4} className="mb-3">
+                    銀行匯款
+                  </Typography.Title>
+                  <Typography.Title level={4} className="mb-3">
+                    若已匯款成功，請填入您的銀行帳號後五碼。
+                  </Typography.Title>
+                  <div style={{ width: 120 }}>
+                    <Input />
+                  </div>
+                  <Link to="/" className="mt-3 mb-sm-0 mr-sm-2">
+                    <Button>{formatMessage(commonMessages.ui.submit)}</Button>
+                  </Link>
+                </>
               ) : (
                 <>
                   <Icon
@@ -223,9 +247,36 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                     <Link to="/" className="mb-3 mb-sm-0 mr-sm-2">
                       <Button>{formatMessage(commonMessages.button.home)}</Button>
                     </Link>
-                    <Link to="/settings/orders" className="ml-sm-2">
-                      <Button>{formatMessage(commonMessages.ui.repay)}</Button>
-                    </Link>
+                    <Dropdown
+                      overlay={
+                        <Menu
+                          onClick={param => {
+                            axios
+                              .post(
+                                `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
+                                { orderId: orderId, clientBackUrl: window.location.origin },
+                                { headers: { authorization: `Bearer ${authToken}` } },
+                              )
+                              .then(({ data: { code, result } }) => {
+                                if (code === 'SUCCESS') {
+                                  history.push(`/tasks/payment/${result.id}`)
+                                } else {
+                                  message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+                                }
+                              })
+                              .catch(handleError)
+                          }}
+                        >
+                          <Menu.Item key="spgateway">藍新</Menu.Item>
+                          <Menu.Item key="paypal">Paypal</Menu.Item>
+                        </Menu>
+                      }
+                    >
+                      <Button style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <div>{formatMessage(commonMessages.ui.repay)}</div>
+                        <Icon type="down" />
+                      </Button>
+                    </Dropdown>
                   </div>
                 </>
               )}

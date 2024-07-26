@@ -1,7 +1,7 @@
 import { gql, useQuery } from '@apollo/client'
 import { LockIcon } from '@chakra-ui/icons'
 import { Button, SkeletonText } from '@chakra-ui/react'
-import { message, Table, Tooltip } from 'antd'
+import { Dropdown, Icon, Menu, message, Table, Tooltip } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { ColumnProps } from 'antd/lib/table'
 import axios from 'axios'
@@ -233,32 +233,42 @@ const OrderCollectionAdminCard: React.VFC<
       <div className="row">
         <div className="col-3 d-flex align-items-end">
           {['UNPAID', 'PARTIAL_PAID', 'FAILED'].includes(record.status) && (
-            <Button
-              variant="outline"
-              _hover={{
-                color: theme.colors.primary[500],
-                borderColor: theme.colors.primary[500],
-              }}
-              onClick={() =>
-                axios
-                  .post(
-                    `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
-                    { orderId: record.id, clientBackUrl: window.location.origin },
-                    { headers: { authorization: `Bearer ${authToken}` } },
-                  )
-                  .then(({ data: { code, result } }) => {
-                    if (code === 'SUCCESS') {
-                      history.push(`/tasks/payment/${result.id}`)
-                    } else {
-                      message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-                    }
-                  })
-                  .catch(handleError)
+            <Dropdown
+              overlay={
+                <Menu
+                  onClick={param => {
+                    axios
+                      .post(
+                        `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
+                        { orderId: record.id, clientBackUrl: window.location.origin },
+                        { headers: { authorization: `Bearer ${authToken}` } },
+                      )
+                      .then(({ data: { code, result } }) => {
+                        if (code === 'SUCCESS') {
+                          history.push(`/tasks/payment/${result.id}`)
+                        } else {
+                          message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+                        }
+                      })
+                      .catch(handleError)
+                  }}
+                >
+                  <Menu.Item key="spgateway">藍新</Menu.Item>
+                  <Menu.Item key="paypal">Paypal</Menu.Item>
+                </Menu>
               }
-              className="mr-2"
             >
-              {formatMessage(commonMessages.ui.repay)}
-            </Button>
+              <Button
+                variant="outline"
+                _hover={{
+                  color: theme.colors.primary[500],
+                  borderColor: theme.colors.primary[500],
+                }}
+                className="mr-2"
+              >
+                {formatMessage(commonMessages.ui.repay)} <Icon type="down" />
+              </Button>
+            </Dropdown>
           )}
           {settings['order.apply_refund.enabled'] === '1' && record.status === 'SUCCESS' && (
             <OrderRequestRefundModal
