@@ -39,7 +39,7 @@ class CartSync {
   }
 
   public async syncCartProducts(operation: cartOperation) {
-    const cachedCartProducts = this._getLocalCartProducts()
+    const cachedCartProducts = this.getLocalCartProducts()
     const cartProductOptions = this._restructureCachedCartProducts(cachedCartProducts)
 
     const remoteCartProducts = await this._fetchRemoteCartProducts(operation, cachedCartProducts)
@@ -76,7 +76,7 @@ class CartSync {
     } catch (error) {}
   }
 
-  private _getLocalCartProducts(): CartProductProps[] {
+  public getLocalCartProducts(): CartProductProps[] {
     let cachedCartProducts: CartProductProps[]
     try {
       localStorage.removeItem('kolable.cart')
@@ -265,19 +265,6 @@ export const CartProvider: React.FC = ({ children }) => {
     return new CartSync(apolloClient, appId, currentMemberId, updateCartProducts)
   }, [apolloClient, appId, currentMemberId, updateCartProducts])
 
-  const _getLocalCartProducts = () => {
-    let cachedCartProducts: CartProductProps[]
-    try {
-      // remove deprecated localStorage key
-      localStorage.removeItem('kolable.cart')
-      localStorage.removeItem('kolable.cart.products')
-      cachedCartProducts = JSON.parse(localStorage.getItem('kolable.cart._products') || '[]')
-    } catch (error) {
-      cachedCartProducts = []
-    }
-    return cachedCartProducts
-  }
-
   // sync cart products: save to localStorage & update to remote
   const syncCartProducts = useCallback(
     async (operation: cartOperation) => {
@@ -326,7 +313,7 @@ export const CartProvider: React.FC = ({ children }) => {
             Object.assign(trackingOptions, { fb: conversionApiData })
           }
 
-          const cachedCartProducts = _getLocalCartProducts()
+          const cachedCartProducts = cartSync.getLocalCartProducts()
           const repeatedCartProduct = cachedCartProducts.find(
             cartProduct => cartProduct.productId === `${productType}_${productTarget}`,
           )
@@ -349,7 +336,7 @@ export const CartProvider: React.FC = ({ children }) => {
           syncCartProducts(cartOperation.ADD_CART_PRODUCT)
         },
         updatePluralCartProductQuantity: async (productId: string, quantity: number) => {
-          const cachedCartProducts = _getLocalCartProducts()
+          const cachedCartProducts = cartSync.getLocalCartProducts()
           const newCartProducts = cachedCartProducts.map(cartProduct =>
             cartProduct.productId === productId
               ? {
@@ -366,7 +353,7 @@ export const CartProvider: React.FC = ({ children }) => {
           syncCartProducts(cartOperation.UPDATE_PLURAL_CART_PRODUCT_QUANTITY)
         },
         removeCartProducts: async (productIds: string[]) => {
-          const cachedCartProducts = _getLocalCartProducts()
+          const cachedCartProducts = cartSync.getLocalCartProducts()
           const newCartProduct = cachedCartProducts.filter(cartProduct => !productIds.includes(cartProduct.productId))
           localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProduct))
           syncCartProducts(cartOperation.REMOVE_CART_PRODUCTS)
