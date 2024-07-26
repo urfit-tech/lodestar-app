@@ -39,14 +39,18 @@ class CartSync {
   }
 
   public async syncCartProducts(operation: cartOperation) {
-    const cachedCartProducts = this.getLocalCartProducts()
-    const cartProductOptions = this.restructureCachedCartProducts(cachedCartProducts)
+    const cachedCartProducts = this._getLocalCartProducts()
+    const cartProductOptions = this._restructureCachedCartProducts(cachedCartProducts)
 
-    const data = await this.fetchRemoteCartProducts(operation, cachedCartProducts)
-    const cartProducts = this.mergeLocalAndRemoteCartProducts({ data, cachedCartProducts, cartProductOptions })
-    const filteredProducts = this.removePhaseOutCartProducts(cartProducts)
+    const remoteCartProducts = await this._fetchRemoteCartProducts(operation, cachedCartProducts)
+    const mergedCartProducts = this._mergeLocalAndRemoteCartProducts({
+      remoteCartProducts,
+      cachedCartProducts,
+      cartProductOptions,
+    })
+    const availableProducts = this._removePhaseOutCartProducts(mergedCartProducts)
 
-    this.updateLocalCache(filteredProducts)
+    this._updateLocalCache(availableProducts)
 
     if (!this.currentMemberId) {
       return
@@ -56,7 +60,7 @@ class CartSync {
       await this.updateCartProducts({
         variables: {
           memberId: this.currentMemberId,
-          cartProductObjects: filteredProducts.map(product => {
+          cartProductObjects: availableProducts.map(product => {
             const tracking = product?.options?.tracking || {}
             return {
               app_id: this.appId,
@@ -68,11 +72,11 @@ class CartSync {
         },
       })
 
-      return filteredProducts
+      return availableProducts
     } catch (error) {}
   }
 
-  private getLocalCartProducts(): CartProductProps[] {
+  private _getLocalCartProducts(): CartProductProps[] {
     let cachedCartProducts: CartProductProps[]
     try {
       localStorage.removeItem('kolable.cart')
@@ -84,14 +88,14 @@ class CartSync {
     return cachedCartProducts
   }
 
-  private restructureCachedCartProducts(cachedCartProducts: CartProductProps[]): { [ProductId: string]: any } {
+  private _restructureCachedCartProducts(cachedCartProducts: CartProductProps[]): { [ProductId: string]: any } {
     return cachedCartProducts.reduce((options, cartProduct) => {
       options[cartProduct.productId] = cartProduct.options
       return options
     }, {} as { [ProductId: string]: any })
   }
 
-  private createGetCartProductOperationQuery(operation: cartOperation): string {
+  private _createGetCartProductOperationQuery(operation: cartOperation): string {
     const productIdsCondition =
       operation === cartOperation.REMOVE_CART_PRODUCTS
         ? `product: { id: { _in: $productIds }, product_owner: { member: { app_id: { _eq: $appId } } } }`
@@ -144,8 +148,8 @@ class CartSync {
     `
   }
 
-  private async fetchRemoteCartProducts(operation: cartOperation, cachedCartProducts: any[]) {
-    const query = this.createGetCartProductOperationQuery(operation)
+  private async _fetchRemoteCartProducts(operation: cartOperation, cachedCartProducts: any[]) {
+    const query = this._createGetCartProductOperationQuery(operation)
 
     const { data } = await this.apolloClient.query({
       query: gql`
@@ -166,23 +170,24 @@ class CartSync {
     return data
   }
 
-  private mergeLocalAndRemoteCartProducts({
-    data,
+  private _mergeLocalAndRemoteCartProducts({
+    remoteCartProducts,
     cachedCartProducts,
     cartProductOptions,
   }: {
-    data: hasura.GET_CART_PRODUCT_COLLECTION
+    remoteCartProducts: hasura.GET_CART_PRODUCT_COLLECTION
     cachedCartProducts: any[]
     cartProductOptions: { [ProductId: string]: any }
   }) {
     return uniqBy(
       cartProduct => cartProduct.productId,
       [
-        ...data.cart_product.map(cartProduct => ({
+        ...remoteCartProducts.cart_product.map(cartProduct => ({
           productId: cartProduct.product.id,
           shopId: cartProduct.product.id.startsWith('MerchandiseSpec_')
-            ? data.merchandise_spec.find(v => v.id === cartProduct.product.id.replace('MerchandiseSpec_', ''))
-                ?.merchandise.member_shop_id || ''
+            ? remoteCartProducts.merchandise_spec.find(
+                v => v.id === cartProduct.product.id.replace('MerchandiseSpec_', ''),
+              )?.merchandise.member_shop_id || ''
             : '',
           enrollments: cartProduct.product.product_enrollments.map(enrollment => ({
             memberId: enrollment.member_id || null,
@@ -193,10 +198,11 @@ class CartSync {
         ...cachedCartProducts.map(cartProduct => ({
           ...cartProduct,
           shopId: cartProduct.productId.startsWith('MerchandiseSpec_')
-            ? data.merchandise_spec.find(v => v.id === cartProduct.productId.replace('MerchandiseSpec_', ''))
-                ?.merchandise.member_shop_id || ''
+            ? remoteCartProducts.merchandise_spec.find(
+                v => v.id === cartProduct.productId.replace('MerchandiseSpec_', ''),
+              )?.merchandise.member_shop_id || ''
             : '',
-          enrollments: data.product
+          enrollments: remoteCartProducts.product
             .find(product => product.id === cartProduct.productId)
             ?.product_enrollments.map(enrollment => ({
               memberId: enrollment.member_id || null,
@@ -207,18 +213,23 @@ class CartSync {
     )
   }
 
-  private removePhaseOutCartProducts(cartProducts: CartProductProps[]) {
-    return cartProducts.filter(
-      cartProduct =>
-        cartProduct.productId.startsWith('Program_') === false &&
-        (cartProduct.enrollments
-          ? cartProduct.enrollments.length === 0 ||
-            cartProduct.enrollments.map(enrollment => enrollment.isPhysical).includes(true)
-          : false),
-    )
+  private _removePhaseOutCartProducts(cartProducts: CartProductProps[]): CartProductProps[] {
+    return cartProducts
+      .filter(cartProduct => !this._isPhasedOutProduct(cartProduct))
+      .filter(cartProduct => this._hasValidEnrollments(cartProduct))
   }
 
-  private updateLocalCache(filteredProducts: CartProductProps[]) {
+  private _isPhasedOutProduct(cartProduct: CartProductProps): boolean {
+    return cartProduct.productId.startsWith('Program_')
+  }
+
+  private _hasValidEnrollments(cartProduct: CartProductProps): boolean {
+    return cartProduct.enrollments
+      ? cartProduct.enrollments.length === 0 || cartProduct.enrollments.some(enrollment => enrollment.isPhysical)
+      : false
+  }
+
+  private _updateLocalCache(filteredProducts: CartProductProps[]) {
     localStorage.setItem('kolable.cart._products', JSON.stringify(filteredProducts))
   }
 }
@@ -254,7 +265,7 @@ export const CartProvider: React.FC = ({ children }) => {
     return new CartSync(apolloClient, appId, currentMemberId, updateCartProducts)
   }, [apolloClient, appId, currentMemberId, updateCartProducts])
 
-  const getLocalCartProducts = () => {
+  const _getLocalCartProducts = () => {
     let cachedCartProducts: CartProductProps[]
     try {
       // remove deprecated localStorage key
@@ -315,7 +326,7 @@ export const CartProvider: React.FC = ({ children }) => {
             Object.assign(trackingOptions, { fb: conversionApiData })
           }
 
-          const cachedCartProducts = getLocalCartProducts()
+          const cachedCartProducts = _getLocalCartProducts()
           const repeatedCartProduct = cachedCartProducts.find(
             cartProduct => cartProduct.productId === `${productType}_${productTarget}`,
           )
@@ -338,7 +349,7 @@ export const CartProvider: React.FC = ({ children }) => {
           syncCartProducts(cartOperation.ADD_CART_PRODUCT)
         },
         updatePluralCartProductQuantity: async (productId: string, quantity: number) => {
-          const cachedCartProducts = getLocalCartProducts()
+          const cachedCartProducts = _getLocalCartProducts()
           const newCartProducts = cachedCartProducts.map(cartProduct =>
             cartProduct.productId === productId
               ? {
@@ -355,7 +366,7 @@ export const CartProvider: React.FC = ({ children }) => {
           syncCartProducts(cartOperation.UPDATE_PLURAL_CART_PRODUCT_QUANTITY)
         },
         removeCartProducts: async (productIds: string[]) => {
-          const cachedCartProducts = getLocalCartProducts()
+          const cachedCartProducts = _getLocalCartProducts()
           const newCartProduct = cachedCartProducts.filter(cartProduct => !productIds.includes(cartProduct.productId))
           localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProduct))
           syncCartProducts(cartOperation.REMOVE_CART_PRODUCTS)
