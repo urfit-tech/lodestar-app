@@ -14,7 +14,8 @@ const ProgramContentExerciseBlock: React.VFC<{
     attachments: ProgramContentAttachmentProps[]
   }
   nextProgramContentId?: string
-}> = ({ programContent, nextProgramContentId }) => {
+  programId?: string
+}> = ({ programContent, nextProgramContentId, programId }) => {
   const [exerciseId] = useQueryParam('exerciseId', StringParam)
   const { currentMemberId } = useAuth()
 
@@ -57,6 +58,7 @@ const ProgramContentExerciseBlock: React.VFC<{
     return (
       <ExerciseBlock
         id={programContent.programContentBody.id}
+        programId={programId || ''}
         programContentId={programContent.id}
         title={programContent.title}
         nextProgramContentId={nextProgramContentId}
@@ -110,6 +112,7 @@ const ProgramContentExerciseBlock: React.VFC<{
         errorExam={errorExam}
         errorExamId={errorExamId}
         exam={exam}
+        programId={programId || ''}
         programContentId={programContent.id}
         nextProgramContentId={nextProgramContentId}
         title={programContent.title}
