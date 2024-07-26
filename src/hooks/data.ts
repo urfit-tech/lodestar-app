@@ -145,6 +145,7 @@ export const useNav = () => {
 }
 
 export const useMemberContract = (memberContractId: string) => {
+  const { authToken } = useAuth()
   const { data, ...result } = useQuery<hasura.GET_MEMBER_CONTRACT, hasura.GET_MEMBER_CONTRACTVariables>(
     gql`
       query GET_MEMBER_CONTRACT($memberContractId: uuid!) {
@@ -171,7 +172,7 @@ export const useMemberContract = (memberContractId: string) => {
         }
       }
     `,
-    { variables: { memberContractId } },
+    { variables: { memberContractId }, skip: !authToken },
   )
 
   return {
