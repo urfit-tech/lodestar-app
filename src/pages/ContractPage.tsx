@@ -1,8 +1,9 @@
 import { gql, useMutation } from '@apollo/client'
-import { Card, Checkbox, Typography } from 'antd'
+import { Card, Checkbox, Skeleton, Typography } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox/Checkbox'
 import Axios from 'axios'
 import Embedded from 'lodestar-app-element/src/components/common/Embedded'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import { render } from 'mustache'
 import React, { useEffect, useState } from 'react'
@@ -61,9 +62,14 @@ const StyledSection = styled.section`
 `
 
 const ContractPage: React.VFC = () => {
+  const { isAuthenticating } = useAuth()
   const { memberContractId } = useParams<{ memberId: string; memberContractId: string }>()
   const [agreedIp, setAgreedIpAddress] = useState('unknown')
-  const { memberContract, refetch: refetchMemberContract } = useMemberContract(memberContractId)
+  const {
+    memberContract,
+    refetch: refetchMemberContract,
+    loading: memberContractLoading,
+  } = useMemberContract(memberContractId)
   const [agreeMemberContract] = useMutation<hasura.AGREE_MEMBER_CONTRACT, hasura.AGREE_MEMBER_CONTRACTVariables>(
     AGREE_MEMBER_CONTRACT,
   )
@@ -72,14 +78,12 @@ const ContractPage: React.VFC = () => {
     Axios.get('https://api.ipify.org/').then(res => setAgreedIpAddress(res.data))
   }, [])
 
-  if (!memberContract) {
+  if (!memberContract && !memberContractLoading && !isAuthenticating) {
     return <NotFoundPage />
   }
 
   const handleCheck = (e: CheckboxChangeEvent) => {
-    if (sessionStorage.getItem(`${memberContractId}.ready`) !== 'true') {
-      alert('有欄位未確認，請確認')
-    } else if (e.target.checked && window.confirm('同意後無法修改')) {
+    if (e.target.checked && window.confirm('同意後無法修改') && memberContract) {
       agreeMemberContract({
         variables: {
           memberContractId,
@@ -101,45 +105,53 @@ const ContractPage: React.VFC = () => {
       <StyledSection className="container">
         <StyledTitle level={1}>{'線上課程服務約款'}</StyledTitle>
         <StyledCard>
-          <Embedded
-            iframe={render(memberContract.contract.template, {
-              ...memberContract.values,
-              startedAt: memberContract.values?.startedAt ? dateFormatter(memberContract.values.startedAt) : '',
-              endedAt: memberContract.values?.endedAt ? dateFormatter(memberContract.values.endedAt) : '',
-            })}
-          />
+          {isAuthenticating || memberContractLoading ? (
+            <Skeleton active />
+          ) : memberContract ? (
+            <Embedded
+              iframe={render(memberContract.contract.template, {
+                ...memberContract.values,
+                startedAt: memberContract.values?.startedAt ? dateFormatter(memberContract.values.startedAt) : '',
+                endedAt: memberContract.values?.endedAt ? dateFormatter(memberContract.values.endedAt) : '',
+              })}
+            />
+          ) : (
+            '無合約內容'
+          )}
         </StyledCard>
 
-        <StyledCard>
-          <div className="text-center">
-            {memberContract.revokedAt ? (
-              <>
-                <p>
-                  姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
-                </p>
-                <p>已於 {moment(memberContract.revokedAt).format('YYYY-MM-DD HH:mm:ss')} 解除此契約</p>
-              </>
-            ) : memberContract.agreedAt ? (
-              <>
-                <p>
-                  姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
-                </p>
-                <p>已於 {moment(memberContract.agreedAt).format('YYYY-MM-DD HH:mm:ss')} 同意此契約</p>
-              </>
-            ) : memberContract.startedAt && moment() >= moment(memberContract.startedAt) ? (
-              <p>此合約已失效</p>
-            ) : (
-              <>
-                <p>
-                  姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
-                </p>
-                <Checkbox checked={!!memberContract.agreedAt} onChange={handleCheck}>
-                  我已詳細閱讀並同意上述契約並願意遵守規定
-                </Checkbox>
-              </>
-            )}
-          </div>
-        </StyledCard>
+        {!isAuthenticating && !memberContractLoading && memberContract && (
+          <StyledCard>
+            <div className="text-center">
+              {memberContract.revokedAt ? (
+                <>
+                  <p>
+                    姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
+                  </p>
+                  <p>已於 {moment(memberContract.revokedAt).format('YYYY-MM-DD HH:mm:ss')} 解除此契約</p>
+                </>
+              ) : memberContract.agreedAt ? (
+                <>
+                  <p>
+                    姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
+                  </p>
+                  <p>已於 {moment(memberContract.agreedAt).format('YYYY-MM-DD HH:mm:ss')} 同意此契約</p>
+                </>
+              ) : memberContract.startedAt && moment() >= moment(memberContract.startedAt) ? (
+                <p>此合約已失效</p>
+              ) : (
+                <>
+                  <p>
+                    姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
+                  </p>
+                  <Checkbox checked={!!memberContract.agreedAt} onChange={handleCheck}>
+                    我已詳細閱讀並同意上述契約並願意遵守規定
+                  </Checkbox>
+                </>
+              )}
+            </div>
+          </StyledCard>
+        )}
       </StyledSection>
     </DefaultLayout>
   )
