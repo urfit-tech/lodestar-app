@@ -1,12 +1,16 @@
 import { Box, Button, Flex, Image, Link, Text } from '@chakra-ui/react'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { desktopViewMixin } from 'lodestar-app-element/src/helpers'
+import queryString from 'query-string'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { FaShareAlt } from 'react-icons/fa'
 import ReactPlayer from 'react-player'
+import { useLocation } from 'react-router'
 import styled, { css, ThemeContext } from 'styled-components'
 import { BREAK_POINT } from '../../../../components/common/Responsive'
 import VideoPlayer from '../../../../components/common/VideoPlayer'
+import ReviewCollectionBlock from '../../../../components/review/ReviewCollectionBlock'
 import { useProgramPlansEnrollmentsAggregateList } from '../../../../hooks/program'
 import { Program, ProgramContentSectionType } from '../../../../types/program'
 import ProgramIntroTabs from '../../Secondary/ProgramIntroTabs'
@@ -74,6 +78,9 @@ const layoutTemplateConfigMap = {
 const EbookProgramPageContent: React.VFC<{
   program: Program & ProgramContentSectionType
 }> = ({ program }) => {
+  const { enabledModules } = useApp()
+  const { pathname, search } = useLocation()
+  const params = queryString.parse(search)
   const theme = useContext(ThemeContext)
   const { loading: loadingProgramPlansEnrollmentsAggregateList, programPlansEnrollmentsAggregateList } =
     useProgramPlansEnrollmentsAggregateList(program?.plans.map(plan => plan.id) || [])
@@ -87,6 +94,13 @@ const EbookProgramPageContent: React.VFC<{
   const planBlockRef = useRef<HTMLDivElement | null>(null)
   const planListHeightRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
+  const customerReviewBlockRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (customerReviewBlockRef.current && params.moveToBlock === 'customer-review') {
+      setTimeout(() => customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' }), 1000)
+    }
+  }, [customerReviewBlockRef, params])
 
   useEffect(() => {
     if (!loadingProgramPlansEnrollmentsAggregateList) {
@@ -163,6 +177,11 @@ const EbookProgramPageContent: React.VFC<{
                 </StyledPlayer>
               )}
               <ProgramIntroTabs program={program} contentInformation={contentInformation} />
+              {enabledModules.customer_review && (
+                <div id="customer-review" ref={customerReviewBlockRef}>
+                  <ReviewCollectionBlock path={pathname} targetId={program.id} />
+                </div>
+              )}
             </StyledContentWrapper>
 
             <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
