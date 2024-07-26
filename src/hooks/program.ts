@@ -1086,6 +1086,7 @@ export const useProgramProgress = (programContentIds: string[]) => {
         ) {
           program_content_id
           last_progress
+          progress
         }
       }
     `,
@@ -1094,6 +1095,7 @@ export const useProgramProgress = (programContentIds: string[]) => {
   const programContentProgress = data?.program_content_progress.map(progress => ({
     contentId: progress.program_content_id,
     lastProgress: progress.last_progress,
+    progress: progress.progress,
   }))
   return { programContentProgress }
 }
