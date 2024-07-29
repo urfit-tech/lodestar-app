@@ -4,7 +4,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { getConversionApiData } from 'lodestar-app-element/src/helpers/conversionApi'
 import { ConversionApiContent, ConversionApiEvent } from 'lodestar-app-element/src/types/conversionApi'
 import { uniqBy } from 'ramda'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import hasura from '../hasura'
 import { getTrackingCookie } from '../helpers'
 import { useMember } from '../hooks/member'
@@ -316,6 +316,52 @@ class ClearCartOperator extends CartOperator {
   }
 }
 
+class CreateCartOperationContextFactory {
+  private apolloClient: ApolloClient<any>
+  private appId: string
+  private currentMemberId: string | null
+  protected updateCartProducts: (variables: any) => Promise<any>
+  protected setCartProducts: React.Dispatch<React.SetStateAction<CartProductProps[]>>
+
+  constructor(
+    apolloClient: ApolloClient<any>,
+    appId: string,
+    currentMemberId: string | null,
+    updateCartProducts: (variables: any) => Promise<any>,
+    setCartProducts: React.Dispatch<React.SetStateAction<CartProductProps[]>>,
+  ) {
+    this.apolloClient = apolloClient
+    this.appId = appId
+    this.currentMemberId = currentMemberId
+    this.updateCartProducts = updateCartProducts
+    this.setCartProducts = setCartProducts
+  }
+
+  createOperator(operation: cartOperation): CartOperator {
+    const operationMap: Record<cartOperation, new (...args: any[]) => CartOperator> = {
+      [cartOperation.INIT]: InitCartOperator,
+      [cartOperation.REMOVE_ITEM]: RemoveCartProductOperator,
+      [cartOperation.ADD_CART_PRODUCT]: AddCartProductOperator,
+      [cartOperation.UPDATE_PLURAL_CART_PRODUCT_QUANTITY]: UpdatePluralCartProductQuantityOperator,
+      [cartOperation.REMOVE_CART_PRODUCTS]: RemoveCartProductOperator,
+      [cartOperation.CLEAR_CART]: ClearCartOperator,
+    }
+
+    const OperatorClass = operationMap[operation]
+    if (!OperatorClass) {
+      throw new Error(`Unsupported cart operation: ${operation}`)
+    }
+
+    return new OperatorClass(
+      this.apolloClient,
+      this.appId,
+      this.currentMemberId,
+      this.updateCartProducts,
+      this.setCartProducts,
+    )
+  }
+}
+
 const CartContext = React.createContext<{
   cartProducts: CartProductProps[]
   isProductInCart?: (productType: ProductType, productTarget: string) => boolean
@@ -343,10 +389,16 @@ export const CartProvider: React.FC = ({ children }) => {
 
   const [cartProducts, setCartProducts] = useState<CartProductProps[]>([])
 
+  const cartOperationFactory = useMemo(
+    () =>
+      new CreateCartOperationContextFactory(apolloClient, appId, currentMemberId, updateCartProducts, setCartProducts),
+    [apolloClient, appId, currentMemberId, updateCartProducts],
+  )
+
   useEffect(() => {
-    const operator = new InitCartOperator(apolloClient, appId, currentMemberId, updateCartProducts, setCartProducts)
+    const operator = cartOperationFactory.createOperator(cartOperation.INIT)
     operator.operation()
-  }, [apolloClient, appId, currentMemberId, updateCartProducts])
+  }, [cartOperationFactory])
 
   return (
     <CartContext.Provider
@@ -381,13 +433,7 @@ export const CartProvider: React.FC = ({ children }) => {
             if (authToken) await conversionApi(authToken, 'AddToCart').catch(error => console.log(error))
             Object.assign(trackingOptions, { fb: conversionApiData })
           }
-          const addCartOperator = new AddCartProductOperator(
-            apolloClient,
-            appId,
-            currentMemberId,
-            updateCartProducts,
-            setCartProducts,
-          )
+          const addCartOperator = cartOperationFactory.createOperator(cartOperation.ADD_CART_PRODUCT)
           await addCartOperator.operation(
             productType,
             productTarget,
@@ -397,31 +443,16 @@ export const CartProvider: React.FC = ({ children }) => {
           )
         },
         updatePluralCartProductQuantity: async (productId: string, quantity: number) => {
-          const operator = new UpdatePluralCartProductQuantityOperator(
-            apolloClient,
-            appId,
-            currentMemberId,
-            updateCartProducts,
-            setCartProducts,
-          )
+          const operator = cartOperationFactory.createOperator(cartOperation.UPDATE_PLURAL_CART_PRODUCT_QUANTITY)
           await operator.operation(productId, quantity)
         },
         removeCartProducts: async (productIds: string[]) => {
-          const operator = new RemoveCartProductOperator(
-            apolloClient,
-            appId,
-            currentMemberId,
-            updateCartProducts,
-            setCartProducts,
-          )
+          const operator = cartOperationFactory.createOperator(cartOperation.REMOVE_CART_PRODUCTS)
           await operator.operation(productIds)
         },
         clearCart: async () => {
-          localStorage.removeItem('kolable.cart._products')
-          setCartProducts([])
-          if (currentMemberId) {
-            await updateCartProducts({ variables: { memberId: currentMemberId, cartProductObjects: [] } })
-          }
+          const operator = cartOperationFactory.createOperator(cartOperation.CLEAR_CART)
+          await operator.operation(currentMemberId)
         },
       }}
     >
