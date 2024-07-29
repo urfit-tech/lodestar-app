@@ -2,19 +2,12 @@ import { ApolloClient } from '@apollo/client'
 import { CartProductProps } from '../../types/checkout'
 import { AddCartProductOperator } from './AddCartProductOperator'
 import { CartOperator } from './CartOperator'
+import { CartOperatorEnum } from './CartOperatorEnum'
 import { ClearCartOperator } from './ClearCartOperator'
 import { InitCartOperator } from './InitCartOperator'
 import { RemoveCartProductOperator } from './RemoveCartProductOperator'
 import { UpdatePluralCartProductQuantityOperator } from './UpdatePluralCartProductQuantityOperator'
 
-enum CartOperatorEnum {
-  INIT,
-  REMOVE_ITEM,
-  ADD_CART_PRODUCT,
-  UPDATE_PLURAL_CART_PRODUCT_QUANTITY,
-  REMOVE_CART_PRODUCTS,
-  CLEAR_CART,
-}
 export class CreateCartOperationContextFactory {
   private apolloClient: ApolloClient<any>
   private appId: string

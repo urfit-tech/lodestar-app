@@ -3,6 +3,8 @@ import { CartOperator } from './CartOperator'
 import { CartOperatorEnum } from './CartOperatorEnum'
 
 export class AddCartProductOperator extends CartOperator {
+  operator = CartOperatorEnum.ADD_CART_PRODUCT
+
   async operation(
     productType: ProductType,
     productTarget: string,
@@ -30,6 +32,6 @@ export class AddCartProductOperator extends CartOperator {
     }
     newCartProducts.push(newCartProduct)
     localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProducts))
-    this.syncCartProducts(CartOperatorEnum.ADD_CART_PRODUCT)
+    this.syncCartProducts(this.operator)
   }
 }

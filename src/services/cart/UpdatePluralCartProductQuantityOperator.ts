@@ -2,6 +2,8 @@ import { CartOperator } from './CartOperator'
 import { CartOperatorEnum } from './CartOperatorEnum'
 
 export class UpdatePluralCartProductQuantityOperator extends CartOperator {
+  operator = CartOperatorEnum.UPDATE_PLURAL_CART_PRODUCT_QUANTITY
+
   async operation(productId: string, quantity: number) {
     const cachedCartProducts = this.getLocalCartProducts()
     const newCartProducts = cachedCartProducts.map(cartProduct =>
@@ -17,6 +19,6 @@ export class UpdatePluralCartProductQuantityOperator extends CartOperator {
     )
 
     localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProducts))
-    this.syncCartProducts(CartOperatorEnum.UPDATE_PLURAL_CART_PRODUCT_QUANTITY)
+    this.syncCartProducts(this.operator)
   }
 }

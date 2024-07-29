@@ -10,6 +10,7 @@ export abstract class CartOperator {
   private currentMemberId: string | null
   protected updateCartProducts: (variables: any) => Promise<any>
   protected setCartProducts: React.Dispatch<React.SetStateAction<CartProductProps[]>>
+  protected operator: CartOperatorEnum | undefined
 
   constructor(
     apolloClient: ApolloClient<any>,
