@@ -4,7 +4,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { getConversionApiData } from 'lodestar-app-element/src/helpers/conversionApi'
 import { ConversionApiContent, ConversionApiEvent } from 'lodestar-app-element/src/types/conversionApi'
 import { uniqBy } from 'ramda'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import hasura from '../hasura'
 import { getTrackingCookie } from '../helpers'
 import { useMember } from '../hooks/member'
@@ -20,23 +20,28 @@ enum cartOperation {
   CLEAR_CART,
 }
 
-class CartSync {
+abstract class CartOperator {
   private apolloClient: ApolloClient<any>
   private appId: string
   private currentMemberId: string | null
-  private updateCartProducts: (variables: any) => Promise<any>
+  protected updateCartProducts: (variables: any) => Promise<any>
+  protected setCartProducts: React.Dispatch<React.SetStateAction<CartProductProps[]>>
 
   constructor(
     apolloClient: ApolloClient<any>,
     appId: string,
     currentMemberId: string | null,
     updateCartProducts: (variables: any) => Promise<any>,
+    setCartProducts: React.Dispatch<React.SetStateAction<CartProductProps[]>>,
   ) {
     this.apolloClient = apolloClient
     this.appId = appId
     this.currentMemberId = currentMemberId
     this.updateCartProducts = updateCartProducts
+    this.setCartProducts = setCartProducts
   }
+
+  abstract operation(...args: any[]): Promise<void>
 
   public async syncCartProducts(operation: cartOperation) {
     const cachedCartProducts = this.getLocalCartProducts()
@@ -72,7 +77,7 @@ class CartSync {
         },
       })
 
-      return availableProducts
+      this.setCartProducts(availableProducts)
     } catch (error) {}
   }
 
@@ -234,6 +239,83 @@ class CartSync {
   }
 }
 
+class AddCartProductOperator extends CartOperator {
+  async operation(
+    productType: ProductType,
+    productTarget: string,
+    cartDisableSetting: boolean,
+    trackingOptions: {},
+    productOptions?: { [key: string]: any },
+  ) {
+    const cachedCartProducts = this.getLocalCartProducts()
+    const repeatedCartProduct = cachedCartProducts.find(
+      cartProduct => cartProduct.productId === `${productType}_${productTarget}`,
+    )
+    const newCartProducts = Number(cartDisableSetting)
+      ? []
+      : cachedCartProducts.filter(cartProduct => cartProduct.productId !== `${productType}_${productTarget}`)
+    const newCartProduct = {
+      productId: `${productType}_${productTarget}`,
+      shopId: '',
+      options:
+        productType === 'MerchandiseSpec'
+          ? {
+              quantity: (productOptions?.quantity || 1) + (repeatedCartProduct?.options?.quantity || 0),
+              tracking: trackingOptions,
+            }
+          : { ...productOptions, tracking: trackingOptions },
+    }
+    newCartProducts.push(newCartProduct)
+    localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProducts))
+    this.syncCartProducts(cartOperation.ADD_CART_PRODUCT)
+  }
+}
+
+class UpdatePluralCartProductQuantityOperator extends CartOperator {
+  async operation(productId: string, quantity: number) {
+    const cachedCartProducts = this.getLocalCartProducts()
+    const newCartProducts = cachedCartProducts.map(cartProduct =>
+      cartProduct.productId === productId
+        ? {
+            ...cartProduct,
+            options: {
+              ...cartProduct.options,
+              quantity,
+            },
+          }
+        : cartProduct,
+    )
+
+    localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProducts))
+    this.syncCartProducts(cartOperation.UPDATE_PLURAL_CART_PRODUCT_QUANTITY)
+  }
+}
+
+class RemoveCartProductOperator extends CartOperator {
+  async operation(productIds: string[]) {
+    const cachedCartProducts = this.getLocalCartProducts()
+    const newCartProduct = cachedCartProducts.filter(cartProduct => !productIds.includes(cartProduct.productId))
+    localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProduct))
+    this.syncCartProducts(cartOperation.REMOVE_CART_PRODUCTS)
+  }
+}
+
+class InitCartOperator extends CartOperator {
+  async operation() {
+    this.syncCartProducts(cartOperation.INIT)
+  }
+}
+
+class ClearCartOperator extends CartOperator {
+  async operation(currentMemberId: string) {
+    localStorage.removeItem('kolable.cart._products')
+    this.setCartProducts([])
+    if (currentMemberId) {
+      await this.updateCartProducts({ variables: { memberId: currentMemberId, cartProductObjects: [] } })
+    }
+  }
+}
+
 const CartContext = React.createContext<{
   cartProducts: CartProductProps[]
   isProductInCart?: (productType: ProductType, productTarget: string) => boolean
@@ -261,23 +343,10 @@ export const CartProvider: React.FC = ({ children }) => {
 
   const [cartProducts, setCartProducts] = useState<CartProductProps[]>([])
 
-  const cartSync = useMemo(() => {
-    return new CartSync(apolloClient, appId, currentMemberId, updateCartProducts)
-  }, [apolloClient, appId, currentMemberId, updateCartProducts])
-
-  // sync cart products: save to localStorage & update to remote
-  const syncCartProducts = useCallback(
-    async (operation: cartOperation) => {
-      const filteredProducts = await cartSync.syncCartProducts(operation)
-      setCartProducts(filteredProducts || [])
-    },
-    [cartSync],
-  )
-
-  // init state
   useEffect(() => {
-    syncCartProducts(cartOperation.INIT)
-  }, [syncCartProducts])
+    const operator = new InitCartOperator(apolloClient, appId, currentMemberId, updateCartProducts, setCartProducts)
+    operator.operation()
+  }, [apolloClient, appId, currentMemberId, updateCartProducts])
 
   return (
     <CartContext.Provider
@@ -312,56 +381,47 @@ export const CartProvider: React.FC = ({ children }) => {
             if (authToken) await conversionApi(authToken, 'AddToCart').catch(error => console.log(error))
             Object.assign(trackingOptions, { fb: conversionApiData })
           }
-
-          const cachedCartProducts = cartSync.getLocalCartProducts()
-          const repeatedCartProduct = cachedCartProducts.find(
-            cartProduct => cartProduct.productId === `${productType}_${productTarget}`,
+          const addCartOperator = new AddCartProductOperator(
+            apolloClient,
+            appId,
+            currentMemberId,
+            updateCartProducts,
+            setCartProducts,
           )
-          const newCartProducts = Number(settings['feature.cart.disable'])
-            ? []
-            : cachedCartProducts.filter(cartProduct => cartProduct.productId !== `${productType}_${productTarget}`)
-          const newCartProduct = {
-            productId: `${productType}_${productTarget}`,
-            shopId: '',
-            options:
-              productType === 'MerchandiseSpec'
-                ? {
-                    quantity: (productOptions?.quantity || 1) + (repeatedCartProduct?.options?.quantity || 0),
-                    tracking: trackingOptions,
-                  }
-                : { ...productOptions, tracking: trackingOptions },
-          }
-          newCartProducts.push(newCartProduct)
-          localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProducts))
-          syncCartProducts(cartOperation.ADD_CART_PRODUCT)
+          await addCartOperator.operation(
+            productType,
+            productTarget,
+            !!settings['feature.cart.disable'],
+            trackingOptions,
+            productOptions,
+          )
         },
         updatePluralCartProductQuantity: async (productId: string, quantity: number) => {
-          const cachedCartProducts = cartSync.getLocalCartProducts()
-          const newCartProducts = cachedCartProducts.map(cartProduct =>
-            cartProduct.productId === productId
-              ? {
-                  ...cartProduct,
-                  options: {
-                    ...cartProduct.options,
-                    quantity,
-                  },
-                }
-              : cartProduct,
+          const operator = new UpdatePluralCartProductQuantityOperator(
+            apolloClient,
+            appId,
+            currentMemberId,
+            updateCartProducts,
+            setCartProducts,
           )
-
-          localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProducts))
-          syncCartProducts(cartOperation.UPDATE_PLURAL_CART_PRODUCT_QUANTITY)
+          await operator.operation(productId, quantity)
         },
         removeCartProducts: async (productIds: string[]) => {
-          const cachedCartProducts = cartSync.getLocalCartProducts()
-          const newCartProduct = cachedCartProducts.filter(cartProduct => !productIds.includes(cartProduct.productId))
-          localStorage.setItem('kolable.cart._products', JSON.stringify(newCartProduct))
-          syncCartProducts(cartOperation.REMOVE_CART_PRODUCTS)
+          const operator = new RemoveCartProductOperator(
+            apolloClient,
+            appId,
+            currentMemberId,
+            updateCartProducts,
+            setCartProducts,
+          )
+          await operator.operation(productIds)
         },
         clearCart: async () => {
           localStorage.removeItem('kolable.cart._products')
           setCartProducts([])
-          currentMemberId && updateCartProducts({ variables: { memberId: currentMemberId, cartProductObjects: [] } })
+          if (currentMemberId) {
+            await updateCartProducts({ variables: { memberId: currentMemberId, cartProductObjects: [] } })
+          }
         },
       }}
     >
