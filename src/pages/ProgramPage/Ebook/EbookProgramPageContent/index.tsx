@@ -75,6 +75,29 @@ const layoutTemplateConfigMap = {
   contentInformation: 'f5c67360-baaf-45d1-b98b-729e750eb16f',
 }
 
+const EbookTrialAndShareButtonGroup = ({
+  programId,
+  ebookTrialContentId,
+  display,
+}: {
+  programId: string
+  ebookTrialContentId: string
+  display: { [key: string]: string }
+}) => {
+  return (
+    <Flex alignItems="center" gridGap="2" width="100%" display={display} marginTop="20px">
+      <Link href={`/programs/${programId}/contents/${ebookTrialContentId}`} width="100%">
+        <StyledButton>試閱</StyledButton>
+      </Link>
+      <Box width="20%" display="flex" justifyContent="center">
+        <SocialSharePopover url={window.location.href}>
+          <FaShareAlt color="#9b9b9b" fontSize="20px" />
+        </SocialSharePopover>
+      </Box>
+    </Flex>
+  )
+}
+
 const EbookProgramPageContent: React.VFC<{
   program: Program & ProgramContentSectionType
 }> = ({ program }) => {
@@ -125,21 +148,16 @@ const EbookProgramPageContent: React.VFC<{
         <div className="container">
           <div className="row">
             <StyledContentWrapper className="col-12 col-lg-8">
-              <Flex gridGap="5">
+              <Flex gridGap="5" flexWrap={{ base: 'wrap', md: 'nowrap' }}>
                 <Box>
-                  <Box marginBottom="20px" boxShadow="md" width="248px" height="248px">
+                  <Box boxShadow="md" width="248px" height="248px">
                     <Image src={coverUrl || ''} alt="cover" />
                   </Box>
-                  <Flex alignItems="center" gridGap="2" width="100%">
-                    <Link href={`/programs/${program.id}/contents/${ebookTrialContent?.id}`} width="100%">
-                      <StyledButton>試閱</StyledButton>
-                    </Link>
-                    <Box width="20%" display="flex" justifyContent="center">
-                      <SocialSharePopover url={window.location.href}>
-                        <FaShareAlt color="#9b9b9b" fontSize="20px" />
-                      </SocialSharePopover>
-                    </Box>
-                  </Flex>
+                  <EbookTrialAndShareButtonGroup
+                    programId={program.id}
+                    ebookTrialContentId={ebookTrialContent?.id || ''}
+                    display={{ base: 'none', md: 'flex' }}
+                  />
                 </Box>
 
                 <Flex flexDirection="column">
@@ -150,6 +168,11 @@ const EbookProgramPageContent: React.VFC<{
                     {bookSubTitle}
                   </Text>
                   <BraftContent>{bookInformation}</BraftContent>
+                  <EbookTrialAndShareButtonGroup
+                    programId={program.id}
+                    ebookTrialContentId={ebookTrialContent?.id || ''}
+                    display={{ base: 'flex', md: 'none' }}
+                  />
                 </Flex>
               </Flex>
               <StyledProgramAbstract>{program?.abstract}</StyledProgramAbstract>
