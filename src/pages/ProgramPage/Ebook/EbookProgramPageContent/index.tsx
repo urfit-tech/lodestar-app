@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Image, Link, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Link, Text } from '@chakra-ui/react'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { desktopViewMixin } from 'lodestar-app-element/src/helpers'
@@ -12,6 +12,7 @@ import { BREAK_POINT } from '../../../../components/common/Responsive'
 import VideoPlayer from '../../../../components/common/VideoPlayer'
 import ReviewCollectionBlock from '../../../../components/review/ReviewCollectionBlock'
 import { useProgramPlansEnrollmentsAggregateList } from '../../../../hooks/program'
+import EmptyCover from '../../../../images/empty-cover.png'
 import { Program, ProgramContentSectionType } from '../../../../types/program'
 import ProgramIntroTabs from '../../Secondary/ProgramIntroTabs'
 import SecondaryProgramPlanCard from '../../Secondary/SecondaryProgramPlanCard'
@@ -79,16 +80,20 @@ const EbookTrialAndShareButtonGroup = ({
   programId,
   ebookTrialContentId,
   display,
+  isHasEbookTrialSection,
 }: {
   programId: string
   ebookTrialContentId: string
   display: { [key: string]: string }
+  isHasEbookTrialSection: boolean
 }) => {
   return (
     <Flex alignItems="center" gridGap="2" width="100%" display={display} marginTop="20px">
-      <Link href={`/programs/${programId}/contents/${ebookTrialContentId}`} width="100%">
-        <StyledButton>試閱</StyledButton>
-      </Link>
+      {isHasEbookTrialSection && (
+        <Link href={`/programs/${programId}/contents/${ebookTrialContentId}`} width="100%">
+          <StyledButton>試閱</StyledButton>
+        </Link>
+      )}
       <Box width="20%" display="flex" justifyContent="center">
         <SocialSharePopover url={window.location.href}>
           <FaShareAlt color="#9b9b9b" fontSize="20px" />
@@ -108,9 +113,9 @@ const EbookProgramPageContent: React.VFC<{
   const { loading: loadingProgramPlansEnrollmentsAggregateList, programPlansEnrollmentsAggregateList } =
     useProgramPlansEnrollmentsAggregateList(program?.plans.map(plan => plan.id) || [])
   const { moduleData, title, coverUrl } = program
-  const bookSubTitle = moduleData[layoutTemplateConfigMap.bookSubTitle]
-  const bookInformation = moduleData[layoutTemplateConfigMap.bookInformation]
-  const contentInformation = moduleData[layoutTemplateConfigMap.contentInformation]
+  const bookSubTitle = moduleData?.[layoutTemplateConfigMap.bookSubTitle]
+  const bookInformation = moduleData?.[layoutTemplateConfigMap.bookInformation]
+  const contentInformation = moduleData?.[layoutTemplateConfigMap.contentInformation]
 
   const [isPlanListSticky, setIsPlanListSticky] = useState(false)
 
@@ -131,13 +136,13 @@ const EbookProgramPageContent: React.VFC<{
     }
   }, [loadingProgramPlansEnrollmentsAggregateList])
 
-  const hasEbookTrialSection = program.contentSections.find(section =>
+  const ebookTrialSection = program.contentSections.find(section =>
     section.contents.some(content => {
       const isTrial = content?.displayMode === 'trial' || content?.displayMode === 'loginToTrial'
       return isTrial && content.contentType === 'ebook'
     }),
   )
-  const ebookTrialContent = hasEbookTrialSection?.contents.find(content => {
+  const ebookTrialContent = ebookTrialSection?.contents.find(content => {
     const isTrial = content?.displayMode === 'trial' || content?.displayMode === 'loginToTrial'
     return isTrial && content.contentType === 'ebook'
   })
@@ -151,12 +156,19 @@ const EbookProgramPageContent: React.VFC<{
               <Flex gridGap="5" flexWrap={{ base: 'wrap', md: 'nowrap' }}>
                 <Box>
                   <Box boxShadow="md" width="248px" height="248px">
-                    <Image src={coverUrl || ''} alt="cover" />
+                    <Box
+                      backgroundImage={`url(${coverUrl || EmptyCover})`}
+                      backgroundPosition={'center'}
+                      backgroundSize={'cover'}
+                      width="100%"
+                      height="100%"
+                    />
                   </Box>
                   <EbookTrialAndShareButtonGroup
                     programId={program.id}
                     ebookTrialContentId={ebookTrialContent?.id || ''}
                     display={{ base: 'none', md: 'flex' }}
+                    isHasEbookTrialSection={!!ebookTrialSection}
                   />
                 </Box>
 
@@ -172,6 +184,7 @@ const EbookProgramPageContent: React.VFC<{
                     programId={program.id}
                     ebookTrialContentId={ebookTrialContent?.id || ''}
                     display={{ base: 'flex', md: 'none' }}
+                    isHasEbookTrialSection={!!ebookTrialSection}
                   />
                 </Flex>
               </Flex>
