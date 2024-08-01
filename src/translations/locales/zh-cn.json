@@ -1131,6 +1131,8 @@
   "program.ProgramContentPlayer.next": "接下來",
   "program.ProgramDisplayedListItem.expiredAt": "到期",
   "program.ProgramSelector.allPrograms": "全部課程",
+  "program.ProgramContentEbookReader.trialCompleted": "试阅完毕",
+  "program.ProgramContentEbookReader.trialCompletedMessage": "后面内容更精彩，立即购买完整版",
   "program.label.cover": "封面图片",
   "program.label.coverNotice": "建议上传图片尺寸为1600*900px",
   "program.label.editPractice": "编辑作业",

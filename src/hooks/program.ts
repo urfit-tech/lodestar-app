@@ -264,7 +264,8 @@ export const useProgram = (programId: string) => {
           display_footer
           cover_type
           mobile_cover_type
-          program_layout_template_configs(where: { is_active: { _eq: true } }) {
+          activated_layout_template_config_id
+          program_layout_template_config {
             id
             program_layout_template_id
             module_data
@@ -399,13 +400,18 @@ export const useProgram = (programId: string) => {
           auto_renewed
           is_countdown_timer_visible
           group_buying_people
+          sale_price_prefix
+          sale_price_suffix
+          list_price_prefix
+          list_price_suffix
+          price_description
         }
       }
     `,
     { skip: !programId, variables: { programId } },
   )
 
-  const program: (Program & { duration: number | null; score: number | null }) | null = useMemo(() => {
+  const program: Program | null = useMemo(() => {
     return {
       id: data?.program_by_pk?.id,
       coverType: data?.program_by_pk?.cover_type || 'image',
@@ -430,10 +436,10 @@ export const useProgram = (programId: string) => {
       displayHeader: data?.program_by_pk?.display_header ?? true,
       displayFooter: data?.program_by_pk?.display_footer ?? true,
       programLayoutTemplateId:
-        data?.program_by_pk?.program_layout_template_configs[0]?.program_layout_template_id || undefined,
-      moduleData: data?.program_by_pk?.program_layout_template_configs[0]?.module_data,
+        data?.program_by_pk?.program_layout_template_config?.program_layout_template_id || undefined,
+      moduleData: data?.program_by_pk?.program_layout_template_config?.module_data,
       programLayoutTemplateVariant:
-        data?.program_by_pk?.program_layout_template_configs[0]?.program_layout_template?.variant,
+        data?.program_by_pk?.program_layout_template_config?.program_layout_template?.variant,
       categories:
         data?.program_by_pk?.program_categories.map(programCategory => ({
           id: programCategory.category.id,
@@ -475,6 +481,11 @@ export const useProgram = (programId: string) => {
           publishedAt: programPlan.published_at,
           isCountdownTimerVisible: programPlan.is_countdown_timer_visible,
           groupBuyingPeople: programPlan.group_buying_people || 1,
+          salePricePrefix: programPlan.sale_price_prefix || undefined,
+          salePriceSuffix: programPlan.sale_price_suffix || undefined,
+          listPricePrefix: programPlan.list_price_prefix || undefined,
+          listPriceSuffix: programPlan.list_price_suffix || undefined,
+          priceDescription: programPlan.price_description || undefined,
           // enrollmentCount:
           //   programPlanEnrollmentsAggregateData?.program_plan.find(v => v.id === programPlan.id)
           //     ?.program_plan_enrollments_aggregate.aggregate?.count || 0,
@@ -1086,6 +1097,7 @@ export const useProgramProgress = (programContentIds: string[]) => {
         ) {
           program_content_id
           last_progress
+          progress
         }
       }
     `,
@@ -1094,6 +1106,7 @@ export const useProgramProgress = (programContentIds: string[]) => {
   const programContentProgress = data?.program_content_progress.map(progress => ({
     contentId: progress.program_content_id,
     lastProgress: progress.last_progress,
+    progress: progress.progress,
   }))
   return { programContentProgress }
 }

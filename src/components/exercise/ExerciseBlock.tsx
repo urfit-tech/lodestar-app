@@ -1,4 +1,5 @@
 import { Icon } from '@chakra-ui/icons'
+import { max } from 'lodash'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import moment, { Moment } from 'moment'
@@ -6,7 +7,8 @@ import { sum } from 'ramda'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { useMutateExercise, useProgramContentExamId } from '../../hooks/program'
+import { useInsertProgress } from '../../contexts/ProgressContext'
+import { useMutateExercise, useProgramContentExamId, useProgramProgress } from '../../hooks/program'
 import { ReactComponent as routeErrorIcon } from '../../images/404.svg'
 import AdminCard from '../common/AdminCard'
 import { BREAK_POINT } from '../common/Responsive'
@@ -40,6 +42,7 @@ const StyledDescription = styled.div`
 const ExerciseBlock: React.VFC<{
   id: string
   programContentId: string
+  programId: string
   title: string
   nextProgramContentId?: string
   isTaken?: boolean
@@ -76,6 +79,7 @@ const ExerciseBlock: React.VFC<{
   isAvailableToRetry,
   isAvailableAnnounceScore,
   programContentId,
+  programId,
   startedAt,
   endedAt,
   timeLimitUnit,
@@ -89,12 +93,14 @@ const ExerciseBlock: React.VFC<{
   const { currentMemberId } = useAuth()
   const { insertExercise } = useMutateExercise()
   const { examId } = useProgramContentExamId(programContentId)
+  const insertProgress = useInsertProgress(currentMemberId || '')
   const exerciseBeganAt = useRef<Moment | null>(null)
   const exerciseFinishedAt = useRef<Moment | null>(null)
   const [status, setStatus] = useState<'intro' | 'answering' | 'result' | 'review' | 'error'>(
     isTaken ? 'result' : 'intro',
   )
   const [questions, setQuestions] = useState(defaultQuestions)
+  const { programContentProgress } = useProgramProgress([programContentId])
 
   useEffect(() => {
     setStatus(isTaken ? 'result' : 'intro')
@@ -128,6 +134,15 @@ const ExerciseBlock: React.VFC<{
       },
     })
       .then(() => setStatus('result'))
+      .then(() => {
+        const existProgramContent = programContentProgress?.find(content => content.contentId === programContentId)
+        const totalGainedPoints = questions.reduce((sum, question) => sum + (question.gainedPoints || 0), 0)
+
+        insertProgress(programId, programContentId, {
+          progress: max([existProgramContent?.progress ?? 0.5, totalGainedPoints > passingScore ? 1 : 0.5]),
+          lastProgress: totalGainedPoints > passingScore ? 1 : 0.5,
+        })
+      })
       .catch(error => handleError(error))
   }
 

@@ -52,6 +52,8 @@ export type Program = ProgramBriefProps & {
   description: string | null
   coverType: string
   mobileCoverType: string
+  duration: number | null
+  score: number | null
   coverVideoUrl: string | null
   metaTag: MetaTag
   isIssuesOpen: boolean
@@ -65,10 +67,7 @@ export type Program = ProgramBriefProps & {
   displayFooter: boolean
   programLayoutTemplateId: string
   moduleData: {
-    [key: string]: {
-      id: string
-      value: string
-    }
+    [key: string]: string
   }
   programLayoutTemplateVariant?: string | null | undefined
   plans: (ProgramPlan & {
@@ -107,7 +106,6 @@ export type ProgramPlan = {
   title: string
   description: string | null
   gains: string | null
-
   currency: CurrencyProps
   listPrice: number
   salePrice: number | null
@@ -120,6 +118,11 @@ export type ProgramPlan = {
   isParticipantsVisible: boolean
   publishedAt: Date | null
   isCountdownTimerVisible?: boolean
+  salePricePrefix?: string
+  salePriceSuffix?: string
+  listPricePrefix?: string
+  listPriceSuffix?: string
+  priceDescription?: string
 }
 
 export type ProgramContentSection = {

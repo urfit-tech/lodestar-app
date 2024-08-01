@@ -51,7 +51,7 @@ const StyledPinnedIcon = styled.span<{ pin: boolean }>`
     `}
 `
 
-const MobileProgramContentItem = styled.div<{ isEnrolled: boolean }>`
+const StyledMobileProgramContentItem = styled.div<{ isEnrolled: boolean }>`
   position: relative;
   margin-bottom: 12px;
   padding: 1rem;
@@ -65,7 +65,7 @@ const MobileProgramContentItem = styled.div<{ isEnrolled: boolean }>`
   }
 `
 
-const ProgramContentItem = styled(MobileProgramContentItem)<{ isEnrolled: boolean }>`
+const StyledProgramContentItem = styled(StyledMobileProgramContentItem)<{ isEnrolled: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -117,7 +117,7 @@ const ProgramContentListSection: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const theme = useAppTheme()
-  const { currentMemberId, isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { isEquityProgram } = useEquityProgramByProgramId(program.id)
 
@@ -225,12 +225,16 @@ const ProgramContentListSection: React.VFC<{
   }> = ({ item, isPinned }) => {
     if (item == null) return <></>
 
+    const isEbookTrial =
+      (item.contentType === 'ebook' && item.displayMode === DisplayModeEnum.trial) ||
+      item.displayMode === DisplayModeEnum.loginToTrial
+
     return (
       <>
         {isMobile ? (
           <div style={{ position: 'relative' }}>
             <StyledPinnedIcon pin={isPinned} />
-            <MobileProgramContentItem
+            <StyledMobileProgramContentItem
               key={item.id}
               isEnrolled={isEquityProgram}
               onClick={() => {
@@ -242,7 +246,7 @@ const ProgramContentListSection: React.VFC<{
                   url.searchParams.set('programContentId', item.id)
                   window.history.pushState({}, '', url.toString())
                   setAuthModalVisible?.(true)
-                } else if (item.contentType === 'ebook' && item.displayMode === DisplayModeEnum.trial) {
+                } else if (isEbookTrial) {
                   history.push(`/programs/${program.id}/contents/${item.id}?back=programs_${program.id}`)
                 }
               }}
@@ -300,14 +304,14 @@ const ProgramContentListSection: React.VFC<{
                     ` (${moment(item.publishedAt).format('MM/DD')} ${formatMessage(commonMessages.text.publish)}) `}
                 </span>
               </StyledDuration>
-            </MobileProgramContentItem>
+            </StyledMobileProgramContentItem>
           </div>
         ) : (
           <div style={{ position: 'relative' }}>
             <StyledPinnedIcon pin={isPinned} />
-            <ProgramContentItem
+            <StyledProgramContentItem
               key={item.id}
-              isEnrolled={isEquityProgram}
+              isEnrolled={isEquityProgram || isEbookTrial}
               onClick={() => {
                 if (isEquityProgram) {
                   history.push(`/programs/${program.id}/contents/${item.id}?back=programs_${program.id}`)
@@ -317,7 +321,7 @@ const ProgramContentListSection: React.VFC<{
                   url.searchParams.set('programContentId', item.id)
                   window.history.pushState({}, '', url.toString())
                   setAuthModalVisible?.(true)
-                } else if (item.contentType === 'ebook' && item.displayMode === DisplayModeEnum.trial) {
+                } else if (isEbookTrial) {
                   history.push(`/programs/${program.id}/contents/${item.id}?back=programs_${program.id}`)
                 }
               }}
@@ -376,7 +380,7 @@ const ProgramContentListSection: React.VFC<{
                 </span>
                 {durationFormatter(item.duration) || ''}
               </StyledDuration>
-            </ProgramContentItem>
+            </StyledProgramContentItem>
           </div>
         )}
       </>

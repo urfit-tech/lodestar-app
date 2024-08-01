@@ -281,7 +281,7 @@ const ProgramContentBlock: React.VFC<{
         <ProgramContentEbookReader
           setEbook={setEbook}
           programContentId={programContent.id}
-          isTrial={programContent.displayMode === 'trial'}
+          isTrial={programContent.displayMode === 'trial' || programContent.displayMode === 'loginToTrial'}
           ebookCurrentToc={ebookCurrentToc}
           onEbookCurrentTocChange={onEbookCurrentTocChange}
           location={ebookLocation}
@@ -300,7 +300,11 @@ const ProgramContentBlock: React.VFC<{
           />
         </div>
       ) : isEquityExerciseOrExam ? (
-        <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
+        <ProgramContentExerciseBlock
+          programContent={programContent}
+          nextProgramContentId={nextProgramContent?.id}
+          programId={programId}
+        />
       ) : null}
 
       {/* Background mode play video mark */}

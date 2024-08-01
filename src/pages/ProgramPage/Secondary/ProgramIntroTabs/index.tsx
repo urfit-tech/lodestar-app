@@ -30,7 +30,8 @@ const ProgramIntroTabs: React.VFC<{
   program: Program & {
     roles: ProgramRole[]
   }
-}> = ({ program }) => {
+  contentInformation?: string
+}> = ({ program, contentInformation }) => {
   const { isEquityProgram } = useEquityProgramByProgramId(program.id)
   const programContentSections = program.contentSections
     .filter(programContentSection => programContentSection.contents.length)
@@ -52,8 +53,8 @@ const ProgramIntroTabs: React.VFC<{
     <Tabs position="relative" width="100%">
       <StyledTabList justifyContent="center">
         <ProgramIntroTab>簡介</ProgramIntroTab>
-        <ProgramIntroTab>章節</ProgramIntroTab>
-        <ProgramIntroTab>講師</ProgramIntroTab>
+        <ProgramIntroTab>{program.programLayoutTemplateVariant === 'ebook' ? '目錄' : '章節'}</ProgramIntroTab>
+        <ProgramIntroTab>{program.programLayoutTemplateVariant === 'ebook' ? '作者' : '講師'}</ProgramIntroTab>
       </StyledTabList>
 
       <TabPanels>
@@ -66,6 +67,7 @@ const ProgramIntroTabs: React.VFC<{
             programContentSections={programContentSections}
             isEquityProgram={isEquityProgram}
           />
+          {program.programLayoutTemplateVariant === 'ebook' && <BraftContent>{contentInformation}</BraftContent>}
         </StyledPanel>
         <StyledPanel>
           <SecondaryInstructorCollectionBlock program={program} />
