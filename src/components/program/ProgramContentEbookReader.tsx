@@ -127,8 +127,7 @@ export type Bookmark = {
   percentage: number
 }
 
-const isSafari = /Safari/i.test(navigator.userAgent) && !/CriOS/i.test(navigator.userAgent)
-// When using the chrome browser on an ios phone, the word "CriOS" will appear in the userAgent
+const isSafari = /Safari/.test(navigator.userAgent)
 
 const ProgramContentEbookReader: React.VFC<{
   programContentId: string
@@ -580,7 +579,7 @@ const ProgramContentEbookReader: React.VFC<{
   }
 
   return (
-    <Box height={{ base: '90vh', md: '85vh' }}>
+    <Box height={{ base: `${!!isSafari ? '90vh' : '100vh'}`, md: '85vh' }}>
       <CommonModal
         isCentered
         isOpen={modalState === 'trialComplete'}
@@ -627,7 +626,7 @@ const ProgramContentEbookReader: React.VFC<{
         />
       ) : null}
       {source ? (
-        <Box height={{ base: `${!!isSafari ? 'calc(100% - 125px)' : 'calc(100% - 50px)'}`, md: '100%' }}>
+        <Box height={{ base: `${!!isSafari ? '78%' : '90%'}`, md: '100%' }}>
           <div style={readerStyles.container}>
             <div style={readerStyles.readerArea}>
               <div style={readerStyles.reader}>
