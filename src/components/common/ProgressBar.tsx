@@ -29,6 +29,8 @@ const ProgressBar: React.VFC<{
   marginBottom?: string
   loading?: boolean
 }> = ({ percent, noPercent, className, width, marginBottom, loading }) => {
+  const roundedPercent = Math.round(percent * 100) / 100
+
   return (
     <Box
       display="flex"
@@ -43,9 +45,9 @@ const ProgressBar: React.VFC<{
       ) : (
         <>
           <StyledBar className="progress-bar">
-            <StyledProgress percent={percent} />
+            <StyledProgress percent={roundedPercent} />
           </StyledBar>
-          {!noPercent && <StyledPercent className="ml-2">{percent}%</StyledPercent>}
+          {!noPercent && <StyledPercent className="ml-2">{roundedPercent}%</StyledPercent>}
         </>
       )}
     </Box>
