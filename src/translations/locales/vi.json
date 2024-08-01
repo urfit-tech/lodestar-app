@@ -1211,6 +1211,8 @@
   "program.ProgramContentPlayer.next": "接下來",
   "program.ProgramDisplayedListItem.expiredAt": "到期",
   "program.ProgramSelector.allPrograms": "全部課程",
+  "program.ProgramContentEbookReader.trialCompleted": "Đọc thử đã hoàn tất",
+  "program.ProgramContentEbookReader.trialCompletedMessage": "Nội dung sau sẽ thú vị hơn, hãy mua phiên bản đầy đủ ngay",
   "program.label.cover": "Ảnh bìa",
   "program.label.coverNotice": "Kích thước hình ảnh tải lên được đề xuất là 1600 * 900px",
   "program.label.editPractice": "Chỉnh sửa Công việc",

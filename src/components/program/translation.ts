@@ -52,6 +52,13 @@ const programMessages = {
     singleEbook: { id: 'program.ProgramTab.singleEbook', defaultMessage: '單本' },
     packageEbook: { id: 'program.ProgramTab.packageEbook', defaultMessage: '套組' },
   }),
+  ProgramContentEbookReader: defineMessages({
+    trialCompleted: { id: 'program.ProgramContentEbookReader.trialCompleted', defaultMessage: 'Trial Read Completed' },
+    trialCompletedMessage: {
+      id: 'program.ProgramContentEbookReader.trialCompletedMessage',
+      defaultMessage: 'The following content is more exciting, buy the full version now.',
+    },
+  }),
 }
 
 export default programMessages

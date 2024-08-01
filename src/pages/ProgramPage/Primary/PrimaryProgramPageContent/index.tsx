@@ -1,4 +1,4 @@
-import { Button, Icon, Spinner } from '@chakra-ui/react'
+import { Button, Icon } from '@chakra-ui/react'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -6,11 +6,9 @@ import queryString from 'query-string'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessage, useIntl } from 'react-intl'
-import { Link, Redirect, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import Responsive, { BREAK_POINT } from '../../../../components/common/Responsive'
-import DefaultLayout from '../../../../components/layout/DefaultLayout'
 import ReviewCollectionBlock from '../../../../components/review/ReviewCollectionBlock'
 import MediaPlayerContext from '../../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../../contexts/PodcastPlayerContext'
@@ -23,14 +21,13 @@ import {
 } from '../../../../hooks/program'
 import { useEnrolledProgramPackage } from '../../../../hooks/programPackage'
 import { ReactComponent as PlayIcon } from '../../../../images/play-fill-icon.svg'
-import ForbiddenPage from '../../../ForbiddenPage'
+import { Program, ProgramContent, ProgramContentSection } from '../../../../types/program'
 import { CustomizeProgramBanner, PerpetualProgramBanner } from '../ProgramBanner'
 import ProgramBestReviewsCarousel from '../ProgramBestReviewsCarousel'
 import ProgramContentListSection from '../ProgramContentListSection'
 import ProgramContentCountBlock from '../ProgramInfoBlock/ProgramContentCountBlock'
 import ProgramInfoCard, { StyledProgramInfoCard } from '../ProgramInfoBlock/ProgramInfoCard'
 import ProgramInstructorCollectionBlock from '../ProgramInstructorCollectionBlock'
-import ProgramPageHelmet from '../ProgramPageHelmet'
 import ProgramPlanCard from '../ProgramPlanCard'
 import ProgramTagCard from '../ProgramTagCard'
 
@@ -74,33 +71,32 @@ const FixedBottomBlock = styled.div<{ bottomSpace?: string }>`
   z-index: 999;
 `
 
-const StyledDiv = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: calc(100vh - 64px);
-`
-
 const StyledButtonWrapper = styled.div`
   padding: 0.5rem 0.75rem;
   background: white;
 `
 
-const PrimaryProgramPageContent: React.VFC = () => {
+type ProgramContentSectionType = {
+  contentSections: (ProgramContentSection & {
+    contents: ProgramContent[]
+  })[]
+}
+
+const PrimaryProgramPageContent: React.VFC<{
+  program: Program & ProgramContentSectionType
+}> = ({ program }) => {
   const { formatMessage } = useIntl()
   const { pathname } = useLocation()
   const { currentMemberId } = useAuth()
   const location = useLocation()
   const params = queryString.parse(location.search)
-  const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
-  const [previousPage] = useQueryParam('back', StringParam)
   const { programId } = useParams<{ programId: string }>()
-  const { settings, enabledModules, loading: loadingApp } = useApp()
+  const { settings, enabledModules } = useApp()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
-  const { loadingProgram, program, addProgramView } = useProgram(programId)
-  const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
-  const { isEquityProgram, loadingEquityProgram } = useEquityProgramByProgramId(programId)
+  const { addProgramView } = useProgram(programId)
+  const { data: enrolledProgramPackages } = useEnrolledProgramPackage(currentMemberId || '', { programId })
+  const { isEquityProgram } = useEquityProgramByProgramId(programId)
   const { loading: loadingProgramPlansEnrollmentsAggregateList, programPlansEnrollmentsAggregateList } =
     useProgramPlansEnrollmentsAggregateList(program?.plans.map(plan => plan.id) || [])
   const [isPlanListSticky, setIsPlanListSticky] = useState(false)
@@ -136,35 +132,12 @@ const PrimaryProgramPageContent: React.VFC = () => {
     }
   }, [loadingProgramPlansEnrollmentsAggregateList])
 
-  if (!loadingEquityProgram && !visitIntro && isEquityProgram) {
-    return <Redirect to={`/programs/${programId}/contents?back=${previousPage || `programs_${programId}`}`} />
-  }
-
-  if (
-    loadingProgram ||
-    enrolledProgramPackages.loading ||
-    loadingEquityProgram ||
-    loadingProgramPlansEnrollmentsAggregateList
-  ) {
-    return (
-      <DefaultLayout noFooter={true} noHeader={true}>
-        <StyledDiv className="loading">
-          <Spinner size="lg" />
-        </StyledDiv>
-      </DefaultLayout>
-    )
-  }
-
-  if (!program) {
-    return <ForbiddenPage />
-  }
-
   const instructorId = program.roles.filter(role => role.name === 'instructor').map(role => role.memberId)[0] || ''
 
-  const isEnrolledByProgramPackage = !!enrolledProgramPackages.data.length
+  const isEnrolledByProgramPackage = !!enrolledProgramPackages.length
 
   const isDelivered = isEnrolledByProgramPackage
-    ? enrolledProgramPackages.data.some(programPackage =>
+    ? enrolledProgramPackages.some(programPackage =>
         programPackage.enrolledPlans.some(plan => !plan.isTempoDelivery)
           ? true
           : programPackage.programs.some(program => program.id === programId && program.isDelivered),
@@ -172,14 +145,7 @@ const PrimaryProgramPageContent: React.VFC = () => {
     : false
 
   return (
-    <DefaultLayout
-      white
-      footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}
-      noHeader={loadingProgram ? true : !program.displayHeader}
-      noFooter={loadingProgram ? true : !program.displayFooter}
-    >
-      {!loadingApp && <ProgramPageHelmet program={program} />}
-
+    <>
       <div>
         {Number(settings['layout.program_page']) ? (
           <CustomizeProgramBanner program={program} isEnrolled={isEquityProgram} />
@@ -347,7 +313,7 @@ const PrimaryProgramPageContent: React.VFC = () => {
           </FixedBottomBlock>
         </Responsive.Default>
       )}
-    </DefaultLayout>
+    </>
   )
 }
 

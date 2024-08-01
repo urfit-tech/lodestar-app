@@ -1211,6 +1211,8 @@
   "program.ProgramContentPlayer.next": "接下來",
   "program.ProgramDisplayedListItem.expiredAt": "到期",
   "program.ProgramSelector.allPrograms": "全部課程",
+  "program.ProgramContentEbookReader.trialCompleted": "Percobaan pembacaan selesai",
+  "program.ProgramContentEbookReader.trialCompletedMessage": "Konten berikut akan lebih seru, beli versi lengkapnya sekarang",
   "program.label.cover": "Gambar Sampul",
   "program.label.coverNotice": "Ukuran gambar unggahan yang disarankan adalah 1600*900px",
   "program.label.editPractice": "Edit Pekerjaan",

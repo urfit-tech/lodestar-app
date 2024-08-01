@@ -3,11 +3,11 @@ import { Icon, LockIcon } from '@chakra-ui/icons'
 import { Button, SkeletonText, Switch } from '@chakra-ui/react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
+import dayjs from 'dayjs'
 import Cookies from 'js-cookie'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import dayjs from 'dayjs'
 import { flatten, includes } from 'ramda'
 import React, { useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
@@ -281,7 +281,7 @@ const ProgramContentBlock: React.VFC<{
         <ProgramContentEbookReader
           setEbook={setEbook}
           programContentId={programContent.id}
-          isTrial={programContent.displayMode === 'trial'}
+          isTrial={programContent.displayMode === 'trial' || programContent.displayMode === 'loginToTrial'}
           ebookCurrentToc={ebookCurrentToc}
           onEbookCurrentTocChange={onEbookCurrentTocChange}
           location={ebookLocation}
@@ -300,7 +300,11 @@ const ProgramContentBlock: React.VFC<{
           />
         </div>
       ) : isEquityExerciseOrExam ? (
-        <ProgramContentExerciseBlock programContent={programContent} nextProgramContentId={nextProgramContent?.id} />
+        <ProgramContentExerciseBlock
+          programContent={programContent}
+          nextProgramContentId={nextProgramContent?.id}
+          programId={programId}
+        />
       ) : null}
 
       {/* Background mode play video mark */}
