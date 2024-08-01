@@ -203,15 +203,17 @@ const ReviewModal: React.VFC<{
 
   return (
     <>
-      <StyledButtonReview
-        variant={memberReviews && memberReviews.length !== 0 ? 'outline' : 'primary'}
-        reviewed={(!!(memberReviews !== null && memberReviews.length !== 0)).toString()}
-        onClick={onOpen}
-      >
-        {memberReviews && memberReviews.length !== 0
-          ? formatMessage(reviewMessages.button.editReview)
-          : formatMessage(reviewMessages.button.toReview)}
-      </StyledButtonReview>
+      {authToken && (
+        <StyledButtonReview
+          variant={memberReviews && memberReviews.length !== 0 ? 'outline' : 'primary'}
+          reviewed={(!!(memberReviews !== null && memberReviews.length !== 0)).toString()}
+          onClick={onOpen}
+        >
+          {memberReviews && memberReviews.length !== 0
+            ? formatMessage(reviewMessages.button.editReview)
+            : formatMessage(reviewMessages.button.toReview)}
+        </StyledButtonReview>
+      )}
       <CommonModal
         title={formatMessage(reviewMessages.modal.fillReview)}
         isOpen={isOpen}
