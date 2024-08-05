@@ -2,6 +2,7 @@ import { gql, useMutation } from '@apollo/client'
 import { Button } from '@chakra-ui/button'
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay } from '@chakra-ui/modal'
 import { Card, Checkbox, Skeleton, Typography } from 'antd'
+import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import Axios from 'axios'
 import Embedded from 'lodestar-app-element/src/components/common/Embedded'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -90,6 +91,24 @@ const ContractPage: React.VFC = () => {
     settings['custom.contract.confirm.text'] &&
     JSON.parse(settings['custom.contract.confirm.text'])[memberContract?.contract.id || '']
 
+  const handleCheck = (e: CheckboxChangeEvent) => {
+    if (e.target.checked && window.confirm('同意後無法修改') && memberContract) {
+      agreeMemberContract({
+        variables: {
+          memberContractId,
+          agreedAt: new Date(),
+          agreedIp,
+          agreedOptions: {
+            agreedName: memberContract.values?.invoice?.name,
+            agreedPhone: memberContract.values?.invoice?.phone,
+          },
+        },
+      })
+        .then(() => refetchMemberContract())
+        .catch(handleError)
+    }
+  }
+
   return (
     <DefaultLayout>
       <StyledSection className="container">
@@ -134,7 +153,12 @@ const ContractPage: React.VFC = () => {
                   <p>
                     姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
                   </p>
-                  <Checkbox onClick={() => setIsOpenApproveModal(true)} checked={false}>
+                  <Checkbox
+                    checked={!!memberContract.agreedAt}
+                    onChange={
+                      settings['contract_page.v2.enabled'] === '1' ? () => setIsOpenApproveModal(true) : handleCheck
+                    }
+                  >
                     我已詳細閱讀並同意上述契約並願意遵守規定
                   </Checkbox>
                 </>

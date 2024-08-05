@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { Button, Dropdown, Icon, Input, Menu, message, Typography } from 'antd'
+import { Button, Icon, Input, message, Typography } from 'antd'
 import axios from 'axios'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -247,36 +247,28 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                     <Link to="/" className="mb-3 mb-sm-0 mr-sm-2">
                       <Button>{formatMessage(commonMessages.button.home)}</Button>
                     </Link>
-                    <Dropdown
-                      overlay={
-                        <Menu
-                          onClick={param => {
-                            axios
-                              .post(
-                                `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
-                                { orderId: orderId, clientBackUrl: window.location.origin },
-                                { headers: { authorization: `Bearer ${authToken}` } },
-                              )
-                              .then(({ data: { code, result } }) => {
-                                if (code === 'SUCCESS') {
-                                  history.push(`/tasks/payment/${result.id}`)
-                                } else {
-                                  message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-                                }
-                              })
-                              .catch(handleError)
-                          }}
-                        >
-                          <Menu.Item key="spgateway">藍新</Menu.Item>
-                          <Menu.Item key="paypal">Paypal</Menu.Item>
-                        </Menu>
-                      }
+                    <Button
+                      style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+                      onClick={param => {
+                        axios
+                          .post(
+                            `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
+                            { orderId: orderId, clientBackUrl: window.location.origin },
+                            { headers: { authorization: `Bearer ${authToken}` } },
+                          )
+                          .then(({ data: { code, result } }) => {
+                            if (code === 'SUCCESS') {
+                              history.push(`/tasks/payment/${result.id}`)
+                            } else {
+                              message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+                            }
+                          })
+                          .catch(handleError)
+                      }}
                     >
-                      <Button style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                        <div>{formatMessage(commonMessages.ui.repay)}</div>
-                        <Icon type="down" />
-                      </Button>
-                    </Dropdown>
+                      <div>{formatMessage(commonMessages.ui.repay)}</div>
+                      <Icon type="down" />
+                    </Button>
                   </div>
                 </>
               )}
