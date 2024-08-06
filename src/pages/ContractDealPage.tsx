@@ -42,9 +42,9 @@ const DealComponent: React.FC<{
       gateway: 'spgateway',
       method: 'credit',
     }).then(({ orderId, paymentNo, payToken }) => {
-      memberContract.values.paymentOptions.paymentMethod === '藍新'
+      memberContract.values.paymentOptions.paymentMethod.includes('藍新')
         ? history.push(paymentNo ? `/payments/${paymentNo}?token=${payToken}` : `/orders/${orderId}?tracking=1`)
-        : memberContract.values.paymentOptions.paymentMethod === '匯款'
+        : memberContract.values.paymentOptions.paymentMethod.includes('匯款')
         ? history.push(`/orders/${orderId}?method=bankTransfer`)
         : history.goBack()
     })
