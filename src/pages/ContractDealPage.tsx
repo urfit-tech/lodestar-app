@@ -31,12 +31,21 @@ const DealComponent: React.FC<{
   }
 }> = ({ memberContract }) => {
   const history = useHistory()
+
+  let options: { [key: string]: any } = {}
+
+  memberContract?.values?.orderProducts.forEach((p: any) => {
+    console.log(p)
+
+    options[p.product_id] = { ...p, isContract: true, quantity: p.options?.quantity }
+  })
   const { check, orderChecking, placeOrder, orderPlacing, totalPrice } = useCheck({
     productIds: memberContract?.values?.orderProducts.map((p: any) => p.product_id),
     discountId: null,
     shipping: null,
-    options: {},
+    options,
   })
+
   useEffect(() => {
     placeOrder('perpetual', memberContract.values.invoice, {
       gateway: 'spgateway',
