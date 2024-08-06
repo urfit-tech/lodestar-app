@@ -53,7 +53,7 @@ const DealComponent: React.FC<{
     }).then(({ orderId, paymentNo, payToken }) => {
       memberContract.values.paymentOptions.paymentMethod.includes('藍新')
         ? history.push(paymentNo ? `/payments/${paymentNo}?token=${payToken}` : `/orders/${orderId}?tracking=1`)
-        : history.push(`/orders/${orderId}?method=${memberContract?.values.paymentMethod.paymentMethod}`)
+        : history.push(`/orders/${orderId}?method=${memberContract?.values.paymentOptions.paymentMethod}`)
     })
   }, [])
 
