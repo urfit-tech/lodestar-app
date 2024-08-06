@@ -48,14 +48,12 @@ const DealComponent: React.FC<{
 
   useEffect(() => {
     placeOrder('perpetual', memberContract.values.invoice, {
-      gateway: 'spgateway',
-      method: 'credit',
+      gateway: memberContract?.values.paymentMethod.paymentGateway,
+      method: memberContract?.values.paymentMethod.paymentMethod,
     }).then(({ orderId, paymentNo, payToken }) => {
       memberContract.values.paymentOptions.paymentMethod.includes('藍新')
         ? history.push(paymentNo ? `/payments/${paymentNo}?token=${payToken}` : `/orders/${orderId}?tracking=1`)
-        : memberContract.values.paymentOptions.paymentMethod.includes('匯款')
-        ? history.push(`/orders/${orderId}?method=bankTransfer`)
-        : history.goBack()
+        : history.push(`/orders/${orderId}?method=${memberContract?.values.paymentMethod.paymentMethod}`)
     })
   }, [])
 

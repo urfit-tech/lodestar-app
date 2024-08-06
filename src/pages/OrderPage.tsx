@@ -228,6 +228,22 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                     <Button>{formatMessage(commonMessages.ui.submit)}</Button>
                   </Link>
                 </>
+              ) : method === 'cash' || method === 'physicalCredit' || method === 'physicalRemoteCredit' ? (
+                <>
+                  <Icon
+                    className="mb-5"
+                    type="clock-circle"
+                    theme="twoTone"
+                    twoToneColor="#6299ff"
+                    style={{ fontSize: '4rem' }}
+                  />
+                  <Typography.Title level={4} className="mb-3">
+                    訂單已建立成功，請透過{method === 'cash' ? '現金' : '實體刷卡'}來完成付款
+                  </Typography.Title>
+                  <Typography.Title level={4} className="mb-3">
+                    若已付款完成，稍後重整頁面確認訂單狀態。
+                  </Typography.Title>
+                </>
               ) : (
                 <>
                   <Icon
