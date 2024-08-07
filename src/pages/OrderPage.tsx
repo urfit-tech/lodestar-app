@@ -183,7 +183,9 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                     <Button>{formatMessage(commonMessages.button.home)}</Button>
                   </Link>
                 </>
-              ) : order.status === 'SUCCESS' ? (
+              ) : order.status === 'SUCCESS' ||
+                (!!order.options?.installmentPlans &&
+                  order.payment_logs.filter(p => p.status === 'SUCCESS').length > 0) ? (
                 <>
                   <Icon
                     className="mb-5"
@@ -196,6 +198,22 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                     {formatMessage(commonMessages.title.purchasedItemAvailable)}
                   </Typography.Title>
                   {orderSuccessHintFormat(order.payment_model?.method)}
+                  {!!order.options?.installmentPlans &&
+                    order.options?.installmentPlans.map((plan: { price: number; index: number }) => (
+                      <div key={plan.index} className="mb-2">
+                        <b>
+                          {plan.index === 0 && order.options?.installmentPlans.length === 2
+                            ? '訂金'
+                            : plan.index === 1 && order.options?.installmentPlans.length === 2
+                            ? '尾款'
+                            : `${plan.index + 1}期`}
+                        </b>
+                        ：
+                        {order.payment_logs.filter(p => p.price === plan.price)[0].status === 'SUCCESS'
+                          ? '已付款'
+                          : '未付款'}
+                      </div>
+                    ))}
                   <div className="d-flex justify-content-center flex-column flex-sm-row mt-2">
                     <Link to={`/members/${currentMemberId}`} className="mb-3 mb-sm-0 mr-sm-2">
                       <Button>{formatMessage(commonMessages.button.myPage)}</Button>
@@ -265,6 +283,12 @@ const PH_GET_ORDERS_PRODUCT = gql`
       status
       payment_model
       custom_id
+      options
+      payment_logs {
+        no
+        status
+        price
+      }
       order_discounts_aggregate {
         aggregate {
           sum {
