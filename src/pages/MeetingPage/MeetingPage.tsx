@@ -146,6 +146,7 @@ const MeetingPage = () => {
 
       if (code === 'SUCCESS') {
         Cookies.remove('utm')
+        Cookies.remove('landing')
         history.push('/meets/us/completed')
       } else {
         alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${message}`)
