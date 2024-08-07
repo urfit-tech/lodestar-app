@@ -165,6 +165,7 @@ export const useMemberContract = (memberContractId: string) => {
             }
           }
           contract {
+            id
             name
             description
             template
@@ -192,6 +193,7 @@ export const useMemberContract = (memberContractId: string) => {
           memberEmail: data.member_contract_by_pk.member.email || null,
           revokedAt: data.member_contract_by_pk.revoked_at || null,
           contract: {
+            id: data.member_contract_by_pk.contract.id,
             name: data.member_contract_by_pk.contract.name || '',
             description: data.member_contract_by_pk.contract.description || '',
             template: data.member_contract_by_pk.contract.template || '',
