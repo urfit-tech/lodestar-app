@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { Button, Divider, Icon, SkeletonText } from '@chakra-ui/react'
+import { Button, Divider, Icon, SkeletonText, Spinner } from '@chakra-ui/react'
 import { List } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -27,6 +27,7 @@ type CartProductTableCardProps = CardProps & {
   cartProducts: CartProductProps[]
   withCartLink?: boolean
 }
+
 const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
   shopId,
   cartProducts: cartProductWithoutInventory,
@@ -38,6 +39,7 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
   const { id: appId } = useApp()
   const { removeCartProducts } = useContext(CartContext)
   const [isTargetLoaded, setIsTargetLoaded] = useState(false)
+  const [loadingRemoveProductId, setLoadingRemoveProductId] = useState<string | null>(null)
   const { loading, cartProductsWithInventory: cartProducts, refetch } = useProductInventory(cartProductWithoutInventory)
   const { memberShop } = useMemberShop(shopId)
   const { resourceCollection } = useResourceCollection(
@@ -52,6 +54,32 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
   useEffect(() => {
     refetch && refetch()
   }, [refetch])
+
+  const handleRemoveProduct = async (productId: string, quantity: number | undefined) => {
+    setLoadingRemoveProductId(productId)
+
+    try {
+      await new Promise<void>(_ => {
+        ReactGA.plugin.execute('ec', 'addProduct', {
+          id: productId,
+          quantity: `${quantity || 1}`,
+        })
+        ReactGA.plugin.execute('ec', 'setAction', 'remove')
+        ReactGA.ga('send', 'event', 'UX', 'click', 'remove from cart')
+
+        removeCartProducts && removeCartProducts([productId])
+
+        const resource = resourceCollection.find(resource => resource?.id === productId.split('_')[1])
+        if (resource) {
+          tracking.removeFromCart(resource, { quantity })
+        }
+      })
+    } catch (error) {
+      console.error('Error removing product:', error)
+    } finally {
+      setLoadingRemoveProductId(null)
+    }
+  }
 
   if (loading) {
     return (
@@ -100,23 +128,15 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
                     buyableQuantity={cartProduct.buyableQuantity}
                     onTargetLoaded={setIsTargetLoaded}
                   />
-                  <Icon
-                    as={AiOutlineClose}
-                    className="flex-shrink-0 cursor-pointer"
-                    onClick={async () => {
-                      ReactGA.plugin.execute('ec', 'addProduct', {
-                        id: cartProduct.productId,
-                        quantity: `${cartProduct.options?.quantity || 1}`,
-                      })
-                      ReactGA.plugin.execute('ec', 'setAction', 'remove')
-                      ReactGA.ga('send', 'event', 'UX', 'click', 'remove from cart')
-                      removeCartProducts && removeCartProducts([cartProduct.productId])
-                      const resource = resourceCollection.find(
-                        resource => resource?.id === cartProduct.productId.split('_')[1],
-                      )
-                      resource && tracking.removeFromCart(resource, { quantity: cartProduct.options?.quantity })
-                    }}
-                  />
+                  {loadingRemoveProductId === cartProduct.productId ? (
+                    <Spinner />
+                  ) : (
+                    <Icon
+                      as={AiOutlineClose}
+                      className="flex-shrink-0 cursor-pointer"
+                      onClick={() => handleRemoveProduct(cartProduct.productId, cartProduct.options?.quantity)}
+                    />
+                  )}
                 </div>
                 <CartProductGiftPlan productId={cartProduct.productId} isTargetLoaded={isTargetLoaded} />
                 <Divider className="my-4" />
