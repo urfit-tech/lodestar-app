@@ -1,3 +1,4 @@
+import { Skeleton } from 'antd'
 import { useEffect } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { useCheck } from '../hooks/checkout'
@@ -7,8 +8,11 @@ import NotFoundPage from './NotFoundPage'
 const ContractDealPage: React.FC = () => {
   const { memberContractId } = useParams<{ memberId: string; memberContractId: string }>()
 
-  const { memberContract, refetch: refetchMemberContract } = useMemberContract(memberContractId)
+  const { memberContract, loading } = useMemberContract(memberContractId)
 
+  if (loading) {
+    return <Skeleton />
+  }
   if (!memberContract) {
     return <NotFoundPage />
   }
@@ -35,15 +39,17 @@ const DealComponent: React.FC<{
   let options: { [key: string]: any } = {}
 
   memberContract?.values?.orderProducts.forEach((p: any) => {
-    console.log(p)
-
     options[p.product_id] = { ...p, isContract: true, quantity: p.options?.quantity }
   })
   const { check, orderChecking, placeOrder, orderPlacing, totalPrice } = useCheck({
     productIds: memberContract?.values?.orderProducts.map((p: any) => p.product_id),
     discountId: null,
     shipping: null,
-    options,
+    options: {
+      ...options,
+      installmentPlans: memberContract?.values.paymentOptions.installmentPlans,
+      paymentMode: memberContract?.values.paymentOptions.paymentMode,
+    },
   })
 
   useEffect(() => {
@@ -53,7 +59,11 @@ const DealComponent: React.FC<{
     }).then(({ orderId, paymentNo, payToken }) => {
       memberContract.values.paymentOptions.paymentGateway === 'spgateway'
         ? history.push(paymentNo ? `/payments/${paymentNo}?token=${payToken}` : `/orders/${orderId}?tracking=1`)
-        : history.push(`/orders/${orderId}?method=${memberContract?.values.paymentOptions.paymentMethod}`)
+        : history.push(
+            paymentNo
+              ? `/payments/${paymentNo}?method=${memberContract?.values.paymentOptions.paymentMethod}`
+              : `/orders/${orderId}?tracking=1`,
+          )
     })
   }, [])
 

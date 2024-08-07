@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { Button, Icon, Input, message, Typography } from 'antd'
+import { Button, Icon, message, Typography } from 'antd'
 import axios from 'axios'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -35,7 +35,6 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
   const location = useLocation()
   const history = useHistory()
   const [withTracking] = useQueryParam('tracking', BooleanParam)
-  const [method] = useQueryParam('method', StringParam)
   const [errorCode] = useQueryParam('code', StringParam)
   const { settings, id: appId, loading: isAppLoading } = useApp()
   const { currentMemberId, isAuthenticating, authToken } = useAuth()
@@ -205,44 +204,6 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                       <Button>{formatMessage(messages.orderTracking)}</Button>
                     </Link>
                   </div>
-                </>
-              ) : method === 'bankTransfer' ? (
-                <>
-                  <Icon
-                    className="mb-5"
-                    type="clock-circle"
-                    theme="twoTone"
-                    twoToneColor="#6299ff"
-                    style={{ fontSize: '4rem' }}
-                  />
-                  <Typography.Title level={4} className="mb-3">
-                    銀行匯款
-                  </Typography.Title>
-                  <Typography.Title level={4} className="mb-3">
-                    若已匯款成功，請填入您的銀行帳號後五碼。
-                  </Typography.Title>
-                  <div style={{ width: 120 }}>
-                    <Input />
-                  </div>
-                  <Link to="/" className="mt-3 mb-sm-0 mr-sm-2">
-                    <Button>{formatMessage(commonMessages.ui.submit)}</Button>
-                  </Link>
-                </>
-              ) : method === 'cash' || method === 'physicalCredit' || method === 'physicalRemoteCredit' ? (
-                <>
-                  <Icon
-                    className="mb-5"
-                    type="clock-circle"
-                    theme="twoTone"
-                    twoToneColor="#6299ff"
-                    style={{ fontSize: '4rem' }}
-                  />
-                  <Typography.Title level={4} className="mb-3">
-                    訂單已建立成功，請透過{method === 'cash' ? '現金' : '實體刷卡'}來完成付款
-                  </Typography.Title>
-                  <Typography.Title level={4} className="mb-3">
-                    若已付款完成，稍後重整頁面確認訂單狀態。
-                  </Typography.Title>
                 </>
               ) : (
                 <>
