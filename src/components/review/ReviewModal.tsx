@@ -214,7 +214,6 @@ const ReviewModal: React.VFC<{
             : formatMessage(reviewMessages.button.toReview)}
         </StyledButtonReview>
       )}
-
       <CommonModal
         title={formatMessage(reviewMessages.modal.fillReview)}
         isOpen={isOpen}

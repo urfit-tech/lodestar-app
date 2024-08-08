@@ -1,4 +1,5 @@
 import { Box, Skeleton } from '@chakra-ui/react'
+import { isNumber } from 'lodash'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -29,6 +30,8 @@ const ProgressBar: React.VFC<{
   marginBottom?: string
   loading?: boolean
 }> = ({ percent, noPercent, className, width, marginBottom, loading }) => {
+  const roundedPercent = isNumber(percent) ? Math.round(percent * 100) / 100 : 0
+
   return (
     <Box
       display="flex"
@@ -43,9 +46,9 @@ const ProgressBar: React.VFC<{
       ) : (
         <>
           <StyledBar className="progress-bar">
-            <StyledProgress percent={percent} />
+            <StyledProgress percent={roundedPercent} />
           </StyledBar>
-          {!noPercent && <StyledPercent className="ml-2">{percent}%</StyledPercent>}
+          {!noPercent && <StyledPercent className="ml-2">{roundedPercent}%</StyledPercent>}
         </>
       )}
     </Box>
