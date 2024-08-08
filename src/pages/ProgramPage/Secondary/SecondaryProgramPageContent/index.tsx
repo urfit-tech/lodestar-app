@@ -12,6 +12,7 @@ import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import Responsive, { BREAK_POINT } from '../../../../components/common/Responsive'
 import VideoPlayer from '../../../../components/common/VideoPlayer'
 import DefaultLayout from '../../../../components/layout/DefaultLayout'
+import ReviewCollectionBlock from '../../../../components/review/ReviewCollectionBlock'
 import MediaPlayerContext from '../../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../../contexts/PodcastPlayerContext'
 import { desktopViewMixin, handleError } from '../../../../helpers'
@@ -89,12 +90,12 @@ const StyledButtonWrapper = styled.div`
 const SecondaryProgramPageContent: React.VFC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
-  const location = useLocation()
-  const params = queryString.parse(location.search)
   const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
   const [previousPage] = useQueryParam('back', StringParam)
   const { programId } = useParams<{ programId: string }>()
-  const { settings, loading: loadingApp } = useApp()
+  const { pathname, search } = useLocation()
+  const params = queryString.parse(search)
+  const { settings, enabledModules, loading: loadingApp } = useApp()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
   const { loadingProgram, program, addProgramView } = useProgram(programId)
@@ -132,6 +133,12 @@ const SecondaryProgramPageContent: React.VFC = () => {
   useEffect(() => {
     ReactGA.ga('send', 'pageview')
   }, [])
+
+  useEffect(() => {
+    if (customerReviewBlockRef.current && params.moveToBlock === 'customer-review') {
+      setTimeout(() => customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' }), 1000)
+    }
+  }, [customerReviewBlockRef, params])
 
   useEffect(() => {
     if (!loadingProgramPlansEnrollmentsAggregateList) {
@@ -248,6 +255,11 @@ const SecondaryProgramPageContent: React.VFC = () => {
                 {trialProgramContentMedias.length !== 0 ? (
                   <PreviewBlock trialProgramContentMedias={trialProgramContentMedias} />
                 ) : null}
+                {enabledModules.customer_review && (
+                  <div id="customer-review" ref={customerReviewBlockRef}>
+                    <ReviewCollectionBlock path={pathname} targetId={programId} />
+                  </div>
+                )}
               </StyledContentWrapper>
 
               <StyledIntroWrapper ref={planBlockRef} className="col-12 col-lg-4">
