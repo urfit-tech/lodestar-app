@@ -152,10 +152,11 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   })
   if (utmQuery.utm_source) {
     Cookies.set('utm', JSON.stringify(utmQuery), { expires: Number(settings['utm.expires']) || 30 })
-    Cookies.set('landing', window.location.href, { expires: Number(settings['utm.expires']) || 30 })
     Cookies.set('referrer', document.referrer, { expires: Number(settings['utm.expires']) || 30 })
+    if (Cookies.get('landing') === undefined) {
+      Cookies.set('landing', window.location.href, { expires: Number(settings['utm.expires']) || 30 })
+    }
   }
-
   useEffect(() => {
     if (enabledModules.login_restriction || enabledModules.device_management) {
       const refreshTokenAsync = async () => {
