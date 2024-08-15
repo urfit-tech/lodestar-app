@@ -75,7 +75,9 @@ export abstract class CartOperator {
       })
 
       this.setCartProducts(availableProducts)
-    } catch (error) {}
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   public getLocalCartProducts(): CartProductProps[] {
