@@ -47,7 +47,7 @@ const CollapseContentBlock: React.FC<{ creatorId: string }> = ({ creatorId }) =>
             {podcastPrograms.map(podcast => (
               <CollapseContentCard
                 imgSrc={podcast.coverUrl || EmptyCover}
-                href={`/podcast/${podcast.id}`}
+                href={`/podcasts/${podcast.id}`}
                 key={podcast.id}
               >
                 {podcast.title}
