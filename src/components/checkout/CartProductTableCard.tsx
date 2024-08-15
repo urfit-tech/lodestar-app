@@ -58,22 +58,21 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
   const handleRemoveProduct = async (productId: string, quantity: number | undefined) => {
     setLoadingRemoveProductId(productId)
 
+    ReactGA.plugin.execute('ec', 'addProduct', {
+      id: productId,
+      quantity: `${quantity || 1}`,
+    })
+    ReactGA.plugin.execute('ec', 'setAction', 'remove')
+    ReactGA.ga('send', 'event', 'UX', 'click', 'remove from cart')
+
     try {
       await new Promise<void>(_ => {
-        ReactGA.plugin.execute('ec', 'addProduct', {
-          id: productId,
-          quantity: `${quantity || 1}`,
-        })
-        ReactGA.plugin.execute('ec', 'setAction', 'remove')
-        ReactGA.ga('send', 'event', 'UX', 'click', 'remove from cart')
-
         removeCartProducts && removeCartProducts([productId])
-
-        const resource = resourceCollection.find(resource => resource?.id === productId.split('_')[1])
-        if (resource) {
-          tracking.removeFromCart(resource, { quantity })
-        }
       })
+      const resource = resourceCollection.find(resource => resource?.id === productId.split('_')[1])
+      if (resource) {
+        tracking.removeFromCart(resource, { quantity })
+      }
     } catch (error) {
       console.error('Error removing product:', error)
     } finally {

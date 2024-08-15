@@ -4,11 +4,23 @@ import hasura from '../../hasura'
 import { CartProductProps } from '../../types/checkout'
 import { CartOperatorEnum } from './CartOperatorEnum'
 
+type updateCartProductVariables = {
+  variables: {
+    memberId: string
+    cartProductObjects: {
+      app_id: string
+      member_id: string | null
+      product_id: string
+      options: { tracking: any }
+    }[]
+  }
+}
+
 export abstract class CartOperator {
   private apolloClient: ApolloClient<any>
   private appId: string
   private currentMemberId: string | null
-  protected updateCartProducts: (variables: any) => Promise<any>
+  protected updateCartProducts: (variables: updateCartProductVariables) => Promise<any>
   protected setCartProducts: React.Dispatch<React.SetStateAction<CartProductProps[]>>
   protected operator: CartOperatorEnum | undefined
 
@@ -16,7 +28,7 @@ export abstract class CartOperator {
     apolloClient: ApolloClient<any>,
     appId: string,
     currentMemberId: string | null,
-    updateCartProducts: (variables: any) => Promise<any>,
+    updateCartProducts: (variables: updateCartProductVariables) => Promise<any>,
     setCartProducts: React.Dispatch<React.SetStateAction<CartProductProps[]>>,
   ) {
     this.apolloClient = apolloClient
