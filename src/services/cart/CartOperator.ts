@@ -152,7 +152,7 @@ export abstract class CartOperator {
     `
   }
 
-  private async _fetchRemoteCartProducts(operation: CartOperatorEnum, cachedCartProducts: any[]) {
+  private async _fetchRemoteCartProducts(operation: CartOperatorEnum, cachedCartProducts: CartProductProps[]) {
     const query = this._createGetCartProductOperationQuery(operation)
 
     const { data } = await this.apolloClient.query({
