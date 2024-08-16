@@ -91,7 +91,7 @@ const EbookTrialAndShareButtonGroup = ({
     <Flex alignItems="center" gridGap="2" width="100%" display={display} marginTop="20px">
       {isHasEbookTrialSection && (
         <Link href={`/programs/${programId}/contents/${ebookTrialContentId}`} width="100%">
-          <StyledButton>試閱</StyledButton>
+          <StyledButton>試看</StyledButton>
         </Link>
       )}
       <Box width="20%" display="flex" justifyContent="center">
