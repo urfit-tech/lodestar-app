@@ -32,7 +32,7 @@ const CollapseContentBlock: React.FC<{ creatorId: string }> = ({ creatorId }) =>
             {programs.map(program => (
               <CollapseContentCard
                 imgSrc={program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover}
-                href={`/program/${program.id}`}
+                href={`/programs/${program.id}`}
                 key={program.id}
               >
                 {program.title}
@@ -47,7 +47,7 @@ const CollapseContentBlock: React.FC<{ creatorId: string }> = ({ creatorId }) =>
             {podcastPrograms.map(podcast => (
               <CollapseContentCard
                 imgSrc={podcast.coverUrl || EmptyCover}
-                href={`/podcast/${podcast.id}`}
+                href={`/podcasts/${podcast.id}`}
                 key={podcast.id}
               >
                 {podcast.title}
