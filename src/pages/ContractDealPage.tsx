@@ -41,12 +41,13 @@ const DealComponent: React.FC<{
   memberContract?.values?.orderProducts.forEach((p: any) => {
     options[p.product_id] = { ...p, isContract: true, quantity: p.options?.quantity }
   })
-  const { check, orderChecking, placeOrder, orderPlacing, totalPrice } = useCheck({
+  const { placeOrder } = useCheck({
     productIds: memberContract?.values?.orderProducts.map((p: any) => p.product_id),
     discountId: null,
     shipping: null,
     options: {
       ...options,
+      ...memberContract?.values.options,
       installmentPlans: memberContract?.values.paymentOptions.installmentPlans,
       paymentMode: memberContract?.values.paymentOptions.paymentMode,
     },

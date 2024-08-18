@@ -124,6 +124,52 @@ const pageMessages = {
     TitleFirstText: { id: 'page.ResetPasswordPage.TitleFirstText', defaultMessage: '你的帳號為 {account}' },
     TitleSecondText: { id: 'page.ResetPasswordPage.TitleSecondText', defaultMessage: '請輸入密碼來完成帳號設定' },
   }),
+  ContractPage: defineMessages({
+    onlineCourseServiceTerms: {
+      id: 'page.ContractPage.onlineCourseServiceTerms',
+      defaultMessage: 'Online Course Service Terms',
+    },
+    noContractContent: {
+      id: 'page.ContractPage.noContractContent',
+      defaultMessage: 'No Contract Content',
+    },
+    name: {
+      id: 'page.ContractPage.name',
+      defaultMessage: 'Name',
+    },
+    email: {
+      id: 'page.ContractPage.email',
+      defaultMessage: 'Email',
+    },
+    agreedOn: {
+      id: 'page.ContractPage.agreedOn',
+      defaultMessage: 'Agreed to this contract on {date}',
+    },
+    terminatedOn: {
+      id: 'page.ContractPage.terminatedOn',
+      defaultMessage: 'This contract was terminated on {date}',
+    },
+    contractExpired: {
+      id: 'page.ContractPage.contractExpired',
+      defaultMessage: 'This contract has expired',
+    },
+    alreadyReadAndAgree: {
+      id: 'page.ContractPage.alreadyReadAndAgree',
+      defaultMessage: 'I have carefully read and agree to the above contract and am willing to abide by the terms.',
+    },
+    requireContractingParty: {
+      id: 'page.ContractPage.requireContractingParty',
+      defaultMessage: 'Signature Required by the Contracting Party',
+    },
+    disagree: {
+      id: 'page.ContractPage.disagree',
+      defaultMessage: 'Disagree',
+    },
+    agree: {
+      id: 'page.ContractPage.agree',
+      defaultMessage: 'Agree',
+    },
+  }),
 }
 
 export const termPrivacyMessages = {
