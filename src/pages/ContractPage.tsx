@@ -10,6 +10,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import { render } from 'mustache'
 import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { AuthModalContext } from '../components/auth/AuthModal'
@@ -18,6 +19,7 @@ import hasura from '../hasura'
 import { dateFormatter, handleError } from '../helpers'
 import { useAuthModal } from '../hooks/auth'
 import { useMemberContract } from '../hooks/data'
+import pageMessages from './translation'
 
 const StyledTitle = styled(Typography.Title)`
   && {
@@ -66,6 +68,7 @@ const StyledSection = styled.section`
 `
 
 const ContractPage: React.VFC = () => {
+  const { formatMessage } = useIntl()
   const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
   const { settings } = useApp()
   const authModal = useAuthModal()
@@ -85,9 +88,6 @@ const ContractPage: React.VFC = () => {
     Axios.get('https://api.ipify.org/').then(res => setAgreedIpAddress(res.data))
   }, [])
 
-  if (currentMemberId && currentMemberId !== memberId) {
-    return <DefaultLayout>無法查看他人合約</DefaultLayout>
-  }
   const customConfirmText =
     settings['custom.contract.confirm.text'] &&
     JSON.parse(settings['custom.contract.confirm.text'])[memberContract?.contract.id || '']
@@ -121,7 +121,7 @@ const ContractPage: React.VFC = () => {
         }}
       </AuthModalContext.Consumer>
       <StyledSection className="container">
-        <StyledTitle level={1}>{'線上課程服務約款'}</StyledTitle>
+        <StyledTitle level={1}>{formatMessage(pageMessages.ContractPage.onlineCourseServiceTerms)}</StyledTitle>
         <StyledCard>
           {isAuthenticating || memberContractLoading ? (
             <Skeleton active />
@@ -134,7 +134,7 @@ const ContractPage: React.VFC = () => {
               })}
             />
           ) : (
-            '無合約內容'
+            formatMessage(pageMessages.ContractPage.noContractContent)
           )}
         </StyledCard>
 
@@ -144,23 +144,34 @@ const ContractPage: React.VFC = () => {
               {memberContract.revokedAt ? (
                 <>
                   <p>
-                    姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
+                    {formatMessage(pageMessages.ContractPage.name)}：{memberContract.memberName} /{' '}
+                    {formatMessage(pageMessages.ContractPage.email)}：{memberContract.memberEmail}
                   </p>
-                  <b>已於 {moment(memberContract.revokedAt).format('YYYY-MM-DD HH:mm:ss')} 解除此契約</b>
+                  <b>
+                    {formatMessage(pageMessages.ContractPage.agreedOn, {
+                      date: moment(memberContract.revokedAt).format('YYYY-MM-DD HH:mm:ss'),
+                    })}
+                  </b>
                 </>
               ) : memberContract.agreedAt ? (
                 <>
                   <p>
-                    姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
+                    {formatMessage(pageMessages.ContractPage.name)}：{memberContract.memberName} /{' '}
+                    {formatMessage(pageMessages.ContractPage.email)}：{memberContract.memberEmail}
                   </p>
-                  <b>已於 {moment(memberContract.agreedAt).format('YYYY-MM-DD HH:mm:ss')} 同意此契約</b>
+                  <b>
+                    {formatMessage(pageMessages.ContractPage.agreedOn, {
+                      date: moment(memberContract.agreedAt).format('YYYY-MM-DD HH:mm:ss'),
+                    })}
+                  </b>
                 </>
               ) : memberContract.startedAt && moment() >= moment(memberContract.startedAt) ? (
-                <b>此合約已失效</b>
-              ) : (
+                <b> {formatMessage(pageMessages.ContractPage.contractExpired)}</b>
+              ) : !!(currentMemberId && currentMemberId === memberId) ? (
                 <>
                   <p>
-                    姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
+                    {formatMessage(pageMessages.ContractPage.name)}：{memberContract.memberName} /{' '}
+                    {formatMessage(pageMessages.ContractPage.email)}：{memberContract.memberEmail}
                   </p>
                   <Checkbox
                     checked={!!memberContract.agreedAt}
@@ -168,9 +179,11 @@ const ContractPage: React.VFC = () => {
                       settings['contract_page.v2.enabled'] === '1' ? () => setIsOpenApproveModal(true) : handleCheck
                     }
                   >
-                    <b> 我已詳細閱讀並同意上述契約並願意遵守規定</b>
+                    <b> {formatMessage(pageMessages.ContractPage.alreadyReadAndAgree)}</b>
                   </Checkbox>
                 </>
+              ) : (
+                <b> {formatMessage(pageMessages.ContractPage.requireContractingParty)}</b>
               )}
             </div>
           </StyledCard>
@@ -196,7 +209,7 @@ const ContractPage: React.VFC = () => {
                 setIsOpenApproveModal(false)
               }}
             >
-              不同意
+              {formatMessage(pageMessages.ContractPage.disagree)}
             </Button>
             <Button
               colorScheme="primary"
@@ -218,7 +231,7 @@ const ContractPage: React.VFC = () => {
                     .catch(handleError)
               }}
             >
-              確認同意
+              {formatMessage(pageMessages.ContractPage.agree)}
             </Button>
           </ModalFooter>
         </ModalContent>
