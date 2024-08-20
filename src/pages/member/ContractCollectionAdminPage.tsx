@@ -49,8 +49,10 @@ const ContractCollectionAdminPage: React.VFC = () => {
           agreedOptions: value.agreed_options || {},
           revokedAt: value.revoked_at,
           options: value.options || {},
+          createdAt: value.created_at,
         }
-      }) || []
+      })
+      .sort((a, b) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf()) || []
   return (
     <MemberAdminLayout content={{ icon: CoinIcon, title: formatMessage(commonMessages.content.contracts) }}>
       <List
@@ -101,6 +103,7 @@ const GET_MEMBER_CONTRACTS = gql`
       agreed_options
       revoked_at
       started_at
+      created_at
       ended_at
       options
       contract {
