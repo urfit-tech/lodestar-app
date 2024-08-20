@@ -97,7 +97,6 @@ const MeetingPage = () => {
       alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${error}`)
     } finally {
       setIsSubmitting(false)
-      window.location.reload()
     }
   }
 
