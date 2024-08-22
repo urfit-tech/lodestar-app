@@ -54,25 +54,23 @@ export abstract class CartOperator {
 
     this._updateLocalCache(availableProducts)
 
-    if (!this.currentMemberId) {
-      return
-    }
-
     try {
-      await this.updateCartProducts({
-        variables: {
-          memberId: this.currentMemberId,
-          cartProductObjects: availableProducts.map(product => {
-            const tracking = product?.options?.tracking || {}
-            return {
-              app_id: this.appId,
-              member_id: this.currentMemberId,
-              product_id: product.productId,
-              options: { tracking },
-            }
-          }),
-        },
-      })
+      if (this.isLoginStatus()) {
+        await this.updateCartProducts({
+          variables: {
+            memberId: this.currentMemberId || '',
+            cartProductObjects: availableProducts.map(product => {
+              const tracking = product?.options?.tracking || {}
+              return {
+                app_id: this.appId,
+                member_id: this.currentMemberId,
+                product_id: product.productId,
+                options: { tracking },
+              }
+            }),
+          },
+        })
+      }
 
       this.setCartProducts(availableProducts)
     } catch (error) {
@@ -235,5 +233,9 @@ export abstract class CartOperator {
 
   private _updateLocalCache(filteredProducts: CartProductProps[]) {
     localStorage.setItem('kolable.cart._products', JSON.stringify(filteredProducts))
+  }
+
+  private isLoginStatus() {
+    return !!this.currentMemberId
   }
 }
