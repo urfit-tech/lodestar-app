@@ -3,7 +3,7 @@ import { Button, message } from 'antd'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -13,6 +13,17 @@ import { codeMessages, commonMessages } from '../helpers/translation'
 import { useTask } from '../hooks/task'
 import { sleep } from '../hooks/util'
 import { ReactComponent as ErrorIcon } from '../images/error.svg'
+
+const messages = defineMessages({
+  confirmingOrder: {
+    id: 'orderTaskPage.message.confirmingOrder',
+    defaultMessage: '確認訂單中，請稍候...',
+  },
+  doNotRefresh: {
+    id: 'orderTaskPage.message.doNotRefresh',
+    defaultMessage: '請勿重整與返回上一頁',
+  },
+})
 
 const StyledWrapper = styled.div`
   padding: 4rem 1rem;
@@ -97,8 +108,9 @@ const OrderTaskPage: React.VFC = () => {
     <DefaultLayout noFooter noHeader centeredBox>
       <StyledContainer>
         <div className="text-center">
-          確認訂單中，請稍候...{(Math.exp(-1 / retry) * 100).toFixed(0)}%
-          <StyledWarning>請勿重整與返回上一頁</StyledWarning>
+          {formatMessage(messages.confirmingOrder)}
+          {(Math.exp(-1 / retry) * 100).toFixed(0)}%
+          <StyledWarning>{formatMessage(messages.doNotRefresh)}</StyledWarning>
         </div>
       </StyledContainer>
     </DefaultLayout>

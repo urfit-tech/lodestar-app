@@ -27,12 +27,14 @@ import moment from 'moment-timezone'
 import { useState } from 'react'
 import { FaQuoteLeft } from 'react-icons/fa'
 import { HiDotsVertical } from 'react-icons/hi'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
 import { ReactComponent as DeleteIcon } from '../../images/delete-o.svg'
 import { ReactComponent as BookmarkIcon } from '../../images/icon-grid-view.svg'
 import { ReactComponent as MarkIcon } from '../../images/mark.svg'
 import { Bookmark } from '../program/ProgramContentEbookReader'
+import ebookMessage from './translation'
 
 const StyledHighlight = styled.div`
   display: flex;
@@ -120,6 +122,7 @@ export const EbookBookmarkModal: React.VFC<{
   showDeleteHighlightModal,
   showCommentModal,
 }) => {
+  const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const onLocationChangeAndCloseModel = (loc: string) => {
@@ -129,7 +132,11 @@ export const EbookBookmarkModal: React.VFC<{
 
   return (
     <Flex>
-      <Tooltip label="書籤及註釋" aria-label="書籤及註釋" placement="top">
+      <Tooltip
+        label={formatMessage(ebookMessage.EbookBookmarkModal.bookmarkAndAnnotation)}
+        aria-label={formatMessage(ebookMessage.EbookBookmarkModal.bookmarkAndAnnotation)}
+        placement="top"
+      >
         <Icon
           ml={{ base: '20px', md: '16px' }}
           as={BookmarkIcon}
@@ -145,8 +152,8 @@ export const EbookBookmarkModal: React.VFC<{
           <ModalBody>
             <Tabs>
               <TabList>
-                <Tab>書籤</Tab>
-                <Tab>畫線註釋</Tab>
+                <Tab>{formatMessage(ebookMessage.EbookBookmarkModal.bookmark)}</Tab>
+                <Tab>{formatMessage(ebookMessage.EbookBookmarkModal.underlineAnnotation)}</Tab>
               </TabList>
               <TabPanels>
                 <TabPanel>
@@ -248,6 +255,7 @@ const HighlightRow: React.VFC<{
   modelOnClose: () => void
   showCommentModal: (cfiRange: string | null, id?: string | null) => void
 }> = ({ highlight, onLocationChange, deleteHighlight, showDeleteHighlightModal, modelOnClose, showCommentModal }) => {
+  const { formatMessage } = useIntl()
   const [isDeleting, setDeleting] = useState<boolean>(false)
 
   const formattedCreatedAt = moment(highlight.createdAt).tz('Asia/Taipei').format('YYYY-MM-DD HH:mm')
@@ -292,8 +300,12 @@ const HighlightRow: React.VFC<{
           <Menu>
             <MenuButton as={IconButton} aria-label="Options" icon={<HiDotsVertical />} variant="ghost" />
             <MenuList minWidth="auto" width="fit-content">
-              <MenuItem onClick={() => handleCommentHighlight(highlight.id)}>編輯</MenuItem>
-              <MenuItem onClick={() => handleDeleteHighlight(highlight.id)}>刪除</MenuItem>
+              <MenuItem onClick={() => handleCommentHighlight(highlight.id)}>
+                {formatMessage(ebookMessage.EbookBookmarkModal.edit)}
+              </MenuItem>
+              <MenuItem onClick={() => handleDeleteHighlight(highlight.id)}>
+                {formatMessage(ebookMessage.EbookBookmarkModal.delete)}
+              </MenuItem>
             </MenuList>
           </Menu>
         )}
