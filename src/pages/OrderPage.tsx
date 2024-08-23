@@ -24,9 +24,29 @@ import NotFoundPage from './NotFoundPage'
 export const messages = defineMessages({
   orderSuccessHint: {
     id: 'common.text.orderSuccessHint',
-    defaultMessage: '若你選擇「{method}」需於付款完成後，{waitingDays} 個工作日才會開通。',
+    defaultMessage: '若你選擇「{method}」需於付款完成後，等待{waitingDays} 個工作日才會開通。',
   },
   orderTracking: { id: 'common.text.orderTracking', defaultMessage: '訂單查詢' },
+  deposit: {
+    id: 'orderPage.label.deposit',
+    defaultMessage: '訂金',
+  },
+  finalPayment: {
+    id: 'orderPage.label.finalPayment',
+    defaultMessage: '尾款',
+  },
+  installment: {
+    id: 'orderPage.label.installment',
+    defaultMessage: '{index}期',
+  },
+  paid: {
+    id: 'orderPage.status.paid',
+    defaultMessage: '已付款',
+  },
+  unpaid: {
+    id: 'orderPage.status.unpaid',
+    defaultMessage: '未付款',
+  },
 })
 
 const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_by_pk'] }> = ({ render }) => {
@@ -110,7 +130,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
           <Typography.Text className="mb-4">
             {formatMessage(messages.orderSuccessHint, {
               method: formatMessage(checkoutMessages.label.barcode),
-              waitingDays: '等待 3-5',
+              waitingDays: '3-5',
             })}
           </Typography.Text>
         )
@@ -203,15 +223,15 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                       <div key={plan.index} className="mb-2">
                         <b>
                           {plan.index === 0 && order.options?.installmentPlans.length === 2
-                            ? '訂金'
+                            ? formatMessage(messages.deposit)
                             : plan.index === 1 && order.options?.installmentPlans.length === 2
-                            ? '尾款'
-                            : `${plan.index + 1}期`}
+                            ? formatMessage(messages.finalPayment)
+                            : formatMessage(messages.installment, { index: plan.index + 1 })}
                         </b>
                         ：
                         {order.payment_logs.filter(p => p.price === plan.price)[0].status === 'SUCCESS'
-                          ? '已付款'
-                          : '未付款'}
+                          ? formatMessage(messages.paid)
+                          : formatMessage(messages.unpaid)}
                       </div>
                     ))}
                   <div className="d-flex justify-content-center flex-column flex-sm-row mt-2">

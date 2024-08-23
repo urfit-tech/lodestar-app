@@ -10,7 +10,7 @@ import { css, FlattenSimpleInterpolation } from 'styled-components'
 import { v4 as uuid } from 'uuid'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { ApiResponse, MemberPageProductType } from '../types/general'
-import { helperMessages } from './translation'
+import { checkoutMessages, commonMessages, helperMessages } from './translation'
 
 export const TPDirect = (window as any)['TPDirect']
 
@@ -132,7 +132,12 @@ export const dateRangeFormatter: (props: {
 }
 
 export const durationFormatter = (value?: number | null) => {
-  return typeof value === 'number' && `約 ${Math.ceil(value / 60)} 分鐘`
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { formatMessage } = useIntl()
+  return (
+    typeof value === 'number' &&
+    formatMessage(commonMessages.content.durationFormatter, { minute: Math.ceil(value / 60) })
+  )
 }
 
 export const durationFullFormatter = (seconds: number) => {
@@ -150,14 +155,16 @@ export const durationFullFormatter = (seconds: number) => {
 }
 
 export const braftLanguageFn = (languages: { [lan: string]: any }, context: any) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { formatMessage } = useIntl()
   if (context === 'braft-editor') {
-    languages['zh-hant'].controls.normal = '內文'
-    languages['zh-hant'].controls.fontSize = '字級'
-    languages['zh-hant'].controls.removeStyles = '清除樣式'
-    languages['zh-hant'].controls.code = '程式碼'
-    languages['zh-hant'].controls.link = '連結'
-    languages['zh-hant'].controls.hr = '水平線'
-    languages['zh-hant'].controls.fullscreen = '全螢幕'
+    languages['zh-hant'].controls.normal = formatMessage(commonMessages.editor.title.content)
+    languages['zh-hant'].controls.fontSize = formatMessage(commonMessages.editor.defaults.fontSize)
+    languages['zh-hant'].controls.removeStyles = formatMessage(commonMessages.editor.title.clearStyles)
+    languages['zh-hant'].controls.code = formatMessage(commonMessages.editor.title.code)
+    languages['zh-hant'].controls.link = formatMessage(commonMessages.editor.title.link)
+    languages['zh-hant'].controls.hr = formatMessage(commonMessages.editor.title.hr)
+    languages['zh-hant'].controls.fullscreen = formatMessage(commonMessages.editor.title.fullscreen)
 
     return languages['zh-hant']
   }
@@ -299,19 +306,21 @@ export const createUploadFn = (appId: string, authToken: string | null) => {
 }
 
 export const shippingMethodFormatter = (value?: string) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { formatMessage } = useIntl()
   switch (value) {
     case 'home-delivery':
-      return '宅配'
+      return formatMessage(checkoutMessages.shipping.homeDelivery)
     case 'seven-eleven':
-      return '7-11 超商取貨'
+      return formatMessage(checkoutMessages.shipping.sevenEleven)
     case 'family-mart':
-      return '全家超商取貨'
+      return formatMessage(checkoutMessages.shipping.familyMart)
     case 'hi-life':
-      return '萊爾富超商取貨'
+      return formatMessage(checkoutMessages.shipping.hiLife)
     case 'ok-mart':
-      return 'OK 超商取貨'
+      return formatMessage(checkoutMessages.shipping.okMart)
     default:
-      return '未知配送方式'
+      return formatMessage(checkoutMessages.shipping.unknownDeliveryMethod)
   }
 }
 

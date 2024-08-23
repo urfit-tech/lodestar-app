@@ -27,6 +27,14 @@ const checkoutMessages = {
       id: 'checkout.CoinCheckoutModal.checkPhoneFormat',
       defaultMessage: '請確認格式',
     },
+    pleaseEnterPhoneNumber: {
+      id: 'checkout.CoinCheckoutModal.pleaseEnterPhoneNumber',
+      defaultMessage: 'Please enter your phone number',
+    },
+    checkPhoneNumberFormat: {
+      id: 'checkout.CoinCheckoutModal.checkPhoneNumberFormat',
+      defaultMessage: 'Please checkout the phone number format',
+    },
   }),
 }
 

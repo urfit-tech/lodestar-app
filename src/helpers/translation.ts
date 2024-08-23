@@ -402,6 +402,10 @@ export const commonMessages = {
       id: 'common.content.noProgramPackage',
       defaultMessage: '沒有參與任何課程組合',
     },
+    durationFormatter: {
+      id: 'common.text.durationFormatter',
+      defaultMessage: '約 {minutes} 分鐘',
+    },
   }),
   unknown: defineMessages({
     default: { id: 'common.unknown', defaultMessage: '未知' },
@@ -447,6 +451,7 @@ export const commonMessages = {
   editor: {
     defaults: defineMessages({ fontSize: { id: 'common.editor.fontSize', defaultMessage: '字級' } }),
     title: defineMessages({
+      content: { id: 'common.editor.content', defaultMessage: '內文' },
       clearStyles: { id: 'common.editor.title.styles.clear', defaultMessage: '清除樣式' },
       code: { id: 'common.editor.title.code', defaultMessage: '程式碼' },
       link: { id: 'common.editor.title.link', defaultMessage: '連結' },
@@ -720,6 +725,10 @@ export const checkoutMessages = {
     sendByPost: { id: 'checkout.label.sendByPost', defaultMessage: '郵寄' },
     homeDelivery: { id: 'checkout.label.homeDelivery', defaultMessage: '宅配' },
     other: { id: 'checkout.label.other', defaultMessage: '其他' },
+    unknownDeliveryMethod: {
+      id: 'checkout.label.unknownDeliveryMethod',
+      defaultMessage: '未知配送方式',
+    },
     outsideTaiwanIslandNoShipping: {
       id: 'checkout.label.outsideTaiwanIslandNoShipping',
       defaultMessage: '台灣離島/海外不寄送',
@@ -1236,6 +1245,11 @@ export const termMessages = {
     terms: { id: 'term.title.terms', defaultMessage: '使用者條款' },
     report: { id: 'term.title.report', defaultMessage: '舉報' },
     refund: { id: 'term.title.refund', defaultMessage: '退費辦法' },
+    purchaseNotice: { id: 'term.title.purchaseNotice', defaultMessage: 'Purchase Notice' },
+    facebookDataDeletion: {
+      id: 'term.title.facebookDataDeletion',
+      defaultMessage: 'Facebook Data Deletion Instructions',
+    },
   }),
   subtitle: defineMessages({
     scope: { id: 'term.subtitle.scope', defaultMessage: '隱私權保護政策的適用範圍' },
@@ -1250,6 +1264,7 @@ export const termMessages = {
     suspension: { id: 'term.title.suspension', defaultMessage: '暫停或終止服務' },
     refundPolicy: { id: 'term.subtitle.refund.policy', defaultMessage: '退費規定' },
     refundMethod: { id: 'term.subtitle.refund.method', defaultMessage: '退費方式' },
+    userResponsibility: { id: 'term.subtitle.userResponsibility', defaultMessage: 'User Responsibility' },
   }),
   paragraph: defineMessages({
     scope: {
@@ -1347,6 +1362,21 @@ export const termMessages = {
       id: 'term.paragraph.refund4',
       defaultMessage: '退費申請流程：請您聯繫客服，將有專人回覆。',
     },
+    purchaseNotice1: {
+      id: 'term.paragraph.purchaseNotice1',
+      defaultMessage:
+        'According to civil law, individuals without legal capacity (such as minors under the age of seven) must have their legal representatives make the purchase of this course on their behalf; individuals with limited legal capacity (aged seven but under twenty) must obtain the consent of their legal representatives before purchasing this course.',
+    },
+    purchaseNotice2: {
+      id: 'term.paragraph.purchaseNotice2',
+      defaultMessage:
+        'By registering and indicating "Agree to Purchase Notice", you are agreeing to fully comply with all the contents of this Purchase Notice; if you are an individual without legal capacity or with limited legal capacity as defined by civil law, it is presumed that the purchase of this course is made by the legal representative on behalf of the individual without legal capacity, or with the consent of the legal representative for the individual with limited legal capacity.',
+    },
+    facebookDataDeletion: {
+      id: 'term.paragraph.facebookDataDeletion',
+      defaultMessage:
+        'According to Facebook policy, we must provide "Facebook Data Deletion Instructions." If you wish to delete your Facebook login application data from this platform, you can follow these steps:',
+    },
   }),
   list: defineMessages({
     item1: {
@@ -1390,6 +1420,60 @@ export const termMessages = {
     item10: {
       id: 'term.list.item10',
       defaultMessage: '其他 {name} 有正當理由認為不適當之行為。',
+    },
+    userResponsibility1: {
+      id: 'term.list.userResponsibility1',
+      defaultMessage:
+        'Users are responsible for using the service at their own risk and for all actions and outcomes resulting from their use of the service.',
+    },
+    userResponsibility2: {
+      id: 'term.list.userResponsibility2',
+      defaultMessage:
+        "If the user engages in or is likely to engage in the following situations, {name} may, without prior notice to the user, suspend the user's access to all or part of the service, disable or delete the {name} account, terminate the contract between the user and {name} regarding the service (including but not limited to contracts established under these terms), or take any other measures {name} deems necessary and appropriate:",
+    },
+    userResponsibility21: {
+      id: 'term.list.userResponsibility21',
+      defaultMessage: 'The user violates relevant laws, these terms, or any individual terms.',
+    },
+    userResponsibility22: {
+      id: 'term.list.userResponsibility22',
+      defaultMessage: 'The user is a member of an antisocial force or a related party.',
+    },
+    userResponsibility23: {
+      id: 'term.list.userResponsibility23',
+      defaultMessage:
+        'The user spreads false information, such as by using fraudulent means or force, or otherwise unlawfully damages the reputation of {name}.',
+    },
+    userResponsibility24: {
+      id: 'term.list.userResponsibility24',
+      defaultMessage:
+        "The user is subject to seizure, provisional seizure, auction, bankruptcy, civil rehabilitation, or similar proceedings, or {name} reasonably believes that the user's creditworthiness is uncertain.",
+    },
+    userResponsibility25: {
+      id: 'term.list.userResponsibility25',
+      defaultMessage:
+        'The relationship of trust between the user and {name} no longer exists, or {name} reasonably believes it is no longer appropriate to provide the service to the user due to reasons other than those listed in items (1) to (4).',
+    },
+    userResponsibility3: {
+      id: 'term.list.userResponsibility3',
+      defaultMessage:
+        "If the user's use of the service (including but not limited to claims for damages made by third parties against {name} due to the user's use of the service) causes {name} to suffer any direct or indirect loss/damage (including but not limited to the burden of attorney fees), the user shall immediately compensate {name} upon {name}'s request.",
+    },
+    facebookDataDeletionStep1: {
+      id: 'term.list.facebookDataDeletionStep1',
+      defaultMessage: 'Go to your Facebook account’s "Settings & Privacy" menu and click "Settings".',
+    },
+    facebookDataDeletionStep2: {
+      id: 'term.list.facebookDataDeletionStep2',
+      defaultMessage: 'Scroll down and click "Apps and Websites".',
+    },
+    facebookDataDeletionStep3: {
+      id: 'term.list.facebookDataDeletionStep3',
+      defaultMessage: 'Find and click on this app ({name}).',
+    },
+    facebookDataDeletionStep4: {
+      id: 'term.list.facebookDataDeletionStep4',
+      defaultMessage: 'Click the "Remove" button to successfully delete your app activity.',
     },
   }),
 }
