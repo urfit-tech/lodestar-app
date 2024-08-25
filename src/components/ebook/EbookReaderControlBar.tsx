@@ -11,11 +11,13 @@ import {
 } from '@chakra-ui/react'
 import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
 import { useState } from 'react'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
 import { Bookmark } from '../program/ProgramContentEbookReader'
 import { EbookBookmarkModal } from './EbookBookmarkModal'
 import EbookStyledModal from './EbookStyledModal'
+import ebookMessage from './translation'
 import type { Rendition } from 'epubjs'
 
 const Spacer = styled(Flex)`
@@ -79,6 +81,7 @@ export const EbookReaderControlBar: React.VFC<{
   showDeleteHighlightModal,
   showCommentModal,
 }) => {
+  const { formatMessage } = useIntl()
   const [showTooltip, setShowTooltip] = useState(false)
   const [isFocus, setFocus] = useState(false)
 
@@ -162,7 +165,11 @@ export const EbookReaderControlBar: React.VFC<{
             onLineHeightChange={onLineHeightChange}
             onThemeChange={onThemeChange}
             renderTrigger={({ onOpen }) => (
-              <Tooltip label="基本設定" aria-label="基本設定" placement="top">
+              <Tooltip
+                label={formatMessage(ebookMessage.EbookReaderControlBar.basicSettings)}
+                aria-label={formatMessage(ebookMessage.EbookReaderControlBar.basicSettings)}
+                placement="top"
+              >
                 <Box as="u" cursor="pointer" ml={{ base: '20px', md: '16px' }} fontSize="20px" onClick={() => onOpen()}>
                   A
                 </Box>

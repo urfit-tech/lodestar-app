@@ -87,6 +87,22 @@ const ebookMessage = {
       defaultMessage: '深色',
     },
   }),
+  EbookDeleteCommentModel: defineMessages({
+    deleteSelectedHighlight: {
+      id: 'ebook.EbookDeleteCommentModel.deleteSelectedHighlight',
+      defaultMessage: '是否刪除所選的畫線',
+    },
+    deleteConfirmation: {
+      id: 'ebook.EbookDeleteCommentModel.deleteConfirmation',
+      defaultMessage: '刪除即不可恢復，確定要刪除嗎？',
+    },
+  }),
+  EbookReaderControlBar: defineMessages({
+    basicSettings: {
+      id: 'ebook.EbookReaderControlBar.basicSetting',
+      defaultMessage: '基本設定',
+    },
+  }),
 }
 
 export default ebookMessage

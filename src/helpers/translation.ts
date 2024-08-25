@@ -906,6 +906,14 @@ export const productMessages = {
       course: { id: 'product.program.title.course', defaultMessage: '課程' },
     }),
     content: defineMessages({
+      collapseAll: {
+        id: 'product.program.content.collapseAll',
+        defaultMessage: '全部收合',
+      },
+      expandAll: {
+        id: 'product.program.content.expandAll',
+        defaultMessage: '全部展開',
+      },
       subscribe: { id: 'product.program.content.subscribe', defaultMessage: '訂閱' },
       onlineCourse: { id: 'product.program.content.course.online', defaultMessage: '線上課程' },
       expired: { id: 'product.program.form.message.content.expired', defaultMessage: '已過期' },
