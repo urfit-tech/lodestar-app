@@ -14,7 +14,7 @@ import {
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { MinusIcon, PlusIcon } from '../../images'
-import ebookMessage from './translation'
+import ebookMessages from './translation'
 
 const EbookStyledModal: React.VFC<{
   fontSize: number
@@ -73,13 +73,13 @@ const EbookStyledModal: React.VFC<{
           <ModalBody>
             <Box px="8px" py="24px">
               <Flex mb="16px">
-                <Flex {...LabelStyle}>{formatMessage(ebookMessage.EbookStyledModal.fontSizeLabel)}</Flex>
+                <Flex {...LabelStyle}>{formatMessage(ebookMessages.EbookStyledModal.fontSizeLabel)}</Flex>
                 <Button
                   {...ButtonStyle}
                   onClick={() => {
                     if (fontSize <= 10) {
                       toast({
-                        title: formatMessage(ebookMessage.EbookStyledModal.minFontSizeReached),
+                        title: formatMessage(ebookMessages.EbookStyledModal.minFontSizeReached),
                         status: 'info',
                         duration: 3000,
                         isClosable: false,
@@ -92,14 +92,14 @@ const EbookStyledModal: React.VFC<{
                   }}
                 >
                   <Icon as={MinusIcon} {...IconStyle} />
-                  {formatMessage(ebookMessage.EbookStyledModal.decreaseFontSize)}
+                  {formatMessage(ebookMessages.EbookStyledModal.decreaseFontSize)}
                 </Button>
                 <Button
                   {...ButtonStyle}
                   onClick={() => {
                     if (fontSize >= 40) {
                       toast({
-                        title: formatMessage(ebookMessage.EbookStyledModal.maxFontSizeReached),
+                        title: formatMessage(ebookMessages.EbookStyledModal.maxFontSizeReached),
                         status: 'info',
                         duration: 3000,
                         isClosable: false,
@@ -112,18 +112,18 @@ const EbookStyledModal: React.VFC<{
                   }}
                 >
                   <Icon as={PlusIcon} {...IconStyle} />
-                  {formatMessage(ebookMessage.EbookStyledModal.increaseFontSize)}
+                  {formatMessage(ebookMessages.EbookStyledModal.increaseFontSize)}
                 </Button>
               </Flex>
 
               <Flex mb="16px">
-                <Flex {...LabelStyle}>{formatMessage(ebookMessage.EbookStyledModal.lineHeightLabel)}</Flex>
+                <Flex {...LabelStyle}>{formatMessage(ebookMessages.EbookStyledModal.lineHeightLabel)}</Flex>
                 <Button
                   {...ButtonStyle}
                   onClick={() => {
                     if (lineHeight <= 1.5) {
                       toast({
-                        title: formatMessage(ebookMessage.EbookStyledModal.minLineHeightReached),
+                        title: formatMessage(ebookMessages.EbookStyledModal.minLineHeightReached),
                         status: 'info',
                         duration: 3000,
                         isClosable: false,
@@ -136,14 +136,14 @@ const EbookStyledModal: React.VFC<{
                   }}
                 >
                   <Icon as={MinusIcon} {...IconStyle} />
-                  {formatMessage(ebookMessage.EbookStyledModal.decreaseLineHeight)}
+                  {formatMessage(ebookMessages.EbookStyledModal.decreaseLineHeight)}
                 </Button>
                 <Button
                   {...ButtonStyle}
                   onClick={() => {
                     if (lineHeight >= 3.0) {
                       toast({
-                        title: formatMessage(ebookMessage.EbookStyledModal.maxLineHeightReached),
+                        title: formatMessage(ebookMessages.EbookStyledModal.maxLineHeightReached),
                         status: 'info',
                         duration: 3000,
                         isClosable: false,
@@ -156,19 +156,19 @@ const EbookStyledModal: React.VFC<{
                   }}
                 >
                   <Icon as={PlusIcon} {...IconStyle} />
-                  {formatMessage(ebookMessage.EbookStyledModal.increaseLineHeight)}
+                  {formatMessage(ebookMessages.EbookStyledModal.increaseLineHeight)}
                 </Button>
               </Flex>
 
               <Flex>
-                <Flex {...LabelStyle}>{formatMessage(ebookMessage.EbookStyledModal.theme)}</Flex>
+                <Flex {...LabelStyle}>{formatMessage(ebookMessages.EbookStyledModal.theme)}</Flex>
                 <Button
                   {...buttonAppearanceStyle}
                   colorScheme="primary"
                   variant={selectedTheme === 'light' ? 'solid' : 'outline'}
                   onClick={() => handleOnClick('light')}
                 >
-                  {formatMessage(ebookMessage.EbookStyledModal.lightTheme)}
+                  {formatMessage(ebookMessages.EbookStyledModal.lightTheme)}
                 </Button>
                 <Button
                   {...buttonAppearanceStyle}
@@ -176,7 +176,7 @@ const EbookStyledModal: React.VFC<{
                   variant={selectedTheme === 'dark' ? 'solid' : 'outline'}
                   onClick={() => handleOnClick('dark')}
                 >
-                  {formatMessage(ebookMessage.EbookStyledModal.darkTheme)}
+                  {formatMessage(ebookMessages.EbookStyledModal.darkTheme)}
                 </Button>
               </Flex>
             </Box>

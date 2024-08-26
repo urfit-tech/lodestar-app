@@ -17,7 +17,7 @@ import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
 import { Bookmark } from '../program/ProgramContentEbookReader'
 import { EbookBookmarkModal } from './EbookBookmarkModal'
 import EbookStyledModal from './EbookStyledModal'
-import ebookMessage from './translation'
+import ebookMessages from './translation'
 import type { Rendition } from 'epubjs'
 
 const Spacer = styled(Flex)`
@@ -166,8 +166,8 @@ export const EbookReaderControlBar: React.VFC<{
             onThemeChange={onThemeChange}
             renderTrigger={({ onOpen }) => (
               <Tooltip
-                label={formatMessage(ebookMessage.EbookReaderControlBar.basicSettings)}
-                aria-label={formatMessage(ebookMessage.EbookReaderControlBar.basicSettings)}
+                label={formatMessage(ebookMessages.EbookReaderControlBar.basicSettings)}
+                aria-label={formatMessage(ebookMessages.EbookReaderControlBar.basicSettings)}
                 placement="top"
               >
                 <Box as="u" cursor="pointer" ml={{ base: '20px', md: '16px' }} fontSize="20px" onClick={() => onOpen()}>

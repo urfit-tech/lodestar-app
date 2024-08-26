@@ -34,7 +34,7 @@ import { ReactComponent as DeleteIcon } from '../../images/delete-o.svg'
 import { ReactComponent as BookmarkIcon } from '../../images/icon-grid-view.svg'
 import { ReactComponent as MarkIcon } from '../../images/mark.svg'
 import { Bookmark } from '../program/ProgramContentEbookReader'
-import ebookMessage from './translation'
+import ebookMessages from './translation'
 
 const StyledHighlight = styled.div`
   display: flex;
@@ -133,8 +133,8 @@ export const EbookBookmarkModal: React.VFC<{
   return (
     <Flex>
       <Tooltip
-        label={formatMessage(ebookMessage.EbookBookmarkModal.bookmarkAndAnnotation)}
-        aria-label={formatMessage(ebookMessage.EbookBookmarkModal.bookmarkAndAnnotation)}
+        label={formatMessage(ebookMessages.EbookBookmarkModal.bookmarkAndAnnotation)}
+        aria-label={formatMessage(ebookMessages.EbookBookmarkModal.bookmarkAndAnnotation)}
         placement="top"
       >
         <Icon
@@ -152,8 +152,8 @@ export const EbookBookmarkModal: React.VFC<{
           <ModalBody>
             <Tabs>
               <TabList>
-                <Tab>{formatMessage(ebookMessage.EbookBookmarkModal.bookmark)}</Tab>
-                <Tab>{formatMessage(ebookMessage.EbookBookmarkModal.underlineAnnotation)}</Tab>
+                <Tab>{formatMessage(ebookMessages.EbookBookmarkModal.bookmark)}</Tab>
+                <Tab>{formatMessage(ebookMessages.EbookBookmarkModal.underlineAnnotation)}</Tab>
               </TabList>
               <TabPanels>
                 <TabPanel>
@@ -301,10 +301,10 @@ const HighlightRow: React.VFC<{
             <MenuButton as={IconButton} aria-label="Options" icon={<HiDotsVertical />} variant="ghost" />
             <MenuList minWidth="auto" width="fit-content">
               <MenuItem onClick={() => handleCommentHighlight(highlight.id)}>
-                {formatMessage(ebookMessage.EbookBookmarkModal.edit)}
+                {formatMessage(ebookMessages.EbookBookmarkModal.edit)}
               </MenuItem>
               <MenuItem onClick={() => handleDeleteHighlight(highlight.id)}>
-                {formatMessage(ebookMessage.EbookBookmarkModal.delete)}
+                {formatMessage(ebookMessages.EbookBookmarkModal.delete)}
               </MenuItem>
             </MenuList>
           </Menu>

@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-const ebookMessage = {
+const ebookMessages = {
   EbookCommentModal: defineMessages({
     underlineComment: {
       id: 'ebook.EbookCommentModel.underlineComment',
@@ -9,6 +9,10 @@ const ebookMessage = {
     commentContent: {
       id: 'ebook.EbookCommentModel.commentContent',
       defaultMessage: '註釋內容',
+    },
+    save: {
+      id: 'ebook.EbookCommentModel.save',
+      defaultMessage: '儲存',
     },
   }),
   EbookBookmarkModal: defineMessages({
@@ -105,4 +109,4 @@ const ebookMessage = {
   }),
 }
 
-export default ebookMessage
+export default ebookMessages

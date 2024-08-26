@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
 import { BREAK_POINT } from '../common/Responsive'
-import ebookMessage from './translation'
+import ebookMessages from './translation'
 
 const StyledCommentModal = styled(Modal)`
   -webkit-user-select: none;
@@ -125,14 +125,19 @@ const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCance
   }
 
   return (
-    <StyledCommentModal visible={visible} okText="儲存" onOk={handleOnOk} onCancel={onCancel}>
+    <StyledCommentModal
+      visible={visible}
+      okText={formatMessage(ebookMessages.EbookCommentModal.save)}
+      onOk={handleOnOk}
+      onCancel={onCancel}
+    >
       <div
         onContextMenu={e => e.preventDefault()}
         onDragStart={e => e.preventDefault()}
         onCopy={e => e.preventDefault()}
       >
         <div className="headerContainer">
-          <h1>{formatMessage(ebookMessage.EbookCommentModal.underlineComment)}</h1>
+          <h1>{formatMessage(ebookMessages.EbookCommentModal.underlineComment)}</h1>
         </div>
         <div className="modelContainer">
           <div className="quoteIcon">
@@ -141,7 +146,7 @@ const EbookCommentModal: React.FC<CommentModalProps> = ({ visible, onOk, onCance
 
           <div className="commentArea">
             <h2>{text}</h2>
-            <p>{formatMessage(ebookMessage.EbookCommentModal.commentContent)}</p>
+            <p>{formatMessage(ebookMessages.EbookCommentModal.commentContent)}</p>
             <Input.TextArea
               rows={4}
               value={annotation?.annotation || ''}

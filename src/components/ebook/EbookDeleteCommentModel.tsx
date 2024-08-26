@@ -4,7 +4,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../common/Responsive'
-import ebookMessage from './translation'
+import ebookMessages from './translation'
 
 const StyledCommentModal = styled(Modal)`
   .ant-modal-content {
@@ -74,11 +74,11 @@ const EbookDeleteHighlightModal: React.FC<CommentModalProps> = ({
   return (
     <StyledCommentModal visible={visible} onOk={onOk} onCancel={onCancel}>
       <div className="headerContainer">
-        <h1>{formatMessage(ebookMessage.EbookDeleteCommentModel.deleteSelectedHighlight)}</h1>
+        <h1>{formatMessage(ebookMessages.EbookDeleteCommentModel.deleteSelectedHighlight)}</h1>
       </div>
       <div className="modelContainer">
         <div className="commentArea">
-          <p>{formatMessage(ebookMessage.EbookDeleteCommentModel.deleteConfirmation)}</p>
+          <p>{formatMessage(ebookMessages.EbookDeleteCommentModel.deleteConfirmation)}</p>
         </div>
       </div>
     </StyledCommentModal>
