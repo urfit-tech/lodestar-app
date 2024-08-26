@@ -202,11 +202,11 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                     order.options?.installmentPlans.map((plan: { price: number; index: number }) => (
                       <div key={plan.index} className="mb-2">
                         <b>
-                          {plan.index === 0 && order.options?.installmentPlans.length === 2
-                            ? '訂金'
-                            : plan.index === 1 && order.options?.installmentPlans.length === 2
-                            ? '尾款'
-                            : `${plan.index + 1}期`}
+                          {order.options?.installmentPlans.length === 2
+                            ? plan.index === 1
+                              ? '訂金'
+                              : '尾款'
+                            : `${plan.index}期`}
                         </b>
                         ：
                         {order.payment_logs.filter(p => p.price === plan.price)[0].status === 'SUCCESS'
