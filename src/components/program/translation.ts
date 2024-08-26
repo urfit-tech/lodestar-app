@@ -55,6 +55,10 @@ const programMessages = {
       defaultMessage: 'The following content is more exciting, buy the full version now.',
     },
   }),
+  ProgramTab: defineMessages({
+    singleEbook: { id: 'program.ProgramTab.singleEbook', defaultMessage: '單本' },
+    packageEbook: { id: 'program.ProgramTab.packageEbook', defaultMessage: '套組' },
+  }),
 }
 
 export default programMessages
