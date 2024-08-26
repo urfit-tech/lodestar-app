@@ -17,8 +17,8 @@ import { useEbookHighlight, useGetEbookTrialPercentage } from '../../hooks/ebook
 import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
 import CommonModal from '../common/CommonModal'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
-import EbookCommentModal from '../ebook/EbookCommentModel'
-import EbookDeleteHighlightModal from '../ebook/EbookDeleteCommentModel'
+import EbookCommentModal from '../ebook/EbookCommentModal'
+import EbookDeleteHighlightModal from '../ebook/EbookDeleteCommentModal'
 import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
 import EbookTextSelectionToolbar from '../ebook/EbookTextSelectionToolbar'
 import { decryptData } from './decryptUtils'
@@ -163,7 +163,7 @@ const ProgramContentEbookReader: React.VFC<{
     useMutationProgramContentEbookTocProgress()
 
   const [sliderValue, setSliderValue] = useState<number>(0)
-  const [modalState, setModalState] = useState<'trialComplete' | null | string>(null)
+  const [modalType, setModalType] = useState<'trialComplete' | 'comment' | 'deleteHighLight' | null | string>(null)
   const [isTrialCompleted, setIsTrialCompleted] = useState(false)
   const [isLocationGenerated, setIsLocationGenerated] = useState<boolean>(false)
   const [currentPageBookmarkIds, setCurrentPageBookmarkIds] = useState<string[]>([])
@@ -181,8 +181,6 @@ const ProgramContentEbookReader: React.VFC<{
     cfiRange: null,
     contents: null,
   })
-  const [openCommentModel, setOpenCommentModel] = useState(false)
-  const [openDeleteHighlightModel, setDeleteHighlightModel] = useState(false)
   const [isRenditionReady, setIsRenditionReady] = useState(false)
   const [reRenderHighlightQueue, setReRenderHighlightQueue] = useState<string[]>([])
   const [forceReapplyHighlight, setForceReapplyHighlight] = useState(false)
@@ -194,7 +192,7 @@ const ProgramContentEbookReader: React.VFC<{
   const originalPrevRef = useRef<(() => Promise<void>) | undefined>()
 
   if (rendition.current) {
-    if (!!openCommentModel || !isLocationGenerated) {
+    if (modalType === 'comment' || !isLocationGenerated) {
       rendition.current.next = () => {
         return Promise.resolve()
       }
@@ -237,7 +235,7 @@ const ProgramContentEbookReader: React.VFC<{
     }
 
     setAnnotation(highlightToComment)
-    setOpenCommentModel(true)
+    setModalType('comment')
     setToolbarVisible(false)
   }
 
@@ -267,13 +265,13 @@ const ProgramContentEbookReader: React.VFC<{
       }
 
       setAnnotation(null)
-      setOpenCommentModel(false)
+      setModalType(null)
       setToolbarVisible(false)
     }
   }
 
   const handleCommentCancel = () => {
-    setOpenCommentModel(false)
+    setModalType(null)
     setToolbarVisible(false)
   }
 
@@ -284,7 +282,7 @@ const ProgramContentEbookReader: React.VFC<{
 
     if (existingHighlight) {
       setHighlightToDelete(existingHighlight)
-      setDeleteHighlightModel(true)
+      setModalType('deleteHighLight')
       setToolbarVisible(false)
     }
   }
@@ -296,14 +294,14 @@ const ProgramContentEbookReader: React.VFC<{
       rendition.current?.annotations.remove(highlightToDelete.cfiRange, 'highlight')
       rendition.current?.annotations.remove(highlightToDelete.cfiRange, 'underline')
 
-      setDeleteHighlightModel(false)
+      setModalType(null)
       setToolbarVisible(false)
       setHighlightToDelete(null)
     }
   }
 
   const handleDeleteHighlightModalCancel = () => {
-    setDeleteHighlightModel(false)
+    setModalType(null)
     setToolbarVisible(false)
   }
 
@@ -583,10 +581,10 @@ const ProgramContentEbookReader: React.VFC<{
     <Box height={{ base: '90vh', md: '85vh' }}>
       <CommonModal
         isCentered
-        isOpen={modalState === 'trialComplete'}
+        isOpen={modalType === 'trialComplete'}
         title={formatMessage(programMessages.ProgramContentEbookReader.trialCompleted)}
         onClose={() => {
-          setModalState(null)
+          setModalType(null)
         }}
         renderFooter={() => (
           <Link href={`/programs/${programId}?visitIntro=1`}>
@@ -597,14 +595,14 @@ const ProgramContentEbookReader: React.VFC<{
         <Text marginTop="16px">{formatMessage(programMessages.ProgramContentEbookReader.trialCompletedMessage)}</Text>
       </CommonModal>
       <EbookDeleteHighlightModal
-        visible={openDeleteHighlightModel}
+        visible={modalType === 'deleteHighLight'}
         onOk={() => {
           handleDeleteHighlightModalOk()
         }}
         onCancel={handleDeleteHighlightModalCancel}
       />
       <EbookCommentModal
-        visible={openCommentModel}
+        visible={modalType === 'comment'}
         onOk={handleCommentOk}
         onCancel={handleCommentCancel}
         annotation={annotation}
@@ -650,7 +648,7 @@ const ProgramContentEbookReader: React.VFC<{
                       setIsTrialCompleted(false)
                       setSliderValue(sliderPercentage)
                       if (isTrial && sliderPercentage >= ebookTrialPercentage) {
-                        setModalState('trialComplete')
+                        setModalType('trialComplete')
                         setIsTrialCompleted(true)
                       } else {
                         setIsTrialCompleted(false)
@@ -858,7 +856,7 @@ const ProgramContentEbookReader: React.VFC<{
                 style={{ ...readerStyles.arrow, ...readerStyles.next }}
                 onClick={async () => {
                   if (isTrialCompleted) {
-                    setModalState('trialComplete')
+                    setModalType('trialComplete')
                   } else {
                     await rendition.current?.next()
                     setForceReapplyHighlight(!forceReapplyHighlight)
@@ -879,7 +877,7 @@ const ProgramContentEbookReader: React.VFC<{
         <EbookReaderControlBar
           isLocationGenerated={isLocationGenerated}
           sliderValue={sliderValue}
-          onModalStateChange={setModalState}
+          onModalStateChange={setModalType}
           onSliderValueChange={setSliderValue}
           ebookTrialPercentage={ebookTrialPercentage}
           isTrial={isTrial}
