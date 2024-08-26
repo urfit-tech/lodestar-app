@@ -88,8 +88,10 @@ type OrderRow = {
     options: { [key: string]: any } | null
   }[]
   orderDiscounts: OrderDiscountProps[]
+  paymentLogs: { no: string; status: string; options?: { index: number; price: number } }[]
   key: string
   totalPrice: number
+  options: { installmentPlans?: { index: number; price: number }[] }
 }
 
 const OrderCollectionAdminCard: React.VFC<
@@ -232,6 +234,24 @@ const OrderCollectionAdminCard: React.VFC<
 
       <div className="row">
         <div className="col-3 d-flex align-items-end">
+          {record.options?.installmentPlans &&
+            record.options?.installmentPlans.length > 0 &&
+            record.paymentLogs
+              .filter(p => p.status === 'UNPAID')
+              .sort((a, b) => (a.options?.index || 0) - (b.options?.index || 0))
+              .map(p => (
+                <Button
+                  variant="outline"
+                  _hover={{
+                    color: theme.colors.primary[500],
+                    borderColor: theme.colors.primary[500],
+                  }}
+                  onClick={() => history.push(`/tasks/payment/${p.no}`)}
+                  className="mr-2"
+                >
+                  {p.options?.index}期付款
+                </Button>
+              ))}
           {['UNPAID', 'PARTIAL_PAID', 'FAILED'].includes(record.status) && (
             <Button
               variant="outline"
@@ -332,6 +352,7 @@ const useOrderLogCollection = (memberId: string) => {
           created_at
           status
           shipping
+          options
           order_products {
             id
             name
@@ -355,6 +376,11 @@ const useOrderLogCollection = (memberId: string) => {
             target
             options
           }
+          payment_logs {
+            no
+            options
+            status
+          }
         }
       }
     `,
@@ -372,6 +398,7 @@ const useOrderLogCollection = (memberId: string) => {
         sum(orderLog.order_discounts.map(prop('price'))) +
         (orderLog.shipping?.fee || 0),
       shipping: orderLog.shipping,
+      options: orderLog.options,
       orderProducts: [...orderLog.order_products]
         .sort((a, b) => (a.options?.position || 0) - (b.options?.position || 0))
         .map(orderProduct => ({
@@ -397,6 +424,11 @@ const useOrderLogCollection = (memberId: string) => {
         description: orderDiscount.description || '',
         price: orderDiscount.price,
         options: orderDiscount.options,
+      })),
+      paymentLogs: orderLog.payment_logs.map(paymentLog => ({
+        no: paymentLog.no,
+        status: paymentLog.status || 'UNKNOWN',
+        options: paymentLog.options,
       })),
     })) || []
 
