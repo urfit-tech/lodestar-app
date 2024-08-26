@@ -1,6 +1,8 @@
 import { Icon } from '@chakra-ui/icons'
 import { Divider, Tag } from '@chakra-ui/react'
 import { CommonLargeTitleMixin } from 'lodestar-app-element/src/components/common'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -9,8 +11,6 @@ import { dateRangeFormatter } from '../../helpers'
 import { activityMessages, commonMessages, productMessages } from '../../helpers/translation'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import { ActivitySession } from '../../types/activity'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const StyledWrapper = styled.div`
   padding: 1.5rem;
@@ -119,7 +119,9 @@ const ActivityTicketCard: React.VFC<ActivityTicketProps> = ({
     <StyledWrapper>
       <StyledTitle className="d-flex align-items-start justify-content-between mb-3">
         <span>{title}</span>
-        {variant === 'admin' && <StyledLabel active={status === '販售中'}>{status}</StyledLabel>}
+        {variant === 'admin' && (
+          <StyledLabel active={status === formatMessage(commonMessages.button.onSale)}>{status}</StyledLabel>
+        )}
       </StyledTitle>
       <StyledPrice>
         <PriceLabel listPrice={price} currencyId={currencyId} />

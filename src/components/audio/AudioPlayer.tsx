@@ -43,6 +43,7 @@ import {
 import { ProgramContent } from '../../types/program'
 import { BREAK_POINT } from '../common/Responsive'
 import PlaylistOverlay from './PlaylistOverlay'
+import audioMessages from './translation'
 
 const messages = defineMessages({
   playRate: { id: 'common.AudioPlayer.playRate', defaultMessage: '播放速度' },
@@ -218,38 +219,38 @@ const PlayRateButton: React.VFC<
       {...buttonProps}
     >
       {playRate < 0.75 ? (
-        <Tooltip placement="top" title="0.5 倍速">
+        <Tooltip placement="top" title={formatMessage(audioMessages.AudioPlayer.playRate05x)}>
           <Icon as={PlayRate05xIcon} />
         </Tooltip>
       ) : playRate < 1 ? (
-        <Tooltip placement="top" title="0.75 倍速">
+        <Tooltip placement="top" title={formatMessage(audioMessages.AudioPlayer.playRate075x)}>
           <Icon as={PlayRate075xIcon_white} display={{ base: 'none', md: 'unset' }} />
           <Icon as={PlayRate075xIcon} display={{ base: 'unset', md: 'none' }} />
         </Tooltip>
       ) : playRate < 1.25 ? (
-        <Tooltip placement="top" title="1 倍速">
+        <Tooltip placement="top" title={formatMessage(audioMessages.AudioPlayer.playRate10x)}>
           <Icon as={PlayRate10xIcon} />
         </Tooltip>
       ) : playRate < 1.5 ? (
-        <Tooltip placement="top" title="1.25 倍速">
+        <Tooltip placement="top" title={formatMessage(audioMessages.AudioPlayer.playRate125x)}>
           <Icon as={PlayRate125xIcon_white} display={{ base: 'none', md: 'unset' }} />
           <Icon as={PlayRate125xIcon} display={{ base: 'unset', md: 'none' }} />
         </Tooltip>
       ) : playRate < 1.75 ? (
-        <Tooltip placement="top" title="1.5 倍速">
+        <Tooltip placement="top" title={formatMessage(audioMessages.AudioPlayer.playRate15x)}>
           <Icon as={PlayRate15xIcon} />
         </Tooltip>
       ) : playRate < 2 ? (
-        <Tooltip placement="top" title="1.75 倍速">
+        <Tooltip placement="top" title={formatMessage(audioMessages.AudioPlayer.playRate175x)}>
           <Icon as={PlayRate175xIcon_white} display={{ base: 'none', md: 'unset' }} />
           <Icon as={PlayRate175xIcon} display={{ base: 'unset', md: 'none' }} />
         </Tooltip>
       ) : playRate < 4 ? (
-        <Tooltip placement="top" title="2 倍速">
+        <Tooltip placement="top" title={formatMessage(audioMessages.AudioPlayer.playRate20x)}>
           <Icon as={PlayRate20xIcon} />
         </Tooltip>
       ) : (
-        <Tooltip placement="top" title="4 倍速">
+        <Tooltip placement="top" title={formatMessage(audioMessages.AudioPlayer.playRate40x)}>
           <Icon as={PlayRate40xIcon_white} display={{ base: 'none', md: 'unset' }} />
           <Icon as={PlayRate40xIcon} display={{ base: 'unset', md: 'none' }} />
         </Tooltip>
@@ -415,6 +416,7 @@ const AudioPlayer: React.VFC<{
   const isLoading = duration === 0
   const isLast = playList.length - 1 === currentIndex
   const isFirst = currentIndex === 0
+  const { formatMessage } = useIntl()
 
   useInterval(() => {
     if (audioRef.current) {
@@ -516,7 +518,7 @@ const AudioPlayer: React.VFC<{
                       display={{ base: 'block', lg: 'none' }}
                       minWidth="0px"
                     >
-                      <Tooltip placement="top" title="播放清單">
+                      <Tooltip placement="top" title={formatMessage(audioMessages.AudioPlayer.playlist)}>
                         <Icon as={PlaylistIcon} />
                       </Tooltip>
                     </StyledButton>
@@ -610,7 +612,7 @@ const AudioPlayer: React.VFC<{
                     onClick={() => setShowAction(false)}
                     display={{ base: 'none', lg: 'block' }}
                   >
-                    <Tooltip placement="top" title="播放清單">
+                    <Tooltip placement="top" title={formatMessage(audioMessages.AudioPlayer.playlist)}>
                       <Icon as={PlaylistIcon} />
                     </Tooltip>
                   </StyledButton>

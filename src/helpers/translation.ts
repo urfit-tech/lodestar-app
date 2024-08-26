@@ -49,6 +49,7 @@ export const commonMessages = {
     coming: { id: 'product.activity.ticket.coming', defaultMessage: '即將舉行' },
     loading: { id: 'common.loading', defaultMessage: '載入中' },
     loadingError: { id: 'common.loading.error', defaultMessage: '載入失敗' },
+    uploadError: { id: 'common.uploadError', defaultMessage: '上傳失敗' },
     loadingNotificationError: { id: 'common.loading.error.notification', defaultMessage: '無法載入通知' },
     loadingQuestionError: { id: 'common.loading.error.question', defaultMessage: '無法取得問題' },
     loadingProductError: { id: 'common.loading.error.product', defaultMessage: '讀取產品錯誤' },
@@ -229,6 +230,10 @@ export const commonMessages = {
     reload: { id: 'common.button.reload', defaultMessage: '重新整理' },
     review: { id: 'common.button.review', defaultMessage: '評價' },
     loadMore: { id: 'common.button.loadMore', defaultMessage: '載入更多' },
+    logoutSuccess: {
+      id: 'common.button.logoutSuccess',
+      defaultMessage: '已成功登出',
+    },
   }),
   link: defineMessages({
     more: { id: 'common.profile', defaultMessage: '查看簡介' },
