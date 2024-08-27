@@ -197,7 +197,8 @@ const ProfileBasicBusinessCard: React.VFC<ProfileBasicBusinessCardProps> = ({ fo
                     {
                       validator: async (_, value, callback) => {
                         if (
-                          property.name === '公司統編' &&
+                          property.name ===
+                            formatMessage(profileMessages.ProfileBasicBusinessCard.companyUniformNumber) &&
                           value?.toString().length === 8 &&
                           !checkUniformNumber(value)
                         ) {
@@ -214,7 +215,7 @@ const ProfileBasicBusinessCard: React.VFC<ProfileBasicBusinessCardProps> = ({ fo
                     <Select disabled={loading}>
                       {property?.placeholder?.split('/').map((value: string, idx: number) => (
                         <Select.Option key={idx} value={value}>
-                          {property.name === '公司類型'
+                          {property.name === formatMessage(profileMessages.ProfileBasicBusinessCard.companyType)
                             ? companyTypes.filter(companyType => companyType.value === value)[0]?.label
                             : value}
                         </Select.Option>

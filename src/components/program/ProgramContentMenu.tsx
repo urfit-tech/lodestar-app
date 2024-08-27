@@ -706,9 +706,14 @@ const SortByDateItem: React.VFC<{
   )
 }
 
-const EmptyMenu: React.VFC = () => (
-  <Card style={{ textAlign: 'center', color: '#9b9b9b' }}>初次購買還沒有新的內容喔～</Card>
-)
+const EmptyMenu: React.VFC = () => {
+  const { formatMessage } = useIntl()
+  return (
+    <Card style={{ textAlign: 'center', color: '#9b9b9b' }}>
+      {formatMessage(programMessages.ProgramContentMenu.noNewContent)}
+    </Card>
+  )
+}
 
 const ExerciseQuestionCount: React.VFC<{ contentBodyId: string; programContent: ProgramContent }> = ({
   contentBodyId,

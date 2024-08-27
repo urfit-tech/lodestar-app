@@ -1,6 +1,8 @@
+import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useOnceAnimation } from '../../helpers'
+import { commonMessages } from '../../helpers/translation'
 import { usePublishedActivityCollection } from '../../hooks/activity'
 import ActivityBlock from '../activity/ActivityBlock'
 import { BREAK_POINT } from '../common/Responsive'
@@ -121,6 +123,7 @@ const ActivityIntroSection: React.VFC<{
   const { activities } = usePublishedActivityCollection({
     categoryId: categoryId ? categoryId : undefined,
   })
+  const { formatMessage } = useIntl()
 
   return (
     <section className="row m-0">
@@ -160,7 +163,7 @@ const ActivityIntroSection: React.VFC<{
           </StyledCarousel>
           <div className="text-center mt-4">
             <StyledLink to={`/activities${categoryId ? `?categories=${categoryId}` : ''}`} color={linkColor}>
-              查看更多
+              {formatMessage(commonMessages.defaults.more)}
             </StyledLink>
           </div>
         </StyledActivityColumnWrapper>

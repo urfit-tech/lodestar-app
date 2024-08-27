@@ -1,12 +1,14 @@
 import { gql, useQuery } from '@apollo/client'
 import { Icon, SkeletonText } from '@chakra-ui/react'
 import { Tag } from 'antd'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { ReactComponent as AngleThinLeftIcon } from '../../images/angle-thin-left.svg'
 import { ReactComponent as AngleThinRightIcon } from '../../images/angle-thin-right.svg'
 import { BREAK_POINT } from '../common/Responsive'
 import ProgramContentPlayer from './ProgramContentPlayer'
+import programMessages from './translation'
 
 const StyledPlayerWrapper = styled.div`
   position: relative;
@@ -47,6 +49,7 @@ const ProgramContentTrialPlayer: React.VFC<{
   onPrev?: () => void
   onNext?: () => void
 }> = ({ programContentId, onPrev, onNext }) => {
+  const { formatMessage } = useIntl()
   const { data } = useQuery<hasura.GET_PROGRAM_CONTENT_TRIAL, hasura.GET_PROGRAM_CONTENT_TRIALVariables>(
     gql`
       query GET_PROGRAM_CONTENT_TRIAL($programContentId: uuid!) {
@@ -78,7 +81,7 @@ const ProgramContentTrialPlayer: React.VFC<{
     <>
       <div className="mb-3">
         <Tag color="#585858" className="mr-2">
-          試看
+          {formatMessage(programMessages.ProgramContentTrialPlayer.tryOut)}
         </Tag>
         <StyledVideoTitle>
           {data.program_content_by_pk.program_content_section.program.title} - {data.program_content_by_pk.title}

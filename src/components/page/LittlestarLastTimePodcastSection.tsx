@@ -4,6 +4,7 @@ import { Button } from '@chakra-ui/react'
 import { Skeleton } from '@chakra-ui/skeleton'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useContext } from 'react'
+import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
@@ -12,6 +13,7 @@ import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as PlayIcon } from '../../images/play.svg'
 import { BREAK_POINT } from '../common/Responsive'
 import { SectionLayout } from './PodcastAlbumCollectionSection'
+import pageComponentsMessages from './translation'
 
 const StyledImg = styled.img`
   width: 100%;
@@ -112,6 +114,7 @@ const LittlestarLastTimePodcastSection: React.FC<{
     title?: string
   }
 }> = ({ options: { title } }) => {
+  const { formatMessage } = useIntl()
   const { status, lastWatchedPodcastProgram } = useLastWatchedPodcastProgram()
   const { setup } = useContext(PodcastPlayerContext)
   const history = useHistory()
@@ -156,7 +159,7 @@ const LittlestarLastTimePodcastSection: React.FC<{
                   }}
                   rightIcon={<Icon className="ml-2" as={PlayIcon} />}
                 >
-                  繼續播放
+                  {formatMessage(pageComponentsMessages.LittlestarLastTimePodcastSection.continuePlaying)}
                 </StyledLinkButton>
               </div>
             </div>

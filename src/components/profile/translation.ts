@@ -30,6 +30,14 @@ const profileMessages = {
     },
   }),
   ProfileBasicBusinessCard: defineMessages({
+    companyType: {
+      id: 'profileMessages.ProfileBasicBusinessCard.companyType',
+      defaultMessage: '公司類型',
+    },
+    companyUniformNumber: {
+      id: 'profileMessages.ProfileBasicBusinessCard.companyUniformNumber',
+      defaultMessage: '公司統編',
+    },
     basicInfo: { id: 'profileMessages.ProfileBasicBusinessCard.basicInfo', defaultMessage: '基本資料' },
     companyPicture: { id: 'profileMessages.ProfileBasicBusinessCard.companyPicture', defaultMessage: '公司 Logo' },
     notUploaded: { id: 'profileMessages.ProfileBasicBusinessCard.notUploaded', defaultMessage: '尚未上傳' },
