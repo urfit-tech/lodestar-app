@@ -5,8 +5,10 @@ import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/co
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import moment from 'moment-timezone'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { commonMessages } from '../../helpers/translation'
 import { useLatestPost } from '../../hooks/blog'
 import { ReactComponent as ArrowRightIcon } from '../../images/arrow-right.svg'
 import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
@@ -14,6 +16,7 @@ import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
 import { CustomRatioImage } from '../common/Image'
 import { BREAK_POINT } from '../common/Responsive'
+import pageComponentsMessages from './translation'
 
 const StyledSection = styled.section`
   padding: 120px 0 100px;
@@ -161,6 +164,7 @@ const StyledLink = styled(Link)`
 `
 
 const BlndPostSection: React.VFC = () => {
+  const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
   const { loadingPosts, posts, errorPosts } = useLatestPost({ limit: 3 })
 
@@ -179,9 +183,9 @@ const BlndPostSection: React.VFC = () => {
     <StyledSection>
       <StyledDecoration />
       <div className="container px-0">
-        <StyledSubTitle>BLOG</StyledSubTitle>
+        <StyledSubTitle>{formatMessage(pageComponentsMessages.BlndPostSection.blog)}</StyledSubTitle>
         <StyleTitle className="mb-5">
-          延伸閱讀
+          {formatMessage(pageComponentsMessages.BlndPostSection.extendedReading)}
           <StyledTitleLink className="d-none d-lg-inline-block">
             <ReadMoreLink />
           </StyledTitleLink>
@@ -224,9 +228,10 @@ const BlndPostSection: React.VFC = () => {
 }
 
 const ReadMoreLink: React.VFC = () => {
+  const { formatMessage } = useIntl()
   return (
     <StyledLink to="/blog">
-      <span className="mr-1">查看更多</span>
+      <span className="mr-1">{formatMessage(commonMessages.defaults.more)}</span>
       <Icon style={{ color: '#4c60ff' }} as={ArrowRightIcon} />
     </StyledLink>
   )

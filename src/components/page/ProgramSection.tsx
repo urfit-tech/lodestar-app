@@ -4,7 +4,9 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { commonMessages, productMessages } from '../../helpers/translation'
 import { usePublishedProgramCollection } from '../../hooks/program'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { SectionTitle, StyledLink, StyledSection } from '../../pages/AppPage'
@@ -17,6 +19,7 @@ const StyledAngleRightIcon = styled(AngleRightIcon)`
 const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({
   options,
 }) => {
+  const { formatMessage } = useIntl()
   const tracking = useTracking()
 
   const { id: appId } = useApp()
@@ -44,7 +47,7 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
     <StyledSection className="page-section">
       <Tracking.Impression resources={resourceCollection} />
 
-      <SectionTitle>{options?.title || '線上課程'}</SectionTitle>
+      <SectionTitle>{options?.title || formatMessage(productMessages.program.content.onlineCourse)}</SectionTitle>
 
       <div className="container mb-5">
         <div className="row">
@@ -69,7 +72,8 @@ const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number;
 
       <div className="text-center">
         <StyledLink to={`/programs${options?.categoryId ? '?active=' + options?.categoryId : ''}`}>
-          查看更多 <StyledAngleRightIcon />
+          {formatMessage(commonMessages.defaults.more)}
+          <StyledAngleRightIcon />
         </StyledLink>
       </div>
     </StyledSection>

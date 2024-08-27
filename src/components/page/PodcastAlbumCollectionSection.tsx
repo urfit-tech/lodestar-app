@@ -2,10 +2,12 @@ import { gql, useQuery } from '@apollo/client'
 import { Skeleton } from '@chakra-ui/skeleton'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import Responsive from 'lodestar-app-element/src/components/common/Responsive'
+import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import hasura from '../../hasura'
 import { notEmpty } from '../../helpers'
+import { commonMessages, podcastAlbumMessages } from '../../helpers/translation'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import EmptyCover from '../../images/empty-cover.png'
 import { BREAK_POINT } from '../common/Responsive'
@@ -127,6 +129,7 @@ const PodcastAlbumCollectionSection: React.FC<{
     title?: string
   }
 }> = ({ options: { title } }) => {
+  const { formatMessage } = useIntl()
   const { status, podcastAlbums } = useNewestPodcastAlbumCollection()
 
   if (status === 'loading') {
@@ -145,7 +148,9 @@ const PodcastAlbumCollectionSection: React.FC<{
                 </StyledCardImgWrapper>
                 <StyledCardContent>
                   <h3>{podcastAlbum.title}</h3>
-                  <div className="unit mb-3">共 {podcastAlbum.programCount} 單元</div>
+                  <div className="unit mb-3">
+                    {formatMessage(podcastAlbumMessages.text.sectionCount, { sectionCount: podcastAlbum.programCount })}
+                  </div>
                   <Responsive.Desktop>
                     <div className="tag-group">
                       {podcastAlbum.categoryNames.slice(0, 1).map(name => (
@@ -168,11 +173,15 @@ const PodcastAlbumCollectionSection: React.FC<{
   )
 }
 
-export const MoreLink: React.VFC<{ to: string }> = ({ to }) => (
-  <StyledLink className="d-inline-block mt-4" to={to}>
-    查看更多 <AngleRightIcon className="d-inline-block m-auto" />
-  </StyledLink>
-)
+export const MoreLink: React.VFC<{ to: string }> = ({ to }) => {
+  const { formatMessage } = useIntl()
+
+  return (
+    <StyledLink className="d-inline-block mt-4" to={to}>
+      {formatMessage(commonMessages.defaults.more)} <AngleRightIcon className="d-inline-block m-auto" />
+    </StyledLink>
+  )
+}
 
 const useNewestPodcastAlbumCollection: () => {
   status: string

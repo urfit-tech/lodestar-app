@@ -1094,6 +1094,10 @@ export const profileMessages = {
       socialConnect: { id: 'profile.label.socialConnect', defaultMessage: '社群綁定' },
     }),
     message: defineMessages({
+      notUploaded: {
+        id: 'common.notUploaded',
+        defaultMessage: '尚未上傳',
+      },
       enterName: {
         id: 'common.form.message.name',
         defaultMessage: '請輸入名稱',
@@ -1641,6 +1645,7 @@ export const podcastAlbumMessages = {
 export const reviewMessages = {
   title: defineMessages({
     programReview: { id: 'review.title.programReview', defaultMessage: '課程評價' },
+    privateMessage: { id: 'review.title.privateMessage', defaultMessage: '私下給老師的訊息' },
   }),
   status: defineMessages({
     edited: { id: 'review.status.edited', defaultMessage: '已編輯' },

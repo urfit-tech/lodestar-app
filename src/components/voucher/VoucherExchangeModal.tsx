@@ -59,7 +59,9 @@ const VoucherExchangeModal: React.VFC<{
   const [hasPinCode, setHasPinCode] = useState(false)
   const [pinCode, setPinCode] = useState<string | null>(null)
   const [exchanging, setExchanging] = useState(false)
-  const myPageName = settings['nav.my_page.name'] ? settings['nav.my_page.name'] : '我的主頁'
+  const myPageName = settings['nav.my_page.name']
+    ? settings['nav.my_page.name']
+    : formatMessage(voucherMessages.VoucherExchangeModal.homePage)
 
   // check the validity of product which type is ActivityTicket
   // session ended_at and ticket buy
