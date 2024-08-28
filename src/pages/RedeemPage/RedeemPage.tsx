@@ -115,7 +115,7 @@ const RedeemPage: React.VFC = () => {
   }
 
   // TODO discount type formate
-  const discountTypeText = payload?.type === 'Voucher' ? '兌換券' : ''
+  const discountTypeText = payload?.type === 'Voucher' ? formatMessage(RedeemPageMessages.RedeemPage.voucher) : ''
   const sendingStateOject = {
     idle: {
       Icon: (

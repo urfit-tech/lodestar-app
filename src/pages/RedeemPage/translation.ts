@@ -5,6 +5,12 @@ const RedeemPageMessages = {
     duplicate: { id: 'RedeemPageMessages.*.duplicate', defaultMessage: '複製' },
     noItem: { id: 'RedeemPageMessages.*.noItem', defaultMessage: '查無項目' },
   }),
+  RedeemPage: defineMessages({
+    voucher: {
+      id: 'RedeemPageMessages.voucher',
+      defaultMessage: '兌換券',
+    },
+  }),
   idle: defineMessages({
     buttonTitle: { id: 'RedeemPageMessages.idle.receiveNow', defaultMessage: 'Receive Now' },
     title: { id: 'RedeemPageMessages.idle.receiveTitle', defaultMessage: 'Receive {discountTypeText}' },

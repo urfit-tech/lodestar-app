@@ -2,6 +2,10 @@ import { defineMessages } from 'react-intl'
 
 const ProgramPageMessages = {
   PreviewBlock: defineMessages({
+    preview: {
+      id: 'page.PreviewBlock.preview',
+      defaultMessage: '試看/試聽',
+    },
     previous: {
       id: 'page.PreviewBlock.PreviewPlayer.previous',
       defaultMessage: '上一則',
@@ -63,6 +67,10 @@ const ProgramPageMessages = {
     mediaArticle: {
       id: 'page.CollapseContentBlock.mediaArticle',
       defaultMessage: '媒體文章({count})',
+    },
+    introduction: {
+      id: 'page.CollapseContentBlock.introduction',
+      defaultMessage: '介紹',
     },
   }),
 }

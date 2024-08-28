@@ -67,6 +67,12 @@ const pageComponentsMessages = {
       defaultMessage: '部落格專欄',
     },
   }),
+  CreatorSection: defineMessages({
+    partnerInstructor: {
+      id: 'pageComponents.creatorSection.partnerInstructor',
+      defaultMessage: '合作講師',
+    },
+  }),
 }
 
 export default pageComponentsMessages

@@ -30,6 +30,10 @@ const profileMessages = {
     },
   }),
   ProfileBasicBusinessCard: defineMessages({
+    companyShortName: {
+      id: 'profileMessages.ProfileBasicBusinessCard.companyShortName',
+      defaultMessage: '公司簡稱',
+    },
     companyType: {
       id: 'profileMessages.ProfileBasicBusinessCard.companyType',
       defaultMessage: '公司類型',
