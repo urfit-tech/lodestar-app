@@ -2,6 +2,10 @@ import { defineMessages } from 'react-intl'
 
 const HomePageMessages = {
   AffordableProgramSection: defineMessages({
+    people: {
+      id: 'section.AffordableProgramSection.people',
+      defaultMessage: '人',
+    },
     copperCourse: {
       id: 'section.AffordableProgramSection.copperCourse',
       defaultMessage: '銅板課程',

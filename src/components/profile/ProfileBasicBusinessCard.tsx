@@ -81,7 +81,11 @@ const ProfileBasicBusinessCard: React.VFC<ProfileBasicBusinessCardProps> = ({ fo
           await uploadFile(`avatars/${appId}/${memberId}/${avatarId}`, avatarImageFile, authToken)
         }
         const companyShortNamePropertyId = Object.keys(formValues).filter(
-          propertyId => propertyId === memberProperties.find(item => item.name === '公司簡稱')?.id,
+          propertyId =>
+            propertyId ===
+            memberProperties.find(
+              item => item.name === formatMessage(profileMessages.ProfileBasicBusinessCard.companyShortName),
+            )?.id,
         )?.[0]
 
         await updateMember({

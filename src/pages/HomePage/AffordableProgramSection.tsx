@@ -51,7 +51,9 @@ const AffordableProgramSection: React.FC<{
                 renderCustomDescription={() => (
                   <StyledDescription>
                     <StyledIcon as={UserIcon} />
-                    <span>{program.enrollmentCount} 人</span>
+                    <span>
+                      {program.enrollmentCount} {formatMessage(HomePageMessages.AffordableProgramSection.people)}
+                    </span>
                   </StyledDescription>
                 )}
                 withMeta
