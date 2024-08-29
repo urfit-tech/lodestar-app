@@ -2,9 +2,11 @@ import { TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useEquityProgramByProgramId } from '../../../../hooks/program'
 import { DisplayModeEnum, Program, ProgramRole } from '../../../../types/program'
+import ProgramPageMessages from '../../translation'
 import SecondaryInstructorCollectionBlock from '../SecondaryInstructorCollectionBlock'
 import SecondaryProgramContentListSection from '../SecondaryProgramContentListSection'
 import { colors } from '../style'
@@ -32,6 +34,7 @@ const ProgramIntroTabs: React.VFC<{
   }
   contentInformation?: string
 }> = ({ program, contentInformation }) => {
+  const { formatMessage } = useIntl()
   const { isEquityProgram } = useEquityProgramByProgramId(program.id)
   const programContentSections = program.contentSections
     .filter(programContentSection => programContentSection.contents.length)
@@ -52,9 +55,17 @@ const ProgramIntroTabs: React.VFC<{
   return (
     <Tabs position="relative" width="100%">
       <StyledTabList justifyContent="center">
-        <ProgramIntroTab>簡介</ProgramIntroTab>
-        <ProgramIntroTab>{program.programLayoutTemplateVariant === 'ebook' ? '目錄' : '章節'}</ProgramIntroTab>
-        <ProgramIntroTab>{program.programLayoutTemplateVariant === 'ebook' ? '作者' : '講師'}</ProgramIntroTab>
+        <ProgramIntroTab>{formatMessage(ProgramPageMessages.ProgramIntroTabs.introduction)}</ProgramIntroTab>
+        <ProgramIntroTab>
+          {program.programLayoutTemplateVariant === 'ebook'
+            ? formatMessage(ProgramPageMessages.ProgramIntroTabs.catalog)
+            : formatMessage(ProgramPageMessages.ProgramIntroTabs.chapter)}
+        </ProgramIntroTab>
+        <ProgramIntroTab>
+          {program.programLayoutTemplateVariant === 'ebook'
+            ? formatMessage(ProgramPageMessages.ProgramIntroTabs.author)
+            : formatMessage(ProgramPageMessages.ProgramIntroTabs.courseInstructor)}
+        </ProgramIntroTab>
       </StyledTabList>
 
       <TabPanels>

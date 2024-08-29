@@ -1,6 +1,8 @@
 import { CraftLayout, CraftSection } from 'lodestar-app-element/src/components/common/CraftElement'
 import { Project } from 'lodestar-app-element/src/types/data'
 import React from 'react'
+import { useIntl } from 'react-intl'
+import { commonMessages } from '../../helpers/translation'
 import { SectionTitle, StyledAngleRightIcon, StyledLink } from '../../pages/AppPage'
 
 const ProjectSection: React.FC<{
@@ -9,6 +11,7 @@ const ProjectSection: React.FC<{
     projectType?: Project['type']
   }
 }> = ({ options: { title, projectType } }) => {
+  const { formatMessage } = useIntl()
   return (
     <CraftSection>
       <SectionTitle>{title}</SectionTitle>
@@ -26,7 +29,7 @@ const ProjectSection: React.FC<{
       </div>
       <div className="text-center">
         <StyledLink to="/projects">
-          查看更多
+          {formatMessage(commonMessages.defaults.more)}
           <StyledAngleRightIcon />
         </StyledLink>
       </div>

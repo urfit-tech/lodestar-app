@@ -12,13 +12,7 @@ import CustomMenuButton from '../common/CustomMenuButton'
 import CustomSearchInput from '../common/CustomSearchInput'
 import PackageCard from '../package/PackageCard'
 import RadioCard from '../RadioCard'
-
-const sortOptions = [
-  { className: 'new-purchase-date', value: 'newPurchaseDate', name: '購買日期（新到舊）' },
-  { className: 'old-purchase-date', value: 'oldPurchaseDate', name: '購買日期（舊到新）' },
-  { className: 'new-last-view-date', value: 'newLastViewDate', name: '最後觀課日（新到舊）' },
-  { className: 'old-last-view-date', value: 'oldLastViewDate', name: '最後觀課日（舊到新）' },
-]
+import packageMessages from './translation'
 
 const ProgramPackageCollectionBlock: React.VFC<{
   memberId: string
@@ -72,6 +66,29 @@ const ProgramPackageCollectionBlock: React.VFC<{
       }
       return true
     })
+
+  const sortOptions = [
+    {
+      className: 'new-purchase-date',
+      value: 'newPurchaseDate',
+      name: formatMessage(packageMessages.ProgramPackageCollectionBlock.newPurchaseDate),
+    },
+    {
+      className: 'old-purchase-date',
+      value: 'oldPurchaseDate',
+      name: formatMessage(packageMessages.ProgramPackageCollectionBlock.oldPurchaseDate),
+    },
+    {
+      className: 'new-last-view-date',
+      value: 'newLastViewDate',
+      name: formatMessage(packageMessages.ProgramPackageCollectionBlock.newLastViewDate),
+    },
+    {
+      className: 'old-last-view-date',
+      value: 'oldLastViewDate',
+      name: formatMessage(packageMessages.ProgramPackageCollectionBlock.oldLastViewDate),
+    },
+  ]
 
   const options = [
     formatMessage(commonMessages.label.availableForLimitTime),

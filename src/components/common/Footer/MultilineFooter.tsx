@@ -54,11 +54,36 @@ const MultilineFooter: React.VFC = () => {
                         Tiếng việt
                       </StyledButton>
                     </Menu.Item>
+                    <Menu.Item key="id">
+                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('id')}>
+                        Indonesia
+                      </StyledButton>
+                    </Menu.Item>
+                    <Menu.Item key="ja">
+                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('ja')}>
+                        日本語
+                      </StyledButton>
+                    </Menu.Item>
+                    <Menu.Item key="ko">
+                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('ko')}>
+                        한국어
+                      </StyledButton>
+                    </Menu.Item>
                   </Menu>
                 }
               >
                 <StyledButton type="link" size="small">
-                  {currentLocale === 'en-us' ? 'EN' : currentLocale === 'vi' ? 'Tiếng việt' : '繁中'}
+                  {currentLocale === 'en-us'
+                    ? 'EN'
+                    : currentLocale === 'vi'
+                    ? 'Tiếng việt'
+                    : currentLocale === 'id'
+                    ? 'Indonesia'
+                    : currentLocale === 'ja'
+                    ? '日本語'
+                    : currentLocale === 'ko'
+                    ? '한국어'
+                    : '繁中'}
                   <Icon type="down" />
                 </StyledButton>
               </Dropdown>

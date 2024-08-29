@@ -1,6 +1,8 @@
+import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useOnceAnimation } from '../../helpers'
+import { commonMessages } from '../../helpers/translation'
 import { usePublishedProgramCollection } from '../../hooks/program'
 import { BREAK_POINT } from '../common/Responsive'
 import ProgramCard from '../program/ProgramCard'
@@ -114,6 +116,7 @@ const ProgramIntroSection: React.VFC<{
 }> = ({
   options: { decorationImage, backgroundImage, title, subtitle, quote, person, backgroundColor, linkColor },
 }) => {
+  const { formatMessage } = useIntl()
   const { ref, activated } = useOnceAnimation()
   const { programs } = usePublishedProgramCollection({
     isPrivate: false,
@@ -153,7 +156,7 @@ const ProgramIntroSection: React.VFC<{
           </StyledCarousel>
           <div className="text-center mt-4">
             <StyledLink to="/programs" color={linkColor}>
-              查看更多
+              {formatMessage(commonMessages.defaults.more)}
             </StyledLink>
           </div>
         </StyledProgramColumnWrapper>
