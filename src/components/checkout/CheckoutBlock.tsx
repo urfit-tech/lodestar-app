@@ -175,7 +175,7 @@ const CheckoutBlock: React.VFC<{
           ...member?.invoice,
         }
     cachedPaymentInfo.payment = cachedPayment
-      ? (JSON.parse(cachedPayment) as any)
+      ? (JSON.parse(cachedPayment) as PaymentProps)
       : cachedPaymentInfo.payment && member?.payment
       ? {
           ...cachedPaymentInfo.payment,
