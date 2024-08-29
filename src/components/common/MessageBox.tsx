@@ -1,6 +1,8 @@
 import { Button, Icon as ChakraIcon } from '@chakra-ui/react'
+import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import { commonMessages } from '../../helpers/translation'
 
 const StyledTitle = styled.div`
   margin-bottom: 0.25rem;
@@ -24,6 +26,7 @@ const MessageBox: React.FC<{ icon: React.FunctionComponent; title: string; info:
   info,
 }) => {
   const history = useHistory()
+  const { formatMessage } = useIntl()
   return (
     <>
       <div className="mb-4">
@@ -32,7 +35,7 @@ const MessageBox: React.FC<{ icon: React.FunctionComponent; title: string; info:
       <StyledTitle>{title}</StyledTitle>
       <StyledItemInfo>{info}</StyledItemInfo>
       <Button variant="outline" borderRadius="5px" onClick={() => history.push('/')}>
-        回首頁
+        {formatMessage(commonMessages.button.backToHome)}
       </Button>
     </>
   )

@@ -14,6 +14,7 @@ import { StyledContainer } from '../components/layout/DefaultLayout/DefaultLayou
 import { codeMessages } from '../helpers/translation'
 import { useOrderId } from '../hooks/data'
 import { useMember } from '../hooks/member'
+import pageMessages from './translation'
 
 const StyledFreeSubscriptionNotice = styled.p`
   color: var(--gray-dark);
@@ -89,15 +90,15 @@ const PaymentTapPayBlock: React.VFC = () => {
             isDisabled={!isCreditCardReady || orderId === null}
             onClick={handlePaymentPayAsync}
           >
-            付款
+            {formatMessage(pageMessages.PaymentTapPayPage.payButton)}
           </Button>
 
           <StyledFreeSubscriptionNotice>{formatMessage(messages.freeSubscriptionNotice)}</StyledFreeSubscriptionNotice>
         </div>
       ) : isAuthenticating ? (
-        <div>Authenticating...</div>
+        <div>{formatMessage(pageMessages.PaymentTapPayPage.authenticating)}</div>
       ) : (
-        <div>無法取得會員資料</div>
+        <div>{formatMessage(pageMessages.PaymentTapPayPage.unableToFetchMemberData)}</div>
       )}
     </StyledContainer>
   )

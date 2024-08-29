@@ -1,10 +1,12 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import ProgramCard from '../../components/program/ProgramCard'
 import TimeIcon from '../../images/icon-time.svg'
 import UserIcon from '../../images/icon-user.svg'
+import HomePageMessages from './translation'
 import { SunkProgramProps } from './utils'
 
 export const StyledIcon = styled.img`
@@ -26,10 +28,11 @@ const StyledDescription = styled.div`
 const ProgramBlock: React.FC<{
   programs: SunkProgramProps[]
 }> = ({ programs }) => {
+  const { formatMessage } = useIntl()
   return (
     <div className="container">
       <div className="d-flex justify-content-end mb-2">
-        <Link to="/programs">更多課程</Link>
+        <Link to="/programs">{formatMessage(HomePageMessages.AffordableProgramSection.moreCourses)}</Link>
       </div>
       <div className="row">
         {programs.map(program => (
@@ -40,12 +43,15 @@ const ProgramBlock: React.FC<{
                 <StyledDescription className="mb-2">
                   {!program.plans.some(plan => plan.periodType) && !!program?.totalDuration && (
                     <span className="mr-3">
-                      <StyledIcon src={TimeIcon} style={{ display: 'inline-block' }} />{' '}
-                      {(program.totalDuration / 60).toFixed(0)} 分鐘
+                      <StyledIcon src={TimeIcon} style={{ display: 'inline-block' }} />
+                      {formatMessage(HomePageMessages.ProgramBlock.totalDuration, {
+                        duration: (program.totalDuration / 60).toFixed(0),
+                      })}
                     </span>
                   )}
                   <span>
-                    <StyledIcon src={UserIcon} style={{ display: 'inline-block' }} /> {program.enrollmentCount} 人
+                    <StyledIcon src={UserIcon} style={{ display: 'inline-block' }} />
+                    {formatMessage(HomePageMessages.ProgramBlock.totalDuration, { count: program.enrollmentCount })}
                   </span>
                 </StyledDescription>
               )}

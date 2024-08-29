@@ -1,6 +1,7 @@
 import { Skeleton } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import Slider from 'react-slick'
 import styled from 'styled-components'
@@ -8,6 +9,7 @@ import { useLatestCreator } from '../../hooks/member'
 import DefaultAvatar from '../../images/avatar.svg'
 import { SectionTitle } from '../../pages/AppPage'
 import { BREAK_POINT } from '../common/Responsive'
+import pageComponentsMessages from './translation'
 
 const StyledSection = styled.section`
   padding: 80px 0;
@@ -78,6 +80,7 @@ const StyledDescription = styled.div`
 `
 
 const CreatorSection: React.VFC<{ options: { title?: string; topInstructorIds?: string[] } }> = ({ options }) => {
+  const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { loadingLatestCreators, latestCreators, errorLatestCreators } = useLatestCreator(
     options?.topInstructorIds || [],
@@ -115,7 +118,9 @@ const CreatorSection: React.VFC<{ options: { title?: string; topInstructorIds?: 
 
   return (
     <StyledSection className="page-section">
-      <SectionTitle className="mb-5">{options?.title || '合作講師'}</SectionTitle>
+      <SectionTitle className="mb-5">
+        {options?.title || formatMessage(pageComponentsMessages.CreatorSection.partnerInstructor)}
+      </SectionTitle>
       <StyledWrapper>
         <StyledSlider
           dots

@@ -72,7 +72,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
         .then(() => {
           setSendingState('idle')
           // TODO: locale
-          message.success('成功發送簡訊碼')
+          message.success(formatMessage(authMessages.RegisterSection.smsSentSuccess))
           setTimeout(() => {
             setSendingState('ready')
           }, 30000)
@@ -83,7 +83,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
         })
     } else {
       // TODO: locale
-      message.error('請輸入手機號碼')
+      message.error(formatMessage(authMessages.RegisterSection.enterPhoneNumber))
     }
   }
   const handleSmsVerify = () => {
@@ -105,7 +105,7 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
             sessionStorage.setItem('phone', phoneNumber)
           })
           .catch((error: Error) => {
-            message.error('簡訊驗證失敗')
+            message.error(formatMessage(authMessages.RegisterSection.smsVerificationFailed))
           })
           .finally(() => setVerifying(false))
       })
@@ -550,19 +550,20 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
 }
 
 export const useBusinessSignupPropertyIdMap = () => {
+  const { formatMessage } = useIntl()
   const nameMap: { [key: string]: string } = {
-    公司抬頭: 'companyTitle',
-    公司簡稱: 'companyShortName',
-    公司統編: 'companyUniformNumber',
-    公司類型: 'companyType',
-    官方網站: 'officialWebsite',
-    公司縣市: 'city',
-    公司鄉鎮區: 'district',
-    公司地址: 'companyAddress',
-    公司負責人: 'personInChargeOfTheCompany',
-    公司電話: 'companyPhone',
-    公司簡介: 'companyAbstract',
-    公司介紹: 'companyIntro',
+    [formatMessage(authMessages.RegisterSection.companyTitle)]: 'companyTitle',
+    [formatMessage(authMessages.RegisterSection.companyShortName)]: 'companyShortName',
+    [formatMessage(authMessages.RegisterSection.companyUniformNumber)]: 'companyUniformNumber',
+    [formatMessage(authMessages.RegisterSection.companyType)]: 'companyType',
+    [formatMessage(authMessages.RegisterSection.officialWebsite)]: 'officialWebsite',
+    [formatMessage(authMessages.RegisterSection.companyCity)]: 'city',
+    [formatMessage(authMessages.RegisterSection.companyDistrict)]: 'district',
+    [formatMessage(authMessages.RegisterSection.companyAddress)]: 'companyAddress',
+    [formatMessage(authMessages.RegisterSection.personInChargeOfTheCompany)]: 'personInChargeOfTheCompany',
+    [formatMessage(authMessages.RegisterSection.companyPhone)]: 'companyPhone',
+    [formatMessage(authMessages.RegisterSection.companyAbstract)]: 'companyAbstract',
+    [formatMessage(authMessages.RegisterSection.companyIntro)]: 'companyIntro',
   }
   const { loading, error, data } = useQuery<hasura.GET_BUSINESS_SIGNUP_PROPERTY_ID_MAP>(
     gql`

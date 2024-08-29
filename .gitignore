@@ -26,3 +26,5 @@ yarn-error.log*
 
 db_data
 extracted
+
+.cursorignore

@@ -1,6 +1,8 @@
 import { Button, Typography } from 'antd'
+import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import HaohaomingSectionMessages from './translation'
 import { CoverProp } from './type'
 
 const StyledSection = styled.section`
@@ -85,7 +87,7 @@ const DefaultButton = styled(Button)`
 
 const Cover: React.VFC<CoverProp> = ({ title, subtitle }) => {
   const history = useHistory()
-
+  const { formatMessage } = useIntl()
   return (
     <StyledSection>
       <StyledContainer>
@@ -95,7 +97,7 @@ const Cover: React.VFC<CoverProp> = ({ title, subtitle }) => {
           </Typography.Title>
           <SubTitle>{subtitle}</SubTitle>
           <DefaultButton type="primary" size="large" onClick={() => history.push('/programs')}>
-            探索課程
+            {formatMessage(HaohaomingSectionMessages.Cover.exploreCourses)}
           </DefaultButton>
         </ChangeFateBlock>
       </StyledContainer>

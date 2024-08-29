@@ -12,6 +12,7 @@ import { PeriodType } from '../../types/program'
 import AppointmentCoinModal from '../coin/AppointmentCoinModal'
 import ProgramCoinModal from '../coin/ProgramCoinModal'
 import ProgramPackageCoinModal from '../coin/ProgramPackageCoinModal'
+import projectMessages from './translation'
 
 const messages = defineMessages({
   searchProgramId: { id: 'project.ui.searchProgramId', defaultMessage: '搜尋課程編號' },
@@ -133,9 +134,15 @@ const ProjectProgramSearchSection: React.VFC<{
             }}
             style={{ width: '20%' }}
           >
-            <Select.Option value="program">課程</Select.Option>
-            <Select.Option value="program_package">組合</Select.Option>
-            <Select.Option value="appointment">諮詢</Select.Option>
+            <Select.Option value="program">
+              {formatMessage(projectMessages.ProjectProgramSearchSection.program)}
+            </Select.Option>
+            <Select.Option value="program_package">
+              {formatMessage(projectMessages.ProjectProgramSearchSection.programPackage)}
+            </Select.Option>
+            <Select.Option value="appointment">
+              {formatMessage(projectMessages.ProjectProgramSearchSection.appointment)}
+            </Select.Option>
           </Select>
           <Select
             showSearch
