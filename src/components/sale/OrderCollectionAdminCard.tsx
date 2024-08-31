@@ -234,7 +234,8 @@ const OrderCollectionAdminCard: React.VFC<
 
       <div className="row">
         <div className="col-3 d-flex align-items-end">
-          {record.options?.installmentPlans &&
+          {settings['payment.v2'] === '1' &&
+            record.options?.installmentPlans &&
             record.options?.installmentPlans.length > 0 &&
             record.paymentLogs
               .filter(p => p.status === 'UNPAID')
