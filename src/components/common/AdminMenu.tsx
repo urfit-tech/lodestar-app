@@ -113,7 +113,7 @@ export const MemberAdminMenu: React.VFC<
     },
     {
       key: 'member_program_issues_admin',
-      item: (
+      item: enabledModules.program_issue && (
         <Menu.Item key="member_program_issues_admin">
           <Icon as={BookIcon} className="mr-2" />
           {formatMessage(commonMessages.content.courseProblem)}
@@ -185,7 +185,7 @@ export const MemberAdminMenu: React.VFC<
     },
     {
       key: 'member_coupons_admin',
-      item: (
+      item: enabledModules.coupon && (
         <Menu.Item key="member_coupons_admin">
           <Icon as={TicketIcon} className="mr-2" />
           {formatMessage(commonMessages.content.coupon)}
@@ -221,7 +221,7 @@ export const MemberAdminMenu: React.VFC<
     },
     {
       key: 'customer_support_link',
-      item: (
+      item: !!settings['customer_support_link'] && (
         <Menu.Item key="_blank" data-href={settings['customer_support_link']}>
           <Icon as={CommentsIcon} className="mr-2" />
           {formatMessage(commonMessages.content.contact)}

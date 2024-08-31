@@ -41,7 +41,7 @@ const MemberAdminLayout: React.FC<{
   const authModal = useAuthModal()
 
   return (
-    <DefaultLayout noFooter>
+    <DefaultLayout>
       <PageHelmet title={content.title} />
       <div className="d-flex">
         <Responsive.Desktop>
