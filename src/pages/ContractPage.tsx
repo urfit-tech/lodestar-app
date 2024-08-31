@@ -1,19 +1,25 @@
 import { gql, useMutation } from '@apollo/client'
+import { Button } from '@chakra-ui/button'
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay } from '@chakra-ui/modal'
 import { Card, Checkbox, Skeleton, Typography } from 'antd'
-import { CheckboxChangeEvent } from 'antd/lib/checkbox/Checkbox'
+import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import Axios from 'axios'
 import Embedded from 'lodestar-app-element/src/components/common/Embedded'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import { render } from 'mustache'
 import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
+import { AuthModalContext } from '../components/auth/AuthModal'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
 import { dateFormatter, handleError } from '../helpers'
+import { useAuthModal } from '../hooks/auth'
 import { useMemberContract } from '../hooks/data'
-import NotFoundPage from './NotFoundPage'
+import pageMessages from './translation'
 
 const StyledTitle = styled(Typography.Title)`
   && {
@@ -62,9 +68,13 @@ const StyledSection = styled.section`
 `
 
 const ContractPage: React.VFC = () => {
-  const { isAuthenticating } = useAuth()
-  const { memberContractId } = useParams<{ memberId: string; memberContractId: string }>()
+  const { formatMessage } = useIntl()
+  const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
+  const { settings } = useApp()
+  const authModal = useAuthModal()
+  const { memberContractId, memberId } = useParams<{ memberId: string; memberContractId: string }>()
   const [agreedIp, setAgreedIpAddress] = useState('unknown')
+  const [isOpenApproveModal, setIsOpenApproveModal] = useState(false)
   const {
     memberContract,
     refetch: refetchMemberContract,
@@ -78,9 +88,9 @@ const ContractPage: React.VFC = () => {
     Axios.get('https://api.ipify.org/').then(res => setAgreedIpAddress(res.data))
   }, [])
 
-  if (!memberContract && !memberContractLoading && !isAuthenticating) {
-    return <NotFoundPage />
-  }
+  const customConfirmText =
+    settings['custom.contract.confirm.text'] &&
+    JSON.parse(settings['custom.contract.confirm.text'])[memberContract?.contract.id || '']
 
   const handleCheck = (e: CheckboxChangeEvent) => {
     if (e.target.checked && window.confirm('同意後無法修改') && memberContract) {
@@ -102,8 +112,16 @@ const ContractPage: React.VFC = () => {
 
   return (
     <DefaultLayout>
+      <AuthModalContext.Consumer>
+        {({ setVisible: setAuthModalVisible }) => {
+          if (!memberContract && !isAuthenticating && !isAuthenticated) {
+            authModal.open(setAuthModalVisible)
+          }
+          return <></>
+        }}
+      </AuthModalContext.Consumer>
       <StyledSection className="container">
-        <StyledTitle level={1}>{'線上課程服務約款'}</StyledTitle>
+        <StyledTitle level={1}>{formatMessage(pageMessages.ContractPage.onlineCourseServiceTerms)}</StyledTitle>
         <StyledCard>
           {isAuthenticating || memberContractLoading ? (
             <Skeleton active />
@@ -116,7 +134,7 @@ const ContractPage: React.VFC = () => {
               })}
             />
           ) : (
-            '無合約內容'
+            formatMessage(pageMessages.ContractPage.noContractContent)
           )}
         </StyledCard>
 
@@ -126,33 +144,98 @@ const ContractPage: React.VFC = () => {
               {memberContract.revokedAt ? (
                 <>
                   <p>
-                    姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
+                    {formatMessage(pageMessages.ContractPage.name)}：{memberContract.memberName} /{' '}
+                    {formatMessage(pageMessages.ContractPage.email)}：{memberContract.memberEmail}
                   </p>
-                  <p>已於 {moment(memberContract.revokedAt).format('YYYY-MM-DD HH:mm:ss')} 解除此契約</p>
+                  <b>
+                    {formatMessage(pageMessages.ContractPage.agreedOn, {
+                      date: moment(memberContract.revokedAt).format('YYYY-MM-DD HH:mm:ss'),
+                    })}
+                  </b>
                 </>
               ) : memberContract.agreedAt ? (
                 <>
                   <p>
-                    姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
+                    {formatMessage(pageMessages.ContractPage.name)}：{memberContract.memberName} /{' '}
+                    {formatMessage(pageMessages.ContractPage.email)}：{memberContract.memberEmail}
                   </p>
-                  <p>已於 {moment(memberContract.agreedAt).format('YYYY-MM-DD HH:mm:ss')} 同意此契約</p>
+                  <b>
+                    {formatMessage(pageMessages.ContractPage.agreedOn, {
+                      date: moment(memberContract.agreedAt).format('YYYY-MM-DD HH:mm:ss'),
+                    })}
+                  </b>
                 </>
               ) : memberContract.startedAt && moment() >= moment(memberContract.startedAt) ? (
-                <p>此合約已失效</p>
-              ) : (
+                <b> {formatMessage(pageMessages.ContractPage.contractExpired)}</b>
+              ) : !!(currentMemberId && currentMemberId === memberId) ? (
                 <>
                   <p>
-                    姓名：{memberContract.memberName} / 信箱：{memberContract.memberEmail}
+                    {formatMessage(pageMessages.ContractPage.name)}：{memberContract.memberName} /{' '}
+                    {formatMessage(pageMessages.ContractPage.email)}：{memberContract.memberEmail}
                   </p>
-                  <Checkbox checked={!!memberContract.agreedAt} onChange={handleCheck}>
-                    我已詳細閱讀並同意上述契約並願意遵守規定
+                  <Checkbox
+                    checked={!!memberContract.agreedAt}
+                    onChange={
+                      settings['contract_page.v2.enabled'] === '1' ? () => setIsOpenApproveModal(true) : handleCheck
+                    }
+                  >
+                    <b> {formatMessage(pageMessages.ContractPage.alreadyReadAndAgree)}</b>
                   </Checkbox>
                 </>
+              ) : (
+                <b> {formatMessage(pageMessages.ContractPage.requireContractingParty)}</b>
               )}
             </div>
           </StyledCard>
         )}
       </StyledSection>
+      <Modal
+        onClose={() => {
+          setIsOpenApproveModal(false)
+        }}
+        isOpen={isOpenApproveModal}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody style={{ marginTop: 24 }}>
+            {customConfirmText || '請確認您已了解並同意此合約條款，在合約期間內，雙方將遵守此條款，不可任意修改。'}
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              className="mr-4"
+              w="100%"
+              onClick={() => {
+                setIsOpenApproveModal(false)
+              }}
+            >
+              {formatMessage(pageMessages.ContractPage.disagree)}
+            </Button>
+            <Button
+              colorScheme="primary"
+              w="100%"
+              onClick={() => {
+                memberContract &&
+                  agreeMemberContract({
+                    variables: {
+                      memberContractId,
+                      agreedAt: new Date(),
+                      agreedIp,
+                      agreedOptions: {
+                        agreedName: memberContract.values?.invoice?.name,
+                        agreedPhone: memberContract.values?.invoice?.phone,
+                      },
+                    },
+                  })
+                    .then(() => (window.location.href = `/members/${memberId}/contracts/${memberContractId}/deal`))
+                    .catch(handleError)
+              }}
+            >
+              {formatMessage(pageMessages.ContractPage.agree)}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </DefaultLayout>
   )
 }
