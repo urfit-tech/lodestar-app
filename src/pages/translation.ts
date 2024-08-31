@@ -129,6 +129,10 @@ const pageMessages = {
       id: 'page.ContractPage.onlineCourseServiceTerms',
       defaultMessage: 'Online Course Service Terms',
     },
+    contract: {
+      id: 'page.ContractPage.contract',
+      defaultMessage: 'Contract',
+    },
     noContractContent: {
       id: 'page.ContractPage.noContractContent',
       defaultMessage: 'No Contract Content',
