@@ -99,7 +99,5 @@ export type InvoiceProps = {
   postCode?: string
   address?: string
   referrerEmail?: string
+  invoiceGatewayId?: string
 }
-
-export type PaymentMethodType = 'credit' | 'vacc' | 'cvs' | 'instflag' | 'unionpay' | 'webatm' | 'barcode'
-export type PaymentGatewayType = 'spgateway' | 'tappay' | 'parenting' | 'paypal' | 'commonhealth'

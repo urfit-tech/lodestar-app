@@ -188,7 +188,7 @@ const NewMeetingPageMessages = {
     },
     others: {
       id: 'page.MeetingPage.others',
-      defaultMessage: '其他>>選擇其他則出現文本輸入',
+      defaultMessage: '其他',
     },
   }),
 }
