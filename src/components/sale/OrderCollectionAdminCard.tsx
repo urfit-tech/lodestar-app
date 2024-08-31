@@ -157,10 +157,12 @@ const OrderCollectionAdminCard: React.VFC<
       <OrderProductTable className="mb-4">
         {record.orderProducts
           .filter(orderProduct => orderProduct.product.type !== 'Token')
-          .map(orderProduct => (
+          .map((orderProduct, index) => (
             <OrderProductRow key={orderProduct.id} className="d-table-row">
               <OrderProductCell className="pr-4">
-                {orderProduct.product.type ? (
+                {settings['payment.v2'] === '1' ? (
+                  `#${index + 1}`
+                ) : orderProduct.product.type ? (
                   <ProductTypeLabel productType={orderProduct.product.type} />
                 ) : (
                   <>{formatMessage(commonMessages.unknown.type)}</>
@@ -210,11 +212,19 @@ const OrderCollectionAdminCard: React.VFC<
           ))}
         {record.orderProducts
           .filter(orderProduct => orderProduct.product.type === 'Token')
-          .map(orderProduct => {
+          .map((orderProduct, index) => {
             return (
               <OrderProductRow key={`Token_${orderProduct.id}`} className="d-table-row">
                 <OrderProductCell className="pr-4">
-                  <TokenTypeLabel tokenType="GiftPlan" />
+                  {settings['payment.v2'] === '1' ? (
+                    `#${
+                      record.orderProducts.filter(orderProduct => orderProduct.product.type !== 'Token').length +
+                      index +
+                      1
+                    }`
+                  ) : (
+                    <TokenTypeLabel tokenType="GiftPlan" />
+                  )}{' '}
                 </OrderProductCell>
                 <OrderProductCell className="pr-4" grow>
                   <div className="d-flex align-items-center">
