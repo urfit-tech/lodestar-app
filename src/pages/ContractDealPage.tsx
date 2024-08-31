@@ -58,7 +58,7 @@ const DealComponent: React.FC<{
       gateway: memberContract?.values.paymentOptions.paymentGateway,
       method: memberContract?.values.paymentOptions.paymentMethod,
     }).then(({ orderId, paymentNo, payToken }) => {
-      memberContract.values.paymentOptions.paymentGateway === 'spgateway'
+      memberContract.values.paymentOptions.paymentGateway.includes('spgateway')
         ? history.push(paymentNo ? `/payments/${paymentNo}?token=${payToken}` : `/orders/${orderId}?tracking=1`)
         : history.push(
             paymentNo
