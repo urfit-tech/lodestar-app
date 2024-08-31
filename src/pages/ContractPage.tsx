@@ -125,7 +125,11 @@ const ContractPage: React.VFC = () => {
         }}
       </AuthModalContext.Consumer>
       <StyledSection className="container">
-        <StyledTitle level={1}>{formatMessage(pageMessages.ContractPage.onlineCourseServiceTerms)}</StyledTitle>
+        <StyledTitle level={1}>
+          {settings['contract_page.v2.enabled'] === '1'
+            ? formatMessage(pageMessages.ContractPage.contract)
+            : formatMessage(pageMessages.ContractPage.onlineCourseServiceTerms)}
+        </StyledTitle>
         <StyledCard>
           {isAuthenticating || memberContractLoading ? (
             <Skeleton active />
