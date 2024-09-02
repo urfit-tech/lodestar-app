@@ -235,7 +235,11 @@ const ContractPage: React.VFC = () => {
                       },
                     },
                   })
-                    .then(() => (window.location.href = `/members/${memberId}/contracts/${memberContractId}/deal`))
+                    .then(() =>
+                      memberContract.values.paymentOptions?.paymentGateway?.includes('spgateway')
+                        ? (window.location.href = `/members/${memberId}/contracts/${memberContractId}/deal`)
+                        : window.location.reload(),
+                    )
                     .catch(handleError)
               }}
             >

@@ -1,6 +1,4 @@
 import { ApolloClient, gql } from '@apollo/client'
-import { uniqBy } from 'ramda'
-import hasura from '../../hasura'
 import { CartProductProps } from '../../types/checkout'
 import { CartOperatorEnum } from './CartOperatorEnum'
 
@@ -177,42 +175,11 @@ export abstract class CartOperator {
     cachedCartProducts,
     cartProductOptions,
   }: {
-    remoteCartProducts: hasura.GET_CART_PRODUCT_COLLECTION
+    remoteCartProducts: any
     cachedCartProducts: any[]
     cartProductOptions: { [ProductId: string]: any }
   }) {
-    return uniqBy(
-      cartProduct => cartProduct.productId,
-      [
-        ...remoteCartProducts.cart_product.map(cartProduct => ({
-          productId: cartProduct.product.id,
-          shopId: cartProduct.product.id.startsWith('MerchandiseSpec_')
-            ? remoteCartProducts.merchandise_spec.find(
-                v => v.id === cartProduct.product.id.replace('MerchandiseSpec_', ''),
-              )?.merchandise.member_shop_id || ''
-            : '',
-          enrollments: cartProduct.product.product_enrollments.map(enrollment => ({
-            memberId: enrollment.member_id || null,
-            isPhysical: enrollment.is_physical || false,
-          })),
-          options: cartProductOptions[cartProduct.product.id],
-        })),
-        ...cachedCartProducts.map(cartProduct => ({
-          ...cartProduct,
-          shopId: cartProduct.productId.startsWith('MerchandiseSpec_')
-            ? remoteCartProducts.merchandise_spec.find(
-                v => v.id === cartProduct.productId.replace('MerchandiseSpec_', ''),
-              )?.merchandise.member_shop_id || ''
-            : '',
-          enrollments: remoteCartProducts.product
-            .find(product => product.id === cartProduct.productId)
-            ?.product_enrollments.map(enrollment => ({
-              memberId: enrollment.member_id || null,
-              isPhysical: enrollment.is_physical || false,
-            })),
-        })),
-      ],
-    )
+    return []
   }
 
   private _removePhaseOutCartProducts(cartProducts: CartProductProps[]): CartProductProps[] {
