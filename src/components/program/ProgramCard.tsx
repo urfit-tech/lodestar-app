@@ -168,11 +168,15 @@ const PrimaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
   const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
   const { data: enrolledCount } = useProgramEnrollmentAggregate(program.id, { skip: !program.isEnrolledCountVisible })
 
-  const programAdditionalSoldHeadcountSettings: { programId: string; count: number }[] = JSON.parse(
-    settings['program.additional.sold.headcount'] ?? '[]',
+  const programAdditionalSoldHeadcountSetting = settings['program.additional.sold.headcount'] || '[]'
+  const programAdditionalSoldHeadcountSettingValue: { programId: string; count: number }[] | [] = JSON.parse(
+    programAdditionalSoldHeadcountSetting,
   )
   const programAdditionalSoldHeadcount =
-    programAdditionalSoldHeadcountSettings.find(setting => setting.programId === program.id)?.count || 0
+    (Array.isArray(programAdditionalSoldHeadcountSettingValue) &&
+      programAdditionalSoldHeadcountSettingValue.length > 0 &&
+      programAdditionalSoldHeadcountSettingValue.find(setting => setting?.programId === program.id)?.count) ||
+    0
 
   return (
     <>
