@@ -16,9 +16,15 @@ const voucherMessages = {
       id: 'voucher.VoucherExchangeModal.homePage',
       defaultMessage: '我的主頁',
     },
+    info: {
+      id: 'voucher.VoucherExchangeModal.info',
+      defaultMessage:
+        '*If you do not see the redemption coupon in the "Available" tab after adding it, please try to refresh or exit the page and re-enter.',
+    },
     useNow: { id: 'voucher.VoucherExchangeModal.useNow', defaultMessage: '立即使用' },
     exchange: { id: 'voucher.VoucherExchangeModal.exchange', defaultMessage: '兌換' },
     notice: { id: 'voucher.VoucherExchangeModal.notice', defaultMessage: '兌換券為一次使用後失效，請一次兌換完畢' },
+    viewNow: { id: 'voucher.VoucherExchangeModal.viewNow', defaultMessage: 'View Now' },
     productQuantityLimitText: {
       id: 'voucher.VoucherExchangeModal.productQuantityLimitText',
       defaultMessage: 'can exchange {productQuantityLimit} items',
@@ -57,7 +63,11 @@ const voucherMessages = {
     },
     exchangeVoucher: {
       id: 'voucher.VoucherExchangeModal.exchangeVoucher',
-      defaultMessage: '兌換成功，請到「{myPageName}」查看',
+      defaultMessage: 'Exchange successful',
+    },
+    exchangeVoucherInfo: {
+      id: 'voucher.VoucherExchangeModal.exchangeVoucherInfo',
+      defaultMessage: 'Please check in "{myPageName}"',
     },
   }),
   Voucher: defineMessages({
