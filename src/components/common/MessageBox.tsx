@@ -35,12 +35,7 @@ const MessageBox: React.FC<{
         <ChakraIcon as={icon} w="64px" h="64px" />
       </div>
       <StyledTitle>{title}</StyledTitle>
-      <StyledItemInfo>
-        {info.split('\n').map(text => (
-          <p key={text}>{text}</p>
-        ))}
-      </StyledItemInfo>
-
+      <StyledItemInfo>{info}</StyledItemInfo>
       {footer ? (
         footer
       ) : (
