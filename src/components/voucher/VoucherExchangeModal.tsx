@@ -59,7 +59,7 @@ const VoucherExchangeModal: React.VFC<{
   const { currentMemberId, authToken } = useAuth()
   const { settings } = useApp()
   const [visible, setVisible] = useState(false)
-  const [messageVisibleType, setMessageVisibleType] = useState<'success' | 'error' | ''>('')
+  const [messageModalStatus, setMessageModalStatus] = useState<'success' | ''>('')
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([])
   const [hasPinCode, setHasPinCode] = useState(false)
   const [pinCode, setPinCode] = useState<string | null>(null)
@@ -110,7 +110,7 @@ const VoucherExchangeModal: React.VFC<{
         if (res.data.code.split('_')[0] === 'E') {
           message.error(formatMessage(voucherMessages.VoucherExchangeModal.exchangingError))
         } else {
-          setMessageVisibleType('success')
+          setMessageModalStatus('success')
         }
       })
       .catch(error => handleError(error))
@@ -194,9 +194,9 @@ const VoucherExchangeModal: React.VFC<{
         centered
         destroyOnClose
         footer={null}
-        visible={messageVisibleType === 'success'}
+        visible={messageModalStatus === 'success'}
         onCancel={() => {
-          setMessageVisibleType('')
+          setMessageModalStatus('')
           onRefetch?.()
         }}
       >
