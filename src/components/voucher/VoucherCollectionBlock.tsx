@@ -1,4 +1,4 @@
-import { SkeletonText } from '@chakra-ui/react'
+import { SkeletonText, Text } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
@@ -12,6 +12,7 @@ import { handleError } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProductIds } from '../../hooks/data'
 import { useEnrolledVoucherCollection } from '../../hooks/voucher'
+import voucherMessages from './translation'
 
 const VoucherCollectionBlock: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -77,6 +78,9 @@ const VoucherCollectionBlock: React.VFC = () => {
     <>
       <div className="mb-5">
         <VoucherInsertBlock onRefetch={handleRefetch} />
+        <Text marginTop="24px" fontSize="sm" color={'var(--gray-dark)'}>
+          {formatMessage(voucherMessages.VoucherExchangeModal.info)}
+        </Text>
       </div>
 
       <VoucherCollectionTabs vouchers={vouchers} />

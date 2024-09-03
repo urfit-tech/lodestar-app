@@ -1,6 +1,9 @@
 import { Button, Icon as ChakraIcon } from '@chakra-ui/react'
+import { ReactElement } from 'react'
+import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import { commonMessages } from '../../helpers/translation'
 
 const StyledTitle = styled.div`
   margin-bottom: 0.25rem;
@@ -18,12 +21,14 @@ const StyledItemInfo = styled.div`
   color: var(--gray-dark);
 `
 
-const MessageBox: React.FC<{ icon: React.FunctionComponent; title: string; info: string }> = ({
-  icon,
-  title,
-  info,
-}) => {
+const MessageBox: React.FC<{
+  icon: React.FunctionComponent
+  title: string
+  info: string
+  footer?: ReactElement
+}> = ({ icon, title, info, footer }) => {
   const history = useHistory()
+  const { formatMessage } = useIntl()
   return (
     <>
       <div className="mb-4">
@@ -31,9 +36,13 @@ const MessageBox: React.FC<{ icon: React.FunctionComponent; title: string; info:
       </div>
       <StyledTitle>{title}</StyledTitle>
       <StyledItemInfo>{info}</StyledItemInfo>
-      <Button variant="outline" borderRadius="5px" onClick={() => history.push('/')}>
-        回首頁
-      </Button>
+      {footer ? (
+        footer
+      ) : (
+        <Button variant="outline" borderRadius="5px" onClick={() => history.push('/')}>
+          {formatMessage(commonMessages.button.backToHome)}
+        </Button>
+      )}
     </>
   )
 }
