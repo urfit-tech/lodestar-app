@@ -271,7 +271,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                             {
                               orderId: orderId,
                               clientBackUrl: window.location.origin,
-                              invoiceGatewayId: order.payment_logs[0].invoice_gateway_id,
+                              invoiceGatewayId: order.payment_logs[0]?.invoice_gateway_id,
                             },
                             { headers: { authorization: `Bearer ${authToken}` } },
                           )
