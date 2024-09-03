@@ -268,7 +268,11 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                         axios
                           .post(
                             `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
-                            { orderId: orderId, clientBackUrl: window.location.origin },
+                            {
+                              orderId: orderId,
+                              clientBackUrl: window.location.origin,
+                              invoiceGatewayId: order.payment_logs[0]?.invoice_gateway_id,
+                            },
                             { headers: { authorization: `Bearer ${authToken}` } },
                           )
                           .then(({ data: { code, result } }) => {
@@ -308,6 +312,7 @@ const PH_GET_ORDERS_PRODUCT = gql`
         no
         status
         price
+        invoice_gateway_id
       }
       order_discounts_aggregate {
         aggregate {
