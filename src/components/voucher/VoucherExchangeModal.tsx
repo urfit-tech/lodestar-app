@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { Button, Divider, Icon, Input, Spinner, Text } from '@chakra-ui/react'
+import { Box, Button, Divider, Icon, Input, Spinner, Text } from '@chakra-ui/react'
 import { Checkbox, message, Modal } from 'antd'
 import axios from 'axios'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
@@ -7,12 +7,16 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import ProductItem from '../../components/common/ProductItem'
 import hasura from '../../hasura'
 import { handleError } from '../../helpers'
+import { useProductCollection } from '../../hooks/common'
 import { fetchCurrentGeolocation } from '../../hooks/util'
 import { ReactComponent as EmptyBoxIcon } from '../../images/icons-empty-box.svg'
+import { ReactComponent as SuccessIcon } from '../../images/status-success.svg'
+import MessageBox from '../common/MessageBox'
 import voucherMessages from './translation'
 
 const StyledTitle = styled.div`
@@ -52,9 +56,11 @@ const VoucherExchangeModal: React.VFC<{
   onRefetch,
 }) => {
   const { formatMessage } = useIntl()
+  const history = useHistory()
   const { currentMemberId, authToken } = useAuth()
   const { settings } = useApp()
   const [visible, setVisible] = useState(false)
+  const [messageModalStatus, setMessageModalStatus] = useState<'success' | ''>('')
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([])
   const [hasPinCode, setHasPinCode] = useState(false)
   const [pinCode, setPinCode] = useState<string | null>(null)
@@ -105,8 +111,7 @@ const VoucherExchangeModal: React.VFC<{
         if (res.data.code.split('_')[0] === 'E') {
           message.error(formatMessage(voucherMessages.VoucherExchangeModal.exchangingError))
         } else {
-          message.success(formatMessage(voucherMessages.VoucherExchangeModal.exchangeVoucher, { myPageName }))
-          onRefetch?.()
+          setMessageModalStatus('success')
         }
       })
       .catch(error => handleError(error))
@@ -174,16 +179,36 @@ const VoucherExchangeModal: React.VFC<{
       .catch(error => handleError(error))
   }
 
-  return (
-    <>
-      <Button
-        isLoading={loading}
-        loadingText={formatMessage(voucherMessages.VoucherExchangeModal.exchanging)}
-        colorScheme="primary"
-        onClick={() => setVisible(true)}
+  const ModalBlock: React.FC = () => {
+    const { loading, productCollection } = useProductCollection(validProductIds)
+
+    return (
+      <Modal
+        width="460px"
+        centered
+        destroyOnClose
+        footer={null}
+        visible={messageModalStatus === 'success'}
+        onCancel={() => {
+          setMessageModalStatus('')
+          onRefetch?.()
+        }}
       >
-        {formatMessage(voucherMessages.VoucherExchangeModal.useNow)}
-      </Button>
+        <Box marginY="10px" display={'flex'} alignItems={'center'} justifyContent={'center'} flexDirection={'column'}>
+          <MessageBox
+            icon={SuccessIcon}
+            title={formatMessage(voucherMessages.VoucherExchangeModal.exchangeVoucher)}
+            info={formatMessage(voucherMessages.VoucherExchangeModal.exchangeVoucherInfo, {
+              myPageName,
+            })}
+            footer={
+              <Button colorScheme="primary" onClick={() => history.push(`/members/${currentMemberId}`)}>
+                {formatMessage(voucherMessages.VoucherExchangeModal.viewNow)}
+              </Button>
+            }
+          />
+        </Box>
+      </Modal>
 
       <Modal
         centered
@@ -194,6 +219,7 @@ const VoucherExchangeModal: React.VFC<{
           onLoading?.(false)
           setExchanging(false)
           setVisible(false)
+          setSelectedProductIds([])
         }}
       >
         {hasPinCode ? (
@@ -246,7 +272,10 @@ const VoucherExchangeModal: React.VFC<{
                 borderRadius="4px"
                 border="solid 1px var(--gray)"
                 variant="outline"
-                onClick={() => setVisible(false)}
+                onClick={() => {
+                  setVisible(false)
+                  setSelectedProductIds([])
+                }}
               >
                 {formatMessage(voucherMessages['*'].close)}
               </Button>
@@ -262,34 +291,37 @@ const VoucherExchangeModal: React.VFC<{
             <StyledDescription className="mb-2">{description}</StyledDescription>
             <StyledNotice>{formatMessage(voucherMessages.VoucherExchangeModal.notice)}</StyledNotice>
 
-            {loadingValidityCheck ? (
+            {loading || loadingValidityCheck ? (
               <Spinner />
             ) : error ? (
               <>something went wrong.</>
             ) : (
-              validProductIds.map(productId => (
-                <div key={productId}>
-                  <div className="d-flex align-items-center justify-content-start">
-                    <Checkbox
-                      className="mr-4"
-                      onChange={e => {
-                        if (e.target.checked) {
-                          setSelectedProductIds([...selectedProductIds, productId])
-                        } else {
-                          setSelectedProductIds(selectedProductIds.filter(id => id !== productId))
+              productCollection.map(product => {
+                const productId = `${product.productType}_${product.targetId}`
+                return (
+                  <div key={product.targetId}>
+                    <div className="d-flex align-items-center justify-content-start">
+                      <Checkbox
+                        className="mr-4"
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setSelectedProductIds([...selectedProductIds, productId])
+                          } else {
+                            setSelectedProductIds(selectedProductIds.filter(id => id !== productId))
+                          }
+                        }}
+                        disabled={
+                          disabledProductIds.includes(productId) ||
+                          (!selectedProductIds.includes(productId) && selectedProductIds.length >= productQuantityLimit)
                         }
-                      }}
-                      disabled={
-                        disabledProductIds.includes(productId) ||
-                        (!selectedProductIds.includes(productId) && selectedProductIds.length >= productQuantityLimit)
-                      }
-                    />
-                    <ProductItem id={productId} />
-                  </div>
+                      />
+                      <ProductItem product={product} />
+                    </div>
 
-                  <Divider className="my-4" />
-                </div>
-              ))
+                    <Divider className="my-4" />
+                  </div>
+                )
+              })
             )}
 
             <div className="text-right">
@@ -315,6 +347,21 @@ const VoucherExchangeModal: React.VFC<{
           </>
         )}
       </Modal>
+    )
+  }
+
+  return (
+    <>
+      <Button
+        isLoading={loading}
+        loadingText={formatMessage(voucherMessages.VoucherExchangeModal.exchanging)}
+        colorScheme="primary"
+        onClick={() => setVisible(true)}
+      >
+        {formatMessage(voucherMessages.VoucherExchangeModal.useNow)}
+      </Button>
+
+      {visible ? <ModalBlock /> : null}
     </>
   )
 }
