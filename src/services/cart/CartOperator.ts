@@ -1,8 +1,8 @@
 import { ApolloClient, gql } from '@apollo/client'
-import { CartProductProps } from '../../types/checkout'
-import { CartOperatorEnum } from './CartOperatorEnum'
 import { uniqBy } from 'ramda'
 import hasura from '../../hasura'
+import { CartProductProps } from '../../types/checkout'
+import { CartOperatorEnum } from './CartOperatorEnum'
 
 type updateCartProductVariables = {
   variables: {
@@ -97,13 +97,13 @@ export abstract class CartOperator {
     }, {} as { [ProductId: string]: any })
   }
 
-  private _createGetCartProductOperationQuery(operation: CartOperatorEnum): string {
+  private _createGetCartProductOperationQuery(operation: CartOperatorEnum) {
     const productIdsCondition =
       operation === CartOperatorEnum.REMOVE_CART_PRODUCTS
         ? `product: { id: { _in: $productIds }, product_owner: { member: { app_id: { _eq: $appId } } } }`
         : ''
 
-    return `
+    return gql`
       query GET_CART_PRODUCT_COLLECTION(
         $appId: String!
         $memberId: String!
@@ -154,9 +154,7 @@ export abstract class CartOperator {
     const query = this._createGetCartProductOperationQuery(operation)
 
     const { data } = await this.apolloClient.query({
-      query: gql`
-        ${query}
-      `,
+      query,
       variables: {
         appId: this.appId,
         memberId: this.currentMemberId || '',
