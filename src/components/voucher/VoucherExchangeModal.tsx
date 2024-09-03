@@ -12,6 +12,7 @@ import styled from 'styled-components'
 import ProductItem from '../../components/common/ProductItem'
 import hasura from '../../hasura'
 import { handleError } from '../../helpers'
+import { useProductCollection } from '../../hooks/common'
 import { fetchCurrentGeolocation } from '../../hooks/util'
 import { ReactComponent as EmptyBoxIcon } from '../../images/icons-empty-box.svg'
 import { ReactComponent as SuccessIcon } from '../../images/status-success.svg'
@@ -176,17 +177,10 @@ const VoucherExchangeModal: React.VFC<{
       .catch(error => handleError(error))
   }
 
-  return (
-    <>
-      <Button
-        isLoading={loading}
-        loadingText={formatMessage(voucherMessages.VoucherExchangeModal.exchanging)}
-        colorScheme="primary"
-        onClick={() => setVisible(true)}
-      >
-        {formatMessage(voucherMessages.VoucherExchangeModal.useNow)}
-      </Button>
+  const ModalBlock: React.FC = () => {
+    const { loading, productCollection } = useProductCollection(validProductIds)
 
+    return (
       <Modal
         width="460px"
         centered
@@ -295,34 +289,37 @@ const VoucherExchangeModal: React.VFC<{
             <StyledDescription className="mb-2">{description}</StyledDescription>
             <StyledNotice>{formatMessage(voucherMessages.VoucherExchangeModal.notice)}</StyledNotice>
 
-            {loadingValidityCheck ? (
+            {loading || loadingValidityCheck ? (
               <Spinner />
             ) : error ? (
               <>something went wrong.</>
             ) : (
-              validProductIds.map(productId => (
-                <div key={productId}>
-                  <div className="d-flex align-items-center justify-content-start">
-                    <Checkbox
-                      className="mr-4"
-                      onChange={e => {
-                        if (e.target.checked) {
-                          setSelectedProductIds([...selectedProductIds, productId])
-                        } else {
-                          setSelectedProductIds(selectedProductIds.filter(id => id !== productId))
+              productCollection.map(product => {
+                const productId = `${product.productType}_${product.targetId}`
+                return (
+                  <div key={product.targetId}>
+                    <div className="d-flex align-items-center justify-content-start">
+                      <Checkbox
+                        className="mr-4"
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setSelectedProductIds([...selectedProductIds, productId])
+                          } else {
+                            setSelectedProductIds(selectedProductIds.filter(id => id !== productId))
+                          }
+                        }}
+                        disabled={
+                          disabledProductIds.includes(productId) ||
+                          (!selectedProductIds.includes(productId) && selectedProductIds.length >= productQuantityLimit)
                         }
-                      }}
-                      disabled={
-                        disabledProductIds.includes(productId) ||
-                        (!selectedProductIds.includes(productId) && selectedProductIds.length >= productQuantityLimit)
-                      }
-                    />
-                    <ProductItem id={productId} />
-                  </div>
+                      />
+                      <ProductItem product={product} />
+                    </div>
 
-                  <Divider className="my-4" />
-                </div>
-              ))
+                    <Divider className="my-4" />
+                  </div>
+                )
+              })
             )}
 
             <div className="text-right">
@@ -348,6 +345,21 @@ const VoucherExchangeModal: React.VFC<{
           </>
         )}
       </Modal>
+    )
+  }
+
+  return (
+    <>
+      <Button
+        isLoading={loading}
+        loadingText={formatMessage(voucherMessages.VoucherExchangeModal.exchanging)}
+        colorScheme="primary"
+        onClick={() => setVisible(true)}
+      >
+        {formatMessage(voucherMessages.VoucherExchangeModal.useNow)}
+      </Button>
+
+      {visible ? <ModalBlock /> : null}
     </>
   )
 }
