@@ -88,7 +88,7 @@ type OrderRow = {
     options: { [key: string]: any } | null
   }[]
   orderDiscounts: OrderDiscountProps[]
-  paymentLogs: { no: string; status: string; options?: { index: number; price: number } }[]
+  paymentLogs: { no: string; status: string; options?: { index: number; price: number }; invoiceGatewayId?: string }[]
   key: string
   totalPrice: number
   options: { installmentPlans?: { index: number; price: number }[] }
@@ -274,7 +274,11 @@ const OrderCollectionAdminCard: React.VFC<
                 axios
                   .post(
                     `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
-                    { orderId: record.id, clientBackUrl: window.location.origin },
+                    {
+                      orderId: record.id,
+                      clientBackUrl: window.location.origin,
+                      invoiceGatewayId: record.paymentLogs[0].invoiceGatewayId,
+                    },
                     { headers: { authorization: `Bearer ${authToken}` } },
                   )
                   .then(({ data: { code, result } }) => {
@@ -391,6 +395,7 @@ const useOrderLogCollection = (memberId: string) => {
             no
             options
             status
+            invoice_gateway_id
           }
         }
       }
@@ -440,6 +445,7 @@ const useOrderLogCollection = (memberId: string) => {
         no: paymentLog.no,
         status: paymentLog.status || 'UNKNOWN',
         options: paymentLog.options,
+        invoiceGatewayId: paymentLog.invoice_gateway_id,
       })),
     })) || []
 
