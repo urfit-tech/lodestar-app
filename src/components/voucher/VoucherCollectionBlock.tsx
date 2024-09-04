@@ -1,7 +1,7 @@
 import { SkeletonText, Text } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { StringParam, useQueryParam } from 'use-query-params'
 import VoucherCollectionTabs from '../../components/voucher/VoucherCollectionTabs'
@@ -12,12 +12,37 @@ import { handleError } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProductIds } from '../../hooks/data'
 import { useEnrolledVoucherCollection } from '../../hooks/voucher'
+import { EnrolledVoucher, VoucherFromAPI } from '../../types/vouchers'
 import voucherMessages from './translation'
 
 const VoucherCollectionBlock: React.VFC = () => {
   const { formatMessage } = useIntl()
+  const { currentMemberId } = useAuth()
+
+  const {
+    loading: loadingEnrolledVoucherCollection,
+    error: errorEnrolledVoucherCollection,
+    data: enrolledVoucherCollection,
+  } = useEnrolledVoucherCollection(currentMemberId || '')
+
+  if (!currentMemberId || loadingEnrolledVoucherCollection) {
+    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
+  }
+
+  if (errorEnrolledVoucherCollection) {
+    return <div>{formatMessage(commonMessages.status.loadingError)}</div>
+  }
+
+  return <VoucherCollectionInnerBlock enrolledVoucherCollection={enrolledVoucherCollection} />
+}
+
+const VoucherCollectionInnerBlock: React.VFC<{
+  enrolledVoucherCollection: EnrolledVoucher[]
+}> = ({ enrolledVoucherCollection }) => {
   const { enabledModules } = useApp()
   const { currentMemberId } = useAuth()
+  const { formatMessage } = useIntl()
+  const [vouchers, setVouchers] = useState<EnrolledVoucher[]>(enrolledVoucherCollection)
   const [loading, setLoading] = useState(false)
   const [voucherCode, setVoucherCode] = useQueryParam('voucherCode', StringParam)
 
@@ -28,28 +53,93 @@ const VoucherCollectionBlock: React.VFC = () => {
     refetch: refetchEnrolledProductIds,
   } = useEnrolledProductIds(currentMemberId || '')
 
-  const {
-    loading: loadingEnrolledVoucherCollection,
-    error: errorEnrolledVoucherCollection,
-    data: enrolledVoucherCollection,
-    fetch: refetchEnrolledVoucherCollection,
-  } = useEnrolledVoucherCollection(currentMemberId || '')
-
   const handleRefetch = () => {
-    refetchEnrolledVoucherCollection()
-      .then(() => {
-        refetchEnrolledProductIds().catch(handleError)
-      })
+    refetchEnrolledProductIds()
       .catch(handleError)
       .finally(() => voucherCode && setVoucherCode(null))
   }
 
-  const vouchers = enrolledVoucherCollection.map(voucher => ({
+  const vouchersWithExtraElement = useMemo(() => {
+    return generateVoucherWithExtraElement(
+      vouchers,
+      enrolledProductIds,
+      loading,
+      setLoading,
+      handleRefetch,
+      !!enabledModules.transfer_voucher,
+      voucherId => {
+        setVouchers(prev =>
+          prev.map(voucher =>
+            voucher.id === voucherId
+              ? { ...voucher, available: false, status: { ...voucher.status, used: true } }
+              : voucher,
+          ),
+        )
+      },
+    )
+  }, [vouchers, enrolledProductIds])
+  console.log(vouchersWithExtraElement)
+
+  return (
+    <>
+      <div className="mb-5">
+        <VoucherInsertBlock
+          loading={loading}
+          onChangeLoading={status => setLoading(status)}
+          onRefetch={handleRefetch}
+          afterInsert={(_newVoucher: VoucherFromAPI) => {
+            const newVoucher = {
+              id: _newVoucher.id,
+              voucherPlanId: _newVoucher.voucherCode.voucherPlan.id,
+              title: _newVoucher.voucherCode.voucherPlan.title,
+              description: decodeURI(_newVoucher.voucherCode.voucherPlan.description || ''),
+              productQuantityLimit: _newVoucher.voucherCode.voucherPlan.productQuantityLimit,
+              isTransferable: _newVoucher.voucherCode.voucherPlan.isTransferable,
+              startedAt: _newVoucher.voucherCode.voucherPlan.startedAt
+                ? new Date(_newVoucher.voucherCode.voucherPlan.startedAt)
+                : undefined,
+              endedAt: _newVoucher.voucherCode.voucherPlan.endedAt
+                ? new Date(_newVoucher.voucherCode.voucherPlan.endedAt)
+                : undefined,
+              available: !!_newVoucher.status && !_newVoucher.status.outdated && !_newVoucher.status.used,
+              productIds: _newVoucher.voucherCode.voucherPlan.voucherPlanProducts.map(
+                voucherPlanProduct => voucherPlanProduct.productId,
+              ),
+              voucherCode: {
+                id: _newVoucher.voucherCode.id,
+                code: _newVoucher.voucherCode.code,
+                deletedAt: _newVoucher.voucherCode.deletedAt ? new Date(_newVoucher.voucherCode.deletedAt) : undefined,
+              },
+              status: _newVoucher.status,
+            }
+            setVouchers(prev => [...prev, newVoucher])
+          }}
+        />
+        <Text marginTop="24px" fontSize="sm" color={'var(--gray-dark)'}>
+          {formatMessage(voucherMessages.VoucherExchangeModal.info)}
+        </Text>
+      </div>
+
+      <VoucherCollectionTabs vouchers={vouchersWithExtraElement} />
+    </>
+  )
+}
+
+const generateVoucherWithExtraElement = (
+  vouchers: EnrolledVoucher[],
+  enrolledProductIds: string[],
+  loading: boolean,
+  onChangeLoading: (status: boolean) => void,
+  onRefetch: () => void,
+  hasDeliverModal: boolean,
+  afterExchange: (voucherId: string) => void,
+) => {
+  return vouchers.map(voucher => ({
     ...voucher,
     extra: (
       <>
-        {enabledModules.transfer_voucher && voucher.isTransferable && (
-          <VoucherDeliverModal title={voucher.title} voucherId={voucher.id} onRefetch={handleRefetch} />
+        {hasDeliverModal && voucher.isTransferable && (
+          <VoucherDeliverModal title={voucher.title} voucherId={voucher.id} onRefetch={onRefetch} />
         )}
         <VoucherExchangeModal
           voucherId={voucher.id}
@@ -59,33 +149,13 @@ const VoucherCollectionBlock: React.VFC = () => {
           disabledProductIds={enrolledProductIds}
           description={voucher.description}
           loading={loading}
-          onLoading={status => setLoading(status)}
-          onRefetch={() => refetchEnrolledVoucherCollection()}
+          onLoading={onChangeLoading}
+          onRefetch={onRefetch}
+          afterExchange={afterExchange}
         />
       </>
     ),
   }))
-
-  if (!currentMemberId || loadingEnrolledProductIds || loadingEnrolledVoucherCollection) {
-    return <SkeletonText mt="1" noOfLines={4} spacing="4" />
-  }
-
-  if (errorEnrolledProductIds || errorEnrolledVoucherCollection) {
-    return <div>{formatMessage(commonMessages.status.loadingError)}</div>
-  }
-
-  return (
-    <>
-      <div className="mb-5">
-        <VoucherInsertBlock onRefetch={handleRefetch} />
-        <Text marginTop="24px" fontSize="sm" color={'var(--gray-dark)'}>
-          {formatMessage(voucherMessages.VoucherExchangeModal.info)}
-        </Text>
-      </div>
-
-      <VoucherCollectionTabs vouchers={vouchers} />
-    </>
-  )
 }
 
 export default VoucherCollectionBlock
