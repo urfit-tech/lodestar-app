@@ -12,6 +12,7 @@ import styled, { css, ThemeContext } from 'styled-components'
 import { BREAK_POINT } from '../../../../components/common/Responsive'
 import VideoPlayer from '../../../../components/common/VideoPlayer'
 import ReviewCollectionBlock from '../../../../components/review/ReviewCollectionBlock'
+import { isMobile } from '../../../../helpers'
 import { useProgramPlansEnrollmentsAggregateList } from '../../../../hooks/program'
 import EmptyCover from '../../../../images/empty-cover.png'
 import { Program, ProgramContentSectionType } from '../../../../types/program'
@@ -115,7 +116,7 @@ const EbookProgramPageContent: React.VFC<{
   const theme = useContext(ThemeContext)
   const { loading: loadingProgramPlansEnrollmentsAggregateList, programPlansEnrollmentsAggregateList } =
     useProgramPlansEnrollmentsAggregateList(program?.plans.map(plan => plan.id) || [])
-  const { moduleData, title, coverUrl } = program
+  const { moduleData, title, coverUrl, coverMobileUrl } = program
   const bookSubTitle = moduleData?.[layoutTemplateConfigMap.bookSubTitle]
   const bookInformation = moduleData?.[layoutTemplateConfigMap.bookInformation]
   const contentInformation = moduleData?.[layoutTemplateConfigMap.contentInformation]
@@ -160,7 +161,7 @@ const EbookProgramPageContent: React.VFC<{
                 <Box>
                   <Box boxShadow="md" width="248px" height="248px">
                     <Box
-                      backgroundImage={`url(${coverUrl || EmptyCover})`}
+                      backgroundImage={`url(${isMobile && coverMobileUrl ? coverMobileUrl : coverUrl || EmptyCover})`}
                       backgroundPosition={'center'}
                       backgroundSize={'cover'}
                       width="100%"
