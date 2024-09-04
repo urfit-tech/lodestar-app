@@ -11133,9 +11133,9 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lodestar-app-element@urfit-tech/lodestar-app-element#v1.82.1:
+lodestar-app-element@urfit-tech/lodestar-app-element#v1.82.2:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/57aad56cf3bea538bd4e33e16c95fa0eba2c8b45"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/7334a17efde639bdef5b1ad073fa8a92cabf4f0c"
   dependencies:
     "@apollo/client" "^3.7.11"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
@@ -16603,11 +16603,6 @@ ts-toolbelt@^9.6.0:
   integrity sha512-nsZd8ZeNUzukXPlJmTBwUAuABDe/9qtVDelJeT/qW0ow3ZS3BsQJtNkan1802aM9Uf68/Y8ljw86Hu0h5IUW3w==
 
 ts-typetools@^0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/ts-typetools/-/ts-typetools-0.6.1.tgz#3827d1d06ef7dd578a43effd963378f0458036c2"
-  integrity sha512-A4TcVw40hKKgdK22M6vDvqEmzxuE21uyeGuFBHzgl9USRmmQRnvwY9fURIQfdP8pXV6wIq6O4g3kr3/O3Yl0hA==
-
-ts-typetools@^0.6.1:
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/ts-typetools/-/ts-typetools-0.6.2.tgz#8067b06d04e49fb88049f3e602076ebacdfb2c81"
   integrity sha512-Ke2q5ejYamdlJxs5lvcl7uet+2Bm22MXlTTT9vjopVaDlx/rHMek60qap1tTzPlYoab+aeaIL8fHS7XakJQx7A==
@@ -16766,13 +16761,6 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
-
-types-ramda@^0.30.1:
-  version "0.30.1"
-  resolved "https://registry.yarnpkg.com/types-ramda/-/types-ramda-0.30.1.tgz#03d255128e3696aeaac76281ca19949e01dddc78"
-  integrity sha512-1HTsf5/QVRmLzcGfldPFvkVsAdi1db1BBKzi7iW3KBUlOICg/nKnFS+jGqDJS3YD8VsWbAh7JiHeBvbsw8RPxA==
-  dependencies:
-    ts-toolbelt "^9.6.0"
 
 types-ramda@^0.30.1:
   version "0.30.1"
@@ -17035,11 +17023,6 @@ use-sidecar@^1.0.1:
   dependencies:
     detect-node-es "^1.1.0"
     tslib "^2.0.0"
-
-use-sync-external-store@^1.2.0:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.2.2.tgz#c3b6390f3a30eba13200d2302dcdf1e7b57b2ef9"
-  integrity sha512-PElTlVMwpblvbNqQ82d2n6RjStvdSoNe9FG28kNfz3WiXilJm4DdNkEzRhCZuIDwY8U08WVihhGR5iRqAwfDiw==
 
 use-sync-external-store@^1.2.0:
   version "1.2.2"
