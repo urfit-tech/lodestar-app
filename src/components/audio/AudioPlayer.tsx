@@ -126,8 +126,11 @@ const StyledButtonGroup = styled(HStack)`
     margin: 0 20px;
   }
 `
-const StyledLink = styled(Link)`
+const StyledLink = styled(Link)<{ height?: string; width?: string }>`
   overflow: hidden;
+  display: block;
+  width: ${props => props.width};
+  height: ${props => props.height};
 `
 const StyledButton = styled(Button)<{ variant?: 'overlay' | 'bar'; height?: string }>`
   && {
@@ -476,15 +479,15 @@ const AudioPlayer: React.VFC<{
               marginX="15px"
               display={{ base: 'flex', lg: 'none' }}
             >
-              <StyledLink to={link}>
+              <StyledLink to={link} width="80%">
                 <StyledTitle className="flex-grow-1">{title}</StyledTitle>
               </StyledLink>
               <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
             </Flex>
             <Flex
               justifyContent="space-between"
-              alignItems="center"
-              margin={{ base: '15px 0px 15px 15px', lg: '8px 10px 5px 10px' }}
+              alignItems="flex-end"
+              margin={{ base: '15px 0px 15px 15px', lg: '8px 10px 15px 10px' }}
             >
               <Flex alignItems="center" zIndex="1000">
                 <HStack spacing="5px">
@@ -527,100 +530,104 @@ const AudioPlayer: React.VFC<{
                   alignItems="center"
                   display={{ base: 'none', lg: 'block' }}
                   marginLeft="10px"
+                  width="800px"
                 >
-                  <Link to={link}>
+                  <StyledLink to={link} height="40px">
                     <StyledTitle>{title}</StyledTitle>
-                  </Link>
+                  </StyledLink>
                   <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
                 </Flex>
               </Flex>
-              <Flex
-                alignItems="center"
-                justifyContent="center"
-                width="100%"
-                position="absolute"
-                bottom="10px"
-                right="0px"
-                left="0px"
-              >
-                <AudioControls
-                  isLoading={isLoading}
-                  isPlaying={isPlaying}
-                  isLast={isLast}
-                  isFirst={isFirst}
-                  onPrev={() => onPrev?.()}
-                  onBackward={() => {
-                    const backwardSeconds = 15
-                    audioRef.current && (audioRef.current.currentTime = progress - backwardSeconds)
-                  }}
-                  onPlay={() => {
-                    onPlay(!isPlaying)
-                    audioRef.current && (isPlaying ? audioRef.current.pause() : audioRef.current.play())
-                    if (isPlaying && audioRef.current) {
-                      onAudioEvent({
-                        type: 'pause',
-                        progress: audioRef.current.currentTime / duration,
-                        audioState: {
-                          playbackRate: playRate,
-                          startedAt: lastEndedTime.current,
-                          endedAt: audioRef.current.currentTime,
-                        },
-                      })
-                      lastEndedTime.current = audioRef.current.currentTime
-                    }
-                  }}
-                  onForward={() => {
-                    const forwardSeconds = 15
-                    audioRef.current && (audioRef.current.currentTime = progress + forwardSeconds)
-                  }}
-                  onNext={() => onNext?.()}
-                />
-              </Flex>
-              <HStack spacing={{ base: '0px', lg: '10px' }} alignItems="center" justifyContent="end">
-                <HStack display={{ base: 'none', md: 'flex' }}>
-                  <PlayRateButton
-                    variant="bar"
-                    playRate={playRate}
-                    onChange={rate => {
-                      setPlayRate(rate)
-                      localStorage.setItem('playRate', rate.toString())
-                      audioRef.current && (audioRef.current.playbackRate = rate)
-                    }}
-                  />
-                  <PlayModeButton
-                    variant="bar"
-                    mode={mode}
-                    onChange={mode => {
-                      onPlayModeChange(mode)
-                      audioRef.current && (audioRef.current.loop = mode === 'single-loop')
-                    }}
-                  />
-                </HStack>
-                <Popover
-                  placement="topRight"
-                  trigger="click"
-                  content={
-                    <PlaylistOverlay title={contentSectionTitle} playList={playList} currentIndex={currentIndex} />
-                  }
-                  overlayClassName="audio-player-popover"
+              <Flex zIndex="1004">
+                <Flex
+                  alignItems="center"
+                  justifyContent="center"
+                  width="100%"
+                  position="absolute"
+                  bottom="10px"
+                  right="0px"
+                  left="0px"
                 >
-                  <StyledButton
-                    type="link"
-                    variant="bar"
-                    onClick={() => setShowAction(false)}
-                    display={{ base: 'none', lg: 'block' }}
-                  >
-                    <Tooltip placement="top" title="播放清單">
-                      <Icon as={PlaylistIcon} />
-                    </Tooltip>
-                  </StyledButton>
-                </Popover>
-                <Box display={{ base: 'block', md: 'none' }}>
-                  <StyledButton type="link" variant="bar" onClick={() => setShowAction(!showAction)}>
-                    <Icon as={EllipsisIcon} />
-                  </StyledButton>
-                </Box>
-              </HStack>
+                  <AudioControls
+                    isLoading={isLoading}
+                    isPlaying={isPlaying}
+                    isLast={isLast}
+                    isFirst={isFirst}
+                    onPrev={() => onPrev?.()}
+                    onBackward={() => {
+                      const backwardSeconds = 15
+                      audioRef.current && (audioRef.current.currentTime = progress - backwardSeconds)
+                    }}
+                    onPlay={() => {
+                      onPlay(!isPlaying)
+                      audioRef.current && (isPlaying ? audioRef.current.pause() : audioRef.current.play())
+                      if (isPlaying && audioRef.current) {
+                        onAudioEvent({
+                          type: 'pause',
+                          progress: audioRef.current.currentTime / duration,
+                          audioState: {
+                            playbackRate: playRate,
+                            startedAt: lastEndedTime.current,
+                            endedAt: audioRef.current.currentTime,
+                          },
+                        })
+                        lastEndedTime.current = audioRef.current.currentTime
+                      }
+                    }}
+                    onForward={() => {
+                      const forwardSeconds = 15
+                      audioRef.current && (audioRef.current.currentTime = progress + forwardSeconds)
+                    }}
+                    onNext={() => onNext?.()}
+                  />
+                </Flex>
+                <HStack spacing={{ base: '0px', lg: '10px' }} alignItems="center" justifyContent="end">
+                  <HStack display={{ base: 'none', md: 'flex' }}>
+                    <PlayRateButton
+                      variant="bar"
+                      playRate={playRate}
+                      onChange={rate => {
+                        setPlayRate(rate)
+                        localStorage.setItem('playRate', rate.toString())
+                        audioRef.current && (audioRef.current.playbackRate = rate)
+                      }}
+                    />
+                    <PlayModeButton
+                      variant="bar"
+                      mode={mode}
+                      onChange={mode => {
+                        onPlayModeChange(mode)
+                        audioRef.current && (audioRef.current.loop = mode === 'single-loop')
+                      }}
+                    />
+                    <Popover
+                      placement="topRight"
+                      trigger="click"
+                      content={
+                        <PlaylistOverlay title={contentSectionTitle} playList={playList} currentIndex={currentIndex} />
+                      }
+                      overlayClassName="audio-player-popover"
+                    >
+                      <StyledButton
+                        type="link"
+                        variant="bar"
+                        onClick={() => setShowAction(false)}
+                        display={{ base: 'none', lg: 'block' }}
+                      >
+                        <Tooltip placement="top" title={'播放清單'}>
+                          <Icon as={PlaylistIcon} />
+                        </Tooltip>
+                      </StyledButton>
+                    </Popover>
+                  </HStack>
+
+                  <Box display={{ base: 'block', md: 'none' }}>
+                    <StyledButton type="link" variant="bar" onClick={() => setShowAction(!showAction)}>
+                      <Icon as={EllipsisIcon} />
+                    </StyledButton>
+                  </Box>
+                </HStack>
+              </Flex>
             </Flex>
           </Box>
         </Box>
