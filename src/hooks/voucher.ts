@@ -1,8 +1,7 @@
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useCallback, useEffect, useState } from 'react'
-import { VoucherProps } from '../components/voucher/Voucher'
-import { VoucherFromLodestarAPI } from '../types/vouchers'
+import { VoucherFromAPI, VoucherProps } from '../types/vouchers'
 
 export const useEnrolledVoucherCollection = (memberId: string) => {
   const { authToken } = useAuth()
@@ -25,7 +24,7 @@ export const useEnrolledVoucherCollection = (memberId: string) => {
           headers: { authorization: `Bearer ${authToken}` },
         })
         setData(
-          data.map((voucher: VoucherFromLodestarAPI) => ({
+          data.map((voucher: VoucherFromAPI) => ({
             id: voucher.id,
             voucherPlanId: voucher.voucherCode.voucherPlan.id,
             title: voucher.voucherCode.voucherPlan.title,
