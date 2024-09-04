@@ -3,7 +3,8 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { usersMessages } from '../../helpers/translation'
 import { StyledTabList, StyledTabPanel } from '../../pages/GroupBuyingCollectionPage'
-import Voucher, { VoucherProps } from './Voucher'
+import { VoucherProps } from '../../types/vouchers'
+import Voucher from './Voucher'
 
 const VoucherCollectionTabs: React.VFC<{ vouchers: VoucherProps[] }> = ({ vouchers }) => {
   const { formatMessage } = useIntl()
