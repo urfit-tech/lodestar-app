@@ -38,10 +38,7 @@ const GiftName = styled.p`
   color: var(--gray-darker);
 `
 
-const CartProductGiftPlan: React.VFC<{ productId: string; isTargetLoaded: boolean }> = ({
-  productId,
-  isTargetLoaded,
-}) => {
+const CartProductGiftPlan: React.VFC<{ productId: string }> = ({ productId }) => {
   const { formatMessage } = useIntl()
   const { productGiftPlan } = useProductGiftPlan(productId)
   let isAvailable =
@@ -50,7 +47,7 @@ const CartProductGiftPlan: React.VFC<{ productId: string; isTargetLoaded: boolea
       ? false
       : true
 
-  return isTargetLoaded && productGiftPlan.id && isAvailable ? (
+  return productGiftPlan.id && isAvailable ? (
     <GiftPlanBlock>
       <GiftDescriptionBlock>
         <GiftTag>{formatMessage(checkoutMessages.ui.gift)}</GiftTag>
