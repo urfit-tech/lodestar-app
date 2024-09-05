@@ -1,5 +1,4 @@
 import { Icon } from '@chakra-ui/icons'
-import { Spinner } from '@chakra-ui/react'
 import { Typography } from 'antd'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
@@ -13,9 +12,9 @@ import styled, { css } from 'styled-components'
 import CartContext from '../../contexts/CartContext'
 import { desktopViewMixin } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
-import { useProductCollection } from '../../hooks/common'
 import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as ExclamationCircleIcon } from '../../images/exclamation-circle.svg'
+import { Product } from '../../types/product'
 import { CustomRatioImage } from '../common/Image'
 import QuantityInput from '../common/QuantityInput'
 
@@ -45,39 +44,28 @@ const StyledInventoryBlock = styled.span`
 `
 
 const CartProductItem: React.VFC<{
-  id: string
+  product: Product
   quantity: number
   buyableQuantity: number | null
   onTargetLoaded?: (isLoaded: boolean) => void
-}> = ({ id, quantity, buyableQuantity, onTargetLoaded }) => {
+}> = ({ product, quantity, buyableQuantity, onTargetLoaded }) => {
   const { formatMessage } = useIntl()
   const { enabledModules, id: appId } = useApp()
   const { updatePluralCartProductQuantity } = useContext(CartContext)
-  const { loading, productCollection } = useProductCollection([id])
+
+  const productId = `${product.productType}_${product.targetId}`
+  const { productType } = product
+
   const [pluralProductQuantity, setPluralProductQuantity] = useState(quantity || 1)
   const tracking = useTracking()
   const { resourceCollection } = useResourceCollection([
-    `${appId}:${getResourceByProductId(id).type}:${getResourceByProductId(id).target}`,
+    `${appId}:${getResourceByProductId(productId).type}:${getResourceByProductId(productId).target}`,
   ])
 
   useEffect(() => {
-    updatePluralCartProductQuantity?.(id, pluralProductQuantity)
+    updatePluralCartProductQuantity?.(productId, pluralProductQuantity)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, pluralProductQuantity])
-
-  useEffect(() => {
-    if (!loading) {
-      onTargetLoaded?.(true)
-    }
-  }, [loading, onTargetLoaded])
-
-  if (!productCollection) {
-    return <Spinner size="lg" />
-  }
-
-  const product = productCollection?.[0] || []
-
-  const { productType } = product
+  }, [productId, pluralProductQuantity])
 
   const imageUrl =
     product.productType === 'ProgramPlan'
