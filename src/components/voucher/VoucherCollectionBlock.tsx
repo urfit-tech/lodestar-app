@@ -78,7 +78,6 @@ const VoucherCollectionInnerBlock: React.VFC<{
       },
     )
   }, [vouchers, enrolledProductIds])
-  console.log(vouchersWithExtraElement)
 
   return (
     <>
