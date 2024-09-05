@@ -3,13 +3,12 @@ import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { handleError } from '../../helpers'
 import { codeMessages, commonMessages, voucherMessages } from '../../helpers/translation'
-import { VoucherFromAPI } from '../../types/vouchers'
 import AdminCard from '../common/AdminCard'
 import { BREAK_POINT } from '../common/Responsive'
 
@@ -48,28 +47,19 @@ const StyledFormItem = styled(Form.Item)`
 type VoucherInsertBlockProps = CardProps &
   FormComponentProps & {
     onRefetch?: () => void
-    afterInsert: (voucher: VoucherFromAPI) => void
-    onChangeLoading: (status: boolean) => void
-    loading: boolean
   }
-const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({
-  form,
-  onRefetch,
-  afterInsert,
-  loading,
-  onChangeLoading,
-  ...cardProps
-}) => {
+const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({ form, onRefetch, ...cardProps }) => {
   const { formatMessage } = useIntl()
   const { authToken, currentMemberId } = useAuth()
+  const [loading, setLoading] = useState(false)
   const [voucherCode] = useQueryParam('voucherCode', StringParam)
 
-  const handleInsert = (voucherCode: string) => {
+  const handleInsert = (setLoading: React.Dispatch<React.SetStateAction<boolean>>, voucherCode: string) => {
     if (!currentMemberId) {
       return
     }
 
-    onChangeLoading(true)
+    setLoading(true)
     axios
       .post(
         `${process.env.REACT_APP_API_BASE_ROOT}/payment/exchange`,
@@ -81,9 +71,8 @@ const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({
           headers: { authorization: `Bearer ${authToken}` },
         },
       )
-      .then(({ data: { code, result } }) => {
+      .then(({ data: { code } }) => {
         if (code === 'SUCCESS') {
-          afterInsert(result)
           message.success(formatMessage(voucherMessages.messages.addVoucher))
           onRefetch?.()
         } else {
@@ -91,7 +80,7 @@ const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({
         }
       })
       .catch(handleError)
-      .finally(() => onChangeLoading(false))
+      .finally(() => setLoading(false))
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -102,7 +91,7 @@ const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({
         return
       }
 
-      handleInsert(values.code)
+      handleInsert(setLoading, values.code)
       form.resetFields()
     })
   }
