@@ -143,6 +143,7 @@ export const useCheck = ({
         geolocation: { ip: ip || '', country: country || '', countryCode: countryCode || '' },
         options,
         tracking: trackingOptions,
+        invoiceGatewayId: invoice?.invoiceGatewayId,
       },
       {
         headers: { authorization: `Bearer ${authToken}` },

@@ -91,8 +91,10 @@ type OrderRow = {
     options: { [key: string]: any } | null
   }[]
   orderDiscounts: OrderDiscountProps[]
+  paymentLogs: { no: string; status: string; options?: { index: number; price: number }; invoiceGatewayId?: string }[]
   key: string
   totalPrice: number
+  options: { installmentPlans?: { index: number; price: number }[] }
 }
 
 const OrderCollectionAdminCard: React.VFC<
@@ -158,10 +160,12 @@ const OrderCollectionAdminCard: React.VFC<
       <OrderProductTable className="mb-4">
         {record.orderProducts
           .filter(orderProduct => orderProduct.product.type !== 'Token')
-          .map(orderProduct => (
+          .map((orderProduct, index) => (
             <OrderProductRow key={orderProduct.id} className="d-table-row">
               <OrderProductCell className="pr-4">
-                {orderProduct.product.type ? (
+                {settings['payment.v2'] === '1' ? (
+                  `#${index + 1}`
+                ) : orderProduct.product.type ? (
                   <ProductTypeLabel productType={orderProduct.product.type} />
                 ) : (
                   <>{formatMessage(commonMessages.unknown.type)}</>
@@ -211,11 +215,19 @@ const OrderCollectionAdminCard: React.VFC<
           ))}
         {record.orderProducts
           .filter(orderProduct => orderProduct.product.type === 'Token')
-          .map(orderProduct => {
+          .map((orderProduct, index) => {
             return (
               <OrderProductRow key={`Token_${orderProduct.id}`} className="d-table-row">
                 <OrderProductCell className="pr-4">
-                  <TokenTypeLabel tokenType="GiftPlan" />
+                  {settings['payment.v2'] === '1' ? (
+                    `#${
+                      record.orderProducts.filter(orderProduct => orderProduct.product.type !== 'Token').length +
+                      index +
+                      1
+                    }`
+                  ) : (
+                    <TokenTypeLabel tokenType="GiftPlan" />
+                  )}{' '}
                 </OrderProductCell>
                 <OrderProductCell className="pr-4" grow>
                   <div className="d-flex align-items-center">
@@ -235,6 +247,25 @@ const OrderCollectionAdminCard: React.VFC<
 
       <div className="row">
         <div className="col-3 d-flex align-items-end">
+          {settings['payment.v2'] === '1' &&
+            record.options?.installmentPlans &&
+            record.options?.installmentPlans.length > 0 &&
+            record.paymentLogs
+              .filter(p => p.status === 'UNPAID')
+              .sort((a, b) => (a.options?.index || 0) - (b.options?.index || 0))
+              .map(p => (
+                <Button
+                  variant="outline"
+                  _hover={{
+                    color: theme.colors.primary[500],
+                    borderColor: theme.colors.primary[500],
+                  }}
+                  onClick={() => history.push(`/tasks/payment/${p.no}`)}
+                  className="mr-2"
+                >
+                  {p.options?.index}期付款
+                </Button>
+              ))}
           {['UNPAID', 'PARTIAL_PAID', 'FAILED'].includes(record.status) && (
             <Button
               variant="outline"
@@ -246,7 +277,11 @@ const OrderCollectionAdminCard: React.VFC<
                 axios
                   .post(
                     `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
-                    { orderId: record.id, clientBackUrl: window.location.origin },
+                    {
+                      orderId: record.id,
+                      clientBackUrl: window.location.origin,
+                      invoiceGatewayId: record.paymentLogs[0].invoiceGatewayId,
+                    },
                     { headers: { authorization: `Bearer ${authToken}` } },
                   )
                   .then(({ data: { code, result } }) => {
@@ -335,6 +370,7 @@ const useOrderLogCollection = (memberId: string) => {
           created_at
           status
           shipping
+          options
           order_products {
             id
             name
@@ -358,6 +394,12 @@ const useOrderLogCollection = (memberId: string) => {
             target
             options
           }
+          payment_logs {
+            no
+            options
+            status
+            invoice_gateway_id
+          }
         }
       }
     `,
@@ -375,6 +417,7 @@ const useOrderLogCollection = (memberId: string) => {
         sum(orderLog.order_discounts.map(prop('price'))) +
         (orderLog.shipping?.fee || 0),
       shipping: orderLog.shipping,
+      options: orderLog.options,
       orderProducts: [...orderLog.order_products]
         .sort((a, b) => (a.options?.position || 0) - (b.options?.position || 0))
         .map(orderProduct => ({
@@ -400,6 +443,12 @@ const useOrderLogCollection = (memberId: string) => {
         description: orderDiscount.description || '',
         price: orderDiscount.price,
         options: orderDiscount.options,
+      })),
+      paymentLogs: orderLog.payment_logs.map(paymentLog => ({
+        no: paymentLog.no,
+        status: paymentLog.status || 'UNKNOWN',
+        options: paymentLog.options,
+        invoiceGatewayId: paymentLog.invoice_gateway_id,
       })),
     })) || []
 

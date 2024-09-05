@@ -1,9 +1,10 @@
 import { gql, useQuery } from '@apollo/client'
-import { Button, Icon, Typography } from 'antd'
+import { Button, Icon, message, Typography } from 'antd'
+import axios from 'axios'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { notEmpty } from 'lodestar-app-element/src/helpers'
+import { handleError, notEmpty } from 'lodestar-app-element/src/helpers'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
@@ -16,7 +17,7 @@ import AdminCard from '../components/common/AdminCard'
 import PageHelmet from '../components/common/PageHelmet'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
-import { commonMessages } from '../helpers/translation'
+import { codeMessages, commonMessages } from '../helpers/translation'
 import LoadingPage from './LoadingPage'
 import NotFoundPage from './NotFoundPage'
 
@@ -36,7 +37,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
   const [withTracking] = useQueryParam('tracking', BooleanParam)
   const [errorCode] = useQueryParam('code', StringParam)
   const { settings, id: appId, loading: isAppLoading } = useApp()
-  const { currentMemberId, isAuthenticating } = useAuth()
+  const { currentMemberId, isAuthenticating, authToken } = useAuth()
   const { loading: isOrderLoading, data } = useQuery<
     hasura.PH_GET_ORDERS_PRODUCT,
     hasura.PH_GET_ORDERS_PRODUCTVariables
@@ -182,7 +183,9 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                     <Button>{formatMessage(commonMessages.button.home)}</Button>
                   </Link>
                 </>
-              ) : order.status === 'SUCCESS' ? (
+              ) : order.status === 'SUCCESS' ||
+                (!!order.options?.installmentPlans &&
+                  order.payment_logs.filter(p => p.status === 'SUCCESS').length > 0) ? (
                 <>
                   <Icon
                     className="mb-5"
@@ -195,6 +198,22 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                     {formatMessage(commonMessages.title.purchasedItemAvailable)}
                   </Typography.Title>
                   {orderSuccessHintFormat(order.payment_model?.method)}
+                  {!!order.options?.installmentPlans &&
+                    order.options?.installmentPlans.map((plan: { price: number; index: number }) => (
+                      <div key={plan.index} className="mb-2">
+                        <b>
+                          {order.options?.installmentPlans.length === 2
+                            ? plan.index === 1
+                              ? '訂金'
+                              : '尾款'
+                            : `${plan.index}期`}
+                        </b>
+                        ：
+                        {order.payment_logs.filter(p => p.price === plan.price)[0].status === 'SUCCESS'
+                          ? '已付款'
+                          : '未付款'}
+                      </div>
+                    ))}
                   <div className="d-flex justify-content-center flex-column flex-sm-row mt-2">
                     <Link to={`/members/${currentMemberId}`} className="mb-3 mb-sm-0 mr-sm-2">
                       <Button>{formatMessage(commonMessages.button.myPage)}</Button>
@@ -223,9 +242,32 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                     <Link to="/" className="mb-3 mb-sm-0 mr-sm-2">
                       <Button>{formatMessage(commonMessages.button.home)}</Button>
                     </Link>
-                    <Link to="/settings/orders" className="ml-sm-2">
-                      <Button>{formatMessage(commonMessages.ui.repay)}</Button>
-                    </Link>
+                    <Button
+                      style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+                      onClick={param => {
+                        axios
+                          .post(
+                            `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
+                            {
+                              orderId: orderId,
+                              clientBackUrl: window.location.origin,
+                              invoiceGatewayId: order.payment_logs[0]?.invoice_gateway_id,
+                            },
+                            { headers: { authorization: `Bearer ${authToken}` } },
+                          )
+                          .then(({ data: { code, result } }) => {
+                            if (code === 'SUCCESS') {
+                              history.push(`/tasks/payment/${result.id}`)
+                            } else {
+                              message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+                            }
+                          })
+                          .catch(handleError)
+                      }}
+                    >
+                      <div>{formatMessage(commonMessages.ui.repay)}</div>
+                      <Icon type="down" />
+                    </Button>
                   </div>
                 </>
               )}
@@ -245,6 +287,13 @@ const PH_GET_ORDERS_PRODUCT = gql`
       status
       payment_model
       custom_id
+      options
+      payment_logs {
+        no
+        status
+        price
+        invoice_gateway_id
+      }
       order_discounts_aggregate {
         aggregate {
           sum {

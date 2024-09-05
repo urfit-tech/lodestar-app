@@ -48,7 +48,7 @@ const MemberAdminLayout: React.FC<{
 
   const isPushToMemberLearningPage = checkLearningSystem(settings['custom']).isStart
   return (
-    <DefaultLayout noFooter>
+    <DefaultLayout>
       <PageHelmet title={content.title} />
       <div className="d-flex">
         <Responsive.Desktop>

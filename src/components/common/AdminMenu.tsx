@@ -217,7 +217,7 @@ export const MemberAdminMenu: React.VFC<
     },
     {
       key: 'member_coupons_admin',
-      item: (
+      item: enabledModules.coupon && (
         <Menu.Item key="member_coupons_admin">
           <Icon as={TicketIcon} className="mr-2" />
           {formatMessage(commonMessages.content.coupon)}

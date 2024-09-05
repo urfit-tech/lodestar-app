@@ -1,8 +1,8 @@
 import { ApolloClient, gql } from '@apollo/client'
-import { uniqBy } from 'ramda'
-import hasura from '../../hasura'
 import { CartProductProps } from '../../types/checkout'
 import { CartOperatorEnum } from './CartOperatorEnum'
+import { uniqBy } from 'ramda'
+import hasura from '../../hasura'
 
 type updateCartProductVariables = {
   variables: {
