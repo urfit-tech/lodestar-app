@@ -48,6 +48,7 @@ const VoucherExchangeModalBlock: React.FC<{
   onLoading?: (status: boolean) => void
   onRefetch?: () => void
   onModalVisibleChange: (status: boolean) => void
+  afterExchange: (voucherId: string) => void
 }> = ({
   visible,
   validProductIds,
@@ -61,6 +62,7 @@ const VoucherExchangeModalBlock: React.FC<{
   onLoading,
   onRefetch,
   onModalVisibleChange,
+  afterExchange,
 }) => {
   const { currentMemberId, authToken } = useAuth()
   const history = useHistory()
@@ -181,6 +183,7 @@ const VoucherExchangeModalBlock: React.FC<{
         onModalVisibleChange(false)
         setSelectedProductIds([])
         messageModalStatus === 'success' && onRefetch?.()
+        afterExchange(voucherId)
       }}
     >
       {messageModalStatus === 'success' ? (
@@ -336,6 +339,7 @@ const VoucherExchangeModal: React.VFC<{
   loading: boolean
   onLoading?: (status: boolean) => void
   onRefetch?: () => void
+  afterExchange: (voucherId: string) => void
 }> = ({
   voucherId,
   voucherPlanId,
@@ -346,6 +350,7 @@ const VoucherExchangeModal: React.VFC<{
   loading,
   onLoading,
   onRefetch,
+  afterExchange,
 }) => {
   const { formatMessage } = useIntl()
   const [visible, setVisible] = useState(false)
@@ -392,6 +397,7 @@ const VoucherExchangeModal: React.VFC<{
         onLoading={onLoading}
         onRefetch={onRefetch}
         onModalVisibleChange={(visible: boolean) => setVisible(visible)}
+        afterExchange={afterExchange}
       />
     </>
   )

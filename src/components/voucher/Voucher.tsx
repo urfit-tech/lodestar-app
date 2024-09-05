@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { rgba } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
+import { VoucherProps } from '../../types/vouchers'
 import { BREAK_POINT } from '../common/Responsive'
 import voucherMessages from './translation'
 
@@ -91,27 +92,6 @@ const StyledCode = styled.div<{ available?: boolean }>`
   color: ${props => (props.available ? props.theme['@primary-color'] : 'var(--gray)')};
 `
 
-export type VoucherProps = {
-  id: string
-  title: string
-  description: string | null
-  startedAt?: Date
-  endedAt?: Date
-  productQuantityLimit: number
-  available: boolean
-  extra?: React.ReactNode
-  action?: React.ReactNode
-  isTransferable?: boolean
-  voucherCode: {
-    id: string
-    code: string
-    deletedAt?: Date | null
-  }
-  status: {
-    outdated?: boolean | null
-    used?: boolean | null
-  }
-}
 const Voucher: React.VFC<VoucherProps> = ({
   title,
   startedAt,
