@@ -136,7 +136,7 @@ export const durationFormatter = (value?: number | null) => {
   const { formatMessage } = useIntl()
   return (
     typeof value === 'number' &&
-    formatMessage(commonMessages.content.durationFormatter, { minute: Math.ceil(value / 60) })
+    formatMessage(commonMessages.content.durationFormatter, { minutes: Math.ceil(value / 60) })
   )
 }
 
