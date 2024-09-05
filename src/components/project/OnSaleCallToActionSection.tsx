@@ -140,7 +140,9 @@ const OnSaleCallToActionSection: React.VFC<OnSaleCallToActionSectionProps> = ({ 
             onClick={() => document.getElementById('project-plan-section')?.scrollIntoView({ behavior: 'smooth' })}
           >
             <span>
-              與 <ProjectEnrollmentCounts projectId={projectId} numberOnly /> 人一起參與
+              {formatMessage(projectMessages.OnSaleCallToActionSection.xxxxxx, {
+                count: <ProjectEnrollmentCounts projectId={projectId} numberOnly />,
+              })}
             </span>
           </StyledButton>
         </div>
@@ -154,7 +156,9 @@ const OnSaleCallToActionSection: React.VFC<OnSaleCallToActionSectionProps> = ({ 
                   <span key={promote}>{promote}</span>
                 ))}
                 <span>
-                  已有 <ProjectEnrollmentCounts projectId={projectId} numberOnly /> 人一起學習
+                  {formatMessage(projectMessages.OnSaleCallToActionSection.xxxxxx, {
+                    count: <ProjectEnrollmentCounts projectId={projectId} numberOnly />,
+                  })}
                 </span>
               </div>
               <StyledCountDownTime className="d-flex align-items-center justify-content-between">
