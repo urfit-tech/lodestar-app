@@ -2,6 +2,7 @@ import { Icon } from '@chakra-ui/icons'
 import { Modal } from 'antd'
 import { ModalProps } from 'antd/lib/modal'
 import BraftEditor, { EditorState } from 'braft-editor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -9,8 +10,6 @@ import styled from 'styled-components'
 import { ReactComponent as CheckIcon } from '../../images/check.svg'
 import { CouponProps } from '../../types/checkout'
 import ProductItem from '../common/ProductItem'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
-import { useProductCollection } from '../../hooks/common'
 
 const messages = defineMessages({
   couponPlanCode: { id: 'promotion.label.couponPlanCode', defaultMessage: '折扣代碼' },
@@ -68,10 +67,6 @@ const CouponDescriptionModal: React.VFC<
   const withDescription = !(
     BraftEditor.createEditorState(coupon.couponCode.couponPlan.description || '') as EditorState
   ).isEmpty()
-
-  const productIds = coupon.couponCode.couponPlan.productIds || []
-  const { productCollection } = useProductCollection(productIds)
-
   return (
     <StyledModal title={null} footer={null} {...modalProps}>
       <StyledTitle>{coupon.couponCode.couponPlan.title}</StyledTitle>
@@ -159,8 +154,8 @@ const CouponDescriptionModal: React.VFC<
               <span>{formatMessage(messages.otherSpecificProduct)}</span>
             </div>
             <div className="pl-4">
-              {productCollection.map(product => (
-                <ProductItem key={product.targetId} product={product} variant="coupon-product" />
+              {coupon.couponCode.couponPlan.productIds.map(productId => (
+                <ProductItem key={productId} id={productId} variant="coupon-product" />
               ))}
             </div>
           </>
