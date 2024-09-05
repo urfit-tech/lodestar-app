@@ -105,7 +105,6 @@ const VoucherExchangeModalBlock: React.FC<{
           message.error(formatMessage(voucherMessages.VoucherExchangeModal.exchangingError))
         } else {
           setMessageModalStatus('success')
-          afterExchange(voucherId)
         }
       })
       .catch(error => handleError(error))
@@ -184,6 +183,7 @@ const VoucherExchangeModalBlock: React.FC<{
         onModalVisibleChange(false)
         setSelectedProductIds([])
         messageModalStatus === 'success' && onRefetch?.()
+        afterExchange(voucherId)
       }}
     >
       {messageModalStatus === 'success' ? (

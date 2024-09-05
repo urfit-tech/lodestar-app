@@ -111,7 +111,7 @@ const VoucherCollectionInnerBlock: React.VFC<{
               },
               status: _newVoucher.status,
             }
-            setVouchers(prev => [...prev, newVoucher])
+            setVouchers(prev => [newVoucher, ...prev])
           }}
         />
         <Text marginTop="24px" fontSize="sm" color={'var(--gray-dark)'}>
