@@ -68,12 +68,14 @@ export const LocaleProvider: React.FC = ({ children }) => {
 
   moment.locale(currentLocale)
   let localeMessages: { [key: string]: string } = defaultLocaleMessages
+  let elementMessages: { [key: string]: string } = {}
   try {
     localeMessages = require(`../translations/locales/${currentLocale}.json`)
+    elementMessages = require(`lodestar-app-element/src/translations/locales/${currentLocale}.json`)
   } catch (error) {
     console.warn('cannot load the locale:', currentLocale, error)
   }
-  localeMessages = { ...localeMessages, ...appLocaleMessages }
+  localeMessages = { ...elementMessages, ...localeMessages, ...appLocaleMessages }
 
   return (
     <LocaleContext.Provider

@@ -11297,9 +11297,13 @@ lodash.uniq@^4.5.0:
 
 lodestar-app-element@urfit-tech/lodestar-app-element#master:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/45b4f40d7075e42c26f6401fef36878ea093cf4e"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/1d4aa36c8805521ab3e0017ea3d1d98fed86f2f7"
   dependencies:
     "@apollo/client" "^3.7.11"
+    "@babel/cli" "^7.13.16"
+    "@babel/core" "^7.14.0"
+    "@babel/preset-env" "^7.14.1"
+    "@babel/preset-react" "^7.13.13"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
     "@chakra-ui/icons" "1.0.0"
     "@chakra-ui/react" "1.1.2"
@@ -11329,6 +11333,8 @@ lodestar-app-element@urfit-tech/lodestar-app-element#master:
     ajv "^8.11.2"
     antd "3"
     axios "0.21.4"
+    babel-plugin-import "^1.13.3"
+    babel-plugin-react-intl "^7.5.28"
     braft-editor "2.3.9"
     classnames "^2.3.1"
     dangerously-set-html-content "^1.0.13"
@@ -11352,6 +11358,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#master:
     react-hotjar "^4.0.0"
     react-icons "4.3.1"
     react-intl "5.20.9"
+    react-intl-translations-manager "^5.0.3"
     react-is "^17.0.2"
     react-responsive "8.1.0"
     react-router-dom "5.2.0"
