@@ -520,3 +520,18 @@ export const getProductEnrollmentFromLodestar = async (
   }
   return null
 }
+
+export const useDeepCompareEffect = (callback: () => void, dependencies: any[]) => {
+  const previousDependencies = useRef<string>()
+
+  useEffect(() => {
+    const currentDependencies = JSON.stringify(dependencies)
+
+    if (currentDependencies !== previousDependencies.current) {
+      callback()
+    }
+
+    previousDependencies.current = currentDependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(dependencies.sort())])
+}
