@@ -15,6 +15,7 @@ import CartContext from '../../contexts/CartContext'
 import hasura from '../../hasura'
 import { checkoutMessages } from '../../helpers/translation'
 import { useMemberShop } from '../../hooks/checkout'
+import { useProductCollection } from '../../hooks/common'
 import EmptyAvatar from '../../images/avatar.svg'
 import { CartProductProps } from '../../types/checkout'
 import AdminCard from '../common/AdminCard'
@@ -38,10 +39,11 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { removeCartProducts } = useContext(CartContext)
-  const [isTargetLoaded, setIsTargetLoaded] = useState(false)
   const [loadingRemoveProductId, setLoadingRemoveProductId] = useState<string | null>(null)
-  const { loading, cartProductsWithInventory: cartProducts, refetch } = useProductInventory(cartProductWithoutInventory)
   const { memberShop } = useMemberShop(shopId)
+  const { loading, cartProductsWithInventory: cartProducts, refetch } = useProductInventory(cartProductWithoutInventory)
+  const productIds = cartProducts.map(cartProduct => cartProduct.productId)
+  const { loading: loadingProductCollection, productCollection } = useProductCollection(productIds)
   const { resourceCollection } = useResourceCollection(
     cartProducts.map(
       cartProduct =>
@@ -80,7 +82,7 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
     }
   }
 
-  if (loading) {
+  if (loading || loadingProductCollection) {
     return (
       <AdminCard {...cardProps}>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -116,32 +118,38 @@ const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
       )}
 
       <List itemLayout="horizontal" className={cartProducts.length !== 0 ? 'mb-4' : ''}>
-        {cartProducts.map(
-          cartProduct =>
-            cartProduct.productId && (
-              <Fragment key={cartProduct.productId}>
-                <div className="d-flex align-items-center justify-content-between">
-                  <CartProductItem
-                    id={cartProduct.productId}
-                    quantity={cartProduct.options?.quantity}
-                    buyableQuantity={cartProduct.buyableQuantity}
-                    onTargetLoaded={setIsTargetLoaded}
+        {productCollection.map(product => {
+          const productId = `${product.productType}_${product.targetId}`
+          return (
+            <Fragment key={product.targetId}>
+              <div className="d-flex align-items-center justify-content-between">
+                <CartProductItem
+                  product={product}
+                  quantity={cartProducts.find(cartProduct => cartProduct.productId === productId)?.options?.quantity}
+                  buyableQuantity={
+                    cartProducts.find(cartProduct => cartProduct.productId === productId)?.buyableQuantity
+                  }
+                />
+                {loadingRemoveProductId === productId ? (
+                  <Spinner />
+                ) : (
+                  <Icon
+                    as={AiOutlineClose}
+                    className="flex-shrink-0 cursor-pointer"
+                    onClick={() =>
+                      handleRemoveProduct(
+                        productId,
+                        cartProducts.find(cartProduct => cartProduct.productId === productId)?.options?.quantity,
+                      )
+                    }
                   />
-                  {loadingRemoveProductId === cartProduct.productId ? (
-                    <Spinner />
-                  ) : (
-                    <Icon
-                      as={AiOutlineClose}
-                      className="flex-shrink-0 cursor-pointer"
-                      onClick={() => handleRemoveProduct(cartProduct.productId, cartProduct.options?.quantity)}
-                    />
-                  )}
-                </div>
-                <CartProductGiftPlan productId={cartProduct.productId} isTargetLoaded={isTargetLoaded} />
-                <Divider className="my-4" />
-              </Fragment>
-            ),
-        )}
+                )}
+              </div>
+              <CartProductGiftPlan productId={productId} />
+              <Divider className="my-4" />
+            </Fragment>
+          )
+        })}
       </List>
 
       {withCartLink && (

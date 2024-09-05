@@ -5,7 +5,7 @@ import { MetaProductType } from 'lodestar-app-element/src/types/metaProduct'
 import { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import hasura from '../hasura'
-import { getProductEnrollmentFromLodestar } from '../helpers'
+import { getProductEnrollmentFromLodestar, useDeepCompareEffect } from '../helpers'
 import { commonMessages } from '../helpers/translation'
 import { MemberPageProductType, ProductData, SignupProperty } from '../types/general'
 import { Product, ProductType } from '../types/product'
@@ -364,8 +364,8 @@ export const useProductCollection = (productIds: string[]) => {
 
   const fetchProductsData = useCallback(
     async (productIds: string[]) => {
-      setLoading(true)
       try {
+        setLoading(true)
         const productData = productIds.reduce((accumulator, currentValue) => {
           const [productType, targetId] = currentValue.split('_')
           return {
@@ -395,9 +395,9 @@ export const useProductCollection = (productIds: string[]) => {
     [podcastSubscription, queryClient],
   )
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     fetchProductsData(productIds)
-  }, [productIds, fetchProductsData])
+  }, [productIds])
 
   return {
     loading,
