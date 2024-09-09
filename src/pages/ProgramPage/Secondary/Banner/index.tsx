@@ -12,7 +12,7 @@ const Banner: React.FC<{
   const isVideo = isDesktop && coverUrl?.videoUrl
   if (isVideo) {
     return (
-      <VideoBanner coverUrl={coverUrl} width={{ desktop: '700px', mobile: '400px' }}>
+      <VideoBanner coverUrl={coverUrl} width={{ desktop: '40vw', mobile: '400px' }} videoWidth="100%">
         {children}
       </VideoBanner>
     )
