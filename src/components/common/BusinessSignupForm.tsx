@@ -10,11 +10,11 @@ import ImageUploader from './ImageUploader'
 import commonMessages from './translation'
 
 export const companyTypes = [
-  { labelId: 'companyType.firmOrWorkShop', value: 'firmOrWorkShop' },
-  { labelId: 'companyType.limitedCompany', value: 'limitedCompany' },
-  { labelId: 'companyType.companyLimited', value: 'companyLimited' },
-  { labelId: 'companyType.governmentAgency', value: 'governmentAgency' },
-  { labelId: 'companyType.nonprofitOrganization', value: 'nonprofitOrganization' },
+  { labelId: 'common.BusinessSignupForm.firmOrWorkShop', value: 'firmOrWorkShop' },
+  { labelId: 'common.BusinessSignupForm.limitedCompany', value: 'limitedCompany' },
+  { labelId: 'common.BusinessSignupForm.companyLimited', value: 'companyLimited' },
+  { labelId: 'common.BusinessSignupForm.governmentAgency', value: 'governmentAgency' },
+  { labelId: 'common.BusinessSignupForm.nonprofitOrganization', value: 'nonprofitOrganization' },
 ]
 
 type BusinessSignupFromSubmitValue = {
@@ -201,7 +201,7 @@ const BusinessSignupForm: React.VFC<
               <Select className="col-12" placeholder={formatMessage(authMessages.RegisterSection.pleaseSelect)}>
                 {companyTypes.map(v => (
                   <Select.Option key={v.value} value={v.value}>
-                    {formatMessage(v.labelId)}
+                    {formatMessage({ id: v.labelId })}
                   </Select.Option>
                 ))}
               </Select>,

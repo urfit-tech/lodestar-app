@@ -7,6 +7,7 @@ import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import { BREAK_POINT } from '../common/Responsive'
 import FundingCoverBlock from './FundingCoverBlock'
+import projectMessages from './translation'
 
 const StyledSection = styled.section`
   position: relative;
@@ -66,7 +67,7 @@ const StyledCountDownTime = styled.div<{ formatMessage: (messageDescriptor: { id
 
   @media (max-width: ${BREAK_POINT}px) {
     .discount-down::before {
-      content: '${props => props.formatMessage(xxxmessage.xxxx.xxx)}';
+      content: '${props => props.formatMessage(projectMessages.OnSaleCoverSection.discount)}';
     }
   }
 `
