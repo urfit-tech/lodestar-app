@@ -1,4 +1,4 @@
-import { Button, Icon } from '@chakra-ui/react'
+import { Button, Icon, Spinner } from '@chakra-ui/react'
 import { Badge, List, Popover } from 'antd'
 import React, { useContext } from 'react'
 import { AiOutlineShoppingCart } from 'react-icons/ai'
@@ -8,6 +8,7 @@ import styled from 'styled-components'
 import ProductItem from '../../components/common/ProductItem'
 import CartContext from '../../contexts/CartContext'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
+import { useProductCollection } from '../../hooks/common'
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -52,24 +53,43 @@ const StyledButton = styled(Button)`
   }
 `
 
-const CartDropdown: React.VFC = () => {
+const CartDropdown: React.FC = () => {
   const { cartProducts } = useContext(CartContext)
   const { formatMessage } = useIntl()
+
+  const ProductListItem: React.FC<{ productIds: string[] }> = ({ productIds }) => {
+    const { loading, productCollection } = useProductCollection(productIds)
+    return (
+      <>
+        {loading ? (
+          <StyledListItem>
+            <Spinner />
+          </StyledListItem>
+        ) : (
+          productCollection.map(product => (
+            <StyledListItem key={product.targetId}>
+              <ProductItem
+                product={product}
+                variant="simpleCartProduct"
+                quantity={
+                  cartProducts.find(
+                    cartProduct => cartProduct.productId === `${product.productType}_${product.targetId}`,
+                  )?.options?.quantity || 0
+                }
+              />
+            </StyledListItem>
+          ))
+        )}
+      </>
+    )
+  }
 
   const content = (
     <Wrapper>
       {cartProducts.length > 0 ? (
         <>
           <StyledList itemLayout="horizontal">
-            {cartProducts.map(cartProduct => (
-              <StyledListItem key={cartProduct.productId}>
-                <ProductItem
-                  id={cartProduct.productId}
-                  variant="simpleCartProduct"
-                  quantity={cartProduct.options?.quantity}
-                />
-              </StyledListItem>
-            ))}
+            <ProductListItem productIds={cartProducts.map(cartProduct => cartProduct.productId) || []} />
           </StyledList>
           <StyledAction>
             <Link to="/cart">

@@ -1,4 +1,4 @@
-import { gql, useApolloClient, useQuery } from '@apollo/client'
+import { ApolloClient, gql, useApolloClient, useQuery } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { MetaProductType } from 'lodestar-app-element/src/types/metaProduct'
@@ -8,201 +8,13 @@ import hasura from '../hasura'
 import { getProductEnrollmentFromLodestar } from '../helpers'
 import { commonMessages } from '../helpers/translation'
 import { MemberPageProductType, ProductData, SignupProperty } from '../types/general'
-import { ProductType } from '../types/product'
+import { Product, ProductType } from '../types/product'
 import { PeriodType } from '../types/program'
+import { executeQuery } from './util'
 
-type TargetProps = {
-  id: string
-  productType: ProductType | null
-  title: string
-  isSubscription: boolean
-  coverUrl?: string | null
-  coverType?: string | null
-  coverThumbnailUrl?: string | null
-  listPrice?: number
-  isOnSale?: boolean
-  salePrice?: number
-  discountDownPrice?: number
-  currencyId?: string
-  periodAmount?: number
-  periodType?: PeriodType
-  startedAt?: Date
-  endedAt?: Date
-  variant?: 'default' | 'simple' | 'cartProduct' | 'simpleCartProduct' | 'checkout'
-  isLimited?: boolean
-  isPhysical?: boolean
-  isCustomized?: boolean
-  groupBuyingPeople?: number
-  categories?: string[]
-  authors?: { id: string; name: string; role: string }[]
-  sku?: string | null
-}
-
-export const useSimpleProduct = ({ id, startedAt }: { id: string; startedAt?: Date }) => {
-  const { formatMessage } = useIntl()
-  const [, targetId] = id.split('_')
-
-  const { loading, error, data } = useQuery<hasura.GET_PRODUCT_SIMPLE, hasura.GET_PRODUCT_SIMPLEVariables>(
-    GET_PRODUCT_SIMPLE,
-    {
-      variables: {
-        targetId: targetId,
-        startedAt: startedAt,
-      },
-    },
-  )
-
-  const target: TargetProps | null = data?.program_plan_by_pk
-    ? {
-        id: data.program_plan_by_pk.id,
-        productType: 'ProgramPlan',
-        title: `${data.program_plan_by_pk.program?.title || ''} - ${data.program_plan_by_pk.title || ''}`,
-        coverUrl: data.program_plan_by_pk.program?.cover_url || undefined,
-        coverType: data.program_plan_by_pk.program?.cover_type || undefined,
-        coverThumbnailUrl: data.program_plan_by_pk.program?.cover_thumbnail_url || undefined,
-        listPrice: data.program_plan_by_pk.list_price,
-        isOnSale: data.program_plan_by_pk.sold_at
-          ? new Date(data.program_plan_by_pk.sold_at).getTime() > Date.now()
-          : false,
-        salePrice:
-          data.program_plan_by_pk.sold_at && new Date(data.program_plan_by_pk.sold_at).getTime() > Date.now()
-            ? data.program_plan_by_pk.sale_price
-            : undefined,
-        discountDownPrice: data.program_plan_by_pk.discount_down_price || undefined,
-        periodAmount: data.program_plan_by_pk.period_amount,
-        periodType: data.program_plan_by_pk.period_type as PeriodType,
-        groupBuyingPeople: data.program_plan_by_pk?.group_buying_people || 0,
-        isSubscription: !!data.program_plan_by_pk?.auto_renewed,
-      }
-    : data?.program_package_plan_by_pk
-    ? {
-        id: data.program_package_plan_by_pk.id,
-        productType: 'ProgramPackagePlan',
-        title: `${data?.program_package_plan_by_pk?.program_package?.title || ''} - ${
-          data?.program_package_plan_by_pk?.title || ''
-        }`,
-        coverUrl: data.program_package_plan_by_pk.program_package?.cover_url || undefined,
-        listPrice: data.program_package_plan_by_pk.list_price,
-        isOnSale: data.program_package_plan_by_pk.sold_at
-          ? new Date(data.program_package_plan_by_pk.sold_at).getTime() > Date.now()
-          : false,
-        salePrice:
-          data.program_package_plan_by_pk.sold_at &&
-          new Date(data.program_package_plan_by_pk.sold_at).getTime() > Date.now()
-            ? data.program_package_plan_by_pk.sale_price
-            : undefined,
-        discountDownPrice: data.program_package_plan_by_pk.discount_down_price,
-        periodAmount: data.program_package_plan_by_pk.period_amount,
-        periodType: data.program_package_plan_by_pk.period_type as PeriodType,
-        isSubscription: data.program_package_plan_by_pk.is_subscription,
-      }
-    : data?.activity_ticket_by_pk
-    ? {
-        id: data.activity_ticket_by_pk.id,
-        productType: 'ActivityTicket',
-        title: `${data.activity_ticket_by_pk.activity?.title || ''} - ${data.activity_ticket_by_pk.title || ''}`,
-        listPrice: data.activity_ticket_by_pk.price,
-        coverUrl: data.activity_ticket_by_pk.activity?.cover_url || undefined,
-        isSubscription: false,
-      }
-    : data?.card_by_pk
-    ? {
-        id: data.card_by_pk.id,
-        productType: 'Card',
-        title: data.card_by_pk.title,
-        listPrice: 0,
-        isSubscription: false,
-      }
-    : data?.project_plan_by_pk
-    ? {
-        id: data.project_plan_by_pk.id,
-        productType: 'ProjectPlan',
-        title: `${data.project_plan_by_pk.project?.title || ''} - ${data.project_plan_by_pk.title || ''}`,
-        coverUrl: data.project_plan_by_pk.cover_url || undefined,
-        listPrice: data.project_plan_by_pk.list_price,
-        isOnSale: data.project_plan_by_pk.sold_at
-          ? new Date(data.project_plan_by_pk.sold_at).getTime() > Date.now()
-          : false,
-        salePrice:
-          data.project_plan_by_pk.sold_at && new Date(data.project_plan_by_pk.sold_at).getTime() > Date.now()
-            ? data.project_plan_by_pk.sale_price
-            : undefined,
-        discountDownPrice: data.project_plan_by_pk.discount_down_price || undefined,
-        periodAmount: data.project_plan_by_pk.period_amount,
-        periodType: data.project_plan_by_pk.period_type as PeriodType,
-        isLimited: data.project_plan_by_pk.is_limited,
-        isPhysical: data.project_plan_by_pk.is_physical,
-        isSubscription: data.project_plan_by_pk.is_subscription,
-      }
-    : data?.podcast_program_by_pk
-    ? {
-        id: data.podcast_program_by_pk.id,
-        productType: 'PodcastProgram',
-        title: data.podcast_program_by_pk.title,
-        coverUrl: data.podcast_program_by_pk.cover_url || undefined,
-        listPrice: data.podcast_program_by_pk.list_price,
-        isOnSale: data.podcast_program_by_pk.sold_at
-          ? new Date(data.podcast_program_by_pk.sold_at).getTime() > Date.now()
-          : false,
-        salePrice:
-          data.podcast_program_by_pk.sold_at && new Date(data.podcast_program_by_pk.sold_at).getTime() > Date.now()
-            ? data.podcast_program_by_pk.sale_price
-            : undefined,
-        isSubscription: false,
-      }
-    : data?.podcast_plan_by_pk && data.podcast_plan_by_pk.creator
-    ? {
-        id: data.podcast_plan_by_pk.id,
-        productType: 'PodcastPlan',
-        title: `${formatMessage(commonMessages.title.podcastSubscription)} - ${
-          data.podcast_plan_by_pk.creator.name || data.podcast_plan_by_pk.creator.username
-        }`,
-        coverUrl: 'https://static.kolable.com/images/reservation.svg',
-        isSubscription: data.podcast_plan_by_pk.is_subscription,
-      }
-    : data?.appointment_plan_by_pk
-    ? {
-        id: data.appointment_plan_by_pk.id,
-        productType: 'AppointmentPlan',
-        title: data.appointment_plan_by_pk.title,
-        coverUrl: (data.appointment_plan_by_pk.creator && data.appointment_plan_by_pk.creator.picture_url) || null,
-        startedAt: data.appointment_plan_by_pk.appointment_periods[0]?.started_at,
-        endedAt: data.appointment_plan_by_pk.appointment_periods[0]?.ended_at,
-        isSubscription: false,
-      }
-    : data?.merchandise_spec_by_pk
-    ? {
-        id: data.merchandise_spec_by_pk.id,
-        productType: 'MerchandiseSpec',
-        title: `${data.merchandise_spec_by_pk.merchandise.title} - ${data.merchandise_spec_by_pk.title}`,
-        listPrice: data.merchandise_spec_by_pk.list_price,
-        isOnSale: data.merchandise_spec_by_pk.merchandise.sold_at
-          ? new Date(data.merchandise_spec_by_pk.merchandise.sold_at).getTime() > Date.now()
-          : false,
-        salePrice:
-          data.merchandise_spec_by_pk.merchandise.sold_at &&
-          new Date(data.merchandise_spec_by_pk.merchandise.sold_at).getTime() > Date.now()
-            ? data.merchandise_spec_by_pk.sale_price
-            : undefined,
-        currencyId: data.merchandise_spec_by_pk.merchandise.currency_id,
-        coverUrl: data.merchandise_spec_by_pk.merchandise.merchandise_imgs[0]?.url,
-        // quantity: options.quantity,
-        isPhysical: data.merchandise_spec_by_pk.merchandise.is_physical,
-        isCustomized: data.merchandise_spec_by_pk.merchandise.is_customized,
-        isSubscription: false,
-      }
-    : null
-
-  return {
-    loading,
-    error,
-    target,
-  }
-}
-
-const GET_PRODUCT_SIMPLE = gql`
-  query GET_PRODUCT_SIMPLE($targetId: uuid!, $startedAt: timestamptz) {
-    program_plan_by_pk(id: $targetId) {
+const GetProgramPlanProducts = gql`
+  query GetProgramPlanProducts($targetIds: [uuid!]!) {
+    program_plan(where: { id: { _in: $targetIds }, is_deleted: { _eq: false } }) {
       id
       title
       list_price
@@ -238,7 +50,11 @@ const GET_PRODUCT_SIMPLE = gql`
       }
       auto_renewed
     }
-    program_package_plan_by_pk(id: $targetId) {
+  }
+`
+const GetProgramPackagePlanProducts = gql`
+  query GetProgramPackagePlanProducts($targetIds: [uuid!]!) {
+    program_package_plan(where: { id: { _in: $targetIds } }) {
       id
       title
       list_price
@@ -254,11 +70,11 @@ const GET_PRODUCT_SIMPLE = gql`
         cover_url
       }
     }
-    card_by_pk(id: $targetId) {
-      id
-      title
-    }
-    activity_ticket_by_pk(id: $targetId) {
+  }
+`
+const GetActivityTicketProducts = gql`
+  query GetActivityTicketProducts($targetIds: [uuid!]!) {
+    activity_ticket(where: { id: { _in: $targetIds }, deleted_at: { _is_null: true } }) {
       id
       title
       price
@@ -268,7 +84,19 @@ const GET_PRODUCT_SIMPLE = gql`
         cover_url
       }
     }
-    project_plan_by_pk(id: $targetId) {
+  }
+`
+const GetCardProducts = gql`
+  query GetCardProducts($targetIds: [uuid!]!) {
+    card(where: { id: { _in: $targetIds }, deleted_at: { _is_null: true } }) {
+      id
+      title
+    }
+  }
+`
+const GetProjectPlanProducts = gql`
+  query GetProjectPlanProducts($targetIds: [uuid!]!) {
+    project_plan(where: { id: { _in: $targetIds } }) {
       id
       title
       cover_url
@@ -286,7 +114,11 @@ const GET_PRODUCT_SIMPLE = gql`
       is_physical
       is_subscription
     }
-    podcast_program_by_pk(id: $targetId) {
+  }
+`
+const GetPodcastProgramProducts = gql`
+  query GetPodcastProgramProducts($targetIds: [uuid!]!) {
+    podcast_program(where: { id: { _in: $targetIds } }) {
       id
       title
       cover_url
@@ -294,7 +126,11 @@ const GET_PRODUCT_SIMPLE = gql`
       sale_price
       sold_at
     }
-    podcast_plan_by_pk(id: $targetId) {
+  }
+`
+const GetPodcastPlanProducts = gql`
+  query GetPodcastPlanProducts($targetIds: [uuid!]!) {
+    podcast_plan(where: { id: { _in: $targetIds } }) {
       id
       title
       list_price
@@ -306,7 +142,11 @@ const GET_PRODUCT_SIMPLE = gql`
       }
       is_subscription
     }
-    appointment_plan_by_pk(id: $targetId) {
+  }
+`
+const GetAppointmentPlanProducts = gql`
+  query GetAppointmentPlanProducts($targetIds: [uuid!]!) {
+    appointment_plan(where: { id: { _in: $targetIds } }) {
       id
       title
       price
@@ -315,13 +155,17 @@ const GET_PRODUCT_SIMPLE = gql`
         username
         picture_url
       }
-      appointment_periods(where: { started_at: { _eq: $startedAt } }) {
+      appointment_periods {
         started_at
         ended_at
         booked
       }
     }
-    merchandise_spec_by_pk(id: $targetId) {
+  }
+`
+const GetMerchandiseSpecProducts = gql`
+  query GetMerchandiseSpecProducts($targetIds: [uuid!]!) {
+    merchandise_spec(where: { id: { _in: $targetIds }, is_deleted: { _eq: false } }) {
       id
       title
       list_price
@@ -341,6 +185,226 @@ const GET_PRODUCT_SIMPLE = gql`
     }
   }
 `
+
+const strategyProductMap: {
+  [key: string]: (product: {
+    productIds: string[]
+    queryClient: ApolloClient<object>
+    options: { podcastSubscription?: string }
+  }) => Promise<Product[]>
+} = {
+  ProgramPlan: async product => {
+    const data: hasura.GetProgramPlanProducts = await executeQuery(product.queryClient, {
+      query: GetProgramPlanProducts,
+      variables: { targetIds: product.productIds },
+    })
+    return (
+      data?.program_plan.map(v => ({
+        targetId: v.id,
+        productType: 'ProgramPlan',
+        title: `${v.program?.title || ''} - ${v.title || ''}`,
+        coverUrl: v.program?.cover_url || '',
+        coverType: v.program?.cover_type || '',
+        coverThumbnailUrl: v.program?.cover_thumbnail_url || '',
+        listPrice: v.list_price,
+        isOnSale: v.sold_at ? new Date(v.sold_at).getTime() > Date.now() : false,
+        salePrice: v.sold_at && new Date(v.sold_at).getTime() > Date.now() ? v.sale_price : undefined,
+        discountDownPrice: v?.discount_down_price || 0,
+        periodAmount: v.period_amount,
+        periodType: v.period_type as PeriodType,
+        groupBuyingPeople: v?.group_buying_people || 0,
+        isSubscription: !!v?.auto_renewed,
+      })) || []
+    )
+  },
+  ProgramPackagePlan: async product => {
+    const data: hasura.GetProgramPackagePlanProducts = await executeQuery(product.queryClient, {
+      query: GetProgramPackagePlanProducts,
+      variables: { targetIds: product.productIds },
+    })
+    return (
+      data?.program_package_plan.map(v => ({
+        targetId: v.id,
+        productType: 'ProgramPackagePlan',
+        title: v.title,
+        coverUrl: v.program_package?.cover_url || '',
+        listPrice: v.list_price,
+        isOnSale: v.sold_at ? new Date(v.sold_at).getTime() > Date.now() : false,
+        salePrice: v.sold_at && new Date(v.sold_at).getTime() > Date.now() ? v.sale_price : undefined,
+        discountDownPrice: v.discount_down_price,
+        periodAmount: v.period_amount,
+        periodType: v.period_type as PeriodType,
+        isSubscription: v.is_subscription,
+      })) || []
+    )
+  },
+  ActivityTicket: async product => {
+    const data: hasura.GetActivityTicketProducts = await executeQuery(product.queryClient, {
+      query: GetActivityTicketProducts,
+      variables: { targetIds: product.productIds },
+    })
+    return (
+      data.activity_ticket.map(v => ({
+        targetId: v.id,
+        productType: 'ActivityTicket',
+        title: `${v.activity?.title || ''} - ${v.title || ''}`,
+        listPrice: v.price,
+        coverUrl: v.activity?.cover_url || '',
+        isSubscription: false,
+      })) || []
+    )
+  },
+  Card: async product => {
+    const data: hasura.GetCardProducts = await executeQuery(product.queryClient, {
+      query: GetCardProducts,
+      variables: { targetIds: product.productIds },
+    })
+    return data.card.map(v => ({
+      targetId: v.id,
+      productType: 'Card',
+      title: v.title,
+      listPrice: 0,
+      isSubscription: false,
+    }))
+  },
+  ProjectPlan: async product => {
+    const data: hasura.GetProjectPlanProducts = await executeQuery(product.queryClient, {
+      query: GetProjectPlanProducts,
+      variables: { targetIds: product.productIds },
+    })
+    return (
+      data.project_plan.map(v => ({
+        targetId: v.id,
+        productType: 'ProjectPlan',
+        title: `${v.project?.title || ''} - ${v.title || ''}`,
+        coverUrl: v.cover_url || '',
+        listPrice: v.list_price,
+        isOnSale: v.sold_at ? new Date(v.sold_at).getTime() > Date.now() : false,
+        salePrice: v.sold_at && new Date(v.sold_at).getTime() > Date.now() ? v.sale_price : 0,
+        discountDownPrice: v.discount_down_price || 0,
+        periodAmount: v.period_amount,
+        periodType: v.period_type as PeriodType,
+        isLimited: v.is_limited,
+        isPhysical: v.is_physical,
+        isSubscription: v.is_subscription,
+      })) || []
+    )
+  },
+  PodcastProgram: async product => {
+    const data: hasura.GetPodcastProgramProducts = await executeQuery(product.queryClient, {
+      query: GetPodcastProgramProducts,
+      variables: { targetIds: product.productIds },
+    })
+    return data.podcast_program.map(v => ({
+      targetId: v.id,
+      productType: 'PodcastProgram',
+      title: v.title,
+      coverUrl: v.cover_url || '',
+      listPrice: v.list_price,
+      isOnSale: v.sold_at ? new Date(v.sold_at).getTime() > Date.now() : false,
+      salePrice: v.sold_at && new Date(v.sold_at).getTime() > Date.now() ? v.sale_price : 0,
+      isSubscription: false,
+    }))
+  },
+  PodcastPlan: async product => {
+    const data: hasura.GetPodcastPlanProducts = await executeQuery(product.queryClient, {
+      query: GetPodcastPlanProducts,
+      variables: { targetIds: product.productIds },
+    })
+    return data.podcast_plan.map(v => ({
+      targetId: v.id,
+      productType: 'PodcastPlan',
+      title: `${product.options?.podcastSubscription || ''} - ${v.creator?.name || v.creator?.username || ''}`,
+      coverUrl: 'https://static.kolable.com/images/reservation.svg',
+      isSubscription: v.is_subscription,
+    }))
+  },
+  AppointmentPlan: async product => {
+    const data: hasura.GetAppointmentPlanProducts = await executeQuery(product.queryClient, {
+      query: GetAppointmentPlanProducts,
+      variables: { targetIds: product.productIds },
+    })
+    return data.appointment_plan.map(v => ({
+      targetId: v.id,
+      productType: 'AppointmentPlan',
+      title: v.title,
+      coverUrl: v.creator?.picture_url || '',
+      startedAt: v.appointment_periods[0]?.started_at,
+      endedAt: v.appointment_periods[0]?.ended_at,
+      isSubscription: false,
+    }))
+  },
+  MerchandiseSpec: async product => {
+    const data: hasura.GetMerchandiseSpecProducts = await executeQuery(product.queryClient, {
+      query: GetMerchandiseSpecProducts,
+      variables: { targetIds: product.productIds },
+    })
+    return data.merchandise_spec.map(v => ({
+      targetId: v.id,
+      productType: 'MerchandiseSpec',
+      title: `${v.merchandise.title} - ${v.title}`,
+      listPrice: v.list_price,
+      isOnSale: v.merchandise.sold_at ? new Date(v.merchandise.sold_at).getTime() > Date.now() : false,
+      salePrice: v.merchandise.sold_at && new Date(v.merchandise.sold_at).getTime() > Date.now() ? v.sale_price : 0,
+      currencyId: v.merchandise.currency_id,
+      coverUrl: v.merchandise.merchandise_imgs[0]?.url,
+      isPhysical: v.merchandise.is_physical,
+      isCustomized: v.merchandise.is_customized,
+      isSubscription: false,
+    }))
+  },
+}
+
+export const useProductCollection = (productIds: string[]) => {
+  const queryClient = useApolloClient()
+  const { formatMessage } = useIntl()
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState<Product[]>([])
+  const podcastSubscription = formatMessage(commonMessages.title.podcastSubscription)
+
+  const fetchProductsData = useCallback(
+    async (productIds: string[]) => {
+      setLoading(true)
+      try {
+        const productData = productIds.reduce((accumulator, currentValue) => {
+          const [productType, targetId] = currentValue.split('_')
+          return {
+            ...accumulator,
+            [productType]: [...(accumulator[productType] || []), targetId],
+          }
+        }, {} as Record<string, string[]>)
+        const productTypes = Object.keys(productData) as ProductType[]
+
+        const products = await Promise.all(
+          productTypes.map(async productType => {
+            const productIds = productData[productType]
+            return await strategyProductMap[productType]({
+              productIds,
+              queryClient,
+              options: { podcastSubscription },
+            })
+          }),
+        )
+        setResult(products.flat())
+      } catch (error) {
+        console.error('Error fetching products:', error)
+      } finally {
+        setLoading(false)
+      }
+    },
+    [podcastSubscription, queryClient],
+  )
+
+  useEffect(() => {
+    fetchProductsData(productIds)
+  }, [productIds, fetchProductsData])
+
+  return {
+    loading,
+    productCollection: result,
+  }
+}
+
 export const GET_PRODUCT_SKU = gql`
   query GET_PRODUCT_SKU($targetId: String!) {
     product(where: { target: { _eq: $targetId } }) {
@@ -351,191 +415,6 @@ export const GET_PRODUCT_SKU = gql`
     }
   }
 `
-
-export const useSimpleProductCollection = () => {
-  const { formatMessage } = useIntl()
-  const apolloClient = useApolloClient()
-  const getSimpleProductCollection = async (productIds: string[]) => {
-    const productsCollection: TargetProps[] = []
-    for (let productId of productIds) {
-      const [, targetId] = productId.split('_')
-      try {
-        const { data } = await apolloClient.query<hasura.GET_PRODUCT_SIMPLE, hasura.GET_PRODUCT_SIMPLEVariables>({
-          query: GET_PRODUCT_SIMPLE,
-          variables: {
-            targetId,
-          },
-        })
-        const { data: productData } = await apolloClient.query<hasura.GET_PRODUCT_SKU, hasura.GET_PRODUCT_SKUVariables>(
-          {
-            query: GET_PRODUCT_SKU,
-            variables: {
-              targetId,
-            },
-          },
-        )
-        const productCollection = productData.product
-        const target: TargetProps | null = data?.program_plan_by_pk
-          ? {
-              id: data.program_plan_by_pk.id,
-              productType: 'ProgramPlan',
-              title: `${data.program_plan_by_pk.program?.title || ''} - ${data.program_plan_by_pk.title || ''}`,
-              coverUrl: data.program_plan_by_pk.program?.cover_url || undefined,
-              listPrice: data.program_plan_by_pk.list_price,
-              isOnSale: data.program_plan_by_pk.sold_at
-                ? new Date(data.program_plan_by_pk.sold_at).getTime() > Date.now()
-                : false,
-              salePrice:
-                data.program_plan_by_pk.sold_at && new Date(data.program_plan_by_pk.sold_at).getTime() > Date.now()
-                  ? data.program_plan_by_pk.sale_price
-                  : undefined,
-              discountDownPrice: data.program_plan_by_pk.discount_down_price || undefined,
-              periodAmount: data.program_plan_by_pk.period_amount,
-              periodType: data.program_plan_by_pk.period_type as PeriodType,
-              groupBuyingPeople: data.program_plan_by_pk?.group_buying_people || 0,
-              isSubscription: !!data.program_plan_by_pk?.auto_renewed,
-              categories: data.program_plan_by_pk.program.program_categories.map(v => v.category.name),
-              authors: data.program_plan_by_pk.program.program_roles.map(v => ({
-                id: v.member?.id || '',
-                name: v.member?.name || '',
-                role: v.name,
-              })),
-              sku: productCollection.find(product => product.type === 'ProgramPlan')?.sku,
-            }
-          : data?.program_package_plan_by_pk
-          ? {
-              id: data.program_package_plan_by_pk.id,
-              productType: 'ProgramPackagePlan',
-              title: data.program_package_plan_by_pk.title,
-              coverUrl: data.program_package_plan_by_pk.program_package?.cover_url || undefined,
-              listPrice: data.program_package_plan_by_pk.list_price,
-              isOnSale: data.program_package_plan_by_pk.sold_at
-                ? new Date(data.program_package_plan_by_pk.sold_at).getTime() > Date.now()
-                : false,
-              salePrice:
-                data.program_package_plan_by_pk.sold_at &&
-                new Date(data.program_package_plan_by_pk.sold_at).getTime() > Date.now()
-                  ? data.program_package_plan_by_pk.sale_price
-                  : undefined,
-              discountDownPrice: data.program_package_plan_by_pk.discount_down_price,
-              periodAmount: data.program_package_plan_by_pk.period_amount,
-              periodType: data.program_package_plan_by_pk.period_type as PeriodType,
-              isSubscription: data.program_package_plan_by_pk.is_subscription,
-              sku: productCollection.find(product => product.type === 'ProgramPackagePlan')?.sku,
-            }
-          : data?.activity_ticket_by_pk
-          ? {
-              id: data.activity_ticket_by_pk.id,
-              productType: 'ActivityTicket',
-              title: `${data.activity_ticket_by_pk.activity?.title || ''} - ${data.activity_ticket_by_pk.title || ''}`,
-              listPrice: data.activity_ticket_by_pk.price,
-              coverUrl: data.activity_ticket_by_pk.activity?.cover_url || undefined,
-              isSubscription: false,
-              sku: productCollection.find(product => product.type === 'ActivityTicket')?.sku,
-            }
-          : data?.card_by_pk
-          ? {
-              id: data.card_by_pk.id,
-              productType: 'Card',
-              title: data.card_by_pk.title,
-              listPrice: 0,
-              isSubscription: false,
-            }
-          : data?.project_plan_by_pk
-          ? {
-              id: data.project_plan_by_pk.id,
-              productType: 'ProjectPlan',
-              title: `${data.project_plan_by_pk.project?.title || ''} - ${data.project_plan_by_pk.title || ''}`,
-              coverUrl: data.project_plan_by_pk.cover_url || undefined,
-              listPrice: data.project_plan_by_pk.list_price,
-              isOnSale: data.project_plan_by_pk.sold_at
-                ? new Date(data.project_plan_by_pk.sold_at).getTime() > Date.now()
-                : false,
-              salePrice:
-                data.project_plan_by_pk.sold_at && new Date(data.project_plan_by_pk.sold_at).getTime() > Date.now()
-                  ? data.project_plan_by_pk.sale_price
-                  : undefined,
-              discountDownPrice: data.project_plan_by_pk.discount_down_price || undefined,
-              periodAmount: data.project_plan_by_pk.period_amount,
-              periodType: data.project_plan_by_pk.period_type as PeriodType,
-              isLimited: data.project_plan_by_pk.is_limited,
-              isPhysical: data.project_plan_by_pk.is_physical,
-              isSubscription: data.project_plan_by_pk.is_subscription,
-              sku: productCollection.find(product => product.type === 'ProjectPlan')?.sku,
-            }
-          : data?.podcast_program_by_pk
-          ? {
-              id: data.podcast_program_by_pk.id,
-              productType: 'PodcastProgram',
-              title: data.podcast_program_by_pk.title,
-              coverUrl: data.podcast_program_by_pk.cover_url || undefined,
-              listPrice: data.podcast_program_by_pk.list_price,
-              isOnSale: data.podcast_program_by_pk.sold_at
-                ? new Date(data.podcast_program_by_pk.sold_at).getTime() > Date.now()
-                : false,
-              salePrice:
-                data.podcast_program_by_pk.sold_at &&
-                new Date(data.podcast_program_by_pk.sold_at).getTime() > Date.now()
-                  ? data.podcast_program_by_pk.sale_price
-                  : undefined,
-              isSubscription: false,
-              sku: productCollection.find(product => product.type === 'PodcastProgram')?.sku,
-            }
-          : data?.podcast_plan_by_pk && data.podcast_plan_by_pk.creator
-          ? {
-              id: data.podcast_plan_by_pk.id,
-              productType: 'PodcastPlan',
-              title: `${formatMessage(commonMessages.title.podcastSubscription)} - ${
-                data.podcast_plan_by_pk.creator.name || data.podcast_plan_by_pk.creator.username
-              }`,
-              coverUrl: 'https://static.kolable.com/images/reservation.svg',
-              isSubscription: data.podcast_plan_by_pk.is_subscription,
-              sku: productCollection.find(product => product.type === 'PodcastPlan')?.sku,
-            }
-          : data?.appointment_plan_by_pk
-          ? {
-              id: data.appointment_plan_by_pk.id,
-              productType: 'AppointmentPlan',
-              title: data.appointment_plan_by_pk.title,
-              coverUrl:
-                (data.appointment_plan_by_pk.creator && data.appointment_plan_by_pk.creator.picture_url) || null,
-              startedAt: data.appointment_plan_by_pk.appointment_periods[0]?.started_at,
-              endedAt: data.appointment_plan_by_pk.appointment_periods[0]?.ended_at,
-              isSubscription: false,
-              sku: productCollection.find(product => product.type === 'AppointmentPlan')?.sku,
-            }
-          : data?.merchandise_spec_by_pk
-          ? {
-              id: data.merchandise_spec_by_pk.id,
-              productType: 'MerchandiseSpec',
-              title: `${data.merchandise_spec_by_pk.merchandise.title} - ${data.merchandise_spec_by_pk.title}`,
-              listPrice: data.merchandise_spec_by_pk.list_price,
-              isOnSale: data.merchandise_spec_by_pk.merchandise.sold_at
-                ? new Date(data.merchandise_spec_by_pk.merchandise.sold_at).getTime() > Date.now()
-                : false,
-              salePrice:
-                data.merchandise_spec_by_pk.merchandise.sold_at &&
-                new Date(data.merchandise_spec_by_pk.merchandise.sold_at).getTime() > Date.now()
-                  ? data.merchandise_spec_by_pk.sale_price
-                  : undefined,
-              coverUrl: data.merchandise_spec_by_pk.merchandise.merchandise_imgs[0]?.url,
-              // quantity: options.quantity,
-              isPhysical: data.merchandise_spec_by_pk.merchandise.is_physical,
-              isCustomized: data.merchandise_spec_by_pk.merchandise.is_customized,
-              isSubscription: false,
-              sku: productCollection.find(product => product.type === 'AppointmentPlan')?.sku,
-            }
-          : null
-        if (target) {
-          productsCollection.push(target)
-        }
-      } catch {}
-    }
-    return productsCollection
-  }
-
-  return getSimpleProductCollection
-}
 
 export const useMemberValidation = (email: string) => {
   const { currentMemberId } = useAuth()

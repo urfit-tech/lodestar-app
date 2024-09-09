@@ -7,6 +7,7 @@ import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { useProductCollection } from '../../hooks/common'
 import { ReactComponent as CheckIcon } from '../../images/check.svg'
 import { CouponProps } from '../../types/checkout'
 import ProductItem from '../common/ProductItem'
@@ -67,6 +68,10 @@ const CouponDescriptionModal: React.VFC<
   const withDescription = !(
     BraftEditor.createEditorState(coupon.couponCode.couponPlan.description || '') as EditorState
   ).isEmpty()
+
+  const productIds = coupon.couponCode.couponPlan.productIds || []
+  const { productCollection } = useProductCollection(productIds)
+
   return (
     <StyledModal title={null} footer={null} {...modalProps}>
       <StyledTitle>{coupon.couponCode.couponPlan.title}</StyledTitle>
@@ -154,8 +159,8 @@ const CouponDescriptionModal: React.VFC<
               <span>{formatMessage(messages.otherSpecificProduct)}</span>
             </div>
             <div className="pl-4">
-              {coupon.couponCode.couponPlan.productIds.map(productId => (
-                <ProductItem key={productId} id={productId} variant="coupon-product" />
+              {productCollection.map(product => (
+                <ProductItem key={product.targetId} product={product} variant="coupon-product" />
               ))}
             </div>
           </>

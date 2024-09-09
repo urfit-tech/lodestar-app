@@ -1,17 +1,12 @@
-import { Spinner } from '@chakra-ui/react'
 import { Typography } from 'antd'
 import { CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
-import moment from 'moment'
 import React from 'react'
-import { useIntl } from 'react-intl'
 import styled, { css } from 'styled-components'
 import { desktopViewMixin } from '../../helpers'
-import { commonMessages, productMessages } from '../../helpers/translation'
-import { useSimpleProduct } from '../../hooks/common'
 import EmptyCover from '../../images/empty-cover.png'
-import { ProductType } from '../../types/product'
+import { Product } from '../../types/product'
 import { CustomRatioImage } from './Image'
 
 const StyledCoverImage = styled.img`
@@ -75,121 +70,118 @@ const StyledListTitleBlock = styled.div`
   text-overflow: ellipsis;
 `
 
-type ProductItemProps = {
-  id: string
-  startedAt?: Date
+const ProductItem: React.FC<{
+  product: Product
   variant?: 'default' | 'simple' | 'simpleCartProduct' | 'checkout' | 'coupon-product'
   quantity?: number
-}
-const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quantity }) => {
-  const { formatMessage } = useIntl()
-
-  const { loading, target } = useSimpleProduct({ id, startedAt })
-  const [productType] = id.split('_') as [ProductType]
-
-  if (loading || !target) {
-    if (variant === 'coupon-product') {
-      return <Spinner size="sm" className="d-block" />
-    }
-
-    return <Spinner size="lg" />
-  }
-
-  const {
-    title,
-    coverUrl,
-    coverType,
-    coverThumbnailUrl,
-    listPrice,
-    salePrice,
-    discountDownPrice,
-    currencyId,
-    periodAmount,
-    periodType,
-    endedAt,
-    isSubscription,
-  } = target
-
-  const imageUrl = coverType === 'video' ? coverThumbnailUrl || EmptyCover : coverUrl || EmptyCover
+}> = ({ product, variant, quantity }) => {
+  const imageUrl =
+    product.productType === 'ProgramPlan'
+      ? product.coverType === 'video'
+        ? product.coverThumbnailUrl || EmptyCover
+        : product.coverUrl || EmptyCover
+      : product.productType === 'Card'
+      ? EmptyCover
+      : product.coverUrl || EmptyCover
 
   switch (variant) {
     case 'simple':
       return (
         <>
           <StyledTitle level={2} ellipsis={{ rows: 2 }} className="flex-grow-1 m-0 mr-5">
-            {title}
+            {product.title}
           </StyledTitle>
-          <StyledCoverImage src={imageUrl} alt={id} className="flex-shrink-0" />
+          <StyledCoverImage src={imageUrl} alt={product.targetId} className="flex-shrink-0" />
         </>
       )
     case 'coupon-product':
       return (
         <div className="d-flex mb-1">
           <StyledListLabelBLock className="flex-shrink-0">
-            <ProductTypeLabel productType={productType} />
+            {product.productType ? <ProductTypeLabel productType={product.productType} /> : null}
           </StyledListLabelBLock>
-          <StyledListTitleBlock className="flex-grow-1">{title}</StyledListTitleBlock>
+          <StyledListTitleBlock className="flex-grow-1">{product.title}</StyledListTitleBlock>
         </div>
       )
     case 'simpleCartProduct':
+      let listPrice: number
+      switch (product.productType) {
+        case 'ProgramPlan':
+        case 'ProgramPackagePlan':
+        case 'ProjectPlan':
+        case 'PodcastProgram':
+        case 'MerchandiseSpec':
+          listPrice = product.salePrice || product.listPrice || 0
+          break
+        case 'ActivityTicket':
+        case 'Card':
+          listPrice = product.listPrice
+          break
+        default:
+          listPrice = 0
+          break
+      }
       return (
         <div className="d-flex align-items-center justify-content-between">
           <CustomRatioImage width="4rem" ratio={2 / 3} src={imageUrl} shape="rounded" className="flex-shrink-0 mr-3" />
           <div className="flex-grow-1">
             <Typography.Paragraph ellipsis={{ rows: 2 }} className="mb-0">
-              {title}
+              {product.title}
               {typeof quantity === 'number' ? ` x${quantity}` : ''}
             </Typography.Paragraph>
             <StyledMeta className="text-left">
-              <PriceLabel listPrice={(salePrice || listPrice || 0) * (quantity || 1)} currencyId={currencyId} />
+              <PriceLabel
+                listPrice={listPrice * (quantity || 1)}
+                currencyId={product.productType === 'MerchandiseSpec' ? product.currencyId : undefined}
+              />
             </StyledMeta>
           </div>
         </div>
       )
-    case 'checkout':
-      return (
-        <>
-          <div className="d-flex align-items-center justify-content-between">
-            <StyledTitle level={2} ellipsis={{ rows: 2 }} className="flex-grow-1 m-0 mr-5">
-              <span>{title}</span>
-              {!!startedAt && !!endedAt && (
-                <StyledPeriod className="mt-2">{`${moment(startedAt).format('YYYY-MM-DD(dd)')} ${moment(
-                  startedAt,
-                ).format('HH:mm')} - ${moment(endedAt).format('HH:mm')}`}</StyledPeriod>
-              )}
-            </StyledTitle>
-            <CustomRatioImage width="88px" ratio={3 / 4} src={imageUrl} shape="rounded" className="flex-shrink-0" />
-          </div>
-          {typeof listPrice == 'number' && (
-            <PriceLabel
-              variant="full-detail"
-              listPrice={listPrice}
-              salePrice={salePrice}
-              downPrice={discountDownPrice}
-              currencyId={currencyId}
-              periodType={isSubscription === undefined && periodType ? periodType : undefined}
-              periodAmount={isSubscription === undefined && periodType ? periodAmount : undefined}
-            />
-          )}
-          {isSubscription === false && periodType && (
-            <StyledHighlight className="mb-3">
-              {formatMessage(productMessages.programPackage.label.availableForLimitTime, {
-                amount: periodAmount,
-                unit:
-                  periodType === 'D'
-                    ? formatMessage(commonMessages.unit.day)
-                    : periodType === 'W'
-                    ? formatMessage(commonMessages.unit.week)
-                    : periodType === 'M'
-                    ? formatMessage(commonMessages.unit.monthWithQuantifier)
-                    : periodType === 'Y'
-                    ? formatMessage(commonMessages.unit.year)
-                    : formatMessage(commonMessages.unknown.period),
-              })}
-            </StyledHighlight>
-          )}
-        </>
-      )
+    // case 'checkout':
+    //   return (
+    //     <>
+    //       <div className="d-flex align-items-center justify-content-between">
+    //         <StyledTitle level={2} ellipsis={{ rows: 2 }} className="flex-grow-1 m-0 mr-5">
+    //           <span>{title}</span>
+    //           {!!startedAt && !!endedAt && (
+    //             <StyledPeriod className="mt-2">{`${moment(startedAt).format('YYYY-MM-DD(dd)')} ${moment(
+    //               startedAt,
+    //             ).format('HH:mm')} - ${moment(endedAt).format('HH:mm')}`}</StyledPeriod>
+    //           )}
+    //         </StyledTitle>
+    //         <CustomRatioImage width="88px" ratio={3 / 4} src={imageUrl} shape="rounded" className="flex-shrink-0" />
+    //       </div>
+    //       {typeof listPrice == 'number' && (
+    //         <PriceLabel
+    //           variant="full-detail"
+    //           listPrice={listPrice}
+    //           salePrice={salePrice}
+    //           downPrice={discountDownPrice}
+    //           currencyId={currencyId}
+    //           periodType={isSubscription === undefined && periodType ? periodType : undefined}
+    //           periodAmount={isSubscription === undefined && periodType ? periodAmount : undefined}
+    //         />
+    //       )}
+    //       {isSubscription === false && periodType && (
+    //         <StyledHighlight className="mb-3">
+    //           {formatMessage(productMessages.programPackage.label.availableForLimitTime, {
+    //             amount: periodAmount,
+    //             unit:
+    //               periodType === 'D'
+    //                 ? formatMessage(commonMessages.unit.day)
+    //                 : periodType === 'W'
+    //                 ? formatMessage(commonMessages.unit.week)
+    //                 : periodType === 'M'
+    //                 ? formatMessage(commonMessages.unit.monthWithQuantifier)
+    //                 : periodType === 'Y'
+    //                 ? formatMessage(commonMessages.unit.year)
+    //                 : formatMessage(commonMessages.unknown.period),
+    //           })}
+    //         </StyledHighlight>
+    //       )}
+    //     </>
+    //   )
   }
 
   return (
@@ -197,10 +189,10 @@ const ProductItem: React.VFC<ProductItemProps> = ({ id, startedAt, variant, quan
       <CustomRatioImage width="64px" ratio={3 / 4} src={imageUrl} shape="rounded" className="flex-shrink-0 mr-3" />
       <div className="flex-grow-1">
         <StyledProductType>
-          <ProductTypeLabel productType={productType} />
+          <ProductTypeLabel productType={product.productType} />
         </StyledProductType>
 
-        <StyledProductTitle>{title}</StyledProductTitle>
+        <StyledProductTitle>{product.title}</StyledProductTitle>
       </div>
     </div>
   )
