@@ -2,15 +2,15 @@ import { Icon } from '@chakra-ui/icons'
 import { Modal } from 'antd'
 import { ModalProps } from 'antd/lib/modal'
 import BraftEditor, { EditorState } from 'braft-editor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import React from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { useProductCollection } from '../../hooks/common'
 import { ReactComponent as CheckIcon } from '../../images/check.svg'
 import { CouponProps } from '../../types/checkout'
 import ProductItem from '../common/ProductItem'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
-import { useProductCollection } from '../../hooks/common'
 
 const messages = defineMessages({
   couponPlanCode: { id: 'promotion.label.couponPlanCode', defaultMessage: '折扣代碼' },
