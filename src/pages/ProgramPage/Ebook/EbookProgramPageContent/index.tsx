@@ -12,7 +12,6 @@ import styled, { css, ThemeContext } from 'styled-components'
 import { BREAK_POINT } from '../../../../components/common/Responsive'
 import VideoPlayer from '../../../../components/common/VideoPlayer'
 import ReviewCollectionBlock from '../../../../components/review/ReviewCollectionBlock'
-import { isMobile } from '../../../../helpers'
 import { useProgramPlansEnrollmentsAggregateList } from '../../../../hooks/program'
 import EmptyCover from '../../../../images/empty-cover.png'
 import { Program, ProgramContentSectionType } from '../../../../types/program'
@@ -21,6 +20,17 @@ import SecondaryProgramPlanCard from '../../Secondary/SecondaryProgramPlanCard'
 import SocialSharePopover from '../../Secondary/SocialSharePopover'
 import { colors } from '../../Secondary/style'
 import EbookMessages from '../translation'
+
+const StyledCoverImage = styled(Box)<{ coverUrl: string; coverMobileUrl: string }>`
+  background-image: url(${props => props.coverMobileUrl || EmptyCover});
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  height: 100%;
+  @media (min-width: ${BREAK_POINT}px) {
+    background-image: url(${props => props.coverUrl || EmptyCover});
+  }
+`
 
 const StyledProgramIntroBlock = styled.div`
   position: relative;
@@ -160,13 +170,7 @@ const EbookProgramPageContent: React.VFC<{
               <Flex gridGap="5" flexWrap={{ base: 'wrap', md: 'nowrap' }}>
                 <Box>
                   <Box boxShadow="md" width="248px" height="248px">
-                    <Box
-                      backgroundImage={`url(${isMobile && coverMobileUrl ? coverMobileUrl : coverUrl || EmptyCover})`}
-                      backgroundPosition={'center'}
-                      backgroundSize={'cover'}
-                      width="100%"
-                      height="100%"
-                    />
+                    <StyledCoverImage coverUrl={coverUrl} coverMobileUrl={coverMobileUrl} />
                   </Box>
                   <EbookTrialAndShareButtonGroup
                     programId={program.id}
