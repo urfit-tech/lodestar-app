@@ -7,6 +7,7 @@ import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import { BREAK_POINT } from '../common/Responsive'
+import projectMessages from './translation'
 
 const StyledJoin = styled.div`
   background-color: #563952;
@@ -140,7 +141,7 @@ const OnSaleCallToActionSection: React.VFC<OnSaleCallToActionSectionProps> = ({ 
             onClick={() => document.getElementById('project-plan-section')?.scrollIntoView({ behavior: 'smooth' })}
           >
             <span>
-              {formatMessage(projectMessages.OnSaleCallToActionSection.xxxxxx, {
+              {formatMessage(projectMessages.OnSaleCallToActionSection.joinWithOthers, {
                 count: <ProjectEnrollmentCounts projectId={projectId} numberOnly />,
               })}
             </span>
@@ -156,7 +157,7 @@ const OnSaleCallToActionSection: React.VFC<OnSaleCallToActionSectionProps> = ({ 
                   <span key={promote}>{promote}</span>
                 ))}
                 <span>
-                  {formatMessage(projectMessages.OnSaleCallToActionSection.xxxxxx, {
+                  {formatMessage(projectMessages.OnSaleCallToActionSection.joinWithOthers, {
                     count: <ProjectEnrollmentCounts projectId={projectId} numberOnly />,
                   })}
                 </span>
