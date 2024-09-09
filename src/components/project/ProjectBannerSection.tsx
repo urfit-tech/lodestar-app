@@ -67,7 +67,7 @@ const StyledCountDownTime = styled.div<{ formatMessage: (messageDescriptor: { id
 
   @media (max-width: ${BREAK_POINT}px) {
     .discount-down::before {
-      content: '${props => props.formatMessage(xxxmessage.xxxx.xxx)}';
+      content: '${props => props.formatMessage(projectMessages.ProjectBannerSection.discount)}';
     }
   }
 `

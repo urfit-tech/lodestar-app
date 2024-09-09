@@ -16,10 +16,20 @@ const projectMessages = {
       defaultMessage: '與 {count} 人一起參與',
     },
   }),
+  OnSaleCoverSection: defineMessages({
+    discount: {
+      id: 'project.OnSaleCoverSection.discount',
+      defaultMessage: '優惠',
+    },
+  }),
   ProjectBannerSection: defineMessages({
     discountCountdown: {
       id: 'project.projectBannerSection.discountCountdown',
       defaultMessage: '優惠倒數',
+    },
+    discount: {
+      id: 'project.ProjectBannerSection.discount',
+      defaultMessage: '優惠',
     },
   }),
   ProjectCardSection: defineMessages({

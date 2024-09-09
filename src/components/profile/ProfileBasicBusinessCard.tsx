@@ -220,7 +220,9 @@ const ProfileBasicBusinessCard: React.VFC<ProfileBasicBusinessCardProps> = ({ fo
                       {property?.placeholder?.split('/').map((value: string, idx: number) => (
                         <Select.Option key={idx} value={value}>
                           {property.name === formatMessage(profileMessages.ProfileBasicBusinessCard.companyType)
-                            ? formatMessage(companyTypes.filter(companyType => companyType.value === value)[0]?.labelId)
+                            ? formatMessage({
+                                id: companyTypes.filter(companyType => companyType.value === value)[0]?.labelId,
+                              })
                             : value}
                         </Select.Option>
                       ))}
