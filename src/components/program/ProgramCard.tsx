@@ -1,4 +1,4 @@
-import { Icon } from '@chakra-ui/react'
+import { Box, Icon, Text } from '@chakra-ui/react'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -40,7 +40,7 @@ const StyledContentBlock = styled.div<{ variant?: ProgramCardVariant }>`
   ${props =>
     (props.variant === 'primary' || !props.variant) &&
     css`
-      padding: 1.25rem;
+      padding: 0.5rem 1.25rem 1.25rem 1.25rem;
     `}
 `
 const StyledTitle = styled.div<{ variant?: ProgramCardVariant }>`
@@ -170,10 +170,20 @@ const PrimaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
 
   const programAdditionalSoldHeadcountSetting = settings['program.additional.sold.headcount'] || '[]'
   let programAdditionalSoldHeadcountSettingValue: { programId: string; count: number }[] | [] = []
+  let programLabelColorConfig: { id: number; backgroundColor: string; textColor: string }[] = []
+
   try {
     programAdditionalSoldHeadcountSettingValue = JSON.parse(programAdditionalSoldHeadcountSetting)
   } catch (err) {
     console.error('App Setting: "program.additional.sold.headcount" Error:', err)
+  }
+
+  if (!!settings['program_label_color.config'] && !!enabledModules.program_label) {
+    try {
+      programLabelColorConfig = JSON.parse(settings['program_label_color.config'])
+    } catch (err) {
+      console.error('App Setting: "program_label_color.config" Error:', err)
+    }
   }
 
   const programAdditionalSoldHeadcount =
@@ -181,6 +191,13 @@ const PrimaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
       programAdditionalSoldHeadcountSettingValue.length > 0 &&
       programAdditionalSoldHeadcountSettingValue.find(setting => setting?.programId === program.id)?.count) ||
     0
+
+  const programLabelColor = programLabelColorConfig.find(config => config.id === Number(program.labelColorType)) || {
+    backgroundColor: '#ececec',
+    textColor: '#585858',
+  }
+
+  console.log('program label', program.label)
 
   return (
     <>
@@ -206,6 +223,21 @@ const PrimaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
             ratio={9 / 16}
             src={program.coverThumbnailUrl || program.coverUrl || program.coverMobileUrl || EmptyCover}
           />
+        )}
+
+        {!!enabledModules.program_label && (
+          <Box paddingX="10px" marginTop="10px" minH="25px" width="fit-content">
+            {program.label !== '' && (
+              <Text
+                backgroundColor={programLabelColor?.backgroundColor}
+                textColor={programLabelColor?.textColor}
+                paddingX="10px"
+                borderRadius="4px"
+              >
+                {program.label}
+              </Text>
+            )}
+          </Box>
         )}
 
         <StyledContentBlock variant={variant}>
