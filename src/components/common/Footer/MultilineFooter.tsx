@@ -64,11 +64,11 @@ const MultilineFooter: React.VFC = () => {
                         日本語
                       </StyledButton>
                     </Menu.Item>
-                    <Menu.Item key="ko">
+                    {/* <Menu.Item key="ko">
                       <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('ko')}>
                         한국어
                       </StyledButton>
-                    </Menu.Item>
+                    </Menu.Item> */}
                   </Menu>
                 }
               >
