@@ -544,6 +544,8 @@ const useSearchProductCollection = (
           sale_price
           sold_at
           is_enrolled_count_visible
+          label
+          label_color_type
           program_content_sections {
             id
             program_contents {
@@ -1032,6 +1034,8 @@ const useSearchProductCollection = (
                 ?.blocks.map((v: any) => v?.text)
                 .toString()
             : program.description || '',
+        label: program.label || '',
+        labelColorType: program.label_color_type || '',
         publishedAt: new Date(program.published_at),
         isSubscription: program.is_subscription,
         listPrice: program.list_price,
