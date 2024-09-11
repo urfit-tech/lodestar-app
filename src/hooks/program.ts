@@ -48,6 +48,8 @@ export const usePublishedProgramCollection = (options?: {
           list_price
           sale_price
           sold_at
+          label
+          label_color_type
           program_categories {
             id
             category {
@@ -149,6 +151,8 @@ export const usePublishedProgramCollection = (options?: {
             listPrice: program.list_price,
             salePrice: program.sale_price,
             soldAt: program.sold_at && new Date(program.sold_at),
+            label: program.label || '',
+            labelColorType: program.label_color_type || '',
             isEnrolledCountVisible: program.is_enrolled_count_visible,
             categories: program.program_categories.map(programCategory => ({
               id: programCategory.category.id,
@@ -264,6 +268,8 @@ export const useProgram = (programId: string) => {
           display_footer
           cover_type
           mobile_cover_type
+          label
+          label_color_type
           activated_layout_template_config_id
           program_layout_template_config {
             id
@@ -426,6 +432,8 @@ export const useProgram = (programId: string) => {
       description: data?.program_by_pk?.description || '',
       coverVideoUrl: data?.program_by_pk?.cover_video_url || null,
       metaTag: data?.program_by_pk?.meta_tag,
+      label: data?.program_by_pk?.label || '',
+      labelColorType: data?.program_by_pk?.label_color_type || '',
       isIssuesOpen: data?.program_by_pk?.is_issues_open === false ? false : true,
       isEnrolledCountVisible: data?.program_by_pk?.is_enrolled_count_visible,
       isPrivate: data?.program_by_pk?.is_private || false,
