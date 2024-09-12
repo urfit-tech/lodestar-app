@@ -24,8 +24,6 @@ export type ProgramBriefProps = {
   totalDuration?: number
   isEnrolledCountVisible?: boolean
   editors?: string[]
-  label: string
-  labelColorType: string
 }
 
 export type EquityProgram = {
