@@ -11,9 +11,9 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import { StyledContainer } from '../components/layout/DefaultLayout/DefaultLayout.styled'
 import { handleError } from '../helpers'
 import { codeMessages } from '../helpers/translation'
-import { ReactComponent as ErrorIcon } from '../images/error.svg'
 import { useMember } from '../hooks/member'
-
+import { ReactComponent as ErrorIcon } from '../images/error.svg'
+import pageMessages from './translation'
 
 const StyledWrapper = styled.div`
   padding: 4rem 1rem;
@@ -40,17 +40,14 @@ const VerifyEmailPage: React.VFC = () => {
   const { formatMessage } = useIntl()
   const [token] = useQueryParam('token', StringParam)
 
-
   const [memberId] = useQueryParam('member', StringParam)
   const { authToken } = useAuth()
   const { member } = useMember(memberId || '')
 
-
   const [errorMessage, setErrorMessage] = useState('')
 
-  const verifyEmail = useCallback(()=>{
+  const verifyEmail = useCallback(() => {
     if (authToken && token && memberId === member?.id && member?.email) {
-
       axios
         .post(
           `${process.env.REACT_APP_API_BASE_ROOT}/auth/verify-email`,
@@ -59,21 +56,17 @@ const VerifyEmailPage: React.VFC = () => {
         )
         .then(({ data: { code, message, result } }) => {
           if (code === 'SUCCESS') {
-  
-              window.location.replace(`/settings/profile?verified=1`)
-     
-           
+            window.location.replace(`/settings/profile?verified=1`)
           } else {
             antdMessage.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
             setErrorMessage(message)
-
           }
         })
-        .catch(error=>{
+        .catch(error => {
           handleError(error)
         })
     }
-  },[token, memberId, authToken, member?.id, member?.email, formatMessage])
+  }, [token, memberId, authToken, member?.id, member?.email, formatMessage])
 
   useEffect(() => {
     verifyEmail()
@@ -92,7 +85,7 @@ const VerifyEmailPage: React.VFC = () => {
           </div>
 
           <Link to="/settings/profile">
-            <StyledButton>返回個人設定</StyledButton>
+            <StyledButton>{formatMessage(pageMessages.VerifyEmailPage.backToProfileSettings)}</StyledButton>
           </Link>
         </StyledWrapper>
       </DefaultLayout>
@@ -103,8 +96,8 @@ const VerifyEmailPage: React.VFC = () => {
     <DefaultLayout noFooter noHeader centeredBox noNotificationBar>
       <StyledContainer>
         <div className="text-center">
-          信箱驗證中，請稍候...
-          <StyledWarning>請勿重整與返回上一頁</StyledWarning>
+          {formatMessage(pageMessages.VerifyEmailPage.verifyingEmail)}
+          <StyledWarning>{formatMessage(pageMessages.VerifyEmailPage.doNotRefreshOrGoBack)}</StyledWarning>
         </div>
       </StyledContainer>
     </DefaultLayout>

@@ -118,12 +118,16 @@ const ExerciseQuestionBlock: React.VFC<
           columns: [
             formatMessage(exerciseMessages.ExerciseQuestionBlock.spendTime),
             `${durationFullFormatter((timeSpent || 0) / 1000 / questions.length)}`,
-            '23.64 秒',
+            formatMessage(exerciseMessages.ExerciseQuestionBlock.timeSpentSeconds),
           ],
           hidden: !Boolean(timeSpent),
         },
         {
-          columns: [formatMessage(exerciseMessages.ExerciseQuestionBlock.averageCorrectRate), '', `80%`],
+          columns: [
+            formatMessage(exerciseMessages.ExerciseQuestionBlock.averageCorrectRate),
+            '',
+            formatMessage(exerciseMessages.ExerciseQuestionBlock.correctRate),
+          ],
           hidden: true,
         },
       ],

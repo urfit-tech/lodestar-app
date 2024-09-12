@@ -1,5 +1,6 @@
 import { Icon } from '@chakra-ui/icons'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../../components/common/Responsive'
@@ -8,6 +9,7 @@ import { ReactComponent as HotIcon } from '../../images/icon-hot3.svg'
 import { ReactComponent as UserIcon } from '../../images/icon-user.svg'
 import { StyledIcon } from './ProgramBlock'
 import SectionHeading from './SectionHeading'
+import HomePageMessages from './translation'
 import { SunkProgramProps } from './utils'
 
 const StyledColumn = styled.div`
@@ -29,12 +31,17 @@ const StyledDescription = styled.div`
 const AffordableProgramSection: React.FC<{
   programs: SunkProgramProps[]
 }> = ({ programs }) => {
+  const { formatMessage } = useIntl()
   return (
     <section>
-      <SectionHeading icon={<Icon as={HotIcon} />} title="銅板課程" subtitle="AFFORDABLE COURSE" />
+      <SectionHeading
+        icon={<Icon as={HotIcon} />}
+        title={formatMessage(HomePageMessages.AffordableProgramSection.copperCourse)}
+        subtitle={formatMessage(HomePageMessages.AffordableProgramSection.affordableCourseSubtitle)}
+      />
       <div className="container">
         <div className="d-flex justify-content-end mb-2">
-          <Link to="/programs">更多課程</Link>
+          <Link to="/programs">{formatMessage(HomePageMessages.AffordableProgramSection.moreCourses)}</Link>
         </div>
         <div className="row">
           {programs.map(program => (
@@ -44,7 +51,9 @@ const AffordableProgramSection: React.FC<{
                 renderCustomDescription={() => (
                   <StyledDescription>
                     <StyledIcon as={UserIcon} />
-                    <span>{program.enrollmentCount} 人</span>
+                    <span>
+                      {program.enrollmentCount} {formatMessage(HomePageMessages.AffordableProgramSection.people)}
+                    </span>
                   </StyledDescription>
                 )}
                 withMeta

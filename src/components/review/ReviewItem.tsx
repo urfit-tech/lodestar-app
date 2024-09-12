@@ -148,7 +148,9 @@ const ReviewItem: React.VFC<
 
         {privateContent && !BraftEditor.createEditorState(privateContent).isEmpty() && (
           <ReviewPrivateBlock className="mt-3">
-            <ReviewPrivateTitle className="mb-2">私下給老師的訊息</ReviewPrivateTitle>
+            <ReviewPrivateTitle className="mb-2">
+              {formatMessage(reviewMessages.title.privateMessage)}
+            </ReviewPrivateTitle>
             <BraftContent>{privateContent}</BraftContent>
           </ReviewPrivateBlock>
         )}

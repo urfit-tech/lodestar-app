@@ -13,6 +13,8 @@ export const SUPPORTED_LOCALES = [
   { locale: 'en-us', label: 'English' },
   { locale: 'vi', label: 'Tiếng việt' },
   { locale: 'id', label: 'Indonesia' },
+  { locale: 'ja', label: '日本語' },
+  // { locale: 'ko', label: '한국어' },
 ]
 type LocaleContextProps = {
   defaultLocale: string
@@ -66,12 +68,14 @@ export const LocaleProvider: React.FC = ({ children }) => {
 
   moment.locale(currentLocale)
   let localeMessages: { [key: string]: string } = defaultLocaleMessages
+  let elementMessages: { [key: string]: string } = {}
   try {
     localeMessages = require(`../translations/locales/${currentLocale}.json`)
+    elementMessages = require(`lodestar-app-element/src/translations/locales/${currentLocale}.json`)
   } catch (error) {
     console.warn('cannot load the locale:', currentLocale, error)
   }
-  localeMessages = { ...localeMessages, ...appLocaleMessages }
+  localeMessages = { ...elementMessages, ...localeMessages, ...appLocaleMessages }
 
   return (
     <LocaleContext.Provider

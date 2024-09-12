@@ -28,11 +28,12 @@ const ContentWrapper = styled.div<{ gradient?: boolean }>`
 const VideoBanner: React.FC<{
   coverUrl?: { mobileUrl?: string; desktopUrl?: string; videoUrl?: string }
   width?: { desktop: string; mobile: string }
-}> = ({ coverUrl, width, children }) => {
+  videoWidth?: string
+}> = ({ coverUrl, width, children, videoWidth }) => {
   return (
     <StyledWrapper width={width}>
       <BackgroundWrapper>
-        <video muted autoPlay loop playsInline>
+        <video muted autoPlay loop playsInline width={videoWidth}>
           <source src={coverUrl?.videoUrl} type="video/mp4" />
         </video>
       </BackgroundWrapper>

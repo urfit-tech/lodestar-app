@@ -5,6 +5,7 @@ import { desktopViewMixin } from 'lodestar-app-element/src/helpers'
 import queryString from 'query-string'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { FaShareAlt } from 'react-icons/fa'
+import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { useLocation } from 'react-router'
 import styled, { css, ThemeContext } from 'styled-components'
@@ -18,6 +19,18 @@ import ProgramIntroTabs from '../../Secondary/ProgramIntroTabs'
 import SecondaryProgramPlanCard from '../../Secondary/SecondaryProgramPlanCard'
 import SocialSharePopover from '../../Secondary/SocialSharePopover'
 import { colors } from '../../Secondary/style'
+import EbookMessages from '../translation'
+
+const StyledCoverImage = styled(Box)<{ coverUrl: string; coverMobileUrl: string }>`
+  background-image: url(${props => props.coverMobileUrl || EmptyCover});
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  height: 100%;
+  @media (min-width: ${BREAK_POINT}px) {
+    background-image: url(${props => props.coverUrl || EmptyCover});
+  }
+`
 
 const StyledProgramIntroBlock = styled.div`
   position: relative;
@@ -87,11 +100,12 @@ const EbookTrialAndShareButtonGroup = ({
   display: { [key: string]: string }
   isHasEbookTrialSection: boolean
 }) => {
+  const { formatMessage } = useIntl()
   return (
     <Flex alignItems="center" gridGap="2" width="100%" display={display} marginTop="20px">
       {isHasEbookTrialSection && (
         <Link href={`/programs/${programId}/contents/${ebookTrialContentId}`} width="100%">
-          <StyledButton>試看</StyledButton>
+          <StyledButton>{formatMessage(EbookMessages.EbookProgramPageContent.tryOut)}</StyledButton>
         </Link>
       )}
       <Box width="20%" display="flex" justifyContent="center">
@@ -112,7 +126,7 @@ const EbookProgramPageContent: React.VFC<{
   const theme = useContext(ThemeContext)
   const { loading: loadingProgramPlansEnrollmentsAggregateList, programPlansEnrollmentsAggregateList } =
     useProgramPlansEnrollmentsAggregateList(program?.plans.map(plan => plan.id) || [])
-  const { moduleData, title, coverUrl } = program
+  const { moduleData, title, coverUrl, coverMobileUrl } = program
   const bookSubTitle = moduleData?.[layoutTemplateConfigMap.bookSubTitle]
   const bookInformation = moduleData?.[layoutTemplateConfigMap.bookInformation]
   const contentInformation = moduleData?.[layoutTemplateConfigMap.contentInformation]
@@ -156,13 +170,7 @@ const EbookProgramPageContent: React.VFC<{
               <Flex gridGap="5" flexWrap={{ base: 'wrap', md: 'nowrap' }}>
                 <Box>
                   <Box boxShadow="md" width="248px" height="248px">
-                    <Box
-                      backgroundImage={`url(${coverUrl || EmptyCover})`}
-                      backgroundPosition={'center'}
-                      backgroundSize={'cover'}
-                      width="100%"
-                      height="100%"
-                    />
+                    <StyledCoverImage coverUrl={coverUrl} coverMobileUrl={coverMobileUrl} />
                   </Box>
                   <EbookTrialAndShareButtonGroup
                     programId={program.id}

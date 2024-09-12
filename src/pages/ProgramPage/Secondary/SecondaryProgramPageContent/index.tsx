@@ -84,10 +84,11 @@ const StyledButtonWrapper = styled.div`
 
 const SecondaryProgramPageContent: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { currentMemberId } = useAuth()
-  const { search, pathname } = useLocation()
-  const params = queryString.parse(search)
   const { programId } = useParams<{ programId: string }>()
+  const { pathname, search } = useLocation()
+  const params = queryString.parse(search)
+
+  const { currentMemberId } = useAuth()
   const { settings, enabledModules } = useApp()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
@@ -99,9 +100,9 @@ const SecondaryProgramPageContent: React.VFC = () => {
   const [isPlanListSticky, setIsPlanListSticky] = useState(false)
 
   const planBlockRef = useRef<HTMLDivElement | null>(null)
-  const customerReviewBlockRef = useRef<HTMLDivElement>(null)
   const planListHeightRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
+  const customerReviewBlockRef = useRef<HTMLDivElement>(null)
 
   const scrollToPreview = () => previewRef?.current?.scrollIntoView({ behavior: 'smooth' })
   const scrollToPlanBlock = () => planBlockRef?.current?.scrollIntoView({ behavior: 'smooth' })

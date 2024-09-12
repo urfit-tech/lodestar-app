@@ -73,7 +73,7 @@ const ProgramContentCutscenePage: React.VFC = () => {
   }
   if (!isAuthenticated) return <ProgramContentNoAuthBlock />
 
-  if (errorProgram) return <>fetch program data error</>
+  if (errorProgram) return <>{formatMessage(pageMessages.ProgramContentCutscenePage.fetchProgramDataError)}</>
 
   // ProgramContentPage
   if (flatten(program?.contentSections.map(v => v.contents) || []).length === 0) {

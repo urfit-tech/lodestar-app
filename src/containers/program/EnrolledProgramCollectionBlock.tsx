@@ -12,26 +12,11 @@ import { ProgramTab } from '../../components/program/ProgramTab'
 import RadioCard from '../../components/RadioCard'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { ProgramEnrollment } from '../../types/program'
+import containersMessages from '../translation'
 import ProgramCard from './ProgramCard'
 
 const getCreatorName = (program: ProgramEnrollment) =>
   program.roles.filter(role => role.name === 'instructor')[0]?.memberName.toLowerCase() || ''
-
-const sortOptions = [
-  { className: 'new-purchase-date', value: 'newPurchaseDate', name: '購買日期（新到舊）' },
-  { className: 'old-purchase-date', value: 'oldPurchaseDate', name: '購買日期（舊到新）' },
-  { className: 'new-last-view-date', value: 'newLastViewDate', name: '最後觀課日（新到舊）' },
-  { className: 'old-last-view-date', value: 'oldLastViewDate', name: '最後觀課日（舊到新）' },
-  { className: 'less-creator-strokes', value: 'lessCreatorStrokes', name: '依講師排序（筆畫少到多）' },
-  { className: 'more-creator-strokes', value: 'moreCreatorStrokes', name: '依講師排序（筆畫多到少）' },
-]
-
-const filterOptions = [
-  { className: 'all', value: 'all', name: '全部課程' },
-  { className: 'in-progress', value: 'inProgress', name: '進行中' },
-  { className: 'no-start-yet', value: 'notStartYet', name: '尚未開始' },
-  { className: 'done', value: 'Done', name: '已完課' },
-]
 
 const EnrolledProgramCollectionBlock: React.VFC<{
   memberId: string
@@ -63,6 +48,46 @@ const EnrolledProgramCollectionBlock: React.VFC<{
   const [search, setSearch] = useState('')
   const { settings } = useApp()
   const datetimeEnabled = settings['program.datetime.enabled'] === '1'
+
+  const sortOptions = [
+    {
+      className: 'new-purchase-date',
+      value: 'newPurchaseDate',
+      name: formatMessage(containersMessages.program.newPurchaseDate),
+    },
+    {
+      className: 'old-purchase-date',
+      value: 'oldPurchaseDate',
+      name: formatMessage(containersMessages.program.oldPurchaseDate),
+    },
+    {
+      className: 'new-last-view-date',
+      value: 'newLastViewDate',
+      name: formatMessage(containersMessages.program.newLastViewDate),
+    },
+    {
+      className: 'old-last-view-date',
+      value: 'oldLastViewDate',
+      name: formatMessage(containersMessages.program.oldLastViewDate),
+    },
+    {
+      className: 'less-creator-strokes',
+      value: 'lessCreatorStrokes',
+      name: formatMessage(containersMessages.program.lessCreatorStrokes),
+    },
+    {
+      className: 'more-creator-strokes',
+      value: 'moreCreatorStrokes',
+      name: formatMessage(containersMessages.program.moreCreatorStrokes),
+    },
+  ]
+
+  const filterOptions = [
+    { className: 'all', value: 'all', name: formatMessage(containersMessages.program.allCourses) },
+    { className: 'in-progress', value: 'inProgress', name: formatMessage(containersMessages.program.inProgress) },
+    { className: 'no-start-yet', value: 'notStartYet', name: formatMessage(containersMessages.program.notStartYet) },
+    { className: 'done', value: 'Done', name: formatMessage(containersMessages.program.done) },
+  ]
 
   const options = [
     formatMessage(commonMessages.label.availableForLimitTime),

@@ -1,11 +1,13 @@
 import { Icon } from '@chakra-ui/icons'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import { BREAK_POINT } from '../common/Responsive'
 import FundingCoverBlock from './FundingCoverBlock'
 import ProjectCalloutButton, { Callout } from './ProjectCalloutButton'
+import projectMessages from './translation'
 
 const StyledSection = styled.section`
   position: relative;
@@ -125,6 +127,7 @@ const ProjectBannerSection: React.VFC<ProjectBannerSectionProps> = ({
   backgroundImage,
   callout,
 }) => {
+  const { formatMessage } = useIntl()
   return (
     <StyledSection>
       <img src={backgroundImage} alt="background" />
@@ -133,7 +136,12 @@ const ProjectBannerSection: React.VFC<ProjectBannerSectionProps> = ({
           <StyledCountDownBlock className="col-12 col-lg-4">
             <StyledCountDownTime className="d-flex align-items-center justify-content-center">
               {<Icon as={CalendarOIcon} className="mr-2" />}
-              {expiredAt && <CountDownTimeBlock text="優惠倒數" expiredAt={expiredAt} />}
+              {expiredAt && (
+                <CountDownTimeBlock
+                  text={formatMessage(projectMessages.ProjectBannerSection.discountCountdown)}
+                  expiredAt={expiredAt}
+                />
+              )}
             </StyledCountDownTime>
           </StyledCountDownBlock>
         </div>
