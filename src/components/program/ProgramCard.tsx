@@ -197,8 +197,6 @@ const PrimaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
     textColor: '#585858',
   }
 
-  console.log('program label', program.label)
-
   return (
     <>
       {!noInstructor && instructorId && (
