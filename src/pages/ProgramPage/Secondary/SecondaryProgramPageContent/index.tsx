@@ -84,10 +84,11 @@ const StyledButtonWrapper = styled.div`
 
 const SecondaryProgramPageContent: React.VFC = () => {
   const { formatMessage } = useIntl()
-  const { currentMemberId } = useAuth()
-  const { search, pathname } = useLocation()
-  const params = queryString.parse(search)
   const { programId } = useParams<{ programId: string }>()
+  const { pathname, search } = useLocation()
+  const params = queryString.parse(search)
+
+  const { currentMemberId } = useAuth()
   const { settings, enabledModules } = useApp()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)

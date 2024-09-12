@@ -454,9 +454,9 @@ export const getOgLocale = (locale: string) => {
   return formattedLocale
 }
 
-export const isMobile: boolean = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-  window.navigator.userAgent,
-)
+export const isMobile: boolean =
+  Boolean(window.navigator.userAgent) &&
+  /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent)
 
 export const isAndroid = /android/i.test(window.navigator.userAgent.toLowerCase())
 

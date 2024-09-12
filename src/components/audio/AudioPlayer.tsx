@@ -614,7 +614,7 @@ const AudioPlayer: React.VFC<{
                         onClick={() => setShowAction(false)}
                         display={{ base: 'none', lg: 'block' }}
                       >
-                        <Tooltip placement="top" title={'播放清單'}>
+                        <Tooltip placement="top" title="播放清單">
                           <Icon as={PlaylistIcon} />
                         </Tooltip>
                       </StyledButton>
