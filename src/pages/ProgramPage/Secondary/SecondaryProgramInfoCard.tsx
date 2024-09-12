@@ -10,7 +10,6 @@ import { ReactComponent as ListCheckIcon } from '../../../images/list-check-o.sv
 import { ReactComponent as ListIcon } from '../../../images/list-o-program.svg'
 import { Category } from '../../../types/general'
 import { Program, ProgramContent, ProgramContentSection, ProgramPlan, ProgramRole } from '../../../types/program'
-import ProgramPageMessages from '../translation'
 import { colors } from './style'
 
 const StyledCountBlock = styled.div`
@@ -65,13 +64,13 @@ const SecondaryProgramInfoCard: React.FC<{
     <StyledCountBlock>
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <CalendarIcon />
-        <Title>{formatMessage(ProgramPageMessages.Secondary.expectedStart)}</Title>
+        <Title>預計開課</Title>
         <Content>{expectedStartDate ? dayjs(expectedStartDate).format('YYYY/MM/DD') : '-'}</Content>
       </div>
 
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <TimeoverIcon />
-        <Title>{formatMessage(ProgramPageMessages.Secondary.expectedDuration)}</Title>
+        <Title>預計時長</Title>
         <Content>
           {expectedDuration ? (
             <>
@@ -86,7 +85,7 @@ const SecondaryProgramInfoCard: React.FC<{
 
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <ListIcon />
-        <Title>{formatMessage(ProgramPageMessages.Secondary.expectedChapters)}</Title>
+        <Title>預計章節</Title>
         <Content>
           {expectedSections ? (
             <>
@@ -101,7 +100,7 @@ const SecondaryProgramInfoCard: React.FC<{
 
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
         <ListCheckIcon />
-        <Title>{formatMessage(ProgramPageMessages.Secondary.fullyListed)}</Title>
+        <Title>全數上架</Title>
         <Content>{completeRelease ? dayjs(completeRelease).format('YYYY/MM/DD') : '-'}</Content>
       </div>
     </StyledCountBlock>

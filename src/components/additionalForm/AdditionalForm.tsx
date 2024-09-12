@@ -4,7 +4,6 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { v4 as uuid } from 'uuid'
@@ -13,7 +12,6 @@ import { uploadFile } from '../../helpers'
 import { AuthModalContext } from '../auth/AuthModal'
 import FileUploader from '../common/FileUploader'
 import ImageUploader from '../common/ImageUploader'
-import additionalForm from './translation'
 
 const StyledForm = styled.form`
   padding: 48px 24px;
@@ -39,7 +37,6 @@ const bankBookImageId = uuid()
 const fileImages: { imageId: string; fileName: string }[] = []
 
 const AdditionalForm = () => {
-  const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { isAuthenticated, currentMemberId, authToken } = useAuth()
   const { setVisible: setAuthModalVisible, visible } = useContext(AuthModalContext)
@@ -70,16 +67,16 @@ const AdditionalForm = () => {
       !currentMemberId
     ) {
       const requiredFields = [
-        { field: cardImageFile, name: formatMessage(additionalForm.AdditionalForm.cardImageFile) },
-        { field: credentialImageFile, name: formatMessage(additionalForm.AdditionalForm.credentialImageFile) },
-        { field: bankBookImageFile, name: formatMessage(additionalForm.AdditionalForm.bankBookImageFile) },
-        { field: files.length > 0, name: formatMessage(additionalForm.AdditionalForm.financialProof) },
+        { field: cardImageFile, name: '證件上傳' },
+        { field: credentialImageFile, name: '證明上傳' },
+        { field: bankBookImageFile, name: '存摺封面' },
+        { field: files.length > 0, name: '財力證明電子對帳單、交易明細' },
       ]
       const missingFields = requiredFields.filter(({ field }) => !field)
 
       if (missingFields.length > 0) {
         const errorMessages: string = missingFields.map(({ name }) => name).join(', ')
-        window.alert(formatMessage(additionalForm.AdditionalForm.missingFieldsAlert, { errorMessages: errorMessages }))
+        window.alert(`缺少${errorMessages}請重新確認`)
         return
       }
       return
@@ -137,53 +134,50 @@ const AdditionalForm = () => {
       }}
     >
       <Heading as="h3" size="lg" className="mb-4 text-center">
-        {formatMessage(additionalForm.AdditionalForm.paymentSupplementForm)}
+        金流補件表
       </Heading>
 
       <FormControl className="mb-3" isRequired>
-        <FormLabel>{formatMessage(additionalForm.AdditionalForm.name)}</FormLabel>
-        <Input name="name" placeholder={formatMessage(additionalForm.AdditionalForm.name)} ref={register} />
+        <FormLabel>姓名</FormLabel>
+        <Input name="name" placeholder="姓名" ref={register} />
       </FormControl>
 
       <FormControl className="mb-3" isRequired>
-        <FormLabel>{formatMessage(additionalForm.AdditionalForm.email)}</FormLabel>
-        <Input
-          name="email"
-          placeholder={formatMessage(additionalForm.AdditionalForm.email)}
-          type="email"
-          ref={register}
-        />
+        <FormLabel>Email</FormLabel>
+        <Input name="email" placeholder="Email" type="email" ref={register} />
       </FormControl>
 
       <FormControl className="mb-3" isRequired>
-        <FormLabel>{formatMessage(additionalForm.AdditionalForm.credentialImage1)}</FormLabel>
+        <FormLabel>證件上傳（學生證、工作證、軍公教證）</FormLabel>
         <ImageUploader file={cardImageFile} onChange={file => setCardImageFile(file)} />
       </FormControl>
 
       <FormControl className="mb-3" isRequired>
-        <FormLabel>{formatMessage(additionalForm.AdditionalForm.credentialImage2)}</FormLabel>
+        <FormLabel>證明上傳（勞保、在職證明、在學證明、畢業證書）</FormLabel>
         <ImageUploader file={credentialImageFile} onChange={file => setCredentialImageFile(file)} />
       </FormControl>
 
       <FormControl className="mb-3" isRequired>
-        <FormLabel>{formatMessage(additionalForm.AdditionalForm.bankBookImageFile)}</FormLabel>
+        <FormLabel>存摺封面</FormLabel>
         <ImageUploader file={bankBookImageFile} onChange={file => setBankBookImageFile(file)} />
       </FormControl>
 
       <FormControl className="mb-3" isRequired>
-        <FormLabel>{formatMessage(additionalForm.AdditionalForm.financialProofDescription)}</FormLabel>
+        <FormLabel>
+          財力證明電子對帳單、交易明細（此為近6個月的電子對帳單或交易明細，通常是PDF檔，若有鎖密碼請於備註填寫，不可使用App網銀截圖）
+        </FormLabel>
         <FileUploader multiple showUploadList fileList={files} onChange={files => setFiles(files)} />
       </FormControl>
 
       <FormControl className="mb-3">
-        <FormLabel>{formatMessage(additionalForm.AdditionalForm.notes)}</FormLabel>
-        <Textarea name="notes" placeholder={formatMessage(additionalForm.AdditionalForm.notes)} ref={register} />
+        <FormLabel>備註</FormLabel>
+        <Textarea name="notes" placeholder="備註" ref={register} />
       </FormControl>
 
-      <Text>{formatMessage(additionalForm.AdditionalForm.agree)}</Text>
+      <Text>以上資料僅限於申請現金分期相關服務使用，同意送出後視為學員同意貴司依照個人資料保護法規定蒐集、利用</Text>
 
       <Button marginTop="10px" width="100%" colorScheme="primary" type="submit" isLoading={isSubmitting}>
-        {formatMessage(additionalForm.AdditionalForm.submit)}
+        送出
       </Button>
     </StyledForm>
   )

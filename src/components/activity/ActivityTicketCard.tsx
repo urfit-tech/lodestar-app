@@ -119,9 +119,7 @@ const ActivityTicketCard: React.VFC<ActivityTicketProps> = ({
     <StyledWrapper>
       <StyledTitle className="d-flex align-items-start justify-content-between mb-3">
         <span>{title}</span>
-        {variant === 'admin' && (
-          <StyledLabel active={status === formatMessage(commonMessages.button.onSale)}>{status}</StyledLabel>
-        )}
+        {variant === 'admin' && <StyledLabel active={status === '販售中'}>{status}</StyledLabel>}
       </StyledTitle>
       <StyledPrice>
         <PriceLabel listPrice={price} currencyId={currencyId} />

@@ -158,11 +158,8 @@ const CoinCheckoutModal: React.VFC<{
               <Input
                 name="phone"
                 ref={register({
-                  required: formatMessage(checkoutMessages.CoinCheckoutModal.pleaseEnterPhoneNumber),
-                  pattern: {
-                    value: validationRegExp.phone,
-                    message: formatMessage(checkoutMessages.CoinCheckoutModal.checkPhoneNumberFormat),
-                  },
+                  required: '請填入電話',
+                  pattern: { value: validationRegExp.phone, message: '請確認電話格式' },
                 })}
                 placeholder={formatMessage(checkoutMessages.CoinCheckoutModal.pleaseEnterPhone)}
               />

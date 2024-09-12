@@ -9,26 +9,6 @@ const appointmentMessages = {
     finished: { id: 'appointment.*.finished', defaultMessage: '已結束' },
   }),
   AppointmentCard: defineMessages({
-    noCurrentUserId: {
-      id: 'appointment.AppointmentCard.noCurrentUserId',
-      defaultMessage: '無法獲取當前使用者 id',
-    },
-    noAppointmentPlan: {
-      id: 'appointment.AppointmentCard.noAppointmentPlan',
-      defaultMessage: '無法獲取當前預約方案資訊',
-    },
-    noMeetingInfo: {
-      id: 'appointment.AppointmentCard.noMeetingInfo',
-      defaultMessage: '無法獲取會議資訊',
-    },
-    noAppointmentPlanCreator: {
-      id: 'appointment.AppointmentCard.noAppointmentPlanCreator',
-      defaultMessage: '無法獲取當前方案的主持者資訊',
-    },
-    noLinkSet: {
-      id: 'appointment.AppointmentCard.noLinkSet',
-      defaultMessage: '尚未設定連結',
-    },
     periodDurationAtMost: {
       id: 'appointment.text.periodDurationAtMost',
       defaultMessage: '諮詢一次 {duration} 分鐘為限',

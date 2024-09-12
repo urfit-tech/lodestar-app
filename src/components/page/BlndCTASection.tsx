@@ -1,11 +1,9 @@
 import { Button } from '@chakra-ui/react'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { AuthModalContext } from '../auth/AuthModal'
-import pageComponentsMessages from './translation'
 
 const StyledSection = styled.section`
   &.cta {
@@ -69,21 +67,18 @@ const StyledButton = styled(Button)`
 const BlndCTASection: React.FC = () => {
   const { currentMemberId } = useAuth()
   const { setVisible } = useContext(AuthModalContext)
-  const { formatMessage } = useIntl()
   return (
     <StyledSection className="cta">
       <div className="join-us">
-        <h2 className="title">{formatMessage(pageComponentsMessages.BlndCTASection.joinUs)}</h2>
-        <h3>{formatMessage(pageComponentsMessages.BlndCTASection.joinBlnd)}</h3>
+        <h2 className="title">JOIN US</h2>
+        <h3>加入BLND，向你的專業目標邁出下一步</h3>
         {currentMemberId ? (
           <Link to="/activities?categories=272bc7d6-469e-49f2-be5c-1f4700b15ff8">
-            <StyledButton variant="primary">
-              {formatMessage(pageComponentsMessages.BlndCTASection.startMyCourse)}
-            </StyledButton>
+            <StyledButton variant="primary">開始我的課程</StyledButton>
           </Link>
         ) : (
           <StyledButton variant="primary" onClick={() => setVisible?.(true)}>
-            {formatMessage(pageComponentsMessages.BlndCTASection.startMyCourse)}
+            開始我的課程
           </StyledButton>
         )}
       </div>

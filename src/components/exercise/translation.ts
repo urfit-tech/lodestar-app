@@ -51,14 +51,6 @@ const exerciseMessages = {
     correctAnswer: { id: 'exercise.ExerciseQuestionBlock.correctAnswer', defaultMessage: '答案正確' },
     errorAnswer: { id: 'exercise.ExerciseQuestionBlock.errorAnswer', defaultMessage: '答案錯誤' },
     correct: { id: 'exercise.ExerciseQuestionBlock.correct', defaultMessage: '正解' },
-    timeSpentSeconds: {
-      id: 'exercise.ExerciseQuestionBlock.timeSpentSeconds',
-      defaultMessage: '23.64 秒',
-    },
-    correctRate: {
-      id: 'exercise.ExerciseQuestionBlock.correctRate',
-      defaultMessage: '80%',
-    },
   }),
 }
 

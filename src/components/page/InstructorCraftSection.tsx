@@ -1,10 +1,8 @@
 import { CraftSection } from 'lodestar-app-element/src/components/common/CraftElement'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
-import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { SectionTitle } from '../../pages/AppPage'
-import pageComponentsMessages from './translation'
 
 const StyledContainer = styled.div`
   margin: 0 auto 4rem;
@@ -18,12 +16,9 @@ const InstructorSection: React.FC<{
   }
 }> = ({ options }) => {
   const { id } = useApp()
-  const { formatMessage } = useIntl()
   return (
     <CraftSection>
-      <SectionTitle>
-        {options?.title || formatMessage(pageComponentsMessages.InstructorCraftSection.professionalInstructors)}
-      </SectionTitle>
+      <SectionTitle>{options?.title || '專業師資'}</SectionTitle>
       <StyledContainer>{/* <InstructorBlock appId={id} /> */}</StyledContainer>
     </CraftSection>
   )

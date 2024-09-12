@@ -395,9 +395,7 @@ const ProgramContentListSection: React.VFC<{
             {formatMessage(productMessages.program.title.content)}
             {!checkAllPinned() && (
               <StyleAllCollapsed onClick={() => !checkAllPinned() && toggleAllCollapsed()}>
-                {allCollapsed
-                  ? formatMessage(productMessages.program.content.collapseAll)
-                  : formatMessage(productMessages.program.content.expandAll)}
+                {allCollapsed ? '全部收合' : '全部展開'}
                 <IconButton
                   icon={<FaChevronDown style={{ transform: allCollapsed ? 'rotate(0deg)' : 'rotate(270deg)' }} />}
                   aria-label="Rotate Icon"

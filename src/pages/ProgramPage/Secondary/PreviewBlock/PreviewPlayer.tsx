@@ -4,14 +4,12 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useEffect, useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
-import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import AudioPlayer from '../../../../components/common/AudioPlayer'
 import ProgramContentPlayer from '../../../../components/program/ProgramContentPlayer'
 import { getFileDownloadableLink } from '../../../../helpers'
 import { useProgramContentById } from '../../../../hooks/program'
 import { ProgramContent } from '../../../../types/program'
-import ProgramPageMessages from '../../translation'
 import { colors } from '../style'
 
 const HeaderWrapper = styled(Box)`
@@ -49,7 +47,6 @@ const PreviewPlayer: React.VFC<{
   const [currentTrial, setCurrentTrial] = useState<number>(0)
   const { id: appId } = useApp()
   const { authToken } = useAuth()
-  const { formatMessage } = useIntl()
   const {
     id: programContentId,
     contentSectionTitle,
@@ -81,7 +78,7 @@ const PreviewPlayer: React.VFC<{
           }}
         >
           <FaChevronDown style={{ transform: 'rotate(90deg)' }} className="m-1" />
-          {formatMessage(ProgramPageMessages.PreviewBlock.previous)}
+          上一則
         </ControlButton>
         <Box>
           <SubTitle>{contentSectionTitle}</SubTitle>
@@ -94,7 +91,7 @@ const PreviewPlayer: React.VFC<{
             setCurrentTrial(c => c + 1)
           }}
         >
-          {formatMessage(ProgramPageMessages.PreviewBlock.next)}
+          下一則
           <FaChevronDown style={{ transform: 'rotate(270deg)' }} className="m-1" />
         </ControlButton>
       </HeaderWrapper>

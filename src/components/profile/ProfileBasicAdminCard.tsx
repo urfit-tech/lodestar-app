@@ -119,11 +119,7 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
                 customButtonStyle={{ width: '80%' }}
                 onChange={file => setAvatarImageFile(file)}
               />
-              {avatarImageFile && (
-                <StyledUploadWarning className="ml-2">
-                  * {formatMessage(profileMessages.form.message.notUploaded)}
-                </StyledUploadWarning>
-              )}
+              {avatarImageFile && <StyledUploadWarning className="ml-2">* 尚未上傳</StyledUploadWarning>}
             </>
           )}
         </StyledFormItem>

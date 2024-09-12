@@ -6,7 +6,6 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import { commonMessages } from '../helpers/translation'
 import { useOrderProduct } from '../hooks/checkout'
 import ActivityTicketPage from './ActivityTicketPage'
-import pageMessages from './translation'
 
 const OrderProductPage: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -40,11 +39,7 @@ const OrderProductPage: React.VFC = () => {
     )
   }
 
-  return (
-    <DefaultLayout noFooter>
-      {formatMessage(pageMessages.OrderProductPage.orderProductPageContent, { orderProductId: orderProductId })}
-    </DefaultLayout>
-  )
+  return <DefaultLayout noFooter>this is an order product page of: {orderProductId}</DefaultLayout>
 }
 
 export default OrderProductPage

@@ -96,32 +96,6 @@ const pageMessages = {
       defaultMessage: 'apply tag',
     },
   }),
-  OrderProductPage: defineMessages({
-    orderProductPageContent: {
-      id: 'page.OrderProductPage.orderProductPageContent',
-      defaultMessage: 'this is an order product page of: {orderProductId} ',
-    },
-  }),
-  ProgramContentCutscenePage: defineMessages({
-    fetchProgramDataError: {
-      id: 'page.ProgramContentCutscenePage.fetchProgramDataError',
-      defaultMessage: 'fetch program data error',
-    },
-  }),
-  PaymentTapPayPage: defineMessages({
-    payButton: {
-      id: 'page.PaymentTapPayPage.payButton',
-      defaultMessage: '付款',
-    },
-    authenticating: {
-      id: 'page.PaymentTapPayPage.authenticating',
-      defaultMessage: 'Authenticating...',
-    },
-    unableToFetchMemberData: {
-      id: 'page.PaymentTapPayPage.unableToFetchMemberData',
-      defaultMessage: '無法取得會員資料',
-    },
-  }),
   SearchPage: defineMessages({
     fundingProject: {
       id: 'page.SearchPage.fundingProject',
@@ -198,50 +172,6 @@ const pageMessages = {
     agree: {
       id: 'page.ContractPage.agree',
       defaultMessage: 'Agree',
-    },
-    confirmContractTerms: {
-      id: 'page.ContractPage.confirmContractTerms',
-      defaultMessage: '請確認您已了解並同意此合約條款，在合約期間內，雙方將遵守此條款，不可任意修改。',
-    },
-    cannotModifyAfterAgree: {
-      id: 'page.ContractPage.cannotModifyAfterAgree',
-      defaultMessage: '同意後無法修改',
-    },
-  }),
-  LineBindingPage: defineMessages({
-    bindAccount: {
-      id: 'page.LineBindingPage.bindAccount',
-      defaultMessage: '將以此 {name} 帳號',
-    },
-    bindLineService: {
-      id: 'page.LineBindingPage.bindLineService',
-      defaultMessage: '{userName} 綁定 LINE 個人化服務 ',
-    },
-    isBinding: {
-      id: 'page.LineBindingPage.status.isBinding',
-      defaultMessage: '綁定處理中...',
-    },
-    linePersonalizedServiceBinding: {
-      id: 'page.LineBindingPage.title.linePersonalizedServiceBinding',
-      defaultMessage: 'Line個人化服務綁定',
-    },
-    bindingStart: {
-      id: 'page.LineBindingPage.button.bindingStart',
-      defaultMessage: '開始綁定',
-    },
-  }),
-  VerifyEmailPage: defineMessages({
-    backToProfileSettings: {
-      id: 'page.VerifyEmailPage.backToProfileSettings',
-      defaultMessage: '返回個人設定',
-    },
-    verifyingEmail: {
-      id: 'page.VerifyEmailPage.verifyingEmail',
-      defaultMessage: '信箱驗證中，請稍候...',
-    },
-    doNotRefreshOrGoBack: {
-      id: 'page.VerifyEmailPage.doNotRefreshOrGoBack',
-      defaultMessage: '請勿重整與返回上一頁',
     },
   }),
 }

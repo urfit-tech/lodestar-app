@@ -3,21 +3,18 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import { BooleanParam } from 'serialize-query-params'
 import styled from 'styled-components'
 import { useQueryParams } from 'use-query-params'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import LoadingPage from '../LoadingPage'
-import NewMeetingPageMessages from './translation'
 
 const StyledForm = styled.form`
   padding: 48px 24px;
 `
 
 const MeetingPage = () => {
-  const { formatMessage } = useIntl()
   const { loading: loadingAppData } = useApp()
   const history = useHistory()
   const { username: managerUsername } = useParams<{ username: string }>()
@@ -47,8 +44,8 @@ const MeetingPage = () => {
     const gender = formEntries.find(entry => entry[0] === 'gender')?.[1]
     const source = formEntries.find(entry => entry[0] === 'source')?.[1]
     const friend = formEntries.find(entry => entry[0] === 'friend')?.[1]
-    const referralName = formEntries.find(entry => entry[0] === 'referralName')?.[1]
-    const referralEmail = formEntries.find(entry => entry[0] === 'referralEmail')?.[1]
+    const referalName = formEntries.find(entry => entry[0] === 'referalName')?.[1]
+    const referalEmail = formEntries.find(entry => entry[0] === 'referalEmail')?.[1]
 
     let utm
     try {
@@ -65,19 +62,19 @@ const MeetingPage = () => {
           email,
           name,
           managerUsername,
-          taskTitle: formatMessage(NewMeetingPageMessages.MeetingPage.exclusiveConsultation),
+          taskTitle: `專屬預約諮詢`,
           categoryNames: [],
           properties: [
-            { name: formatMessage(NewMeetingPageMessages.MeetingPage.lastName), value: lastName },
-            { name: formatMessage(NewMeetingPageMessages.MeetingPage.middleName), value: middleName },
-            { name: formatMessage(NewMeetingPageMessages.MeetingPage.firstName), value: name },
-            { name: formatMessage(NewMeetingPageMessages.MeetingPage.country), value: country },
-            { name: formatMessage(NewMeetingPageMessages.MeetingPage.language), value: language },
-            { name: formatMessage(NewMeetingPageMessages.MeetingPage.gender), value: gender },
-            { name: formatMessage(NewMeetingPageMessages.MeetingPage.source), value: source },
-            { name: formatMessage(NewMeetingPageMessages.MeetingPage.friend), value: friend },
-            { name: formatMessage(NewMeetingPageMessages.MeetingPage.referralName), value: referralName },
-            { name: formatMessage(NewMeetingPageMessages.MeetingPage.referralEmail), value: referralEmail },
+            { name: '姓氏', value: lastName },
+            { name: '中間名', value: middleName },
+            { name: '名字', value: name },
+            { name: '國籍', value: country },
+            { name: '母語', value: language },
+            { name: '性別', value: gender },
+            { name: '得知TLI管道', value: source },
+            { name: '就讀過TLI的親友姓名', value: friend },
+            { name: '代理人姓名', value: referalName },
+            { name: '代理人Email', value: referalEmail },
           ],
         },
         {
@@ -94,14 +91,10 @@ const MeetingPage = () => {
         Cookies.remove('landing')
         history.push('/meets/us/completed')
       } else {
-        alert(
-          formatMessage(NewMeetingPageMessages.MeetingPage.errorMessage, {
-            message: message,
-          }),
-        )
+        alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${message}`)
       }
     } catch (error) {
-      alert(formatMessage(NewMeetingPageMessages.MeetingPage.errorMessageWithError, { message: error as string }))
+      alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${error}`)
     } finally {
       setIsSubmitting(false)
     }
@@ -111,89 +104,64 @@ const MeetingPage = () => {
     <DefaultLayout centeredBox noFooter={noFooter} noHeader={noHeader}>
       <StyledForm onSubmit={handleSubmit}>
         <Heading as="h3" size="lg" className="mb-4 text-center">
-          {formatMessage(NewMeetingPageMessages.MeetingPage.bookingLink, {
-            managerUsername: managerUsername,
-          })}
+          {managerUsername} 預約連結
         </Heading>
         <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(NewMeetingPageMessages.MeetingPage.lastName)}</FormLabel>
-          <Input
-            required
-            name="lastName"
-            placeholder={formatMessage(NewMeetingPageMessages.MeetingPage.lastNamePlaceholder)}
-          />
+          <FormLabel>姓氏</FormLabel>
+          <Input required name="lastName" placeholder="您的姓氏是？" />
         </FormControl>
         <FormControl className="mb-3">
-          <FormLabel>{formatMessage(NewMeetingPageMessages.MeetingPage.middleName)}</FormLabel>
-          <Input
-            name="middleName"
-            placeholder={formatMessage(NewMeetingPageMessages.MeetingPage.middleNamePlaceholder)}
-          />
+          <FormLabel>中間名</FormLabel>
+          <Input name="middleName" placeholder="您有中間名嗎？如果有，請填寫。" />
         </FormControl>
         <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(NewMeetingPageMessages.MeetingPage.firstName)}</FormLabel>
-          <Input
-            required
-            name="name"
-            placeholder={formatMessage(NewMeetingPageMessages.MeetingPage.firstNamePlaceholder)}
-          />
+          <FormLabel>名字</FormLabel>
+          <Input required name="name" placeholder="您的名字是？" />
         </FormControl>
         <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(NewMeetingPageMessages.MeetingPage.email)}</FormLabel>
-          <Input
-            required
-            name="email"
-            placeholder={formatMessage(NewMeetingPageMessages.MeetingPage.emailPlaceholder)}
-          />
+          <FormLabel>Email</FormLabel>
+          <Input required name="email" placeholder="您的Email是？" />
         </FormControl>
         <FormControl className="mb-3">
-          <FormLabel>{formatMessage(NewMeetingPageMessages.MeetingPage.phone)}</FormLabel>
-          <Input name="phone" placeholder={formatMessage(NewMeetingPageMessages.MeetingPage.phone)} />
+          <FormLabel>電話</FormLabel>
+          <Input name="phone" placeholder="電話" />
         </FormControl>
         <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(NewMeetingPageMessages.MeetingPage.country)}</FormLabel>
-          <Input
-            required
-            name="country"
-            placeholder={formatMessage(NewMeetingPageMessages.MeetingPage.countryPlaceholder)}
-          />
+          <FormLabel>國籍</FormLabel>
+          <Input required name="country" placeholder="您的國籍是？" />
         </FormControl>
         <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(NewMeetingPageMessages.MeetingPage.language)}</FormLabel>
-          <Input
-            required
-            name="language"
-            placeholder={formatMessage(NewMeetingPageMessages.MeetingPage.languagePlaceholder)}
-          />
+          <FormLabel>母語</FormLabel>
+          <Input required name="language" placeholder="您的母語是什麼呢？" />
         </FormControl>
         <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(NewMeetingPageMessages.MeetingPage.gender)}</FormLabel>
-          <Select name="gender" placeholder={formatMessage(NewMeetingPageMessages.MeetingPage.genderPlaceholder)}>
-            <option>{formatMessage(NewMeetingPageMessages.MeetingPage.male)}</option>
-            <option>{formatMessage(NewMeetingPageMessages.MeetingPage.female)}</option>
-            <option>{formatMessage(NewMeetingPageMessages.MeetingPage.preferNotToSay)}</option>
+          <FormLabel>性別</FormLabel>
+          <Select name="gender" placeholder="您的性別是？">
+            <option>男性</option>
+            <option>女性</option>
+            <option>不願透露</option>
           </Select>
         </FormControl>
         <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(NewMeetingPageMessages.MeetingPage.source)}</FormLabel>
-          <Select name="source" placeholder={formatMessage(NewMeetingPageMessages.MeetingPage.sourcePlaceholder)}>
+          <FormLabel>得知TLI管道</FormLabel>
+          <Select name="source" placeholder="請問您是透過什麼管道得知TLI的呢？">
             {[
-              formatMessage(NewMeetingPageMessages.MeetingPage.branchSign),
-              formatMessage(NewMeetingPageMessages.MeetingPage.branchDM),
-              formatMessage(NewMeetingPageMessages.MeetingPage.friends),
-              formatMessage(NewMeetingPageMessages.MeetingPage.companyColleagues),
-              formatMessage(NewMeetingPageMessages.MeetingPage.intermediaryChannel),
-              formatMessage(NewMeetingPageMessages.MeetingPage.officialWebsite),
-              formatMessage(NewMeetingPageMessages.MeetingPage.facebook),
-              formatMessage(NewMeetingPageMessages.MeetingPage.instagram),
-              formatMessage(NewMeetingPageMessages.MeetingPage.googleBusiness),
-              formatMessage(NewMeetingPageMessages.MeetingPage.youtube),
-              formatMessage(NewMeetingPageMessages.MeetingPage.tiktok),
-              formatMessage(NewMeetingPageMessages.MeetingPage.linkedin),
-              formatMessage(NewMeetingPageMessages.MeetingPage.events),
-              formatMessage(NewMeetingPageMessages.MeetingPage.googleAds),
-              formatMessage(NewMeetingPageMessages.MeetingPage.newspapersMagazines),
-              formatMessage(NewMeetingPageMessages.MeetingPage.others),
+              '分校招牌',
+              '分校DM',
+              '親友',
+              '公司/同事',
+              '仲介/通路',
+              '官網',
+              'Facebook',
+              'Instagram',
+              'Google商家 ',
+              'Youtube',
+              '抖音',
+              'LinkedIn',
+              '活動',
+              'Google廣告',
+              '報章雜誌',
+              '其他>>選擇其他則出現文本輸入',
             ].map(v => (
               <option key={v}>{v}</option>
             ))}
@@ -201,25 +169,19 @@ const MeetingPage = () => {
         </FormControl>
 
         <FormControl className="mb-3">
-          <FormLabel>{formatMessage(NewMeetingPageMessages.MeetingPage.friend)}</FormLabel>
-          <Input name="friend" placeholder={formatMessage(NewMeetingPageMessages.MeetingPage.friendPlaceholder)} />
+          <FormLabel>就讀過TLI的親友姓名</FormLabel>
+          <Input name="friend" placeholder="如果有親友就讀TLI，請填寫他/她的姓名" />
         </FormControl>
         <FormControl className="mb-3">
-          <FormLabel>{formatMessage(NewMeetingPageMessages.MeetingPage.referralName)}</FormLabel>
-          <Input
-            name="referralName"
-            placeholder={formatMessage(NewMeetingPageMessages.MeetingPage.referralNamePlaceholder)}
-          />
+          <FormLabel>代理人姓名</FormLabel>
+          <Input name="referalName" placeholder="如果您有代理人，請填寫代理人的姓名。" />
         </FormControl>
         <FormControl className="mb-3">
-          <FormLabel>{formatMessage(NewMeetingPageMessages.MeetingPage.referralEmail)}</FormLabel>
-          <Input
-            name="referralEmail"
-            placeholder={formatMessage(NewMeetingPageMessages.MeetingPage.referralEmailPlaceholder)}
-          />
+          <FormLabel>代理人Email</FormLabel>
+          <Input name="referalEmail" placeholder="代理人的Email是？" />
         </FormControl>
         <Button width="100%" colorScheme="primary" type="submit" isLoading={isSubmitting}>
-          {formatMessage(NewMeetingPageMessages.MeetingPage.send)}
+          送出
         </Button>
       </StyledForm>
     </DefaultLayout>

@@ -122,20 +122,34 @@ const TermsPage: React.VFC = () => {
             <p>{formatMessage(termMessages.paragraph.suspension)}</p>
             <p>{formatMessage(termMessages.paragraph.suspension2, { name: appName })}</p>
 
-            <StyledSubTitle level={3}>{formatMessage(termMessages.subtitle.userResponsibility)}</StyledSubTitle>
+            <StyledSubTitle level={3}>用戶責任</StyledSubTitle>
             <ol className="mt-4">
-              <li>{formatMessage(termMessages.list.userResponsibility1)}</li>
+              <li>用戶應自行承擔責任使用本服務，對於在本服務所從事的所有行為及其結果應自行負擔一切責任。</li>
               <li>
-                {formatMessage(termMessages.list.userResponsibility2, { name: appName })}
+                若用戶發生或可能發生下列情事，{appName}
+                不須事先告知用戶，即可中止該用戶使用本服務之全部或一部，停用或刪除
+                {appName}帳戶、取消用戶與{appName}
+                之間關於本服務的合約（包括但不限於依據本條款成立的合約，以下皆同），或採取
+                {appName}合理認為必要及適當的任何其他措施：
                 <ol>
-                  <li>{formatMessage(termMessages.list.userResponsibility21)}</li>
-                  <li>{formatMessage(termMessages.list.userResponsibility22)}</li>
-                  <li>{formatMessage(termMessages.list.userResponsibility23, { name: appName })}</li>
-                  <li>{formatMessage(termMessages.list.userResponsibility24, { name: appName })}</li>
-                  <li>{formatMessage(termMessages.list.userResponsibility25, { name: appName })}</li>
+                  <li>用戶違反相關法令、本條款、或任何個別條款；</li>
+                  <li>用戶為反社會勢力或相關黨派成員；</li>
+                  <li>用戶透過散播不實資訊，例如利用詐欺方式或勢力，或透過其他不法方破壞{appName}的信譽；</li>
+                  <li>
+                    用戶遭聲請被扣押、假扣押、拍賣、進入破產、民事重整或類似程序，或{appName}
+                    合理認為用戶的信用有不確定性；或
+                  </li>
+                  <li>
+                    用戶與{appName}之間的信任關係已不存在，或因上列第(1)款至第(4)款以外事由，使{appName}合理認為
+                    {appName}
+                    不再適合向用戶提供本服務。
+                  </li>
                 </ol>
               </li>
-              <li>{formatMessage(termMessages.list.userResponsibility3, { name: appName })}</li>
+              <li>
+                起因於用戶使用本服務（包括但不限於{appName}遭第三人對於用戶使用本服務提出損害賠償請求），致{appName}
+                直接或間接蒙受任何損失/損害（包括但不限於律師費用的負擔）時，用戶應依照{appName}的要求立即給予補償賠償。
+              </li>
             </ol>
 
             <StyledSubTitle level={3}>{formatMessage(termMessages.title.report)}</StyledSubTitle>
@@ -155,20 +169,27 @@ const TermsPage: React.VFC = () => {
           </StyledCard>
 
           <StyledCard>
-            <StyledTitle level={2}>{termMessages.title.purchaseNotice}</StyledTitle>
-            <p>{formatMessage(termMessages.paragraph.purchaseNotice1)}</p>
-            <p>{formatMessage(termMessages.paragraph.purchaseNotice2)}</p>
+            <StyledTitle level={2}>購買須知</StyledTitle>
+            <p>
+              民法規定之無行為能力人（如未滿七歲之未成年人）購買本課程，應由其法定代理人為之；限制行為能力人（滿七歲但未滿二十歲），應得法定代理人之同意，方能購買本課程。
+            </p>
+            <p>
+              一旦註冊及代表「同意購買須知」，即表示您已經同意並願意完全遵守本購買須知所有內容；且若為民法規定之無行為能力人、限制行為能力人，則視為由無行為能力人之法定代理人代為購買本課程，或限制行為能力人之法定代理人已同意購買本課程。
+            </p>
           </StyledCard>
 
           <StyledCard>
-            <StyledTitle level={2}>{formatMessage(termMessages.title.facebookDataDeletion)}</StyledTitle>
-            <p>{formatMessage(termMessages.paragraph.facebookDataDeletion)}</p>
+            <StyledTitle level={2}>Facebook 資料刪除指示</StyledTitle>
+            <p>
+              根據 Facebook 政策，我們必須提供「Facebook 資料刪除指示說明」，如果您想刪除此平台上的 Facebook
+              登入應用數據，您可以按照以下步驟進行：
+            </p>
             <p>
               <ol>
-                <li>{formatMessage(termMessages.list.facebookDataDeletionStep1)}</li>
-                <li>{formatMessage(termMessages.list.facebookDataDeletionStep2)}</li>
-                <li>{formatMessage(termMessages.list.facebookDataDeletionStep3, { name: appName })}</li>
-                <li>{formatMessage(termMessages.list.facebookDataDeletionStep4)}</li>
+                <li>進入您的 Facebook 帳號的「設定和隱私」選單並點擊「設定」</li>
+                <li>向下滾動並點擊「應用程式和網站」</li>
+                <li>找到並點擊此應用程式（{appName}）</li>
+                <li>點擊「移除」按鈕，即成功地刪除了您的應用程式活動。</li>
               </ol>
             </p>
           </StyledCard>

@@ -1,11 +1,9 @@
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
-import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import ProgramContentCard from './ProgramContentCard'
-import HomePageMessages from './translation'
 
 const StyledWelcome = styled.h3`
   font-weight: 500;
@@ -32,20 +30,13 @@ const ProgramContentEnrolledSection: React.FC<{
     }
   }>
 }> = ({ programContents }) => {
-  const { formatMessage } = useIntl()
   const { currentMemberId, currentMember } = useAuth()
   return (
     <section>
       <div className="container">
         <div className="d-flex justify-content-between">
-          {
-            <StyledWelcome className="mb-4">
-              {formatMessage(HomePageMessages.ProgramContentEnrolledSection.welcomeBack, { name: currentMember?.name })}
-            </StyledWelcome>
-          }
-          <Link to={`/members/${currentMemberId}`}>
-            {formatMessage(HomePageMessages.ProgramContentEnrolledSection.myHomepageLink)}
-          </Link>
+          {<StyledWelcome className="mb-4">{currentMember?.name} 歡迎回來</StyledWelcome>}
+          <Link to={`/members/${currentMemberId}`}>我的主頁</Link>
         </div>
         <div className="row">
           {programContents.map(programContent => (

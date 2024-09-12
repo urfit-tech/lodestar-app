@@ -10,7 +10,7 @@ import { css, FlattenSimpleInterpolation } from 'styled-components'
 import { v4 as uuid } from 'uuid'
 import { BREAK_POINT } from '../components/common/Responsive'
 import { ApiResponse, MemberPageProductType } from '../types/general'
-import { checkoutMessages, commonMessages, helperMessages } from './translation'
+import { helperMessages } from './translation'
 
 export const TPDirect = (window as any)['TPDirect']
 
@@ -132,12 +132,7 @@ export const dateRangeFormatter: (props: {
 }
 
 export const durationFormatter = (value?: number | null) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { formatMessage } = useIntl()
-  return (
-    typeof value === 'number' &&
-    formatMessage(commonMessages.content.durationFormatter, { minutes: Math.ceil(value / 60) })
-  )
+  return typeof value === 'number' && `約 ${Math.ceil(value / 60)} 分鐘`
 }
 
 export const durationFullFormatter = (seconds: number) => {
@@ -304,21 +299,19 @@ export const createUploadFn = (appId: string, authToken: string | null) => {
 }
 
 export const shippingMethodFormatter = (value?: string) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { formatMessage } = useIntl()
   switch (value) {
     case 'home-delivery':
-      return formatMessage(checkoutMessages.shipping.homeDelivery)
+      return '宅配'
     case 'seven-eleven':
-      return formatMessage(checkoutMessages.shipping.sevenEleven)
+      return '7-11 超商取貨'
     case 'family-mart':
-      return formatMessage(checkoutMessages.shipping.familyMart)
+      return '全家超商取貨'
     case 'hi-life':
-      return formatMessage(checkoutMessages.shipping.hiLife)
+      return '萊爾富超商取貨'
     case 'ok-mart':
-      return formatMessage(checkoutMessages.shipping.okMart)
+      return 'OK 超商取貨'
     default:
-      return formatMessage(checkoutMessages.shipping.unknownDeliveryMethod)
+      return '未知配送方式'
   }
 }
 

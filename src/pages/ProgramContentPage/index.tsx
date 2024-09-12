@@ -104,7 +104,7 @@ const ProgramContentPage: React.VFC = () => {
                 }}
               >
                 <Icon as={SearchIcon} mr="0.3rem" />
-                {formatMessage(commonMessages.ui.search)}
+                搜尋
               </Button>
             ) : null}
 

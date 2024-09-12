@@ -3,13 +3,11 @@ import { LayoutProps, SpaceProps } from '@chakra-ui/styled-system'
 import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import React from 'react'
-import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { ProgramCover } from '../../components/common/Image'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramPackageProps } from '../../types/programPackage'
-import packageMessages from './translation'
 
 const StyledCard = styled(Box)`
   overflow: hidden;
@@ -55,13 +53,10 @@ const PackageDatetime: React.FC<{
   marginX?: SpaceProps['marginX']
   marginBottom?: SpaceProps['marginBottom']
 }> = ({ display, view, deliveredAt, lastViewedAt, marginX, marginBottom }) => {
-  const { formatMessage } = useIntl()
   return (
     <StyledDescription display={display} marginX={marginX} marginBottom={marginBottom} view={view}>
-      {`${dayjs(deliveredAt).format('YYYY-MM-DD')} ${formatMessage(packageMessages.PackageCard.purchase)}`}
-      {lastViewedAt
-        ? ` / ${dayjs(lastViewedAt).format('YYYY-MM-DD')} ${formatMessage(packageMessages.PackageCard.lastView)}`
-        : ` / ${formatMessage(packageMessages.PackageCard.notView)}`}
+      {`${dayjs(deliveredAt).format('YYYY-MM-DD')} 購買`}
+      {lastViewedAt ? ` / ${dayjs(lastViewedAt).format('YYYY-MM-DD')} 上次觀看` : ` / 尚未觀看`}
     </StyledDescription>
   )
 }

@@ -17,7 +17,6 @@ import { useEquityPrograms } from '../../hooks/program'
 import EmptyCover from '../../images/empty-cover.png'
 import { CurrencyProps, PeriodType } from '../../types/program'
 import { CustomRatioImage } from '../common/Image'
-import coinMessages from './translation'
 
 const messages = defineMessages({
   programPackageContent: { id: 'project.label.programPackageContent', defaultMessage: '課程內容' },
@@ -204,7 +203,7 @@ const ProgramPackageCoinModal: React.VFC<
         >
           {programPackage?.programs.map(program => equityProgramIds.includes(program.id)).includes(false)
             ? formatMessage(commonMessages.button.useCoin)
-            : formatMessage(coinMessages.ProgramPackageCoinModal.useCoin)}
+            : '已使用代幣兌換'}
         </Button>
       </Modal>
     </>

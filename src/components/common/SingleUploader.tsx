@@ -52,13 +52,9 @@ const SingleUploader: React.VFC<
       } else {
         setLoading(false)
         if (info.file.status === 'done') {
-          onSuccess
-            ? onSuccess(info)
-            : message.success(`${info.file.name} ${formatMessage(commonMessages.event.successfullyUpload)}`)
+          onSuccess ? onSuccess(info) : message.success(`${info.file.name} 上傳成功`)
         } else if (info.file.status === 'error') {
-          onError
-            ? onError(info)
-            : message.error(`${info.file.name} ${formatMessage(commonMessages.status.uploadError)}`)
+          onError ? onError(info) : message.error(`${info.file.name} 上傳失敗`)
         }
       }
     },

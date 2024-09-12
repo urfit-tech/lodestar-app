@@ -13,7 +13,6 @@ import { handleError } from '../helpers'
 import { codeMessages } from '../helpers/translation'
 import { useMember } from '../hooks/member'
 import { ReactComponent as ErrorIcon } from '../images/error.svg'
-import pageMessages from './translation'
 
 const StyledWrapper = styled.div`
   padding: 4rem 1rem;
@@ -85,7 +84,7 @@ const VerifyEmailPage: React.VFC = () => {
           </div>
 
           <Link to="/settings/profile">
-            <StyledButton>{formatMessage(pageMessages.VerifyEmailPage.backToProfileSettings)}</StyledButton>
+            <StyledButton>返回個人設定</StyledButton>
           </Link>
         </StyledWrapper>
       </DefaultLayout>
@@ -96,8 +95,8 @@ const VerifyEmailPage: React.VFC = () => {
     <DefaultLayout noFooter noHeader centeredBox noNotificationBar>
       <StyledContainer>
         <div className="text-center">
-          {formatMessage(pageMessages.VerifyEmailPage.verifyingEmail)}
-          <StyledWarning>{formatMessage(pageMessages.VerifyEmailPage.doNotRefreshOrGoBack)}</StyledWarning>
+          信箱驗證中，請稍候...
+          <StyledWarning>請勿重整與返回上一頁</StyledWarning>
         </div>
       </StyledContainer>
     </DefaultLayout>

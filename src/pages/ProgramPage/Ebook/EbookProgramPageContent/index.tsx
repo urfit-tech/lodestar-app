@@ -5,7 +5,6 @@ import { desktopViewMixin } from 'lodestar-app-element/src/helpers'
 import queryString from 'query-string'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { FaShareAlt } from 'react-icons/fa'
-import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { useLocation } from 'react-router'
 import styled, { css, ThemeContext } from 'styled-components'
@@ -19,7 +18,6 @@ import ProgramIntroTabs from '../../Secondary/ProgramIntroTabs'
 import SecondaryProgramPlanCard from '../../Secondary/SecondaryProgramPlanCard'
 import SocialSharePopover from '../../Secondary/SocialSharePopover'
 import { colors } from '../../Secondary/style'
-import EbookMessages from '../translation'
 
 const StyledCoverImage = styled(Box)<{ coverUrl: string; coverMobileUrl: string }>`
   background-image: url(${props => props.coverMobileUrl || EmptyCover});
@@ -100,12 +98,11 @@ const EbookTrialAndShareButtonGroup = ({
   display: { [key: string]: string }
   isHasEbookTrialSection: boolean
 }) => {
-  const { formatMessage } = useIntl()
   return (
     <Flex alignItems="center" gridGap="2" width="100%" display={display} marginTop="20px">
       {isHasEbookTrialSection && (
         <Link href={`/programs/${programId}/contents/${ebookTrialContentId}`} width="100%">
-          <StyledButton>{formatMessage(EbookMessages.EbookProgramPageContent.tryOut)}</StyledButton>
+          <StyledButton>試看</StyledButton>
         </Link>
       )}
       <Box width="20%" display="flex" justifyContent="center">

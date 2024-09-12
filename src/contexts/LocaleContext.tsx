@@ -13,8 +13,6 @@ export const SUPPORTED_LOCALES = [
   { locale: 'en-us', label: 'English' },
   { locale: 'vi', label: 'Tiếng việt' },
   { locale: 'id', label: 'Indonesia' },
-  { locale: 'ja', label: '日本語' },
-  // { locale: 'ko', label: '한국어' },
 ]
 type LocaleContextProps = {
   defaultLocale: string

@@ -5,7 +5,6 @@ import gql from 'graphql-tag'
 import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import { BooleanParam } from 'serialize-query-params'
 import styled from 'styled-components'
@@ -14,7 +13,6 @@ import DefaultLayout from '../../components/layout/DefaultLayout'
 import hasura from '../../hasura'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
-import MeetingPageMessages from './translation'
 
 type CategoryCheckboxes = {
   id: number
@@ -36,7 +34,6 @@ const GetMemberByUsername = gql`
 `
 
 const MeetingPage = () => {
-  const { formatMessage } = useIntl()
   const { id: appId, settings, loading: loadingAppData } = useApp()
   const history = useHistory()
   const { username: managerUsername } = useParams<{ username: string }>()
@@ -94,19 +91,17 @@ const MeetingPage = () => {
       new Set(formEntries.filter(entry => entry[0] === 'field').flatMap(entry => entry[1].toString().split('/'))),
     )
     const timeslots = formEntries.filter(entry => entry[0] === 'timeslot').map(entry => entry[1])
-    const adPropertyValues = (
-      propertyDefaultValue[formatMessage(MeetingPageMessages.MeetingPage.adMaterial)] || ''
-    ).replace(new RegExp(`{${formatMessage(MeetingPageMessages.MeetingPage.field)}}`, 'g'), uniqueFields.join('+'))
+    const adPropertyValues = (propertyDefaultValue['廣告素材'] || '').replace(/{領域}/g, uniqueFields.join('+'))
     const landingPage = Cookies.get('landing') // setting from backend
 
     if (categoryCheckboxes.length !== 0 && uniqueFields.length === 0) {
-      alert(formatMessage(MeetingPageMessages.MeetingPage.interestField))
+      alert('「有興趣了解領域」為必填')
       setIsSubmitting(false)
       return
     }
 
     if (timeslots.length === 0) {
-      alert(formatMessage(MeetingPageMessages.MeetingPage.contactTimes))
+      alert('「方便聯繫時段」為必填')
       setIsSubmitting(false)
       return
     }
@@ -126,24 +121,18 @@ const MeetingPage = () => {
           email,
           name,
           managerUsername,
-          taskTitle: formatMessage(MeetingPageMessages.MeetingPage.reserve, { timeslots: timeslots.join('/') }),
+          taskTitle: `專屬預約諮詢:${timeslots.join('/')}`,
           categoryNames: uniqueFields,
           properties: [
-            { name: formatMessage(MeetingPageMessages.MeetingPage.introducer), value: referal },
-            { name: formatMessage(MeetingPageMessages.MeetingPage.allianceSource), value: utm.utm_source || '' },
-            { name: formatMessage(MeetingPageMessages.MeetingPage.allianceMemberId), value: utm.utm_id || '' },
-            { name: formatMessage(MeetingPageMessages.MeetingPage.allianceTransactionId), value: utm.utm_term || '' },
-            { name: formatMessage(MeetingPageMessages.MeetingPage.marketingContent), value: utm.utm_content || '' },
-            { name: formatMessage(MeetingPageMessages.MeetingPage.sourceUrl), value: landingPage || '' },
-            { name: formatMessage(MeetingPageMessages.MeetingPage.adMaterial), value: adPropertyValues || '' },
-            {
-              name: formatMessage(MeetingPageMessages.MeetingPage.marketingCampaign),
-              value: propertyDefaultValue[formatMessage(MeetingPageMessages.MeetingPage.marketingCampaign)] || '',
-            },
-            {
-              name: formatMessage(MeetingPageMessages.MeetingPage.leadRating),
-              value: propertyDefaultValue[formatMessage(MeetingPageMessages.MeetingPage.leadRating)] || '',
-            },
+            { name: '介紹人', value: referal },
+            { name: '聯盟來源', value: utm.utm_source || '' },
+            { name: '聯盟會員編號', value: utm.utm_id || '' },
+            { name: '聯盟成交編號', value: utm.utm_term || '' },
+            { name: '行銷內容', value: utm.utm_content || '' },
+            { name: '來源網址', value: landingPage || '' },
+            { name: '廣告素材', value: adPropertyValues || '' },
+            { name: '行銷活動', value: propertyDefaultValue['行銷活動'] || '' },
+            { name: '名單分級', value: propertyDefaultValue['名單分級'] || '' },
           ],
         },
         {
@@ -160,10 +149,10 @@ const MeetingPage = () => {
         Cookies.remove('landing')
         history.push('/meets/us/completed')
       } else {
-        alert(formatMessage(MeetingPageMessages.MeetingPage.errorMessage, { message: message }))
+        alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${message}`)
       }
     } catch (error) {
-      alert(formatMessage(MeetingPageMessages.MeetingPage.errorMessage, { message: error as string }))
+      alert(`發生錯誤，請聯繫網站管理員。錯誤訊息：${error}`)
     } finally {
       setIsSubmitting(false)
       window.location.reload()
@@ -174,28 +163,23 @@ const MeetingPage = () => {
     <DefaultLayout centeredBox noFooter={noFooter} noHeader={noHeader}>
       <StyledForm onSubmit={handleSubmit}>
         <Heading as="h3" size="lg" className="mb-4 text-center">
-          {formatMessage(MeetingPageMessages.MeetingPage.bookingLink, { managerUsername: managerUsername })}
+          {managerUsername} 預約連結
         </Heading>
         <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.name)}</FormLabel>
-          <Input required name="name" placeholder={formatMessage(MeetingPageMessages.MeetingPage.name)} />
+          <FormLabel>姓名</FormLabel>
+          <Input required name="name" placeholder="姓名" />
         </FormControl>
         <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.phone)}</FormLabel>
-          <Input required name="phone" placeholder={formatMessage(MeetingPageMessages.MeetingPage.phone)} />
+          <FormLabel>電話</FormLabel>
+          <Input required name="phone" placeholder="電話" />
         </FormControl>
         <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.email)}</FormLabel>
-          <Input
-            required
-            name="email"
-            type="email"
-            placeholder={formatMessage(MeetingPageMessages.MeetingPage.email)}
-          />
+          <FormLabel>Email</FormLabel>
+          <Input required name="email" type="email" placeholder="Email" />
         </FormControl>
         {categoryCheckboxes.length !== 0 ? (
           <FormControl className="mb-3" isRequired>
-            <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.interest)}</FormLabel>
+            <FormLabel>有興趣了解領域</FormLabel>
             <CheckboxGroup colorScheme="primary">
               <Stack>
                 {categoryCheckboxes.map(checkbox => (
@@ -211,30 +195,30 @@ const MeetingPage = () => {
           </FormControl>
         ) : null}
         <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.contactTime)}</FormLabel>
+          <FormLabel>方便聯繫時段</FormLabel>
           <CheckboxGroup colorScheme="primary">
             <Stack>
-              <Checkbox name="timeslot" value={formatMessage(MeetingPageMessages.MeetingPage.weekdayAfternoon)}>
-                {formatMessage(MeetingPageMessages.MeetingPage.weekdayAfternoon)}
+              <Checkbox name="timeslot" value="平日下午">
+                平日下午
               </Checkbox>
-              <Checkbox name="timeslot" value={formatMessage(MeetingPageMessages.MeetingPage.weekdayEvening)}>
-                {formatMessage(MeetingPageMessages.MeetingPage.weekdayEvening)}
+              <Checkbox name="timeslot" value="平日晚上">
+                平日晚上
               </Checkbox>
-              <Checkbox name="timeslot" value={formatMessage(MeetingPageMessages.MeetingPage.weekendAfternoon)}>
-                {formatMessage(MeetingPageMessages.MeetingPage.weekendAfternoon)}
+              <Checkbox name="timeslot" value="假日下午">
+                假日下午
               </Checkbox>
-              <Checkbox name="timeslot" value={formatMessage(MeetingPageMessages.MeetingPage.weekendEvening)}>
-                {formatMessage(MeetingPageMessages.MeetingPage.weekendEvening)}
+              <Checkbox name="timeslot" value="假日晚上">
+                假日晚上
               </Checkbox>
             </Stack>
           </CheckboxGroup>
         </FormControl>
         <FormControl className="mb-3">
-          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.introducer)}</FormLabel>
-          <Input name="referal" placeholder={formatMessage(MeetingPageMessages.MeetingPage.referralName)} />
+          <FormLabel>介紹人</FormLabel>
+          <Input name="referal" placeholder="介紹人姓名" />
         </FormControl>
         <Button width="100%" colorScheme="primary" type="submit" isLoading={isSubmitting}>
-          {formatMessage(MeetingPageMessages.MeetingPage.submit)}
+          送出
         </Button>
       </StyledForm>
     </DefaultLayout>

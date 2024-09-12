@@ -4,11 +4,9 @@ import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/co
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import moment from 'moment-timezone'
 import React from 'react'
-import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { CustomRatioImage } from '../../components/common/Image'
-import { commonMessages } from '../../helpers/translation'
 import { useLatestPost } from '../../hooks/blog'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
@@ -17,7 +15,6 @@ import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
 import { SectionTitle, StyledLink, StyledSection } from '../../pages/AppPage'
 import { StyledPostTitle } from '../blog'
 import { BREAK_POINT } from '../common/Responsive'
-import pageComponentsMessages from './translation'
 
 const StyledCustomRatioImage = styled(CustomRatioImage)`
   transition: transform 0.5s ease-in-out;
@@ -97,7 +94,6 @@ const StyledAngleRightIcon = styled(AngleRightIcon)`
 `
 
 const PostSection: React.VFC<{ options: { title?: string } }> = ({ options }) => {
-  const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
   const { loadingPosts, posts, errorPosts } = useLatestPost({ limit: 3 })
 
@@ -114,7 +110,7 @@ const PostSection: React.VFC<{ options: { title?: string } }> = ({ options }) =>
 
   return (
     <StyledSection className="page-section">
-      <SectionTitle>{options?.title || formatMessage(pageComponentsMessages.PostSection.blogColumn)}</SectionTitle>
+      <SectionTitle>{options?.title || '部落格專欄'}</SectionTitle>
 
       <div className="container px-0">
         <StyledPostListContainer className="mb-5">
@@ -149,7 +145,7 @@ const PostSection: React.VFC<{ options: { title?: string } }> = ({ options }) =>
 
         <div className="text-center">
           <StyledLink to="/blog">
-            {formatMessage(commonMessages.defaults.more)} <StyledAngleRightIcon />
+            查看更多 <StyledAngleRightIcon />
           </StyledLink>
         </div>
       </div>

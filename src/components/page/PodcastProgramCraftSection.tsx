@@ -1,16 +1,13 @@
 import { CraftLayout, CraftSection } from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
-import { useIntl } from 'react-intl'
-import { commonMessages } from '../../helpers/translation'
 import { SectionTitle, StyledAngleRightIcon, StyledLink } from '../../pages/AppPage'
 
 const PodcastProgramSection: React.VFC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({
   options,
 }) => {
-  const { formatMessage } = useIntl()
   return (
     <CraftSection>
-      <SectionTitle>{options?.title || formatMessage(commonMessages.content.selectPodcast)}</SectionTitle>
+      <SectionTitle>{options?.title || '精選廣播'}</SectionTitle>
 
       <div className="container">
         <CraftLayout
@@ -27,7 +24,7 @@ const PodcastProgramSection: React.VFC<{ options: { title?: string; colAmount?: 
 
       <div className="text-center">
         <StyledLink to="/podcasts">
-          {formatMessage(commonMessages.defaults.more)} <StyledAngleRightIcon />
+          查看更多 <StyledAngleRightIcon />
         </StyledLink>
       </div>
     </CraftSection>

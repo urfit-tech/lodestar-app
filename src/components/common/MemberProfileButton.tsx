@@ -149,7 +149,7 @@ const DefaultLogout: React.VFC<{ onClick?: React.MouseEventHandler<HTMLDivElemen
           close?.()
           logout && logout()
           history.push('/')
-          message.success(formatMessage(commonMessages.button.logoutSuccess))
+          message.success('已成功登出')
         })
       }
     >

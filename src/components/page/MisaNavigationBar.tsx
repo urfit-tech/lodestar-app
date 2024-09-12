@@ -1,7 +1,5 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import pageComponentsMessages from './translation'
 
 const StyledBar = styled.div`
   position: sticky;
@@ -40,29 +38,29 @@ const StyledItem = styled.div<{ variant?: 'active' }>`
   }
 `
 
+const sections: {
+  id: string
+  title: string
+}[] = [
+  {
+    id: 'intro',
+    title: 'MISA簡介',
+  },
+  {
+    id: 'chairman',
+    title: '理事長的話',
+  },
+  {
+    id: 'co-founder',
+    title: '共同創辦人',
+  },
+  {
+    id: 'director-list',
+    title: '理監事名單',
+  },
+]
+
 const NavigationBar: React.FC<{}> = () => {
-  const { formatMessage } = useIntl()
-  const sections: {
-    id: string
-    title: string
-  }[] = [
-    {
-      id: 'intro',
-      title: formatMessage(pageComponentsMessages.MisaNavigationBar.intro),
-    },
-    {
-      id: 'chairman',
-      title: formatMessage(pageComponentsMessages.MisaNavigationBar.chairman),
-    },
-    {
-      id: 'co-founder',
-      title: formatMessage(pageComponentsMessages.MisaNavigationBar.coFounder),
-    },
-    {
-      id: 'director-list',
-      title: formatMessage(pageComponentsMessages.MisaNavigationBar.directorList),
-    },
-  ]
   return (
     <StyledBar>
       <StyledWrapper>

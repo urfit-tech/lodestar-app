@@ -1,12 +1,10 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button } from 'antd'
 import React from 'react'
-import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import { BREAK_POINT } from '../common/Responsive'
-import projectMessages from './translation'
 
 const StyledView = styled.div`
   z-index: 10;
@@ -62,7 +60,6 @@ type ProjectPromotionSectionProps = {
   }
 }
 const ProjectPromotionSection: React.VFC<ProjectPromotionSectionProps> = ({ promotions, expiredAt, button }) => {
-  const { formatMessage } = useIntl()
   return (
     <StyledView className="d-flex align-items-center">
       <StyledWrapper className="container">
@@ -75,12 +72,7 @@ const ProjectPromotionSection: React.VFC<ProjectPromotionSectionProps> = ({ prom
             </div>
             <StyledCountDownTime className="d-flex align-items-center justify-content-between">
               {<Icon as={CalendarOIcon} className="icon mr-2" />}
-              {expiredAt && (
-                <CountDownTimeBlock
-                  text={formatMessage(projectMessages.ProjectBannerSection.discountCountdown)}
-                  expiredAt={expiredAt}
-                />
-              )}
+              {expiredAt && <CountDownTimeBlock text="優惠倒數" expiredAt={expiredAt} />}
             </StyledCountDownTime>
           </StyledSlogan>
           <Button

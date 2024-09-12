@@ -8,7 +8,6 @@ import { EnrolledProgramSelector } from '../../components/program/ProgramSelecto
 import { commonMessages } from '../../helpers/translation'
 import { usePracticeCollection } from '../../hooks/practice'
 import { ReactComponent as BookIcon } from '../../images/book.svg'
-import memberPageMessages from './translation'
 
 const PracticeCollectionAdminPage = () => {
   const { formatMessage } = useIntl()
@@ -67,7 +66,7 @@ const PracticeCollectionBlock: React.VFC<{
           </div>
         ))
       ) : (
-        <p>{formatMessage(memberPageMessages.PracticeCollectionAdminPage.noAssignments)}</p>
+        <p>沒有作業唷，可以去課程裡繳交作業，之後來這查看。</p>
       )}
     </div>
   )

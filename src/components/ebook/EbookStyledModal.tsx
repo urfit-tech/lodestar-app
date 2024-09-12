@@ -12,9 +12,7 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import { useState } from 'react'
-import { useIntl } from 'react-intl'
 import { MinusIcon, PlusIcon } from '../../images'
-import ebookMessages from './translation'
 
 const EbookStyledModal: React.VFC<{
   fontSize: number
@@ -26,7 +24,6 @@ const EbookStyledModal: React.VFC<{
     onOpen: () => void
   }>
 }> = ({ renderTrigger, fontSize, lineHeight, onFontSizeChange, onLineHeightChange, onThemeChange }) => {
-  const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [selectedTheme, setSelectedTheme] = useState('light')
   const toast = useToast()
@@ -73,13 +70,13 @@ const EbookStyledModal: React.VFC<{
           <ModalBody>
             <Box px="8px" py="24px">
               <Flex mb="16px">
-                <Flex {...LabelStyle}>{formatMessage(ebookMessages.EbookStyledModal.fontSizeLabel)}</Flex>
+                <Flex {...LabelStyle}>字級</Flex>
                 <Button
                   {...ButtonStyle}
                   onClick={() => {
                     if (fontSize <= 10) {
                       toast({
-                        title: formatMessage(ebookMessages.EbookStyledModal.minFontSizeReached),
+                        title: '已達最小字級',
                         status: 'info',
                         duration: 3000,
                         isClosable: false,
@@ -92,14 +89,14 @@ const EbookStyledModal: React.VFC<{
                   }}
                 >
                   <Icon as={MinusIcon} {...IconStyle} />
-                  {formatMessage(ebookMessages.EbookStyledModal.decreaseFontSize)}
+                  縮小
                 </Button>
                 <Button
                   {...ButtonStyle}
                   onClick={() => {
                     if (fontSize >= 40) {
                       toast({
-                        title: formatMessage(ebookMessages.EbookStyledModal.maxFontSizeReached),
+                        title: '已達最大字級',
                         status: 'info',
                         duration: 3000,
                         isClosable: false,
@@ -112,18 +109,18 @@ const EbookStyledModal: React.VFC<{
                   }}
                 >
                   <Icon as={PlusIcon} {...IconStyle} />
-                  {formatMessage(ebookMessages.EbookStyledModal.increaseFontSize)}
+                  放大
                 </Button>
               </Flex>
 
               <Flex mb="16px">
-                <Flex {...LabelStyle}>{formatMessage(ebookMessages.EbookStyledModal.lineHeightLabel)}</Flex>
+                <Flex {...LabelStyle}>行距</Flex>
                 <Button
                   {...ButtonStyle}
                   onClick={() => {
                     if (lineHeight <= 1.5) {
                       toast({
-                        title: formatMessage(ebookMessages.EbookStyledModal.minLineHeightReached),
+                        title: '已達最小行距',
                         status: 'info',
                         duration: 3000,
                         isClosable: false,
@@ -136,14 +133,14 @@ const EbookStyledModal: React.VFC<{
                   }}
                 >
                   <Icon as={MinusIcon} {...IconStyle} />
-                  {formatMessage(ebookMessages.EbookStyledModal.decreaseLineHeight)}
+                  縮小
                 </Button>
                 <Button
                   {...ButtonStyle}
                   onClick={() => {
                     if (lineHeight >= 3.0) {
                       toast({
-                        title: formatMessage(ebookMessages.EbookStyledModal.maxLineHeightReached),
+                        title: '已達最大行距',
                         status: 'info',
                         duration: 3000,
                         isClosable: false,
@@ -156,19 +153,19 @@ const EbookStyledModal: React.VFC<{
                   }}
                 >
                   <Icon as={PlusIcon} {...IconStyle} />
-                  {formatMessage(ebookMessages.EbookStyledModal.increaseLineHeight)}
+                  增加
                 </Button>
               </Flex>
 
               <Flex>
-                <Flex {...LabelStyle}>{formatMessage(ebookMessages.EbookStyledModal.theme)}</Flex>
+                <Flex {...LabelStyle}>主題</Flex>
                 <Button
                   {...buttonAppearanceStyle}
                   colorScheme="primary"
                   variant={selectedTheme === 'light' ? 'solid' : 'outline'}
                   onClick={() => handleOnClick('light')}
                 >
-                  {formatMessage(ebookMessages.EbookStyledModal.lightTheme)}
+                  亮色
                 </Button>
                 <Button
                   {...buttonAppearanceStyle}
@@ -176,7 +173,7 @@ const EbookStyledModal: React.VFC<{
                   variant={selectedTheme === 'dark' ? 'solid' : 'outline'}
                   onClick={() => handleOnClick('dark')}
                 >
-                  {formatMessage(ebookMessages.EbookStyledModal.darkTheme)}
+                  深色
                 </Button>
               </Flex>
             </Box>

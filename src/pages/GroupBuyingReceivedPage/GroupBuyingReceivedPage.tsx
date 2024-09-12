@@ -85,23 +85,11 @@ const GroupBuyingReceivedContainer: React.VFC = () => {
   const productWording: () => { idleTitle: string; name: string; successMessage: string } = () => {
     switch (type) {
       case 'ProgramPlan':
-        return {
-          idleTitle: formatMessage(GroupBuyingReceivedPageMessages.productWording.receiveProgram),
-          name: formatMessage(GroupBuyingReceivedPageMessages.productWording.programPlanName),
-          successMessage: formatMessage(GroupBuyingReceivedPageMessages.productWording.availableProgram),
-        }
+        return { idleTitle: '你已收到一堂課程', name: '課程', successMessage: '現在你可使用課程囉！' }
       case 'ActivityTicket':
-        return {
-          idleTitle: formatMessage(GroupBuyingReceivedPageMessages.productWording.receiveTicket),
-          name: formatMessage(GroupBuyingReceivedPageMessages.productWording.ticketName),
-          successMessage: formatMessage(GroupBuyingReceivedPageMessages.productWording.availableActivity),
-        }
+        return { idleTitle: '你已收到一張票券', name: '票券', successMessage: '接下來就可以參與活動囉！' }
       default:
-        return {
-          idleTitle: formatMessage(GroupBuyingReceivedPageMessages.productWording.receiveProduct),
-          name: formatMessage(GroupBuyingReceivedPageMessages.productWording.productName),
-          successMessage: formatMessage(GroupBuyingReceivedPageMessages.productWording.availableProduct),
-        }
+        return { idleTitle: '你已收到一個商品', name: '商品', successMessage: '現在你可使用產品囉！' }
     }
   }
   const setAuthModalVisible = () => {
@@ -175,14 +163,11 @@ const GroupBuyingReceivedContainer: React.VFC = () => {
           <ChakraIcon as={GiftIcon} />
         </StyledIcon>
       ),
-      buttonTitle: formatMessage(GroupBuyingReceivedPageMessages.productWording.confirmReceive),
+      buttonTitle: '確認領取',
       title: productWording().idleTitle,
-      message: formatMessage(GroupBuyingReceivedPageMessages.productWording.idleMessage, {
-        ownerName: payload?.ownerName,
-        title: payload?.title,
-        productName: productWording().name,
-        expDate: dayjs(new Date((payload?.exp as number) * 1000 || 0)).format('YYYY-MM-DD'),
-      }),
+      message: `來自 ${payload?.ownerName} 贈送的「${payload?.title}」的${productWording().name}，請於 ${dayjs(
+        new Date((payload?.exp as number) * 1000 || 0),
+      ).format('YYYY-MM-DD')} 前領取。`,
       onClick: () => {
         if (!isAuthenticated) {
           setAuthModalVisible()
@@ -197,43 +182,30 @@ const GroupBuyingReceivedContainer: React.VFC = () => {
           <ChakraIcon as={GiftIcon} />
         </StyledIcon>
       ),
-      buttonTitle: formatMessage(GroupBuyingReceivedPageMessages.productWording.receiveNow),
-      title: formatMessage(GroupBuyingReceivedPageMessages.productWording.receiveTitle, {
-        productName: productWording().name,
-      }),
-      message: formatMessage(GroupBuyingReceivedPageMessages.productWording.loadingMessage, {
-        ownerName: payload?.ownerName,
-        title: payload?.title,
-        exp: payload?.exp,
-      }),
+      buttonTitle: '立即接收',
+      title: `接收${productWording().name}`,
+      message: `來自 ${payload?.ownerName} 贈送的「${payload?.title}」${payload?.exp}`,
       onClick: null,
     },
     success: {
       Icon: <ChakraIcon as={SuccessIcon} w="64px" h="64px" />,
-      buttonTitle: formatMessage(GroupBuyingReceivedPageMessages.productWording.viewNow),
-      title: formatMessage(GroupBuyingReceivedPageMessages.productWording.successTitle, {
-        productName: productWording().name,
-      }),
+      buttonTitle: '立即查看',
+      title: `已收到${productWording().name}`,
       message: productWording().successMessage,
       onClick: () => history.push(`/members/${currentMemberId}`),
     },
     failed: {
       Icon: <ChakraIcon as={AlertIcon} w="64px" h="64px" />,
-      buttonTitle: formatMessage(GroupBuyingReceivedPageMessages.productWording.backToHome),
-      title: formatMessage(GroupBuyingReceivedPageMessages.productWording.expired),
-      message: formatMessage(GroupBuyingReceivedPageMessages.productWording.failedMessage, {
-        productName: productWording().name,
-        ownerName: payload?.ownerName,
-      }),
+      buttonTitle: '回首頁',
+      title: `超過領取效期`,
+      message: `${productWording().name}已超過領取效期，請與 ${payload?.ownerName} 聯繫。`,
       onClick: () => history.push('/'),
     },
     transferred: {
       Icon: <ChakraIcon as={AlertIcon} w="64px" h="64px" />,
-      buttonTitle: formatMessage(GroupBuyingReceivedPageMessages.productWording.backToHome),
-      title: formatMessage(GroupBuyingReceivedPageMessages.productWording.itemReceived),
-      message: formatMessage(GroupBuyingReceivedPageMessages.productWording.transferredMessage, {
-        ownerName: payload?.ownerName,
-      }),
+      buttonTitle: '回首頁',
+      title: `該項目已被領取`,
+      message: `該項目已被領取，請與 ${payload?.ownerName} 聯繫。`,
       onClick: () => history.push('/'),
     },
   }

@@ -3,13 +3,24 @@ import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
-import { useIntl } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { ReactComponent as lineCircle } from '../images/line-circle.svg'
 import { ReactComponent as lineLinking } from '../images/line-linking.svg'
-import pageMessages from './translation'
+
+const messages = defineMessages({
+  isBinding: { id: 'line.status.isBinding', defaultMessage: '綁定處理中...' },
+  linePersonalizedServiceBinding: {
+    id: 'line.title.linePersonalizedServiceBinding',
+    defaultMessage: 'Line個人化服務綁定',
+  },
+  bindingStart: {
+    id: 'line.button.bindingStart',
+    defaultMessage: '開始綁定',
+  },
+})
 
 const StyledBindingIcon = styled.div`
   font-size: 64px;
@@ -75,9 +86,7 @@ const LineBindingPage: React.VFC = () => {
           <div className="text-center mb-4">
             <StyledBindingIcon as={lineLinking} />
           </div>
-          <StyledLinkingText className="text-center">
-            {formatMessage(pageMessages.LineBindingPage.isBinding)}
-          </StyledLinkingText>
+          <StyledLinkingText className="text-center">{formatMessage(messages.isBinding)}</StyledLinkingText>
         </StyledBindingContainer>
       </DefaultLayout>
     )
@@ -87,21 +96,17 @@ const LineBindingPage: React.VFC = () => {
       <StyledContainer>
         <div className="d-flex justify-content-center mb-4">
           <StyledIcon as={lineCircle} />
-          <StyledTitle>{formatMessage(pageMessages.LineBindingPage.linePersonalizedServiceBinding)}</StyledTitle>
+          <StyledTitle>{formatMessage(messages.linePersonalizedServiceBinding)}</StyledTitle>
         </div>
         <div className="mb-4">
-          <p className="text-center">{formatMessage(pageMessages.LineBindingPage.bindAccount, { name: name })}</p>
-          <p className="text-center">
-            {formatMessage(pageMessages.LineBindingPage.bindLineService, {
-              userName: currentMember?.username,
-            })}
-          </p>
+          <p className="text-center">將以此 {name} 帳號</p>
+          <p className="text-center">{currentMember?.username} 綁定 LINE 個人化服務</p>
         </div>
         <StyledButton
           variant="primary"
           onClick={() => authToken && handleAccountLink(appId, accountLinkToken, authToken)}
         >
-          {formatMessage(pageMessages.LineBindingPage.bindingStart)}
+          {formatMessage(messages.bindingStart)}
         </StyledButton>
       </StyledContainer>
     </DefaultLayout>

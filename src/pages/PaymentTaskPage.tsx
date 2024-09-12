@@ -2,7 +2,7 @@ import { Icon } from '@chakra-ui/icons'
 import { Button } from 'antd'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useEffect, useState } from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -10,17 +10,6 @@ import { StyledContainer } from '../components/layout/DefaultLayout/DefaultLayou
 import { codeMessages, commonMessages } from '../helpers/translation'
 import { useTask } from '../hooks/task'
 import { ReactComponent as ErrorIcon } from '../images/error.svg'
-
-const messages = defineMessages({
-  generatingPaymentInfo: {
-    id: 'paymentTaskPage.message.generatingPaymentInfo',
-    defaultMessage: '產生付款資訊中...',
-  },
-  doNotRefresh: {
-    id: 'paymentTaskPage.message.doNotRefresh',
-    defaultMessage: '請勿重整與返回上一頁',
-  },
-})
 
 const StyledWrapper = styled.div`
   padding: 4rem 1rem;
@@ -92,9 +81,7 @@ const PaymentTaskPage: React.VFC = () => {
     <DefaultLayout noFooter noHeader centeredBox>
       <StyledContainer>
         <div className="text-center">
-          {formatMessage(messages.generatingPaymentInfo)}
-          {(Math.exp(-1 / retry) * 100).toFixed(0)}%
-          <StyledWarning>{formatMessage(messages.doNotRefresh)}</StyledWarning>
+          產生付款資訊中...{(Math.exp(-1 / retry) * 100).toFixed(0)}%<StyledWarning>請勿重整與返回上一頁</StyledWarning>
         </div>
       </StyledContainer>
     </DefaultLayout>

@@ -7,18 +7,6 @@ const authMessages = {
     formatIsInvalidated: { id: 'auth.*.formatIsInvalidated', defaultMessage: '格式有誤' },
   }),
   RegisterSection: defineMessages({
-    smsVerificationFailed: {
-      id: 'auth.RegisterSection.smsVerificationFailed',
-      defaultMessage: '簡訊驗證失敗',
-    },
-    smsSentSuccess: {
-      id: 'auth.RegisterSection.smsSentSuccess',
-      defaultMessage: '成功發送簡訊碼',
-    },
-    enterPhoneNumber: {
-      id: 'auth.RegisterSection.enterPhoneNumber',
-      defaultMessage: '請輸入手機號碼',
-    },
     emailIsAlreadyRegistered: {
       id: 'auth.RegisterSection.emailIsAlreadyRegistered',
       defaultMessage: '此信箱已註冊',
@@ -81,23 +69,11 @@ const authMessages = {
     officialWebsite: { id: 'auth.RegisterSection.officialWebsite', defaultMessage: '官方網站' },
     officialWebsiteMessage: { id: 'auth.RegisterSection.officialWebsiteMessage', defaultMessage: 'https://' },
     companyAddress: { id: 'auth.RegisterSection.companyAddress', defaultMessage: '公司地址' },
-    companyCity: {
-      id: 'auth.RegisterSection.companyCity',
-      defaultMessage: '公司縣市',
-    },
-    companyDistrict: {
-      id: 'auth.RegisterSection.companyDistrict',
-      defaultMessage: '公司鄉鎮區',
-    },
     companyAddressPlease: { id: 'auth.RegisterSection.companyAddressPlease', defaultMessage: '請輸入地址' },
     detailedAddress: { id: 'auth.RegisterSection.detailedAddress', defaultMessage: '詳細地址' },
     personInChargeOfTheCompany: { id: 'auth.RegisterSection.personInChargeOfTheCompany', defaultMessage: '公司負責人' },
     companyPhone: { id: 'auth.RegisterSection.companyPhone', defaultMessage: '公司電話' },
     companyAbstract: { id: 'auth.RegisterSection.companyAbstract', defaultMessage: '公司簡介' },
-    companyIntro: {
-      id: 'auth.RegisterSection.companyIntro',
-      defaultMessage: '公司介紹',
-    },
   }),
   LoginSection: defineMessages({
     loginAlertModalTitle: {

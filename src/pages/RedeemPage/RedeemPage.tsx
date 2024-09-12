@@ -15,7 +15,7 @@ import { ReactComponent as GiftIcon } from '../../images/gift.svg'
 import { ReactComponent as AlertIcon } from '../../images/status-alert.svg'
 import { ReactComponent as SuccessIcon } from '../../images/status-success.svg'
 import { ApiResponse } from '../../types/general'
-import { default as RedeemPageMessages, default as redeemPageMessages } from './translation'
+import redeemPageMessages from './translation'
 
 const StyledContainer = styled.div`
   padding: 4rem 1rem;
@@ -115,7 +115,7 @@ const RedeemPage: React.VFC = () => {
   }
 
   // TODO discount type formate
-  const discountTypeText = payload?.type === 'Voucher' ? formatMessage(RedeemPageMessages.RedeemPage.voucher) : ''
+  const discountTypeText = payload?.type === 'Voucher' ? '兌換券' : ''
   const sendingStateOject = {
     idle: {
       Icon: (
@@ -123,13 +123,9 @@ const RedeemPage: React.VFC = () => {
           <ChakraIcon as={GiftIcon} />
         </StyledIcon>
       ),
-      buttonTitle: formatMessage(RedeemPageMessages.idle.buttonTitle),
-      title: formatMessage(RedeemPageMessages.idle.title, { discountTypeText }),
-      message: formatMessage(RedeemPageMessages.idle.message, {
-        ownerName: payload?.ownerName,
-        title: payload?.title,
-        discountTypeText,
-      }),
+      buttonTitle: '立即接收',
+      title: `接收${discountTypeText}`,
+      message: `來自 ${payload?.ownerName} 贈送的「${payload?.title}」${discountTypeText}`,
       onClick: (modalVisible?: (visible: boolean) => void) => {
         if (!isAuthenticated) {
           modalVisible?.(true)
@@ -144,31 +140,23 @@ const RedeemPage: React.VFC = () => {
           <ChakraIcon as={GiftIcon} />
         </StyledIcon>
       ),
-      buttonTitle: formatMessage(RedeemPageMessages.loading.buttonTitle),
-      title: formatMessage(RedeemPageMessages.loading.title, { discountTypeText }),
-      message: formatMessage(RedeemPageMessages.loading.message, {
-        ownerName: payload?.ownerName,
-        title: payload?.title,
-        discountTypeText,
-      }),
+      buttonTitle: '立即接收',
+      title: `接收${discountTypeText}`,
+      message: `來自 ${payload?.ownerName} 贈送的「${payload?.title}」${discountTypeText}`,
       onClick: null,
     },
     success: {
       Icon: <ChakraIcon as={SuccessIcon} w="64px" h="64px" />,
-      buttonTitle: formatMessage(RedeemPageMessages.success.buttonTitle),
-      title: formatMessage(RedeemPageMessages.success.title, { discountTypeText }),
-      message: formatMessage(RedeemPageMessages.success.message, { discountTypeText }),
+      buttonTitle: '立即查看',
+      title: `已收到${discountTypeText}`,
+      message: `現在你可使用${discountTypeText}囉！`,
       onClick: () => history.push('/settings/voucher'),
     },
     failed: {
       Icon: <ChakraIcon as={AlertIcon} w="64px" h="64px" />,
-      buttonTitle: formatMessage(RedeemPageMessages.failed.buttonTitle),
-      title: formatMessage(RedeemPageMessages.failed.title, { discountTypeText }),
-      message: formatMessage(RedeemPageMessages.failed.message, {
-        ownerName: payload?.ownerName,
-        title: payload?.title,
-        discountTypeText,
-      }),
+      buttonTitle: '回首頁',
+      title: `${discountTypeText}已失效`,
+      message: `來自 ${payload?.ownerName} 贈送的「${payload?.title}」${discountTypeText}已失效`,
       onClick: () => history.push('/'),
     },
   }

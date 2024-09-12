@@ -4,51 +4,15 @@ import axios from 'axios'
 import jwt from 'jsonwebtoken'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
-import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useState } from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
-
-const messages = defineMessages({
-  bankCodeMessage: {
-    id: 'payment.label.bankCodeMessage',
-    defaultMessage: '您的後五碼：{bankCode}',
-  },
-  noBankCodeMessage: {
-    id: 'payment.label.noBankCodeMessage',
-    defaultMessage: '若已匯款成功，請填入您的銀行帳號後五碼。',
-  },
-  notifyCustomerService: {
-    id: 'payment.message.notifyCustomerService',
-    defaultMessage: '已更新，請通知客服',
-  },
-  paymentComplete: {
-    id: 'payment.message.paymentComplete',
-    defaultMessage: '若已付款完成，稍後重整頁面確認訂單狀態。',
-  },
-  paymentInfoError: {
-    id: 'payment.error.paymentInfoError',
-    defaultMessage: '無法請求付款資訊，請與平台聯繫 ',
-  },
-  orderSuccess: {
-    id: 'payment.message.orderSuccess',
-    defaultMessage: '訂單已建立成功，請透過{method}來完成付款',
-  },
-  paymentNo: {
-    id: 'payment.message.paymentNo',
-    defaultMessage: '交易編號：{paymentNo}',
-  },
-  bankTransfer: {
-    id: 'payment.method.bankTransfer',
-    defaultMessage: '銀行匯款',
-  },
-})
 
 const PaymentPage: React.VFC = () => {
   const { formatMessage } = useIntl()
@@ -100,14 +64,12 @@ const PaymentPage: React.VFC = () => {
                   style={{ fontSize: '4rem' }}
                 />
                 <Typography.Title level={4} className="mb-3">
-                  {formatMessage(messages.bankTransfer)}
+                  銀行匯款
                 </Typography.Title>
                 <Typography.Title level={4} className="mb-3">
                   {payment?.payment_log[0]?.options?.bankCode
-                    ? formatMessage(messages.bankCodeMessage, {
-                        bankCode: payment?.payment_log[0]?.options?.bankCode,
-                      })
-                    : formatMessage(messages.noBankCodeMessage)}
+                    ? `您的後五碼：${payment?.payment_log[0]?.options?.bankCode}`
+                    : '若已匯款成功，請填入您的銀行帳號後五碼。'}
                 </Typography.Title>
                 {!payment?.payment_log[0]?.options?.bankCode && (
                   <>
@@ -135,7 +97,7 @@ const PaymentPage: React.VFC = () => {
                           )
                           .then(r => {
                             if (r.data.code === 'SUCCESS') {
-                              message.success(formatMessage(messages.notifyCustomerService))
+                              message.success('已更新，請通知客服')
                             }
                           })
                           .catch(handleError)
@@ -156,15 +118,10 @@ const PaymentPage: React.VFC = () => {
                   style={{ fontSize: '4rem' }}
                 />
                 <Typography.Title level={4} className="mb-3">
-                  {formatMessage(messages.orderSuccess, {
-                    method:
-                      method === 'cash'
-                        ? formatMessage(checkoutMessages.label.cash)
-                        : formatMessage(checkoutMessages.label.physicalCredit),
-                  })}
+                  訂單已建立成功，請透過{method === 'cash' ? '現金' : '實體刷卡'}來完成付款
                 </Typography.Title>
                 <Typography.Title level={4} className="mb-3">
-                  {formatMessage(messages.paymentComplete)}
+                  若已付款完成，稍後重整頁面確認訂單狀態。
                 </Typography.Title>
               </>
             ) : (
@@ -177,10 +134,10 @@ const PaymentPage: React.VFC = () => {
                   style={{ fontSize: '4rem' }}
                 />
                 <Typography.Title level={4} className="mb-3">
-                  {formatMessage(messages.paymentInfoError)}
+                  無法請求付款資訊，請與平台聯繫{' '}
                 </Typography.Title>
                 <Typography.Title level={4} className="mb-3">
-                  {formatMessage(messages.paymentNo, { paymentNo: paymentNo })}
+                  交易編號：{paymentNo}
                 </Typography.Title>
               </>
             )}
