@@ -12,6 +12,15 @@ const voucherMessages = {
     transfer: { id: 'voucher.VoucherDeliverModal.transfer', defaultMessage: '轉贈' },
   }),
   VoucherExchangeModal: defineMessages({
+    homePage: {
+      id: 'voucher.VoucherExchangeModal.homePage',
+      defaultMessage: '我的主頁',
+    },
+    info: {
+      id: 'voucher.VoucherExchangeModal.info',
+      defaultMessage:
+        '*If you do not see the redemption coupon in the "Available" tab after adding it, please try to refresh or exit the page and re-enter.',
+    },
     useNow: { id: 'voucher.VoucherExchangeModal.useNow', defaultMessage: '立即使用' },
     exchange: { id: 'voucher.VoucherExchangeModal.exchange', defaultMessage: '兌換' },
     notice: { id: 'voucher.VoucherExchangeModal.notice', defaultMessage: '兌換券為一次使用後失效，請一次兌換完畢' },
