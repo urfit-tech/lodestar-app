@@ -1,13 +1,13 @@
 import { gql, useApolloClient, useQuery } from '@apollo/client'
-import { Button, Form, message, Spin } from 'antd'
 import { Icon } from '@chakra-ui/react'
+import { Button, Form, message, Spin } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useEffect, useState } from 'react'
-import { AiOutlineUser, AiOutlineLock } from 'react-icons/ai'
+import { AiOutlineLock, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -157,7 +157,7 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   if (isAuthenticating) return <Spin />
 
   return (
-    <DefaultLayout noFooter centeredBox>
+    <DefaultLayout centeredBox>
       <StyledContainer>
         {isProjectPortfolioParticipant ? (
           loadingMemberEmail ? (
