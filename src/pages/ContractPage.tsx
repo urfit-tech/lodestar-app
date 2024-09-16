@@ -169,6 +169,8 @@ const ContractPage: React.VFC = () => {
                     })}
                   </b>
                 </>
+              ) : memberContract.startedAt && moment() >= moment(memberContract.startedAt) ? (
+                <b> {formatMessage(pageMessages.ContractPage.contractExpired)}</b>
               ) : !!(currentMemberId && currentMemberId === memberId) ? (
                 <>
                   <p>
