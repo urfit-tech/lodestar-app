@@ -83,6 +83,7 @@ export const MemberAdminMenu: React.VFC<
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
   const { socialCards } = useSocialCardCollection()
   const payload = authToken ? parsePayload(authToken) : null
+  const hideKeys = settings['settings.menu.hide_keys']?.split(',') || []
 
   const defaultMenuItems = [
     {
@@ -259,6 +260,9 @@ export const MemberAdminMenu: React.VFC<
       }) || (
         <AdminMenu {...props} style={{ background: 'transparent', border: 'none' }}>
           {defaultMenuItems
+            .filter(v => {
+              return !hideKeys.includes(v.key)
+            })
             .filter(v => {
               if (settings['nav.personal_setting.disable'] === '1') {
                 return v.key !== 'member_profile_admin'
