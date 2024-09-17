@@ -44,7 +44,7 @@ const StyledLayoutWrapper = styled(StyledLayout)`
 `
 const StyledNotificationBar = styled.div<{ variant?: string }>`
   position: sticky;
-  z-index: 1000;
+  z-index: 500;
   top: 0;
   left: 0;
   height: 40px;
