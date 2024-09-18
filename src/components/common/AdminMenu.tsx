@@ -53,8 +53,8 @@ export const AdminMenu: React.FC<MenuProps> = ({ children, ...menuProps }) => {
   const { managementDomain } = useManagementDomain(appId)
 
   const handleClick = ({ key, item }: ClickParam) => {
-    if (key.startsWith('translation')) {
-      setCurrentLocale?.(key.split('_')[1])
+    if (SUPPORTED_LOCALES.map(v => v.locale).includes(key)) {
+      setCurrentLocale?.(key)
     } else if (item.props['data-href']) {
       if (key.startsWith('_blank')) window.open(item.props['data-href'])
       else history.push(item.props['data-href'])
@@ -240,7 +240,7 @@ export const MemberAdminMenu: React.VFC<
         enabledModules.locale && window.innerWidth < BREAK_POINT ? (
           <Menu.SubMenu
             key="translation"
-            title={SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale)?.label}
+            title={SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === currentLocale)?.label}
           >
             {SUPPORTED_LOCALES.filter(v => v.locale !== currentLocale).map(v => (
               <Menu.Item key={v.locale}>{v.label}</Menu.Item>
