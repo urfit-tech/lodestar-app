@@ -11257,7 +11257,7 @@ lodash.uniq@^4.5.0:
 
 lodestar-app-element@urfit-tech/lodestar-app-element#v1.83.0:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/d442484440851ad5a3cfb4b2d18f4b6a0fbe0865"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/ea6f26462eec8b1f3761b1feff3fbc5a7fd3fc00"
   dependencies:
     "@apollo/client" "^3.7.11"
     "@babel/cli" "^7.13.16"
