@@ -157,7 +157,7 @@ const ResetPasswordPage: React.VFC<FormComponentProps> = ({ form }) => {
   if (isAuthenticating) return <Spin />
 
   return (
-    <DefaultLayout noFooter centeredBox>
+    <DefaultLayout centeredBox>
       <StyledContainer>
         {isProjectPortfolioParticipant ? (
           loadingMemberEmail ? (
