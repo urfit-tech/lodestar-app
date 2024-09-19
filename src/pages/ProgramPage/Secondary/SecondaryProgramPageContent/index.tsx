@@ -175,6 +175,7 @@ const SecondaryProgramPageContent: React.VFC = () => {
           scrollToPreview={scrollToPreview}
           scrollToPlanBlock={scrollToPlanBlock}
         />
+
         <StyledProgramIntroBlock>
           <div className="container">
             <div className="row">

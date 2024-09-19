@@ -1,4 +1,5 @@
 import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import { Dropdown } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -20,7 +21,7 @@ import AuthModal, { AuthModalContext } from '../../auth/AuthModal'
 import CartDropdown from '../../checkout/CartDropdown'
 import Footer from '../../common/Footer'
 import MemberProfileButton from '../../common/MemberProfileButton'
-import Responsive from '../../common/Responsive'
+import Responsive, { BREAK_POINT } from '../../common/Responsive'
 import NotificationDropdown from '../../notification/NotificationDropdown'
 import {
   CenteredBox,
@@ -44,7 +45,7 @@ const StyledLayoutWrapper = styled(StyledLayout)`
 `
 const StyledNotificationBar = styled.div<{ variant?: string }>`
   position: sticky;
-  z-index: 500;
+  z-index: 1000;
   top: 0;
   left: 0;
   height: 40px;
@@ -265,7 +266,6 @@ const DefaultLayout: React.FC<{
                     <MenuList>
                       {SUPPORTED_LOCALES.map(supportedLocale => (
                         <MenuItem
-                          style={{ lineHeight: '2rem' }}
                           defaultValue={currentLocale}
                           onClick={() => setCurrentLocale?.(supportedLocale.locale)}
                           value={supportedLocale.locale}
