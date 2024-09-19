@@ -1,5 +1,4 @@
-import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
-import { Dropdown } from 'antd'
+import { Menu, MenuButton, MenuList } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -9,19 +8,17 @@ import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import AuthButton from '../../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
-import LocaleContext, { SUPPORTED_LOCALES } from '../../../contexts/LocaleContext'
 import MediaPlayerContext from '../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../../helpers/translation'
 import { useNav } from '../../../hooks/data'
 import { useMember } from '../../../hooks/member'
-import { EarthGlobalIcon } from '../../../images'
 import DefaultAvatar from '../../../images/avatar.svg'
 import AuthModal, { AuthModalContext } from '../../auth/AuthModal'
 import CartDropdown from '../../checkout/CartDropdown'
 import Footer from '../../common/Footer'
 import MemberProfileButton from '../../common/MemberProfileButton'
-import Responsive, { BREAK_POINT } from '../../common/Responsive'
+import Responsive from '../../common/Responsive'
 import NotificationDropdown from '../../notification/NotificationDropdown'
 import {
   CenteredBox,
@@ -92,7 +89,6 @@ const DefaultLayout: React.FC<{
   const { navs } = useNav()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
-  const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
   const { renderCartButton, renderMyPageNavItem, renderCreatorPageNavItem } = useCustomRenderer()
   const [isBusinessMember, setIsBusinessMember] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -256,27 +252,6 @@ const DefaultLayout: React.FC<{
                       </Menu>
                     )))}
               </Responsive.Desktop>
-
-              {enabledModules.locale ? (
-                <Responsive.Desktop>
-                  <Menu>
-                    <MenuButton p="1rem">
-                      <EarthGlobalIcon height="24px" width="24px" />
-                    </MenuButton>
-                    <MenuList>
-                      {SUPPORTED_LOCALES.map(supportedLocale => (
-                        <MenuItem
-                          defaultValue={currentLocale}
-                          onClick={() => setCurrentLocale?.(supportedLocale.locale)}
-                          value={supportedLocale.locale}
-                        >
-                          {supportedLocale.label}
-                        </MenuItem>
-                      ))}
-                    </MenuList>
-                  </Menu>
-                </Responsive.Desktop>
-              ) : null}
 
               {(enabledModules.search || enabledModules.search_advanced) && <GlobalSearchModal />}
               {!noCart &&
