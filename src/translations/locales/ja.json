@@ -1497,6 +1497,7 @@
   "project.label.fundingProject": "資金調達プロジェクト",
   "project.label.isExpired": "終了しました",
   "project.label.isExpiredFunding": "プロジェクト終了",
+  "project.label.onSaleCountDownDay": "セールカウントダウン {days} {days, plural, one {日} other {日}}",
   "project.label.onSaleCountDownDays": "{projectType} カウントダウン {days} {days, plural, one {日} other {日}}",
   "project.label.onSaleProject": "販売プロジェクト",
   "project.label.preOrderProject": "予約販売プロジェクト",

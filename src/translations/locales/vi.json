@@ -1497,6 +1497,7 @@
   "project.label.fundingProject": "Dự án gây quỹ",
   "project.label.isExpired": "Đã kết thúc",
   "project.label.isExpiredFunding": "Dự án đã kết thúc",
+  "project.label.onSaleCountDownDay": "Đếm ngược khuyến mãi {days} {days, plural, one {ngày} other {ngày}}",
   "project.label.onSaleCountDownDays": "{projectType} đếm ngược {days} {days, plural, one {ngày} other {ngày}}",
   "project.label.onSaleProject": "Dự án giảm giá",
   "project.label.preOrderProject": "Dự án đặt hàng trước",

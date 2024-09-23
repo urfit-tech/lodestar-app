@@ -1497,6 +1497,7 @@
   "project.label.fundingProject": "Funding Project",
   "project.label.isExpired": "Expired",
   "project.label.isExpiredFunding": "Project Ended",
+  "project.label.onSaleCountDownDay": "Sale countdown {days} {days, plural, one {day} other {days}}",
   "project.label.onSaleCountDownDays": "{projectType}Countdown{days} {days, plural, one {days} other {days}}",
   "project.label.onSaleProject": "Promotion Project",
   "project.label.preOrderProject": "PreOrder Project",

@@ -1497,6 +1497,7 @@
   "project.label.fundingProject": "募资项目",
   "project.label.isExpired": "已结束",
   "project.label.isExpiredFunding": "项目结束",
+  "project.label.onSaleCountDownDay": "促销倒计时 {days} {days, plural, one {天} other {天}}",
   "project.label.onSaleCountDownDays": "{projectType}倒数 {days} {days, plural, one {天} other {天}}",
   "project.label.onSaleProject": "促销项目",
   "project.label.preOrderProject": "预购项目",

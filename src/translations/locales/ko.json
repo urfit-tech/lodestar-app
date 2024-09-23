@@ -1497,6 +1497,7 @@
   "project.label.fundingProject": "모금 프로젝트",
   "project.label.isExpired": "종료됨",
   "project.label.isExpiredFunding": "프로젝트 종료",
+  "project.label.onSaleCountDownDay": "세일 카운트다운 {days} {days, plural, one {일} other {일}}",
   "project.label.onSaleCountDownDays": "{projectType} 카운트다운 {days} {days, plural, one {일} other {일}}",
   "project.label.onSaleProject": "할인 프로젝트",
   "project.label.preOrderProject": "사전 주문 프로젝트",
