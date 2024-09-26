@@ -14,6 +14,7 @@ export type OrderProductProps = {
     currencyPrice?: number
     productGiftPlan?: ProductGiftPlan
   }
+  customPrice?: number
 }
 
 export type OrderDiscountProps = {
