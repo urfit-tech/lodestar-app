@@ -36,7 +36,11 @@ const CheckoutCard: React.VFC<
           <div className="col-6 col-md-4 text-right">
             <PriceLabel
               listPrice={
-                orderProduct.options?.currencyId ? orderProduct.options?.currencyPrice || 0 : orderProduct.price
+                orderProduct.customPrice
+                  ? orderProduct.customPrice
+                  : orderProduct.options?.currencyId
+                  ? orderProduct.options?.currencyPrice || 0
+                  : orderProduct.price
               }
               currencyId={orderProduct.options?.currencyId || appCurrencyId}
             />
