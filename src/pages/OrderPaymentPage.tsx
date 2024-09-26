@@ -364,6 +364,7 @@ const PaymentBlock: React.VFC<{
                   clientBackUrl: window.location.origin,
                   invoiceGatewayId: payment.invoiceGatewayId,
                   price: payment.price,
+                  paymentNo: payment.no,
                   // gateway: payment.gateway,
                   // method: payment.method,
                 },
