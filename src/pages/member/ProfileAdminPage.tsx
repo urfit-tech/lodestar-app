@@ -11,10 +11,10 @@ import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import ProfileBasicAdminCard from '../../components/profile/ProfileBasicAdminCard'
 // import ProfileBasicBusinessCard from '../../components/profile/ProfileBasicBusinessCard'
 // import ProfileIntroBusinessCard from '../../components/profile/ProfileIntroBusinessCard'
-// import ProfileOtherAdminCard from '../../components/profile/ProfileOtherAdminCard'
+import ProfileOtherAdminCard from '../../components/profile/ProfileOtherAdminCard'
 // import ProfilePasswordAdminCard from '../../components/profile/ProfilePasswordAdminCard'
 import { commonMessages } from '../../helpers/translation'
-import { UserIcon, CompanyIcon } from '../../images'
+import { CompanyIcon, UserIcon } from '../../images'
 import memberPageMessages from './translation'
 
 const ProfileAdminPage: React.VFC = () => {
@@ -64,7 +64,7 @@ const ProfileAdminPage: React.VFC = () => {
       ) : (
         <>
           <div className="mb-3">{currentMemberId && <ProfileBasicAdminCard memberId={currentMemberId} />}</div>
-          {/* <div className="mb-3">{currentMemberId && <ProfileOtherAdminCard memberId={currentMemberId} />}</div> */}
+          <div className="mb-3">{currentMemberId && <ProfileOtherAdminCard memberId={currentMemberId} />}</div>
         </>
       )}
       {/* <div className="mb-3" id="account">
