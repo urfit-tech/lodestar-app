@@ -10,12 +10,13 @@ import ImageUploader from './ImageUploader'
 import commonMessages from './translation'
 
 export const companyTypes = [
-  { label: '行號(工作室等)', value: 'firmOrWorkShop' },
-  { label: '有限公司', value: 'limitedCompany' },
-  { label: '股份有限公司', value: 'companyLimited' },
-  { label: '政府機構', value: 'governmentAgency' },
-  { label: '非營利組織', value: 'nonprofitOrganization' },
+  { labelId: commonMessages.BusinessSignupForm.firmOrWorkShop, value: 'firmOrWorkShop' },
+  { labelId: commonMessages.BusinessSignupForm.limitedCompany, value: 'limitedCompany' },
+  { labelId: commonMessages.BusinessSignupForm.companyLimited, value: 'companyLimited' },
+  { labelId: commonMessages.BusinessSignupForm.governmentAgency, value: 'governmentAgency' },
+  { labelId: commonMessages.BusinessSignupForm.nonprofitOrganization, value: 'nonprofitOrganization' },
 ]
+
 type BusinessSignupFromSubmitValue = {
   companyCity: string
   companyDistrict: string
@@ -200,7 +201,7 @@ const BusinessSignupForm: React.VFC<
               <Select className="col-12" placeholder={formatMessage(authMessages.RegisterSection.pleaseSelect)}>
                 {companyTypes.map(v => (
                   <Select.Option key={v.value} value={v.value}>
-                    {v.label}
+                    {formatMessage(v.labelId)}
                   </Select.Option>
                 ))}
               </Select>,
