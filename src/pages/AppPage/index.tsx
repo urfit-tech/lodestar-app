@@ -123,9 +123,9 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   const location = useLocation()
   const { settings, id: appId, enabledModules } = useApp()
   const { updateAuthToken } = useAuth()
-  const { defaultLocale } = useContext(LocaleContext)
+  const { defaultLocale, currentLocale } = useContext(LocaleContext)
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
-  const { loadingAppPage, appPage } = usePage(location.pathname)
+  const { loadingAppPages, appPages } = usePage(location.pathname)
   const ogLocale = getOgLocale(defaultLocale)
 
   const { formatMessage } = useIntl()
@@ -186,23 +186,26 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname])
 
-  if (loadingAppPage) {
+  if (loadingAppPages) {
     return <LoadingPage />
   }
 
   if (location.pathname !== '/repairing' && settings['repairing'] === '1') {
     return <Redirect to="/repairing" />
   }
+
+  const currentAppPage =
+    appPages.find(appPage => appPage.language === currentLocale) || appPages.find(appPage => !appPage.language)
   return (
     <>
-      {appPage ? (
+      {currentAppPage ? (
         <>
           {metaLoaded && <Tracking.View />}
           <PageHelmet
-            title={appPage?.metaTag?.seo?.pageTitle || appPage?.title || ''}
-            description={appPage?.metaTag?.seo?.description || appPage.defaultSettings.description || ''}
-            keywords={appPage?.metaTag?.seo?.keywords?.split(',')}
-            isNoIndex={!appPage.publishedAt}
+            title={currentAppPage?.metaTag?.seo?.pageTitle || currentAppPage?.title || ''}
+            description={currentAppPage?.metaTag?.seo?.description || currentAppPage.defaultSettings.description || ''}
+            keywords={currentAppPage?.metaTag?.seo?.keywords?.split(',')}
+            isNoIndex={!currentAppPage.publishedAt}
             openGraph={[
               { property: 'fb:app_id', content: settings['auth.facebook_app_id'] },
               { property: 'og:site_name', content: settings['name'] },
@@ -211,16 +214,16 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
               {
                 property: 'og:title',
                 content:
-                  appPage?.metaTag?.openGraph?.title ||
-                  appPage?.title ||
+                  currentAppPage?.metaTag?.openGraph?.title ||
+                  currentAppPage?.title ||
                   settings['open_graph.title'] ||
                   settings['title'],
               },
               {
                 property: 'og:description',
                 content: getBraftContent(
-                  appPage?.metaTag?.openGraph?.description ||
-                    appPage.defaultSettings.description ||
+                  currentAppPage?.metaTag?.openGraph?.description ||
+                    currentAppPage.defaultSettings.description ||
                     settings['open_graph.description'] ||
                     settings['description'],
                 )?.slice(0, 150),
@@ -229,27 +232,27 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
               {
                 property: 'og:image',
                 content:
-                  appPage?.metaTag?.openGraph?.image ||
-                  appPage.defaultSettings.img ||
+                  currentAppPage?.metaTag?.openGraph?.image ||
+                  currentAppPage.defaultSettings.img ||
                   settings['open_graph.image'] ||
                   settings['logo'],
               },
               { property: 'og:image:width', content: '1200' },
               { property: 'og:image:height', content: '630' },
-              { property: 'og:image:alt', content: appPage?.metaTag?.openGraph?.imageAlt || '' },
+              { property: 'og:image:alt', content: currentAppPage?.metaTag?.openGraph?.imageAlt || '' },
             ]}
             onLoaded={() => setMetaLoaded(true)}
           />
-          <DefaultLayout {...appPage.options}>
-            {appPage.craftData ? (
+          <DefaultLayout {...currentAppPage.options}>
+            {currentAppPage.craftData ? (
               <Editor enabled={false} resolver={CraftElement}>
-                <CraftBlock craftData={appPage.craftData} />
+                <CraftBlock craftData={currentAppPage.craftData} />
               </Editor>
             ) : (
               <Editor enabled={false} resolver={CraftElement}>
                 <Frame>
                   <>
-                    {appPage.appPageSections.map(section => {
+                    {currentAppPage.appPageSections.map(section => {
                       const Section = sectionConverter[section.type]
                       if (!sectionConverter[section.type]) {
                         return null
@@ -276,9 +279,9 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
 
 export const usePage = (path: string) => {
   const { id: appId } = useApp()
-  const { loading, error, data } = useQuery<hasura.GET_PAGE, hasura.GET_PAGEVariables>(
+  const { loading, error, data } = useQuery<hasura.GetPages, hasura.GetPagesVariables>(
     gql`
-      query GET_PAGE($path: String, $appId: String) {
+      query GetPages($path: String, $appId: String) {
         app_page(
           where: {
             path: { _eq: $path }
@@ -294,6 +297,7 @@ export const usePage = (path: string) => {
           craft_data
           meta_tag
           published_at
+          language
           app_page_sections(order_by: { position: asc }) {
             id
             options
@@ -310,62 +314,69 @@ export const usePage = (path: string) => {
     },
   )
 
-  let defaultImg = '',
-    defaultDescription = ''
-  if (data?.app_page[0]?.craft_data) {
-    const craftData = data.app_page[0].craft_data
-    craftData?.ROOT?.nodes?.forEach((node: string) => {
-      if (!defaultImg && craftData && craftData[node].type.resolvedName === 'CraftImage') {
-        defaultImg = craftData[node]?.props?.customStyle?.backgroundImage?.match(/(?:\(['"]?)(.*?)(?:['"]?\))/, '')?.[1]
-      }
-      if (!defaultDescription && craftData && craftData[node].type.resolvedName === 'CraftParagraph') {
-        defaultDescription = craftData[node]?.props?.content
-      }
-    })
-  }
-
   type AppPageSectionProps = {
     id: string
     options: any
     type: SectionType
   }
 
-  const appPage: {
+  const appPages: {
     id: string | null
     title: string | null
     path: string | null
     craftData: { [key: string]: any } | null
+    language: string | null
     options: { [key: string]: string } | null
     metaTag: MetaTag | null
     publishedAt: Date | null
     appPageSections: AppPageSectionProps[]
     defaultSettings: { img: string; description: string }
-  } | null = data?.app_page[0]
-    ? {
-        id: data.app_page[0].id,
-        title: data.app_page[0].title || '',
-        path: data.app_page[0].path || '',
-        craftData: data.app_page[0].craft_data,
-        options: data.app_page[0].options || null,
-        metaTag: data.app_page[0].meta_tag || null,
-        publishedAt: data.app_page[0].published_at || null,
-        appPageSections: data.app_page[0]
-          ? data.app_page[0].app_page_sections.map(v => ({
-              id: v.id,
-              options: v.options,
-              type: v.type as SectionType,
-            }))
-          : [],
-        defaultSettings: {
-          img: defaultImg,
-          description: defaultDescription,
-        },
-      }
-    : null
+  }[] = data
+    ? data.app_page.map(appPage => {
+        let defaultImg = '',
+          defaultDescription = ''
+        if (appPage.craft_data) {
+          const craftData = appPage.craft_data
+          craftData?.ROOT?.nodes?.forEach((node: string) => {
+            if (!defaultImg && craftData && craftData[node].type.resolvedName === 'CraftImage') {
+              defaultImg = craftData[node]?.props?.customStyle?.backgroundImage?.match(
+                /(?:\(['"]?)(.*?)(?:['"]?\))/,
+                '',
+              )[1]
+            }
+            if (!defaultDescription && craftData && craftData[node].type.resolvedName === 'CraftParagraph') {
+              defaultDescription = craftData[node]?.props?.content
+            }
+          })
+        }
+        return {
+          id: appPage.id,
+          title: appPage.title || '',
+          path: appPage.path || '',
+          craftData: appPage.craft_data,
+          language: appPage.language || null,
+          options: appPage.options || null,
+          metaTag: appPage.meta_tag || null,
+          publishedAt: appPage.published_at || null,
+          appPageSections: appPage
+            ? appPage.app_page_sections.map(v => ({
+                id: v.id,
+                options: v.options,
+                type: v.type as SectionType,
+              }))
+            : [],
+          defaultSettings: {
+            img: defaultImg,
+            description: defaultDescription,
+          },
+        }
+      })
+    : []
+
   return {
-    loadingAppPage: !appId || loading,
-    errorAppPage: error,
-    appPage,
+    loadingAppPages: !appId || loading,
+    errorAppPages: error,
+    appPages,
   }
 }
 
