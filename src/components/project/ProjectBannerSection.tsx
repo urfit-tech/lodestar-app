@@ -54,7 +54,7 @@ const StyledCover = styled.div`
     }
   }
 `
-const StyledCountDownTime = styled.div`
+const StyledCountDownTime = styled.div<{ formatMessage: (messageDescriptor: { id: string }) => string }>`
   background-color: #fff;
   border-radius: 4px;
   width: 100%;
@@ -67,7 +67,7 @@ const StyledCountDownTime = styled.div`
 
   @media (max-width: ${BREAK_POINT}px) {
     .discount-down::before {
-      content: '優惠';
+      content: '${props => props.formatMessage(projectMessages.ProjectBannerSection.discount)}';
     }
   }
 `
@@ -134,7 +134,10 @@ const ProjectBannerSection: React.VFC<ProjectBannerSectionProps> = ({
       <div className="container pt-5">
         <div className="row flex-row-reverse">
           <StyledCountDownBlock className="col-12 col-lg-4">
-            <StyledCountDownTime className="d-flex align-items-center justify-content-center">
+            <StyledCountDownTime
+              className="d-flex align-items-center justify-content-center"
+              formatMessage={formatMessage}
+            >
               {<Icon as={CalendarOIcon} className="mr-2" />}
               {expiredAt && (
                 <CountDownTimeBlock
