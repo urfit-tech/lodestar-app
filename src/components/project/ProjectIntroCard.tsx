@@ -18,7 +18,7 @@ import { ProjectIntroProps } from '../../types/project'
 const messages = defineMessages({
   people: { id: 'common.unit.people', defaultMessage: '{count} {count, plural, one {人} other {人}}' },
   onSaleCountDownDays: {
-    id: 'project.label.onSaleCountDownDays',
+    id: 'project.label.onSaleCountDownDay',
     defaultMessage: '促銷倒數 {days} {days, plural, one {天} other {天}}',
   },
   isExpired: { id: 'project.label.isExpired', defaultMessage: '已結束' },

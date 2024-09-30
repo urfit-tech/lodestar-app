@@ -1,11 +1,13 @@
 import { Icon } from '@chakra-ui/icons'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import { BREAK_POINT } from '../common/Responsive'
 import FundingCoverBlock from './FundingCoverBlock'
+import projectMessages from './translation'
 
 const StyledSection = styled.section`
   position: relative;
@@ -52,7 +54,7 @@ const StyledCover = styled.div`
     }
   }
 `
-const StyledCountDownTime = styled.div`
+const StyledCountDownTime = styled.div<{ formatMessage: (messageDescriptor: { id: string }) => string }>`
   background-color: #fff;
   border-radius: 4px;
   width: 100%;
@@ -65,7 +67,7 @@ const StyledCountDownTime = styled.div`
 
   @media (max-width: ${BREAK_POINT}px) {
     .discount-down::before {
-      content: '優惠';
+      content: '${props => props.formatMessage(projectMessages.OnSaleCoverSection.discount)}';
     }
   }
 `
@@ -204,13 +206,17 @@ type OnSaleCoverSectionProps = {
   expiredAt: Date | null
 }
 const OnSaleCoverSection: React.VFC<OnSaleCoverSectionProps> = ({ cover, header, statistics, expiredAt }) => {
+  const { formatMessage } = useIntl()
   return (
     <StyledSection>
       <img src={`https://static.kolable.com/images/xuemi/bg-zero.png`} alt="background" />
       <div className="container pt-5">
         <div className="row flex-row-reverse">
           <StyledCountDownBlock className="col-12 col-lg-4">
-            <StyledCountDownTime className="d-flex align-items-center justify-content-center">
+            <StyledCountDownTime
+              className="d-flex align-items-center justify-content-center"
+              formatMessage={formatMessage}
+            >
               {<Icon as={CalendarOIcon} className="mr-2" />}
               {expiredAt && <CountDownTimeBlock expiredAt={expiredAt} />}
             </StyledCountDownTime>

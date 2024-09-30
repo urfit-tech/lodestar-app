@@ -7,6 +7,7 @@ import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
 import { BREAK_POINT } from '../common/Responsive'
+import projectMessages from './translation'
 
 const StyledJoin = styled.div`
   background-color: #563952;
@@ -140,7 +141,9 @@ const OnSaleCallToActionSection: React.VFC<OnSaleCallToActionSectionProps> = ({ 
             onClick={() => document.getElementById('project-plan-section')?.scrollIntoView({ behavior: 'smooth' })}
           >
             <span>
-              與 <ProjectEnrollmentCounts projectId={projectId} numberOnly /> 人一起參與
+              {formatMessage(projectMessages.OnSaleCallToActionSection.joinWithOthers, {
+                count: <ProjectEnrollmentCounts projectId={projectId} numberOnly />,
+              })}
             </span>
           </StyledButton>
         </div>
@@ -154,7 +157,9 @@ const OnSaleCallToActionSection: React.VFC<OnSaleCallToActionSectionProps> = ({ 
                   <span key={promote}>{promote}</span>
                 ))}
                 <span>
-                  已有 <ProjectEnrollmentCounts projectId={projectId} numberOnly /> 人一起學習
+                  {formatMessage(projectMessages.OnSaleCallToActionSection.joinWithOthers, {
+                    count: <ProjectEnrollmentCounts projectId={projectId} numberOnly />,
+                  })}
                 </span>
               </div>
               <StyledCountDownTime className="d-flex align-items-center justify-content-between">
