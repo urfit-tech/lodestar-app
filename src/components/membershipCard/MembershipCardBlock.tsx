@@ -48,7 +48,9 @@ const MembershipCardBlock: React.VFC<{
   description?: string
   variant?: string
   membershipCardId: string
-}> = ({ template, templateVars, title, expiredAt, description, variant, membershipCardId }) => {
+  startedAt?: Date | null
+  endedAt?: Date | null
+}> = ({ template, templateVars, title, expiredAt, description, variant, membershipCardId, startedAt, endedAt }) => {
   const { formatMessage } = useIntl()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -77,14 +79,27 @@ const MembershipCardBlock: React.VFC<{
       <StyledSubTitle>
         <div className="expire">
           <Icon as={AiOutlineCalendar} className="mr-2" />
-          {expiredAt
-            ? formatMessage(
-                { id: 'common.expiredTime', defaultMessage: '{expiredTime} 止' },
+          {(() => {
+            if (!startedAt) {
+              return formatMessage(commonMessages.content.noPeriod)
+            }
+            if (!endedAt) {
+              return formatMessage(
+                { id: 'common.periodTime', defaultMessage: '{startedTime} ~ {noPeriod}' },
                 {
-                  expiredTime: dayjs(expiredAt).format('YYYY/MM/DD'),
+                  startedTime: dayjs(startedAt).format('YYYY/MM/DD'),
+                  noPeriod: formatMessage(commonMessages.content.noPeriod),
                 },
               )
-            : formatMessage(commonMessages.content.noPeriod)}
+            }
+            return formatMessage(
+              { id: 'common.periodTime', defaultMessage: '{startedTime} ~ {endedTime}' },
+              {
+                startedTime: dayjs(startedAt).format('YYYY/MM/DD'),
+                endedTime: dayjs(endedAt).format('YYYY/MM/DD'),
+              },
+            )
+          })()}
         </div>
 
         <button className="discountTerm" onClick={onOpen}>
