@@ -2,13 +2,14 @@ import { Button, Checkbox } from '@chakra-ui/react'
 import { Divider, Icon as AntdIcon, List, Skeleton, Typography } from 'antd'
 import axios from 'axios'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
-import Embedded from 'lodestar-app-element/src/components/common/Embedded'
 import InvoiceInput from 'lodestar-app-element/src/components/inputs/InvoiceInput'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { render } from 'mustache'
+import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
+import { PaymentGatewayType, PaymentMethodType } from 'lodestar-app-element/src/types/checkout'
 import { Fragment, useEffect, useState } from 'react'
 import { AiOutlineArrowLeft } from 'react-icons/ai'
+import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
@@ -55,6 +56,15 @@ const StyledTitle = styled.h1`
   ${CommonTitleMixin}
 `
 
+const StyledContractButton = styled.div`
+  cursor: pointer;
+  text-decoration: underline;
+  color: ${props => props.theme['@primary-color']};
+  &:hover {
+    opacity: 0.8;
+  }
+`
+
 type Invoice = {
   merchantOrderNo: string
   buyerName: string
@@ -88,6 +98,8 @@ type Payment = {
   status: string
   price: number
   invoiceGatewayId: string
+  gateway: string
+  method: string | null
 }
 
 type OrderProduct = {
@@ -107,7 +119,7 @@ type Order = {
   memberId: string
   status: string
   options?: {
-    contractId?: string
+    memberContractId?: string
   }
   invoiceOptions?: {
     name?: string
@@ -189,7 +201,7 @@ const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
           invoice={invoice}
           orderProducts={orderProducts}
           memberId={order.memberId}
-          contractId={order.options?.contractId || ''}
+          memberContractId={order.options?.memberContractId || ''}
         />
       ) : (
         <>
@@ -243,13 +255,21 @@ const PaymentBlock: React.VFC<{
   invoice?: Invoice
   orderProducts: OrderProduct[]
   memberId: string
-  contractId: string
-}> = ({ order, payment, invoice, orderProducts, memberId, contractId }) => {
+  memberContractId: string
+}> = ({ order, payment, invoice, orderProducts, memberId, memberContractId }) => {
+  const { formatMessage } = useIntl()
   const { settings, id: appId } = useApp()
   const [token] = useQueryParam('token', StringParam)
-  const [isChecked, setIscChecked] = useState(false)
+  const [isChecked, setIscChecked] = useState(!memberContractId)
+  // const [isApproved, setIsApproved] = useState(localStorage.getItem('kolable.checkout.approvement') === 'true')
+
   console.log(payment, invoice, orderProducts)
 
+  // 讓「我同意」按鈕在使用者重新進入後保持一樣
+  // useEffect(() => {
+  //   localStorage.setItem('kolable.checkout.approvement', JSON.stringify(isApproved))
+  //   setIsApproved(localStorage.getItem('kolable.checkout.approvement') === 'true')
+  // }, [isApproved])
   return (
     <>
       <div className="mb-3">
@@ -284,7 +304,9 @@ const PaymentBlock: React.VFC<{
       <div className="mb-3">
         <AdminCard>
           <StyledTitle>付款方式</StyledTitle>
-          藍新金流
+          {payment.method
+            ? formatMessage(checkoutMessages.label[payment.method as PaymentMethodType])
+            : formatMessage(checkoutMessages.label[payment.gateway as PaymentGatewayType])}
         </AdminCard>
       </div>
 
@@ -305,9 +327,27 @@ const PaymentBlock: React.VFC<{
           />
         </AdminCard>
       </div>
-
-      {contractId && (
+      {/* {settings['checkout.approvement'] === 'true' && (
         <AdminCard className="mb-3">
+          <StyledCheckbox
+            className="mr-2"
+            size="lg"
+            colorScheme="primary"
+            isChecked={isApproved}
+            onChange={() => setIsApproved(prev => !prev)}
+          />
+          <StyledLabel>
+            {formatMessage(defineMessage({ id: 'checkoutMessages.ui.approved', defaultMessage: '我同意' }))}
+          </StyledLabel>
+          <StyledApprovementBox
+            className="mt-2"
+            dangerouslySetInnerHTML={{ __html: settings['checkout.approvement_content'] }}
+          />
+        </AdminCard>
+      )} */}
+
+      {memberContractId && (
+        <AdminCard className="mb-3 d-flex">
           <StyledCheckbox
             className="mr-2"
             size="lg"
@@ -317,14 +357,14 @@ const PaymentBlock: React.VFC<{
               setIscChecked(!isChecked)
             }}
           />
-          <StyledLabel>我同意</StyledLabel>
-          <StyledApprovementBox>
-            <Embedded
-              iframe={render(settings['checkout.approvement_content'], {
-                contractUrl: `${window.location.origin}/members/${memberId}/contracts/${contractId}`,
-              })}
-            />
-          </StyledApprovementBox>
+          <StyledLabel>簽署合約</StyledLabel>
+          <StyledContractButton
+            onClick={() => {
+              window.open(`${window.location.origin}/members/${memberId}/contracts/${memberContractId}`)
+            }}
+          >
+            合約內容
+          </StyledContractButton>
         </AdminCard>
       )}
 
@@ -358,24 +398,22 @@ const PaymentBlock: React.VFC<{
           onCheckout={() => {
             axios
               .post(
-                `${process.env.REACT_APP_API_BASE_ROOT}/order/${order.id}/payment`,
+                `${process.env.REACT_APP_API_BASE_ROOT}/order/${order.id}/pay`,
                 {
                   appId,
-                  clientBackUrl: window.location.origin,
-                  invoiceGatewayId: payment.invoiceGatewayId,
-                  price: payment.price,
                   paymentNo: payment.no,
-                  // gateway: payment.gateway,
-                  // method: payment.method,
+                  memberContractId,
                 },
                 { headers: { authorization: `Bearer ${token}` } },
               )
               .then(({ data: { code, result } }) => {
                 if (code === 'SUCCESS') {
-                  if (result.payForm.url) {
+                  if (result.payForm?.url) {
                     window.location.assign(result.payForm.url)
-                  } else if (result.payForm.html) {
+                  } else if (result.payForm?.html) {
                     document.write(result.payForm.html)
+                  } else {
+                    window.location.href = `/payments/${payment.no}?method=${payment.method}`
                   }
                 }
               })
