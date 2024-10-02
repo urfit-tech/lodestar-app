@@ -34,7 +34,12 @@ const CardCollectionAdminPage: React.VFC = () => {
       <div className="row">
         {enrolledMembershipCards.map(membershipCard => (
           <div className="col-12 col-lg-6" key={membershipCard.card.id}>
-            <MembershipCardAdminBlock cardId={membershipCard.card.id} updatedAt={membershipCard.updatedAt} />
+            <MembershipCardAdminBlock
+              cardId={membershipCard.card.id}
+              updatedAt={membershipCard.updatedAt}
+              startedAt={membershipCard.startedAt}
+              endedAt={membershipCard.endedAt}
+            />
           </div>
         ))}
       </div>
