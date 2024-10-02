@@ -6,6 +6,7 @@ import ReactGA from 'react-ga'
 import { Helmet } from 'react-helmet'
 import { AiFillAppstore } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
+import { useLocation } from 'react-router'
 import { AuthModalContext } from '../components/auth/AuthModal'
 import CheckoutPodcastPlanModal from '../components/checkout/CheckoutPodcastPlanModal'
 import { StyledBanner, StyledBannerTitle } from '../components/layout'
@@ -21,8 +22,9 @@ import { usePodcastProgramCollection } from '../hooks/podcast'
 import { StyledButton } from './ProgramCollectionPage/ProgramCollectionPage'
 
 const PodcastProgramCollectionPage: React.VFC = () => {
+  const location = useLocation()
   const { formatMessage } = useIntl()
-  const { currentMemberId, isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth()
   const { pageTitle } = useNav()
   const { currentLocale } = useContext(LocaleContext)
   const { podcastPrograms } = usePodcastProgramCollection()
@@ -55,6 +57,18 @@ const PodcastProgramCollectionPage: React.VFC = () => {
       ReactGA.ga('send', 'pageview')
     }
   }, [podcastPrograms])
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search)
+    const scrollTo = searchParams.get('scrollTo')
+
+    if (scrollTo) {
+      const podcastElement = document.getElementById(scrollTo)
+      if (podcastElement) {
+        podcastElement.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+  }, [location, podcastPrograms])
 
   return (
     <DefaultLayout white>
@@ -108,39 +122,41 @@ const PodcastProgramCollectionPage: React.VFC = () => {
                         podcastProgram.supportLocales.find(locale => locale === currentLocale),
                     )}
                   renderItem={({ podcastProgram, isEnrolled, isSubscribed }) => (
-                    <CheckoutPodcastPlanModal
-                      creatorId={podcastProgram.instructor?.id || ''}
-                      renderTrigger={({ onOpen }) => (
-                        <PodcastProgramPopover
-                          key={podcastProgram.id}
-                          isEnrolled={isEnrolled}
-                          isSubscribed={isSubscribed}
-                          podcastProgramId={podcastProgram.id}
-                          title={podcastProgram.title}
-                          listPrice={podcastProgram.listPrice}
-                          salePrice={podcastProgram.salePrice}
-                          duration={podcastProgram.duration}
-                          durationSecond={podcastProgram.durationSecond}
-                          description={podcastProgram.description}
-                          categories={podcastProgram.categories}
-                          instructor={podcastProgram.instructor}
-                          isIndividuallySale={podcastProgram.isIndividuallySale}
-                          onSubscribe={() => (isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true))}
-                        >
-                          <PodcastProgramCard
-                            coverUrl={podcastProgram.coverUrl}
+                    <div id={podcastProgram.id}>
+                      <CheckoutPodcastPlanModal
+                        creatorId={podcastProgram.instructor?.id || ''}
+                        renderTrigger={({ onOpen }) => (
+                          <PodcastProgramPopover
+                            key={podcastProgram.id}
+                            isEnrolled={isEnrolled}
+                            isSubscribed={isSubscribed}
+                            podcastProgramId={podcastProgram.id}
                             title={podcastProgram.title}
-                            instructor={podcastProgram.instructor}
-                            salePrice={podcastProgram.salePrice}
                             listPrice={podcastProgram.listPrice}
+                            salePrice={podcastProgram.salePrice}
                             duration={podcastProgram.duration}
                             durationSecond={podcastProgram.durationSecond}
-                            isEnrolled={isEnrolled}
+                            description={podcastProgram.description}
+                            categories={podcastProgram.categories}
+                            instructor={podcastProgram.instructor}
                             isIndividuallySale={podcastProgram.isIndividuallySale}
-                          />
-                        </PodcastProgramPopover>
-                      )}
-                    />
+                            onSubscribe={() => (isAuthenticated ? onOpen?.() : setAuthModalVisible?.(true))}
+                          >
+                            <PodcastProgramCard
+                              coverUrl={podcastProgram.coverUrl}
+                              title={podcastProgram.title}
+                              instructor={podcastProgram.instructor}
+                              salePrice={podcastProgram.salePrice}
+                              listPrice={podcastProgram.listPrice}
+                              duration={podcastProgram.duration}
+                              durationSecond={podcastProgram.durationSecond}
+                              isEnrolled={isEnrolled}
+                              isIndividuallySale={podcastProgram.isIndividuallySale}
+                            />
+                          </PodcastProgramPopover>
+                        )}
+                      />
+                    </div>
                   )}
                 />
               </div>
