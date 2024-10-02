@@ -80,6 +80,8 @@ export const useEnrolledMembershipCards = (memberId: string) => {
             template
           }
           updated_at
+          started_at
+          ended_at
         }
       }
     `,
@@ -96,6 +98,8 @@ export const useEnrolledMembershipCards = (memberId: string) => {
       template: string
     }
     updatedAt: Date | null
+    startedAt: Date | null
+    endedAt: Date | null
   }[] =
     loading || error || !data
       ? []
@@ -107,6 +111,8 @@ export const useEnrolledMembershipCards = (memberId: string) => {
             template: cardEnrollment.card?.template || '',
           },
           updatedAt: cardEnrollment.updated_at ? new Date(cardEnrollment.updated_at) : null,
+          startedAt: cardEnrollment.started_at ? new Date(cardEnrollment.started_at) : null,
+          endedAt: cardEnrollment.ended_at ? new Date(cardEnrollment.ended_at) : null,
         }))
 
   return {
