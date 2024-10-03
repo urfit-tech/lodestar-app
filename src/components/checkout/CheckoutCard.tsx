@@ -19,15 +19,13 @@ import {
 } from '../../types/checkout'
 import AdminCard from '../common/AdminCard'
 
-type EnhancedOrderDiscount = OrderDiscountProps & { productId: string }
-
 const CheckoutCard: React.VFC<
   CardProps & {
     isDisabled: boolean
     discountId: string | null
     check: {
       orderProducts: OrderProductProps[]
-      orderDiscounts: EnhancedOrderDiscount[]
+      orderDiscounts: OrderDiscountProps[]
       shippingOption: ShippingOptionProps | null
     }
     cartProducts: CartProductProps[]
