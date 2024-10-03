@@ -27,51 +27,6 @@ const GetCard = gql`
     }
   }
 `
-const GetActivityTicketTitle = gql`
-  query GetActivityTicketTitle($id: uuid!) {
-    activity_ticket(where: { id: { _eq: $id }, is_published: { _eq: true } }) {
-      title
-      activity {
-        id
-      }
-    }
-  }
-`
-
-const GetProgramAndProgramPlanInfo = gql`
-  query GetProgramPlanInfo($id: uuid!) {
-    program_plan(
-      where: { id: { _eq: $id }, program: { published_at: { _is_null: false }, is_deleted: { _eq: false } } }
-    ) {
-      title
-      program {
-        title
-        id
-      }
-    }
-  }
-`
-
-const GetProgramPackageAndProgramPackagePlan = gql`
-  query GetProgramPackageAndProgramPackagePlan($id: uuid!) {
-    program_package_plan(where: { id: { _eq: $id }, published_at: { _is_null: false } }) {
-      title
-      program_package {
-        title
-        id
-      }
-    }
-  }
-`
-
-const GetPodcastProgram = gql`
-  query GetPodcastProgram($id: uuid!) {
-    podcast_program(where: { id: { _eq: $id }, published_at: { _is_null: false } }) {
-      title
-      id
-    }
-  }
-`
 
 const GetProgramPlanByMembershipCardId = gql`
   query GetProgramPlanByMembershipCard($cardId: uuid!) {
@@ -122,7 +77,16 @@ const fetchMembershipCardEquityProgramPlanProduct = async (queryClient: any, mem
 const strategyMap: { [key: string]: (discount: StrategyDiscount) => Promise<MembershipCardPlanDetails | null> } = {
   ActivityTicket: async discount => {
     const data: hasura.GetActivityTicketTitle = await executeQuery(discount.queryClient, {
-      query: GetActivityTicketTitle,
+      query: gql`
+        query GetActivityTicketTitle($id: uuid!) {
+          activity_ticket(where: { id: { _eq: $id }, is_published: { _eq: true } }) {
+            title
+            activity {
+              id
+            }
+          }
+        }
+      `,
       variables: { id: discount.productId },
     })
     if (!data) return null
@@ -133,7 +97,19 @@ const strategyMap: { [key: string]: (discount: StrategyDiscount) => Promise<Memb
 
   ProgramPlan: async discount => {
     const data: hasura.GetProgramPlanInfo = await executeQuery(discount.queryClient, {
-      query: GetProgramAndProgramPlanInfo,
+      query: gql`
+        query GetProgramPlanInfo($id: uuid!) {
+          program_plan(
+            where: { id: { _eq: $id }, program: { published_at: { _is_null: false }, is_deleted: { _eq: false } } }
+          ) {
+            title
+            program {
+              title
+              id
+            }
+          }
+        }
+      `,
       variables: { id: discount.productId },
     })
     if (!data) return null
@@ -145,10 +121,19 @@ const strategyMap: { [key: string]: (discount: StrategyDiscount) => Promise<Memb
       productId: programPlan.program?.id,
     }
   },
-
   ProgramPackagePlan: async discount => {
     const data: hasura.GetProgramPackageAndProgramPackagePlan = await executeQuery(discount.queryClient, {
-      query: GetProgramPackageAndProgramPackagePlan,
+      query: gql`
+        query GetProgramPackageAndProgramPackagePlan($id: uuid!) {
+          program_package_plan(where: { id: { _eq: $id }, published_at: { _is_null: false } }) {
+            title
+            program_package {
+              title
+              id
+            }
+          }
+        }
+      `,
       variables: { id: discount.productId },
     })
     if (!data) return null
@@ -161,10 +146,16 @@ const strategyMap: { [key: string]: (discount: StrategyDiscount) => Promise<Memb
       productId: programPackagePlan.program_package.id,
     }
   },
-
   PodcastProgram: async discount => {
     const data: hasura.GetPodcastProgram = await executeQuery(discount.queryClient, {
-      query: GetPodcastProgram,
+      query: gql`
+        query GetPodcastProgram($id: uuid!) {
+          podcast_program(where: { id: { _eq: $id }, published_at: { _is_null: false } }) {
+            title
+            id
+          }
+        }
+      `,
       variables: { id: discount.productId },
     })
     if (!data) return null
@@ -175,7 +166,99 @@ const strategyMap: { [key: string]: (discount: StrategyDiscount) => Promise<Memb
       productId: podcast.id,
     }
   },
+  AppointmentPlan: async discount => {
+    const data: hasura.GetAppointmentPlan = await executeQuery(discount.queryClient, {
+      query: gql`
+        query GetAppointmentPlan($id: uuid!) {
+          appointment_plan(where: { id: { _eq: $id }, published_at: { _is_null: false } }) {
+            title
+            id
+            creator_id
+          }
+        }
+      `,
+      variables: { id: discount.productId },
+    })
+    if (!data) return null
+    const appointmentPlan = data.appointment_plan && data.appointment_plan[0] ? data.appointment_plan[0] : null
 
+    return appointmentPlan
+      ? {
+          productName: appointmentPlan.title,
+          productId: appointmentPlan.id,
+        }
+      : null
+  },
+  MerchandiseSpec: async discount => {
+    const data: hasura.GetMerchandiseSpec = await executeQuery(discount.queryClient, {
+      query: gql`
+        query GetMerchandiseSpec($id: uuid!) {
+          merchandise_spec(where: { id: { _eq: $id }, is_deleted: { _eq: false } }) {
+            title
+            id
+          }
+        }
+      `,
+      variables: { id: discount.productId },
+    })
+    if (!data) return null
+    const merchandiseSpec = data.merchandise_spec && data.merchandise_spec[0] ? data.merchandise_spec[0] : null
+
+    return merchandiseSpec
+      ? {
+          productName: merchandiseSpec.title,
+          productId: merchandiseSpec.id,
+        }
+      : null
+  },
+  ProjectPlan: async discount => {
+    const data: hasura.GetProjectPlan = await executeQuery(discount.queryClient, {
+      query: gql`
+        query GetProjectPlan($id: uuid!) {
+          project_plan(where: { id: { _eq: $id }, published_at: { _is_null: false } }) {
+            title
+            id
+          }
+        }
+      `,
+      variables: { id: discount.productId },
+    })
+    if (!data) return null
+    const projectPlan = data.project_plan && data.project_plan[0] ? data.project_plan[0] : null
+
+    return projectPlan
+      ? {
+          productName: projectPlan.title,
+          productId: projectPlan.id,
+        }
+      : null
+  },
+  PodcastPlan: async discount => {
+    const data: hasura.GetPodcastPlan = await executeQuery(discount.queryClient, {
+      query: gql`
+        query GetPodcastPlan($id: uuid!) {
+          podcast_plan(where: { id: { _eq: $id }, published_at: { _is_null: false } }) {
+            id
+            creator {
+              id
+              name
+            }
+          }
+        }
+      `,
+      variables: { id: discount.productId },
+    })
+    if (!data) return null
+    const podcastPlan = data.podcast_plan && data.podcast_plan[0] ? data.podcast_plan[0] : null
+
+    return podcastPlan
+      ? {
+          productName: podcastPlan.creator?.name || '',
+          productId: podcastPlan.id,
+          creatorId: podcastPlan.creator?.id || '',
+        }
+      : null
+  },
   default: async discount => {
     console.error(`Unknown product type: ${discount.type}`)
     return null
