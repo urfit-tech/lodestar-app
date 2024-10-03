@@ -306,7 +306,11 @@ const PaymentBlock: React.VFC<{
           <StyledTitle>付款方式</StyledTitle>
           {payment.method
             ? formatMessage(checkoutMessages.label[payment.method as PaymentMethodType])
-            : formatMessage(checkoutMessages.label[payment.gateway as PaymentGatewayType])}
+            : formatMessage(
+                checkoutMessages.label[
+                  payment.gateway.includes('spgateway') ? 'spgateway' : (payment.gateway as PaymentGatewayType)
+                ],
+              )}
         </AdminCard>
       </div>
 
