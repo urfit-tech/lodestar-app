@@ -1,5 +1,8 @@
 import { CurrencyProps } from './program'
+
 export type ReservationType = 'hour' | 'day' | null
+
+export type UiMode = 'grid' | 'calendar'
 
 export type AppointmentPlan = {
   id: string
