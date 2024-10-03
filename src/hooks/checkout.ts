@@ -8,13 +8,12 @@ import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
 import { PaymentProps } from 'lodestar-app-element/src/types/checkout'
 import { ConversionApiData } from 'lodestar-app-element/src/types/conversionApi'
-import { prop, sum } from 'ramda'
+import { sum } from 'ramda'
 import { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import hasura from '../hasura'
 import { getTrackingCookie } from '../helpers'
 import {
-  CheckProps,
   InvoiceProps,
   OrderDiscountProps,
   OrderProductProps,
@@ -23,6 +22,8 @@ import {
 } from '../types/checkout'
 import { MemberShopProps } from '../types/merchandise'
 import { fetchCurrentGeolocation } from './util'
+
+type EnhancedOrderDiscount = OrderDiscountProps & { productId: string }
 
 export const useCheck = ({
   productIds,
@@ -38,7 +39,11 @@ export const useCheck = ({
   const tracking = useTracking()
   const { authToken } = useAuth()
   const { id: appId, enabledModules, settings } = useApp()
-  const [check, setCheck] = useState<CheckProps>({
+  const [check, setCheck] = useState<{
+    orderProducts: OrderProductProps[]
+    orderDiscounts: EnhancedOrderDiscount[]
+    shippingOption: ShippingOptionProps | null
+  }>({
     orderProducts: [],
     orderDiscounts: [],
     shippingOption: null,
@@ -61,7 +66,7 @@ export const useCheck = ({
       message: string
       result: {
         orderProducts: OrderProductProps[]
-        orderDiscounts: OrderDiscountProps[]
+        orderDiscounts: EnhancedOrderDiscount[]
         shippingOption: ShippingOptionProps
       }
     }>(
@@ -157,9 +162,16 @@ export const useCheck = ({
   }
 
   const totalPrice =
-    sum(check.orderProducts.map(prop('price'))) -
-    sum(check.orderDiscounts.map(prop('price'))) +
-    (check.shippingOption?.fee || 0)
+    sum(
+      check.orderProducts.map(orderProduct => {
+        const salePrice =
+          orderProduct.price -
+          Number(
+            check.orderDiscounts.find(orderDiscount => orderDiscount.productId === orderProduct.productId)?.price ?? 0,
+          )
+        return salePrice < 0 ? 0 : salePrice
+      }),
+    ) + (check.shippingOption?.fee || 0)
 
   return {
     check,

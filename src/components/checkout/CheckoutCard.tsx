@@ -4,18 +4,30 @@ import { camelCase } from 'lodash'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
-import { prop, sum } from 'ramda'
+import { sum } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { checkoutMessages } from '../../helpers/translation'
-import { CartProductProps, CheckProps, InvoiceProps, ShippingOptionIdType, ShippingProps } from '../../types/checkout'
+import {
+  CartProductProps,
+  InvoiceProps,
+  OrderDiscountProps,
+  OrderProductProps,
+  ShippingOptionIdType,
+  ShippingOptionProps,
+  ShippingProps,
+} from '../../types/checkout'
 import AdminCard from '../common/AdminCard'
 
 const CheckoutCard: React.VFC<
   CardProps & {
     isDisabled: boolean
     discountId: string | null
-    check: CheckProps
+    check: {
+      orderProducts: OrderProductProps[]
+      orderDiscounts: OrderDiscountProps[]
+      shippingOption: ShippingOptionProps | null
+    }
     cartProducts: CartProductProps[]
     invoice: InvoiceProps
     shipping: ShippingProps | null
@@ -89,9 +101,17 @@ const CheckoutCard: React.VFC<
             <span className="mr-2">{formatMessage(checkoutMessages.content.total)}</span>
             <PriceLabel
               listPrice={
-                sum(check.orderProducts.map(prop('price'))) -
-                sum(check.orderDiscounts.map(prop('price'))) +
-                (check.shippingOption?.fee || 0)
+                sum(
+                  check.orderProducts.map(orderProduct => {
+                    const salePrice =
+                      orderProduct.price -
+                      Number(
+                        check.orderDiscounts.find(orderDiscount => orderDiscount.productId === orderProduct.productId)
+                          ?.price ?? 0,
+                      )
+                    return salePrice < 0 ? 0 : salePrice
+                  }),
+                ) + (check.shippingOption?.fee || 0)
               }
             />
           </div>

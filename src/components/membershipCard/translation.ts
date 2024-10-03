@@ -2,6 +2,10 @@ import { defineMessages } from 'react-intl'
 
 const membershipCardMessages = {
   MembershipCardDiscount: defineMessages({
+    PodcastPlan: { id: 'membershipCard.MembershipCardDiscount.PodcastPlan', defaultMessage: 'PodcastPlan' },
+    ProjectPlan: { id: 'membershipCard.MembershipCardDiscount.ProjectPlan', defaultMessage: 'Project' },
+    MerchandiseSpec: { id: 'membershipCard.MembershipCardDiscount.MerchandiseSpec', defaultMessage: 'Merchandise' },
+    AppointmentPlan: { id: 'membershipCard.MembershipCardDiscount.AppointmentPlan', defaultMessage: 'Appointment' },
     ActivityTicket: { id: 'membershipCard.MembershipCardDiscount.ActivityTicket', defaultMessage: 'Activity' },
     ProgramPlan: { id: 'membershipCard.MembershipCardDiscount.ProgramPlan', defaultMessage: 'Program' },
     ProgramPackagePlan: {
