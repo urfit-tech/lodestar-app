@@ -357,7 +357,11 @@ export type Target = {
 }
 
 const GET_MUILTI_PERIOD_PRODUCT = gql`
+<<<<<<< HEAD
   query GET_MUILTI_PERIOD_PRODUCT($targetId: uuid!, $startedAts: [timestamptz!]) {
+=======
+  query GET_MUILTI_PERIOD_PRODUCT($targetId: uuid!, $startedAts: [timestamptz]) {
+>>>>>>> 6e112ebb (Merge branch 'develop' into release)
     program_by_pk(id: $targetId) {
       id
       title
