@@ -1,6 +1,10 @@
+import { DeleteOutlined } from '@ant-design/icons'
 import { Button } from '@chakra-ui/button'
 import { useDisclosure } from '@chakra-ui/hooks'
+import { Input } from '@chakra-ui/input'
+import { HStack } from '@chakra-ui/layout'
 import dayjs from 'dayjs'
+import { identity } from 'lodash'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
@@ -11,8 +15,13 @@ import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import moment from 'moment'
 import momentTz from 'moment-timezone'
 import {
+  always,
   append,
   ascend,
+  converge,
+  defaultTo,
+  equals,
+  filter,
   ifElse,
   includes,
   isEmpty,
@@ -23,6 +32,7 @@ import {
   prop,
   props,
   sort,
+  tap,
   without,
 } from 'ramda'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
@@ -122,6 +132,20 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
   const { member: currentMember } = useMember(currentMemberId || '')
   const { isOpen: isCheckOutModalOpen, onOpen: onCheckOutModalOpen, onClose: onCheckOutModalClose } = useDisclosure()
 
+  const [appointmentPeriodLengthLimit, setAppointmentPeriodLengthLimit] = useState<number>(Infinity)
+
+  const safelySetSelectedPeriods: Dispatch<SetStateAction<AppointmentPeriod[]>> = pipe(
+    ifElse(
+      pipe(always(selectedPeriods.length + 1 > appointmentPeriodLengthLimit)),
+      pipe(
+        tap(() => window.alert('選取課程總數超過設定總數！')),
+        always(selectedPeriods),
+      ),
+      identity,
+    ),
+    setSelectedPeriods,
+  )
+
   if (isAuthenticating || currentMember === null) {
     setAuthModalVisible?.(true)
     return <></>
@@ -136,7 +160,8 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
           selectedAppointmentPlanId={selectedAppointmentPlanId}
           setSelectedAppointmentPlanId={setSelectedAppointmentPlanId}
           selectedPeriods={selectedPeriods}
-          setSelectedPeriods={setSelectedPeriods}
+          setSelectedPeriods={safelySetSelectedPeriods}
+          setAppointmentPeriodLengthLimit={setAppointmentPeriodLengthLimit}
         />
       </div>
 
@@ -152,15 +177,11 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
         ) : (
           <>
             {(
-              pipe(
-                map(props(['id', 'startedAt', 'endedAt'])) as any,
-                map(([id, start, end]) => (
-                  <div key={id} id={id}>
-                    <p>
-                      {dayjs(start).format('YYYY-MM-DD (ddd) HH:mm')} ~ {dayjs(end).format('HH:mm')}
-                    </p>
-                  </div>
-                )),
+              map(
+                converge(subtotalListItem(setSelectedPeriods), [
+                  pipe(props(['id', 'startedAt', 'endedAt'])),
+                  always(selectedPeriods),
+                ]),
               ) as any
             )(selectedPeriods)}
             <Button onClick={onCheckOutModalOpen}>submit</Button>
@@ -180,6 +201,27 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
   )
 }
 
+const subtotalListItem =
+  (setSelectedPeriods: Dispatch<SetStateAction<Array<AppointmentPeriod>>>) =>
+  ([id, start, end]: [string, Date, Date], selectedPeriods: Array<AppointmentPeriod>) =>
+    (
+      <HStack key={id} id={id}>
+        <p>
+          {dayjs(start).format('YYYY-MM-DD (ddd) HH:mm')} ~ {dayjs(end).format('HH:mm')}
+        </p>
+        <DeleteOutlined
+          onClick={() =>
+            (
+              pipe(
+                converge(without, [pipe(filter(pipe(prop('id') as any, equals(id)))), identity]),
+                setSelectedPeriods,
+              ) as any
+            )(selectedPeriods)
+          }
+        />
+      </HStack>
+    )
+
 const AppointmentCollectionTabs: React.VFC<{
   creatorId: string
   appointmentPlans: (AppointmentPlan & { periods: AppointmentPeriod[] & { appointmentScheduleCreatedAt: Date }[] })[]
@@ -187,6 +229,7 @@ const AppointmentCollectionTabs: React.VFC<{
   setSelectedAppointmentPlanId: Dispatch<SetStateAction<string>>
   selectedPeriods: Array<AppointmentPeriod>
   setSelectedPeriods: Dispatch<SetStateAction<Array<AppointmentPeriod>>>
+  setAppointmentPeriodLengthLimit: Dispatch<SetStateAction<number>>
 }> = ({
   creatorId,
   appointmentPlans,
@@ -194,6 +237,7 @@ const AppointmentCollectionTabs: React.VFC<{
   setSelectedAppointmentPlanId,
   selectedPeriods,
   setSelectedPeriods,
+  setAppointmentPeriodLengthLimit,
 }) => {
   const { formatMessage } = useIntl()
 
@@ -227,9 +271,12 @@ const AppointmentCollectionTabs: React.VFC<{
     }
   }, [appointmentPlans])
 
-  useEffect(() => {
-    if (appointmentPlanId) setSelectedAppointmentPlanId(appointmentPlanId)
-  }, [appointmentPlanId])
+  const handleAppointmentClick = (appointmentPlan: AppointmentPlan) => {
+    if (isEmpty(selectedPeriods) || window.confirm('尚有課程等待結帳，是否跳至其他系列？')) {
+      setSelectedAppointmentPlanId(appointmentPlan.id)
+      setSelectedPeriods([])
+    }
+  }
 
   return (
     <>
@@ -248,7 +295,7 @@ const AppointmentCollectionTabs: React.VFC<{
                     ? 'active'
                     : ''
                 }`}
-                onClick={() => setSelectedAppointmentPlanId(appointmentPlan.id)}
+                onClick={() => handleAppointmentClick(appointmentPlan)}
               >
                 <div className="title">{appointmentPlan.title}</div>
                 <div className="info">
@@ -267,6 +314,15 @@ const AppointmentCollectionTabs: React.VFC<{
             </div>
           ))}
       </div>
+
+      <HStack padding="1em">
+        <span>本次預約數量上限</span>
+        <Input
+          type="number"
+          width="10em"
+          onChange={e => setAppointmentPeriodLengthLimit(defaultTo(Infinity)(Number(e.target.value)))}
+        />
+      </HStack>
 
       <AppointmentPlanCollection
         creatorId={creatorId}
