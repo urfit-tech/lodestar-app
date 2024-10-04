@@ -18,7 +18,11 @@ export const usePodcastProgramCollection = (creatorId?: string) => {
         podcast_program(
           order_by: { published_at: desc }
           where: {
-            podcast_program_roles: { member_id: { _eq: $creatorId }, name: { _eq: "instructor" } }
+            podcast_program_roles: {
+              member_id: { _eq: $creatorId }
+              name: { _eq: "instructor" }
+              member: { app_id: { _eq: "demo" } }
+            }
             published_at: { _is_null: false }
           }
         ) {
