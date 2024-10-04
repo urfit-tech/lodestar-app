@@ -98,11 +98,11 @@ const AppointmentPeriodBlockCalendar: React.VFC<{
       changeObjectByCond(
         () => curry(isDateInPeriods)(periods)(info.date),
         {
-          cursor: 'default',
+          cursor: 'pointer',
           backgroundColor: 'hwb(from palegreen h w b / 0.5)',
         } as any,
         {
-          cursor: 'pointer',
+          cursor: 'default',
         },
       ),
     ])(info.el.style)
