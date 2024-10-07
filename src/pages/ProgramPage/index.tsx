@@ -10,6 +10,7 @@ import { useEquityProgramByProgramId, useProgram, useProgramPlansEnrollmentsAggr
 import { useEnrolledProgramPackage } from '../../hooks/programPackage'
 import ForbiddenPage from '../ForbiddenPage'
 import LoadingPage from '../LoadingPage'
+import ProgramPageHelmet from './Primary/ProgramPageHelmet'
 import ProgramPageContent from './ProgramPageContent'
 
 const ProgramPage: React.VFC = () => {
@@ -20,7 +21,7 @@ const ProgramPage: React.VFC = () => {
   const { programId } = useParams<{ programId: string }>()
 
   const tracking = useTracking()
-  const { id: appId } = useApp()
+  const { id: appId, loading: loadingApp } = useApp()
   const { loadingProgram, program } = useProgram(programId)
   const { isAuthenticating } = useAuth()
   const { loading: loadingResourceCollection, resourceCollection } = useResourceCollection(
@@ -66,6 +67,8 @@ const ProgramPage: React.VFC = () => {
       noHeader={loadingProgram ? true : !program.displayHeader}
       noFooter={loadingProgram ? true : !program.displayFooter}
     >
+      {!loadingApp && <ProgramPageHelmet program={program} />}
+
       <ProgramPageContent program={program} layoutTemplateVariant={program.programLayoutTemplateVariant} />
     </DefaultLayout>
   )
