@@ -59,7 +59,8 @@ const MembershipCardSelectionModal: React.VFC<{
             <MembershipCardItem
               member={member}
               membershipCardId={membershipCard.card.id}
-              updatedAt={membershipCard.updatedAt}
+              startedAt={membershipCard.startedAt}
+              endedAt={membershipCard.endedAt}
             />
           </div>
         ))}
@@ -71,8 +72,9 @@ const MembershipCardSelectionModal: React.VFC<{
 const MembershipCardItem: React.VFC<{
   member: MemberProps
   membershipCardId: string
-  updatedAt?: Date | null
-}> = ({ member, membershipCardId, updatedAt }) => {
+  startedAt?: Date | null
+  endedAt?: Date | null
+}> = ({ member, membershipCardId, startedAt, endedAt }) => {
   const { loadingMembershipCard, errorMembershipCard, membershipCard } = useMembershipCard(membershipCardId)
 
   if (loadingMembershipCard || errorMembershipCard || !membershipCard) {
@@ -88,11 +90,13 @@ const MembershipCardItem: React.VFC<{
           avatar: member.pictureUrl,
           name: member.name || '',
           account: member.username,
-          date: updatedAt ? moment(updatedAt).format('YYYY//MM/DD') : '',
+          date: startedAt ? moment(startedAt).format('YYYY//MM/DD') : '',
         }}
         title={membershipCard.title}
         description={membershipCard.description}
         variant="list-item"
+        startedAt={startedAt}
+        endedAt={endedAt}
       />
     </StyledContainer>
   )
