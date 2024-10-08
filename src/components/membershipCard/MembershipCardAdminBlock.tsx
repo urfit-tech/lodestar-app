@@ -34,7 +34,7 @@ const MembershipCardAdminBlock: React.VFC<{
           avatar: currentMember.pictureUrl,
           name: currentMember.name || '',
           account: currentMember.username,
-          date: updatedAt ? dayjs(updatedAt).format('YYYY/MM/DD') : '',
+          date: startedAt ? dayjs(startedAt).format('YYYY/MM/DD') : '',
         }}
         title={membershipCard.title}
         description={membershipCard.description}
