@@ -25,6 +25,7 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
           reschedule_type
           default_meet_gateway
           meet_generation_method
+          meeting_link_url
           appointment_schedules {
             id
             created_at
@@ -68,6 +69,7 @@ export const useAppointmentPlanCollection = (memberId: string, startedAt: Date, 
       capacity: appointmentPlan.capacity,
       defaultMeetGateway: appointmentPlan.default_meet_gateway,
       meetGenerationMethod: appointmentPlan.meet_generation_method,
+      meetingLinkUrl: appointmentPlan.meeting_link_url || null,
       currency: {
         id: appointmentPlan.currency.id,
         label: appointmentPlan.currency.label,
@@ -127,6 +129,7 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
           support_locales
           default_meet_gateway
           meet_generation_method
+          meeting_link_url
           appointment_schedules {
             id
             created_at
@@ -198,6 +201,7 @@ export const useAppointmentPlan = (appointmentPlanId: string, currentMemberId?: 
         rescheduleType: (data.appointment_plan_by_pk.reschedule_type as ReservationType) || null,
         defaultMeetGateway: data.appointment_plan_by_pk.default_meet_gateway,
         meetGenerationMethod: data.appointment_plan_by_pk.meet_generation_method,
+        meetingLinkUrl: data.appointment_plan_by_pk.meeting_link_url || null,
         currency: {
           id: data.appointment_plan_by_pk.currency.id,
           label: data.appointment_plan_by_pk.currency.label,
