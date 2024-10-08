@@ -194,8 +194,10 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
     return <Redirect to="/repairing" />
   }
 
-  const currentAppPage =
-    appPages.find(appPage => appPage.language === currentLocale) || appPages.find(appPage => !appPage.language)
+  const currentAppPage = enabledModules.locale
+    ? appPages.find(appPage => appPage.language === currentLocale) || appPages.find(appPage => !appPage.language)
+    : appPages.find(appPage => !appPage.language) || appPages[0]
+
   return (
     <>
       {currentAppPage ? (
