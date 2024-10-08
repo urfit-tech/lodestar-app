@@ -21,6 +21,7 @@ export type AppointmentPlan = {
   capacity: number
   defaultMeetGateway: string
   meetGenerationMethod: string
+  meetingLinkUrl: string | null
 }
 
 export type AppointmentPeriod = {

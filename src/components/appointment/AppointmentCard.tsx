@@ -328,6 +328,8 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
       } catch (error) {
         handleError(error)
       }
+    } else if (!!appointmentPlan.meetingLinkUrl) {
+      joinUrl = appointmentPlan.meetingLinkUrl
     } else {
       joinUrl = `https://meet.jit.si/${orderProductId}#config.startWithVideoMuted=true&userInfo.displayName="${currentMember?.name}", '_blank', 'noopener=yes,noreferrer=yes'`
     }
@@ -479,7 +481,9 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
 
             {loadingAppointmentPlan ? (
               <SkeletonText noOfLines={1} spacing="4" w="90px" />
-            ) : !orderProduct.options?.joinUrl && appointmentPlan.meetGenerationMethod === 'manual' ? (
+            ) : !orderProduct.options?.joinUrl &&
+              !appointmentPlan.meetingLinkUrl &&
+              appointmentPlan.meetGenerationMethod === 'manual' ? (
               <StyledLabel>{formatMessage(appointmentMessages.AppointmentCard.noLinkSet)}</StyledLabel>
             ) : // dayjs(orderProduct.startedAt).diff(new Date(), 'minute') > 10 ? (
             //   <StyledLabel>會議尚未開始</StyledLabel>
