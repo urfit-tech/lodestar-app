@@ -72,7 +72,7 @@ export const useEnrolledMembershipCards = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_ENROLLED_CARDS, hasura.GET_ENROLLED_CARDSVariables>(
     gql`
       query GET_ENROLLED_CARDS($memberId: String!) {
-        card_enrollment(where: { member_id: { _eq: $memberId } }, distinct_on: card_id) {
+        card_enrollment(where: { member_id: { _eq: $memberId } }) {
           card {
             id
             title
