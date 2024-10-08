@@ -1,6 +1,6 @@
 import { CalendarOutlined, TableOutlined } from '@ant-design/icons'
 import { Button } from '@chakra-ui/button'
-import { Box, Flex, Spacer } from '@chakra-ui/layout'
+import { HStack, Spacer } from '@chakra-ui/layout'
 import dayjs from 'dayjs'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
@@ -108,27 +108,27 @@ const AppointmentPeriodCollection: React.VFC<{
 
   return (
     <>
-      <Flex>
-        <Box p="4">
-          <h1>選擇時段</h1>
-        </Box>
-        <Spacer />
-        <Box p="4">
-          <Button onClick={() => setUiMode(uiMode === 'grid' ? 'calendar' : 'grid')}>
-            {uiMode === 'grid' ? (
-              <Box>
-                <CalendarOutlined />
-                切換月曆
-              </Box>
+      <HStack padding="1em">
+        <span className="col-lg-4 col-12" style={{ fontSize: '1.5em', fontWeight: 'bold' }}>
+          選擇時段
+        </span>
+        <Spacer className="col-lg-5 col-12" />
+        <Button
+          variant="outline"
+          className="col-lg-3 col-12"
+          style={{ verticalAlign: 'middle', fontSize: '1em', fontWeight: 'bold' }}
+          onClick={() => setUiMode(uiMode === 'grid' ? 'calendar' : 'grid')}
+          leftIcon={
+            uiMode === 'grid' ? (
+              <CalendarOutlined style={{ fontSize: '1.2em', verticalAlign: 'middle' }} />
             ) : (
-              <Box>
-                <TableOutlined />
-                切換格狀
-              </Box>
-            )}
-          </Button>
-        </Box>
-      </Flex>
+              <TableOutlined style={{ fontSize: '1.2em', verticalAlign: 'middle' }} />
+            )
+          }
+        >
+          {uiMode === 'grid' ? '切換月曆' : '切換格狀'}
+        </Button>
+      </HStack>
       {uiMode === 'grid' ? (
         Object.values(periods).map(periods => (
           <AppointmentPeriodBlock
