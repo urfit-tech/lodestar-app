@@ -9,19 +9,20 @@ import { StatusType } from '../types/general'
 import { PlaylistProps, PodcastProgramContent, PodcastProgramContentProps } from '../types/podcast'
 
 export const usePodcastProgramCollection = (creatorId?: string) => {
+  const { id: appId } = useApp()
   const { loading, error, data, refetch } = useQuery<
     hasura.GET_PODCAST_PROGRAM_COLLECTION,
     hasura.GET_PODCAST_PROGRAM_COLLECTIONVariables
   >(
     gql`
-      query GET_PODCAST_PROGRAM_COLLECTION($creatorId: String) {
+      query GET_PODCAST_PROGRAM_COLLECTION($creatorId: String, $appId: String) {
         podcast_program(
           order_by: { published_at: desc }
           where: {
             podcast_program_roles: {
               member_id: { _eq: $creatorId }
               name: { _eq: "instructor" }
-              member: { app_id: { _eq: "demo" } }
+              member: { app_id: { _eq: $appId } }
             }
             published_at: { _is_null: false }
           }
@@ -60,7 +61,8 @@ export const usePodcastProgramCollection = (creatorId?: string) => {
     `,
     {
       variables: {
-        creatorId: creatorId,
+        creatorId,
+        appId,
       },
     },
   )
