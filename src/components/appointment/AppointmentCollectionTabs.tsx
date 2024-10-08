@@ -2,9 +2,10 @@ import { DeleteOutlined } from '@ant-design/icons'
 import { Button } from '@chakra-ui/button'
 import { useDisclosure } from '@chakra-ui/hooks'
 import { Input } from '@chakra-ui/input'
-import { HStack } from '@chakra-ui/layout'
+import { Divider, HStack, Spacer, VStack } from '@chakra-ui/layout'
 import dayjs from 'dayjs'
 import { identity } from 'lodash'
+import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
@@ -36,8 +37,10 @@ import {
   without,
 } from 'ramda'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
+import { Card } from 'react-bootstrap'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
+import { useMediaQuery } from 'react-responsive'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { PodcastProgramProps } from '../../containers/podcast/PodcastProgramTimeline'
@@ -138,13 +141,15 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
     ifElse(
       pipe(always(selectedPeriods.length + 1 > appointmentPeriodLengthLimit)),
       pipe(
-        tap(() => window.alert('選取課程總數超過設定總數！')),
+        tap(() => window.alert('選取堂數超過設定總數！')),
         always(selectedPeriods),
       ),
       identity,
     ),
     setSelectedPeriods,
   )
+
+  const isDesktop = useMediaQuery({ minWidth: BREAK_POINT })
 
   if (isAuthenticating || currentMember === null) {
     setAuthModalVisible?.(true)
@@ -175,51 +180,78 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
             onSubscribe={() => (isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible?.(true))}
           />
         ) : (
-          <>
-            {(
-              map(
+          <Card
+            style={
+              isDesktop
+                ? {
+                    borderRadius: '4%',
+                    boxShadow: '0 0 2vmin 0 rgba(0, 0, 0, 0.15)',
+                    padding: '2vmin',
+                    background: 'white',
+                    maxHeight: '50vh',
+                    overflow: 'auto',
+                    position: 'fixed',
+                    top: '50vh',
+                    transform: 'translateY(-50%)',
+                  }
+                : {}
+            }
+          >
+            <Card.Title style={{ fontSize: '1.2em', fontWeight: 'bold', padding: '1.2em 0' }}>
+              已選擇 {selectedPeriods.length}{' '}
+              {appointmentPeriodLengthLimit === Infinity ? `` : `/ ${appointmentPeriodLengthLimit}`} 堂
+            </Card.Title>
+            <VStack align="stretch">
+              {map(
                 converge(subtotalListItem(setSelectedPeriods), [
                   pipe(props(['id', 'startedAt', 'endedAt'])),
                   always(selectedPeriods),
                 ]),
-              ) as any
-            )(selectedPeriods)}
-            <Button onClick={onCheckOutModalOpen}>submit</Button>
-            <MultiPeriodCheckoutModal
-              defaultProductId={`AppointmentPlan_${selectedAppointmentPlanId}`}
-              productDetails={
-                pipe(project(['startedAt', 'endedAt']), map(mergeRight({ quantity: 1 })) as any)(selectedPeriods) as any
-              }
-              isCheckOutModalOpen={isCheckOutModalOpen}
-              onCheckOutModalOpen={onCheckOutModalOpen}
-              onCheckOutModalClose={onCheckOutModalClose}
-            />
-          </>
+              )(selectedPeriods)}
+              <Button variant="outline" onClick={onCheckOutModalOpen}>
+                立即購買
+              </Button>
+              <MultiPeriodCheckoutModal
+                defaultProductId={`AppointmentPlan_${selectedAppointmentPlanId}`}
+                productDetails={
+                  pipe(
+                    project(['startedAt', 'endedAt']),
+                    map(mergeRight({ quantity: 1 })) as any,
+                  )(selectedPeriods) as any
+                }
+                isCheckOutModalOpen={isCheckOutModalOpen}
+                onCheckOutModalOpen={onCheckOutModalOpen}
+                onCheckOutModalClose={onCheckOutModalClose}
+              />
+            </VStack>
+          </Card>
         )}
       </div>
     </div>
   )
 }
 
+const pickPeriodById: (id: string) => (selectedPeriods: Array<AppointmentPeriod>) => Array<AppointmentPeriod> = id =>
+  pipe(filter(pipe(prop('id') as any, equals(id))))
+
 const subtotalListItem =
   (setSelectedPeriods: Dispatch<SetStateAction<Array<AppointmentPeriod>>>) =>
   ([id, start, end]: [string, Date, Date], selectedPeriods: Array<AppointmentPeriod>) =>
     (
-      <HStack key={id} id={id}>
-        <p>
-          {dayjs(start).format('YYYY-MM-DD (ddd) HH:mm')} ~ {dayjs(end).format('HH:mm')}
-        </p>
-        <DeleteOutlined
-          onClick={() =>
-            (
-              pipe(
-                converge(without, [pipe(filter(pipe(prop('id') as any, equals(id)))), identity]),
-                setSelectedPeriods,
-              ) as any
-            )(selectedPeriods)
-          }
-        />
-      </HStack>
+      <>
+        <HStack justify="space-around" key={id} id={id}>
+          {}
+          <p>
+            {dayjs(start).format('YYYY-MM-DD (ddd) HH:mm')} ~ {dayjs(end).format('HH:mm')}
+          </p>
+          <DeleteOutlined
+            onClick={() =>
+              (pipe(converge(without, [pickPeriodById(id), identity]), setSelectedPeriods) as any)(selectedPeriods)
+            }
+          />
+        </HStack>
+        <Divider />
+      </>
     )
 
 const AppointmentCollectionTabs: React.VFC<{
@@ -316,10 +348,13 @@ const AppointmentCollectionTabs: React.VFC<{
       </div>
 
       <HStack padding="1em">
-        <span>本次預約數量上限</span>
+        <span className="col-lg-4 col-12" style={{ fontSize: '1.5em', fontWeight: 'bold' }}>
+          選擇堂數
+        </span>
+        <Spacer />
         <Input
+          className="col-lg-8 col-12"
           type="number"
-          width="10em"
           onChange={e => setAppointmentPeriodLengthLimit(defaultTo(Infinity)(Number(e.target.value)))}
         />
       </HStack>
