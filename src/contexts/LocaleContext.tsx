@@ -8,13 +8,13 @@ import hasura from '../hasura'
 import defaultLocaleMessages from '../translations/locales/en-us.json'
 
 export const SUPPORTED_LOCALES = [
-  { locale: 'zh-cn', label: '简体中文' },
   { locale: 'zh-tw', label: '繁體中文' },
+  { locale: 'zh-cn', label: '简体中文' },
   { locale: 'en-us', label: 'English' },
+  { locale: 'ja', label: '日本語' },
+  // { locale: 'ko', label: '한국어' },
   { locale: 'vi', label: 'Tiếng việt' },
   { locale: 'id', label: 'Indonesia' },
-  { locale: 'ja', label: '日本語' },
-  { locale: 'ko', label: '한국어' },
 ]
 type LocaleContextProps = {
   defaultLocale: string
