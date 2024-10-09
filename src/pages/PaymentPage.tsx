@@ -168,21 +168,23 @@ const PaymentPage: React.VFC = () => {
                 </Typography.Title>
               </>
             ) : (
-              <>
-                <Icon
-                  className="mb-5"
-                  type="close-circle"
-                  theme="twoTone"
-                  twoToneColor="#ff7d62"
-                  style={{ fontSize: '4rem' }}
-                />
-                <Typography.Title level={4} className="mb-3">
-                  {formatMessage(messages.paymentInfoError)}
-                </Typography.Title>
-                <Typography.Title level={4} className="mb-3">
-                  {formatMessage(messages.paymentNo, { paymentNo: paymentNo })}
-                </Typography.Title>
-              </>
+              !decodedToken && (
+                <>
+                  <Icon
+                    className="mb-5"
+                    type="close-circle"
+                    theme="twoTone"
+                    twoToneColor="#ff7d62"
+                    style={{ fontSize: '4rem' }}
+                  />
+                  <Typography.Title level={4} className="mb-3">
+                    {formatMessage(messages.paymentInfoError)}
+                  </Typography.Title>
+                  <Typography.Title level={4} className="mb-3">
+                    {formatMessage(messages.paymentNo, { paymentNo: paymentNo })}
+                  </Typography.Title>
+                </>
+              )
             )}
           </div>
         </AdminCard>
