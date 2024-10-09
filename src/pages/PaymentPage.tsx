@@ -125,21 +125,23 @@ const PaymentPage: React.VFC = () => {
                 </Typography.Title>
               </>
             ) : (
-              <>
-                <Icon
-                  className="mb-5"
-                  type="close-circle"
-                  theme="twoTone"
-                  twoToneColor="#ff7d62"
-                  style={{ fontSize: '4rem' }}
-                />
-                <Typography.Title level={4} className="mb-3">
-                  無法請求付款資訊，請與平台聯繫{' '}
-                </Typography.Title>
-                <Typography.Title level={4} className="mb-3">
-                  交易編號：{paymentNo}
-                </Typography.Title>
-              </>
+              !decodedToken && (
+                <>
+                  <Icon
+                    className="mb-5"
+                    type="close-circle"
+                    theme="twoTone"
+                    twoToneColor="#ff7d62"
+                    style={{ fontSize: '4rem' }}
+                  />
+                  <Typography.Title level={4} className="mb-3">
+                    無法請求付款資訊，請與平台聯繫{' '}
+                  </Typography.Title>
+                  <Typography.Title level={4} className="mb-3">
+                    交易編號：{paymentNo}
+                  </Typography.Title>
+                </>
+              )
             )}
           </div>
         </AdminCard>
