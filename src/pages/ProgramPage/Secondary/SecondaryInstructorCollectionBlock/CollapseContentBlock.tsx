@@ -1,9 +1,11 @@
 import { Box } from '@chakra-ui/react'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { usePostPreviewCollection } from '../../../../hooks/blog'
 import { usePodcastProgramCollection } from '../../../../hooks/podcast'
 import { usePublishedProgramCollection } from '../../../../hooks/program'
 import EmptyCover from '../../../../images/empty-cover.png'
+import ProgramPageMessages from '../../translation'
 import CollapseContent from './CollapseContent'
 import CollapseContentCard from './CollapseContentCard'
 
@@ -24,10 +26,16 @@ const CollapseContentBlock: React.FC<{ creatorId: string }> = ({ creatorId }) =>
 
   const { podcastPrograms } = usePodcastProgramCollection(creatorId)
   const { posts } = usePostPreviewCollection({ authorId: creatorId })
+
+  const { formatMessage } = useIntl()
   return (
     <>
       {programs.length !== 0 && (
-        <CollapseContent title={`開設課程(${programs.length})`}>
+        <CollapseContent
+          title={formatMessage(ProgramPageMessages.SecondaryInstructorCollectionBlock.course, {
+            count: programs.length,
+          })}
+        >
           <StyledCollapseContentWrapper>
             {programs.map(program => (
               <CollapseContentCard
@@ -42,7 +50,11 @@ const CollapseContentBlock: React.FC<{ creatorId: string }> = ({ creatorId }) =>
         </CollapseContent>
       )}
       {podcastPrograms.length !== 0 && (
-        <CollapseContent title={`廣播頻道(${podcastPrograms.length})`}>
+        <CollapseContent
+          title={formatMessage(ProgramPageMessages.SecondaryInstructorCollectionBlock.podcastChannel, {
+            count: podcastPrograms.length,
+          })}
+        >
           <StyledCollapseContentWrapper>
             {podcastPrograms.map(podcast => (
               <CollapseContentCard
@@ -57,7 +69,11 @@ const CollapseContentBlock: React.FC<{ creatorId: string }> = ({ creatorId }) =>
         </CollapseContent>
       )}
       {posts.length !== 0 && (
-        <CollapseContent title={`媒體文章(${posts.length})`}>
+        <CollapseContent
+          title={formatMessage(ProgramPageMessages.SecondaryInstructorCollectionBlock.mediaArticle, {
+            count: posts.length,
+          })}
+        >
           <StyledCollapseContentWrapper>
             {posts.map(post => (
               <CollapseContentCard imgSrc={post.coverUrl || EmptyCover} href={`/posts/${post.id}`} key={post.id}>

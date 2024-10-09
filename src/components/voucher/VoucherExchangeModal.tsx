@@ -75,7 +75,10 @@ const VoucherExchangeModalBlock: React.FC<{
   const [hasPinCode, setHasPinCode] = useState(false)
   const [pinCode, setPinCode] = useState<string | null>(null)
   const [exchanging, setExchanging] = useState(false)
-  const myPageName = settings['nav.my_page.name'] ? settings['nav.my_page.name'] : '我的主頁'
+
+  const myPageName = settings['nav.my_page.name']
+    ? settings['nav.my_page.name']
+    : formatMessage(voucherMessages.VoucherExchangeModal.homePage)
 
   const exchangeVoucher = async (selectedProductIds: string[], voucherId: string) => {
     onLoading?.(true)

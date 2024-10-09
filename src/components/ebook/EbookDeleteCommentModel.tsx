@@ -1,8 +1,10 @@
 // CommentModal.tsx
 import { Modal } from 'antd'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { BREAK_POINT } from '../common/Responsive'
+import ebookMessages from './translation'
 
 const StyledCommentModal = styled(Modal)`
   .ant-modal-content {
@@ -68,14 +70,15 @@ const EbookDeleteHighlightModal: React.FC<CommentModalProps> = ({
   onCancel,
   programContentEbookHighlightId,
 }) => {
+  const { formatMessage } = useIntl()
   return (
     <StyledCommentModal visible={visible} onOk={onOk} onCancel={onCancel}>
       <div className="headerContainer">
-        <h1>是否刪除所選的畫線</h1>
+        <h1>{formatMessage(ebookMessages.EbookDeleteCommentModel.deleteSelectedHighlight)}</h1>
       </div>
       <div className="modelContainer">
         <div className="commentArea">
-          <p>刪除即不可恢復，確定要刪除嗎？</p>
+          <p>{formatMessage(ebookMessages.EbookDeleteCommentModel.deleteConfirmation)}</p>
         </div>
       </div>
     </StyledCommentModal>

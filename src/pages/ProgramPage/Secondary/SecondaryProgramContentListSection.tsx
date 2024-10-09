@@ -1,7 +1,9 @@
 import { Collapse, IconButton } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { productMessages } from '../../../helpers/translation'
 import {
   contentTitleCollapsedType,
   Program,
@@ -78,6 +80,7 @@ const SecondaryProgramContentListSection: React.VFC<{
   })[]
   isEquityProgram: boolean
 }> = ({ program, programContentSections, isEquityProgram }) => {
+  const { formatMessage } = useIntl()
   const [contentTitleCollapsed, setContentTitleCollapsed] = useState<contentTitleCollapsedType>({})
   const [allCollapsed, setAllCollapsed] = useState(checkAllCollapsed(contentTitleCollapsed))
 
@@ -115,7 +118,9 @@ const SecondaryProgramContentListSection: React.VFC<{
         <>
           {!checkAllPinned(contentTitleCollapsed) && (
             <StyleAllCollapsed onClick={() => !checkAllPinned(contentTitleCollapsed) && handleToggleAllCollapsed()}>
-              {allCollapsed ? '全部收合' : '全部展開'}
+              {allCollapsed
+                ? formatMessage(productMessages.program.content.collapseAll)
+                : formatMessage(productMessages.program.content.expandAll)}
               <IconButton
                 icon={<FaChevronDown style={{ transform: allCollapsed ? 'rotate(0deg)' : 'rotate(270deg)' }} />}
                 aria-label="Rotate Icon"

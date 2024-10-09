@@ -1,8 +1,10 @@
 import { Button } from 'antd'
+import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { usePublishedProgramCollection } from '../../../hooks/program'
 import ProgramCard from '../../program/ProgramCard'
+import HaohaomingSectionMessages from './translation'
 import { SectionTitle } from './util'
 
 const StyledSection = styled.section`
@@ -39,11 +41,16 @@ const Courses: React.FC = () => {
     isPrivate: false,
     limit: 3,
   })
+  const { formatMessage } = useIntl()
 
   return (
     <StyledSection>
       <div className="container">
-        <SectionTitle title="最新課程" subtitle="HOT COURSES" className="text-center" />
+        <SectionTitle
+          title={formatMessage(HaohaomingSectionMessages.Courses.latestCourses)}
+          subtitle={formatMessage(HaohaomingSectionMessages.Courses.hotCourses)}
+          className="text-center"
+        />
 
         <div className="row">
           {programs.map(program => (
@@ -54,7 +61,7 @@ const Courses: React.FC = () => {
         </div>
         <div className="text-center">
           <StyledButton size="large" onClick={() => history.push('/programs')}>
-            更多課程
+            {formatMessage(HaohaomingSectionMessages.Courses.moreCourses)}
           </StyledButton>
         </div>
       </div>

@@ -1,4 +1,6 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
+import commonMessages from './translation'
 
 type AzureMediaPlayerProps = {
   id: string
@@ -52,6 +54,7 @@ const AzureMediaPlayer = React.forwardRef(
     // FIXME: this type should be fixed
     playerRef: any,
   ) => {
+    const { formatMessage } = useIntl()
     const amp = (window as any).amp || null
 
     if (amp && playerRef?.current) {
@@ -112,9 +115,7 @@ const AzureMediaPlayer = React.forwardRef(
         className="azuremediaplayer amp-default-skin amp-big-play-centered"
       >
         <source src={url} type="application/vnd.ms-sstr+xml" />
-        <p className="amp-no-js">
-          To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video
-        </p>
+        <p className="amp-no-js">{formatMessage(commonMessages.AzureMediaPlayer.enableJavaScript)}</p>
       </video>
     )
   },

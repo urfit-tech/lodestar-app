@@ -282,9 +282,10 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
 
   const handleAttend = async () => {
     let joinUrl
-    if (!currentMemberId) return message.error('無法獲取當前使用者 id')
-    if (!appointmentPlan) return message.error('無法獲取當前預約方案資訊')
-    if (!appointmentPlan.creator) return message.error('無法獲取當前方案的主持者資訊')
+    if (!currentMemberId) return message.error(formatMessage(appointmentMessages.AppointmentCard.noCurrentUserId))
+    if (!appointmentPlan) return message.error(formatMessage(appointmentMessages.AppointmentCard.noAppointmentPlan))
+    if (!appointmentPlan.creator)
+      return message.error(formatMessage(appointmentMessages.AppointmentCard.noAppointmentPlanCreator))
     const { data } = await apolloClient.query<
       hasura.GetMeetByTargetAndPeriodAndSpecifyMember,
       hasura.GetMeetByTargetAndPeriodAndSpecifyMemberVariables
@@ -401,8 +402,10 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
             marginRight="16px"
             loading={!appointmentPlan}
             onClick={async () => {
-              if (!appointmentPlan) return message.error('無法獲取當前預約方案資訊')
-              if (!currentMemberId) return message.error('無法獲取當前使用者 id')
+              if (!appointmentPlan)
+                return message.error(formatMessage(appointmentMessages.AppointmentCard.noAppointmentPlan))
+              if (!currentMemberId)
+                return message.error(formatMessage(appointmentMessages.AppointmentCard.noCurrentUserId))
               const { data } = await apolloClient.query<
                 hasura.GetMeetByTargetAndPeriodAndSpecifyMember,
                 hasura.GetMeetByTargetAndPeriodAndSpecifyMemberVariables
@@ -416,7 +419,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                   memberId,
                 },
               })
-              if (!data) return message.error('無法獲取會議資訊')
+              if (!data) return message.error(formatMessage(appointmentMessages.AppointmentCard.noMeetingInfo))
               const link = await getFileDownloadableLink(
                 data.meet[0].recording_url
                   ? data.meet[0].recording_url
@@ -477,7 +480,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
             {loadingAppointmentPlan ? (
               <SkeletonText noOfLines={1} spacing="4" w="90px" />
             ) : !orderProduct.options?.joinUrl && appointmentPlan.meetGenerationMethod === 'manual' ? (
-              <StyledLabel>尚未設定連結</StyledLabel>
+              <StyledLabel>{formatMessage(appointmentMessages.AppointmentCard.noLinkSet)}</StyledLabel>
             ) : // dayjs(orderProduct.startedAt).diff(new Date(), 'minute') > 10 ? (
             //   <StyledLabel>會議尚未開始</StyledLabel>
             // ) :
