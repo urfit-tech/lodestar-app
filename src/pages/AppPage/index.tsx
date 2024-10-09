@@ -344,7 +344,7 @@ export const usePage = (path: string) => {
               defaultImg = craftData[node]?.props?.customStyle?.backgroundImage?.match(
                 /(?:\(['"]?)(.*?)(?:['"]?\))/,
                 '',
-              )[1]
+              )?.[1]
             }
             if (!defaultDescription && craftData && craftData[node].type.resolvedName === 'CraftParagraph') {
               defaultDescription = craftData[node]?.props?.content
