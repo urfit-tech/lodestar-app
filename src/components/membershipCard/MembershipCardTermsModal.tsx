@@ -12,13 +12,13 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react'
+import { ascend, defaultTo, path, prop, sortWith } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useMembershipCardTerms } from '../../hooks/membershipCardTerms'
 import { MembershipCardTermsModalProps, MembershipCardTermsProductType } from '../../types/membershipCard'
 import membershipCardMessages from './translation'
-import { path, ascend, sortWith, prop, defaultTo } from 'ramda'
 
 const StyledTable = styled(ChakraTable)`
   && {
@@ -78,7 +78,12 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({
     }
   }
 
-  const generateProductLink = (details: { productName: string; id: string; creatorId: string }) => {
+  const generateProductLink = (details: {
+    productName: string
+    id: string
+    creatorId?: string
+    mainProductId?: string
+  }) => {
     switch (details.productName) {
       case 'ActivityTicket':
         return `/activities/${details.id}`
@@ -93,9 +98,9 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({
       case 'AppointmentPlan':
         return `/creators/${details.creatorId}?tabkey=appointments`
       case 'MerchandiseSpec':
-        return `/merchandises/${details.id}`
-      case 'ProjectsPlan':
-        return `/projects/${details.id}`
+        return `/merchandises/${details.mainProductId}`
+      case 'ProjectPlan':
+        return `/projects/${details.mainProductId}`
       default:
         return '/'
     }
@@ -142,10 +147,13 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({
                 const discountProductType = discount?.product?.type as MembershipCardTermsProductType
                 const discountProductPlanName = discount?.product?.details?.productPlanName
                 const discountProductName = discount?.product?.details?.productName
-                const discountName = discountProductPlanName
-                  ? `${discountProductName} - ${discountProductPlanName}`
-                  : discountProductName
-
+                const discountName = `${discount.product.details?.mainProduct?.title ?? discountProductName}${
+                  discountProductPlanName
+                    ? ` - ${discountProductPlanName}`
+                    : discount.product.details?.mainProduct?.title
+                    ? ` - ${discountProductName}`
+                    : ''
+                }`
                 return (
                   <Tr key={discount.id}>
                     <Td>{renderProductType(discountProductType)}</Td>
@@ -154,7 +162,8 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({
                         href={generateProductLink({
                           productName: discountProductType,
                           id: discountProductId as string,
-                          creatorId: discount.product.details?.creatorId || '',
+                          creatorId: discount.product.details?.creatorId,
+                          mainProductId: discount.product.details?.mainProduct?.id,
                         })}
                         onClick={() => console.log()}
                         target="_blank"
