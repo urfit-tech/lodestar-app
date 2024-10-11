@@ -357,7 +357,7 @@ export type Target = {
 }
 
 const GET_MUILTI_PERIOD_PRODUCT = gql`
-  query GET_MUILTI_PERIOD_PRODUCT($targetId: uuid!, $startedAts: [timestamptz]) {
+  query GET_MUILTI_PERIOD_PRODUCT($targetId: uuid!, $startedAts: [timestamptz!]) {
     program_by_pk(id: $targetId) {
       id
       title
