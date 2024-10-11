@@ -83,6 +83,7 @@ const strategyMap: { [key: string]: (discount: StrategyDiscount) => Promise<Memb
             title
             activity {
               id
+              title
             }
           }
         }
@@ -92,7 +93,11 @@ const strategyMap: { [key: string]: (discount: StrategyDiscount) => Promise<Memb
     if (!data) return null
     const activityTicket = data.activity_ticket && data.activity_ticket[0] ? data.activity_ticket[0] : null
     if (!activityTicket) return null
-    return { productName: activityTicket.title, productId: activityTicket.activity.id }
+    return {
+      productName: activityTicket.title,
+      productId: activityTicket.activity.id,
+      mainProduct: { id: activityTicket.activity.id, title: activityTicket.activity.title },
+    }
   },
 
   ProgramPlan: async discount => {
@@ -186,6 +191,7 @@ const strategyMap: { [key: string]: (discount: StrategyDiscount) => Promise<Memb
       ? {
           productName: appointmentPlan.title,
           productId: appointmentPlan.id,
+          creatorId: appointmentPlan.creator_id || '',
         }
       : null
   },
@@ -196,6 +202,10 @@ const strategyMap: { [key: string]: (discount: StrategyDiscount) => Promise<Memb
           merchandise_spec(where: { id: { _eq: $id }, is_deleted: { _eq: false } }) {
             title
             id
+            merchandise {
+              id
+              title
+            }
           }
         }
       `,
@@ -208,6 +218,7 @@ const strategyMap: { [key: string]: (discount: StrategyDiscount) => Promise<Memb
       ? {
           productName: merchandiseSpec.title,
           productId: merchandiseSpec.id,
+          mainProduct: { id: merchandiseSpec.merchandise.id, title: merchandiseSpec.merchandise.title },
         }
       : null
   },
@@ -218,6 +229,10 @@ const strategyMap: { [key: string]: (discount: StrategyDiscount) => Promise<Memb
           project_plan(where: { id: { _eq: $id }, published_at: { _is_null: false } }) {
             title
             id
+            project {
+              id
+              title
+            }
           }
         }
       `,
@@ -230,6 +245,7 @@ const strategyMap: { [key: string]: (discount: StrategyDiscount) => Promise<Memb
       ? {
           productName: projectPlan.title,
           productId: projectPlan.id,
+          mainProduct: { id: projectPlan.project.id, title: projectPlan.project.title },
         }
       : null
   },
