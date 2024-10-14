@@ -10,6 +10,7 @@ import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
+import LocaleContext, { SUPPORTED_LOCALES } from '../../contexts/LocaleContext'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../helpers/translation'
 import { useNav } from '../../hooks/data'
@@ -159,6 +160,36 @@ const DefaultLogout: React.VFC<{ onClick?: React.MouseEventHandler<HTMLDivElemen
   )
 }
 
+const LocaleCollapse: React.FC = () => {
+  const { isOpen, onToggle } = useDisclosure()
+  const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
+  return (
+    <>
+      <Box d="flex" justifyContent="space-between" cursor="pointer" onClick={onToggle}>
+        <Box>
+          <List.Item style={{ cursor: 'pointer' }}>
+            <BlankIcon className="mr-2" />
+            {SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === currentLocale)?.label}
+          </List.Item>
+        </Box>
+        <StyledCollapseIconWrapper>
+          {isOpen ? <ChevronDownIcon w="16px" /> : <ChevronRightIcon w="16px" />}
+        </StyledCollapseIconWrapper>
+      </Box>
+      <Collapse in={isOpen} animateOpacity style={{ background: '#f7f8f8', margin: '0 -12px' }}>
+        {SUPPORTED_LOCALES.filter(v => v.locale !== currentLocale).map(v => (
+          <Box ml="3rem" style={{ cursor: 'pointer' }}>
+            <List.Item key={v.locale} onClick={() => setCurrentLocale?.(v.locale)}>
+              <BlankIcon className="mr-2" />
+              {v.label}
+            </List.Item>
+          </Box>
+        ))}
+      </Collapse>
+    </>
+  )
+}
+
 const MemberProfileButton: React.VFC<{
   id: string
   name: string
@@ -218,6 +249,9 @@ const MemberProfileButton: React.VFC<{
                 {formatMessage(commonMessages.content.creatorPage)}
               </List.Item>
             ))}
+
+          {enabledModules.locale ? <LocaleCollapse /> : null}
+
           {renderMyPageNavItem?.({ memberId: member.id }) ||
             (!(settings['nav.my_page.disable'] === '1') && (
               <BorderedItem onClick={() => history.push(`/members/${member.id}`)} style={{ cursor: 'pointer' }}>
