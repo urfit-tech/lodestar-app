@@ -5,11 +5,10 @@ import { ClickParam, MenuProps } from 'antd/lib/menu'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { parsePayload } from 'lodestar-app-element/src/hooks/util'
-import React, { useContext } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import LocaleContext, { SUPPORTED_LOCALES } from '../../contexts/LocaleContext'
 import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardIds } from '../../hooks/card'
@@ -28,7 +27,6 @@ import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
 import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
 import { ReactComponent as UserIcon } from '../../images/user.svg'
 import { useAppRouter } from './AppRouter'
-import { BREAK_POINT } from './Responsive'
 
 const StyledMenu = styled(Menu)`
   && {
@@ -49,13 +47,10 @@ export const AdminMenu: React.FC<MenuProps> = ({ children, ...menuProps }) => {
   const { routesMap } = useAppRouter()
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { setCurrentLocale } = useContext(LocaleContext)
   const { managementDomain } = useManagementDomain(appId)
 
   const handleClick = ({ key, item }: ClickParam) => {
-    if (SUPPORTED_LOCALES.map(v => v.locale).includes(key)) {
-      setCurrentLocale?.(key)
-    } else if (item.props['data-href']) {
+    if (item.props['data-href']) {
       if (key.startsWith('_blank')) window.open(item.props['data-href'])
       else history.push(item.props['data-href'])
     } else if (key.startsWith('management_system')) {
@@ -77,7 +72,6 @@ export const MemberAdminMenu: React.VFC<
   MenuProps & { renderAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement }
 > = ({ renderAdminMenu, ...props }) => {
   const { formatMessage } = useIntl()
-  const { currentLocale } = useContext(LocaleContext)
   const { currentMemberId, currentUserRole, permissions, authToken } = useAuth()
   const { enabledModules, settings } = useApp()
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
@@ -233,22 +227,6 @@ export const MemberAdminMenu: React.VFC<
           {formatMessage(commonMessages.content.contact)}
         </Menu.Item>
       ),
-    },
-    {
-      key: 'translation',
-      item:
-        enabledModules.locale && window.innerWidth < BREAK_POINT ? (
-          <Menu.SubMenu
-            key="translation"
-            title={SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === currentLocale)?.label}
-          >
-            {SUPPORTED_LOCALES.filter(v => v.locale !== currentLocale).map(v => (
-              <Menu.Item key={v.locale}>{v.label}</Menu.Item>
-            ))}
-          </Menu.SubMenu>
-        ) : (
-          <></>
-        ),
     },
   ]
 
