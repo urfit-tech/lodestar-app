@@ -2,13 +2,16 @@ import { Button, Popover } from 'antd'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AuthModalContext } from '../../components/auth/AuthModal'
+import LocaleCollapse from '../../components/common/LocaleCollapse'
 import { CustomNavLinks, StyledList, Wrapper } from '../../components/common/MemberProfileButton'
 import Responsive from '../../components/common/Responsive'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import { commonMessages } from '../../helpers/translation'
 import { useAuthModal } from '../../hooks/auth'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 
 const AuthButton: React.VFC = () => {
+  const { enabledModules } = useApp()
   const { formatMessage } = useIntl()
   const { renderAuthButton } = useCustomRenderer()
   const { setVisible } = useContext(AuthModalContext)
@@ -35,6 +38,7 @@ const AuthButton: React.VFC = () => {
             <Wrapper>
               <StyledList split={false}>
                 <CustomNavLinks />
+                {enabledModules.locale ? <LocaleCollapse /> : null}
               </StyledList>
             </Wrapper>
           }
