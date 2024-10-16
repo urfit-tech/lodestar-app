@@ -57,6 +57,7 @@ const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
     autoplay: props.autoPlay,
     responsive: true,
     fluid: true,
+    aspectRatio: '16:9',
     plugins: {
       hlsQualitySelector: {
         displayCurrentQuality: true,
