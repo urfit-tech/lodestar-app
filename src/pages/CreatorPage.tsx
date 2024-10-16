@@ -392,7 +392,6 @@ const CreatorTabs: React.VFC<{
           podcastPrograms={podcastPrograms}
           setActiveKey={setActiveKey}
           isAuthenticated={isAuthenticated}
-          onCheckoutModalOpen={onCheckoutModalOpen}
           setAuthModalVisible={setAuthModalVisible}
         />
       ),
