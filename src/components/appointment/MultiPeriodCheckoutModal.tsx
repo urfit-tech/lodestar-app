@@ -2,7 +2,6 @@ import { gql, useQuery } from '@apollo/client'
 import { Box, Button, Checkbox, Divider, OrderedList, SkeletonText, useToast } from '@chakra-ui/react'
 import axios from 'axios'
 import { camelCase } from 'lodash'
-import DiscountSelectionCard from 'lodestar-app-element/src/components/cards/DiscountSelectionCard'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import ProductItem from 'lodestar-app-element/src/components/common/ProductItem'
 import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsive'
@@ -33,6 +32,7 @@ import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { getResourceByProductId, useTappay } from 'lodestar-app-element/src/hooks/util'
 import {
+  CheckProps,
   ContactInfo,
   InvoiceProps,
   PaymentProps,
@@ -41,7 +41,25 @@ import {
 } from 'lodestar-app-element/src/types/checkout'
 import { ConversionApiContent, ConversionApiEvent } from 'lodestar-app-element/src/types/conversionApi'
 import { ShippingMethodProps } from 'lodestar-app-element/src/types/merchandise'
-import { ascend, defaultTo, head, identity, ifElse, isNil, last, map, pipe, pluck, prop, sort, sum } from 'ramda'
+import {
+  ascend,
+  complement,
+  defaultTo,
+  filter,
+  head,
+  identity,
+  ifElse,
+  isNil,
+  join,
+  last,
+  map,
+  mergeLeft,
+  pipe,
+  pluck,
+  prop,
+  sort,
+  sum,
+} from 'ramda'
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
@@ -51,6 +69,7 @@ import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { AuthModalContext } from '../../components/auth/AuthModal'
 import { useMuiltiPeriodProduct } from './muiltiPeriodDataFetcher'
+import DiscountSelectionCard from './MultiPeriodDiscountSelectionCard'
 
 export const StyledTitle = styled.h1`
   ${CommonTitleMixin}
@@ -141,11 +160,12 @@ type ProductDetail = {
   startedAt: Date
   endedAt: Date
   quantity: number
+  discountId?: string
 }
 
 export type CheckoutPeriodsModalProps = {
   defaultProductId: string
-  productDetails: Array<ProductDetail>
+  defaultProductDetails: Array<ProductDetail>
   isCheckOutModalOpen: boolean
   onCheckOutModalOpen: () => void
   onCheckOutModalClose: () => void
@@ -168,7 +188,7 @@ export type CheckoutPeriodsModalProps = {
 
 const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
   defaultProductId,
-  productDetails,
+  defaultProductDetails,
   warningText,
   isCheckOutModalOpen,
   onCheckOutModalOpen,
@@ -183,7 +203,6 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [isOpen, onOpen, onClose] = [isCheckOutModalOpen, onCheckOutModalOpen, onCheckOutModalClose]
-  const checkoutOpened = useRef(false)
   const [checkoutProductId] = useQueryParam('checkoutProductId', StringParam)
   const { enabledModules, settings, id: appId, currencyId: appCurrencyId } = useApp()
   const { currentMemberId, isAuthenticating, authToken } = useAuth()
@@ -191,12 +210,11 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
   const { memberCreditCards } = useMemberCreditCards(currentMemberId || '')
   const app = useApp()
 
-  useEffect(() => {
-    if (!checkoutOpened.current && checkoutProductId === defaultProductId) {
-      checkoutOpened.current = true
-      onOpen()
-    }
-  }, [checkoutProductId])
+  const [productDetails, setProductDetails] = useState<Array<ProductDetail>>(defaultProductDetails)
+  const setProductDetailsOrderByStartedAt: (productDetails: ProductDetail[]) => void = pipe(
+    sort(ascend(prop('startedAt'))),
+    setProductDetails,
+  )
 
   const sessionStorageKey = `lodestar.sharing_code.${defaultProductId}`
   const [sharingCode = window.sessionStorage.getItem(sessionStorageKey)] = useQueryParam('sharing', StringParam)
@@ -318,14 +336,14 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
   const groupBuyingRef = useRef<HTMLDivElement | null>(null)
   const paymentMethodRef = useRef<HTMLDivElement | null>(null)
   const contactInfoRef = useRef<HTMLDivElement | null>(null)
-  const [discountId, setDiscountId] = useState('')
+  // const [discountId, setDiscountId] = useState('')
   useEffect(() => {
     if (
       productTarget?.currencyId === 'LSC' &&
       defaultProductId !== undefined &&
       defaultProductId.includes('MerchandiseSpec_')
     ) {
-      setDiscountId('Coin')
+      pipe(map(mergeLeft({ discountId: 'Coin' })))(productDetails)
     }
   }, [productTarget, defaultProductId])
 
@@ -360,7 +378,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
 
   const { totalPrice, check, orderChecking } = useCheck({
     productIds: [productId],
-    discountId,
+    discountId: productDetails[0]?.discountId ?? '',
     shipping: shippingForSubmit,
     options: {
       [productId]: {
@@ -373,6 +391,30 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
       },
     },
   })
+
+  const useChecks: (productDetail: ProductDetail) => { totalPrice: number; check: CheckProps; orderChecking: boolean } =
+    productDetail => {
+      const { totalPrice, check, orderChecking } = useCheck({
+        productIds: [productId],
+        discountId: productDetail?.discountId ?? '',
+        shipping: shippingForSubmit,
+        options: {
+          [productId]: {
+            startedAt: productDetail.startedAt,
+            from: window.location.pathname,
+            sharingCode,
+            groupBuyingPartnerIds: groupBuying.memberIds,
+            groupBuyingPartnerEmails: groupBuying.memberEmails,
+            quantity: productDetail.quantity,
+          },
+        },
+      })
+      return { totalPrice, check, orderChecking }
+    }
+
+  const checkResults = map(useChecks)(productDetails)
+
+  console.log(checkResults)
 
   const { TPDirect } = useTappay()
   const toast = useToast()
@@ -581,12 +623,12 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
     }
 
     const placeOrder = async (
+      discountId: string,
       paymentType: 'perpetual' | 'subscription' | 'groupBuying',
       invoice: InvoiceProps,
       options: { [ProductId: string]: any },
       payment?: PaymentProps | null,
     ) => {
-      console.log('options', options)
       setOrderPlacing(true)
       const trackingCookie = getTrackingCookie()
       const trackingOptions = { ...trackingCookie }
@@ -644,9 +686,11 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
         price: number
       }[]
     }
+
     const placeOrderResults: Array<placeOrderResult> = await Promise.all(
       productDetails.map(productDetail =>
         placeOrder(
+          productDetail?.discountId ?? '',
           productTarget.isSubscription ? 'subscription' : 'perpetual',
           {
             ...invoice,
@@ -705,16 +749,32 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
       >
         <div className="mb-4">
           {map((period: ProductDetail) => (
-            <ProductItem
-              id={productId}
-              startedAt={period.startedAt}
-              variant={
-                settings['custom.project.plan_price_style'] === 'hidden' && productId.startsWith('ProjectPlan_')
-                  ? undefined
-                  : 'checkout'
-              }
-              quantity={period.quantity}
-            />
+            <>
+              <ProductItem
+                key={productId}
+                id={productId}
+                startedAt={period.startedAt}
+                variant={
+                  settings['custom.project.plan_price_style'] === 'hidden' && productId.startsWith('ProjectPlan_')
+                    ? undefined
+                    : 'checkout'
+                }
+                quantity={period.quantity}
+              />
+              <DiscountSelectionCard
+                key={join('::')([productId, period.startedAt])}
+                check={check}
+                value={period?.discountId ?? ''}
+                currentlyUsedDiscountIds={(pipe(map(prop('discountId')), filter(complement(isNil))) as any)(
+                  productDetails,
+                )}
+                onChange={discountId => {
+                  period.discountId = discountId ?? ''
+                  setProductDetailsOrderByStartedAt(productDetails)
+                }}
+              />
+              <Divider style={{ margin: '2vh 0' }} />
+            </>
           ))(productDetails)}
         </div>
 
@@ -794,9 +854,6 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
                   />
                 ))}
             </div>
-            <div className="mb-3">
-              <DiscountSelectionCard check={check} value={discountId} onChange={setDiscountId} />
-            </div>
           </>
         )}
 
@@ -858,19 +915,21 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
                 />
               ))}
 
-              {check.orderDiscounts.map((orderDiscount, idx) => (
-                <CheckoutProductItem
-                  key={orderDiscount.name}
-                  name={orderDiscount.name}
-                  price={
-                    check.orderProducts[0]?.productId.includes('MerchandiseSpec_') &&
-                    check.orderProducts[0].options?.currencyId === 'LSC'
-                      ? -orderDiscount.options?.coins
-                      : -orderDiscount.price
-                  }
-                  currencyId={productTarget.currencyId}
-                />
-              ))}
+              {checkResults.flatMap(result =>
+                result.check.orderDiscounts.map((orderDiscount, idx) => (
+                  <CheckoutProductItem
+                    key={orderDiscount.name}
+                    name={orderDiscount.name}
+                    price={
+                      check.orderProducts[0]?.productId.includes('MerchandiseSpec_') &&
+                      check.orderProducts[0].options?.currencyId === 'LSC'
+                        ? -orderDiscount.options?.coins
+                        : -orderDiscount.price
+                    }
+                    currencyId={productTarget.currencyId}
+                  />
+                )),
+              )}
               {check.shippingOption && (
                 <CheckoutProductItem
                   name={formatMessage(
@@ -882,7 +941,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
             </StyledCheckoutBlock>
             <StyledCheckoutPrice className="mb-3">
               {!isCoinMerchandise || isCoinsEnough ? (
-                <PriceLabel listPrice={totalPrice * getSafeTotalQuantity(productDetails)} />
+                <PriceLabel listPrice={(pipe(map(prop('totalPrice')), sum) as any)(checkResults)} />
               ) : (
                 `${settings['coin.unit'] || check.orderProducts[0].options?.currencyId} ${formatMessage(
                   checkoutMessages.message.notEnough,
