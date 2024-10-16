@@ -1,4 +1,4 @@
-import { gql, useApolloClient, useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Icon } from '@chakra-ui/icons'
 import { Button, ButtonGroup, SkeletonCircle, SkeletonText, Spinner, Textarea } from '@chakra-ui/react'
 import { Divider, Dropdown, Form, Icon as AntdIcon, Menu, message, Modal } from 'antd'
@@ -17,7 +17,7 @@ import styled from 'styled-components'
 import hasura from '../../hasura'
 import { dateRangeFormatter, downloadFile, getFileDownloadableLink, handleError } from '../../helpers'
 import { useAppointmentPlan, useCancelAppointment, useUpdateAppointmentIssue } from '../../hooks/appointment'
-import { GetMeetByTargetAndPeriodAndSpecifyMember } from '../../hooks/meet'
+import { useGetMeetByTargetAndPeriodAndSpecifyMember } from '../../hooks/meet'
 import { useService } from '../../hooks/service'
 import DefaultAvatar from '../../images/avatar.svg'
 import { ReactComponent as CalendarOIcon } from '../../images/calendar-alt-o.svg'
@@ -181,8 +181,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
   onRefetch,
   form,
 }) => {
-  const apolloClient = useApolloClient()
-  const { id: appId, enabledModules } = useApp()
+  const { enabledModules } = useApp()
   const { formatMessage } = useIntl()
   const { authToken, currentMemberId, currentMember } = useAuth()
   const [issueModalVisible, setIssueModalVisible] = useState(false)
@@ -205,6 +204,8 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
     appointmentPlanId,
     memberId,
   )
+  const { meet } = useGetMeetByTargetAndPeriodAndSpecifyMember(appointmentPlanId, orderProduct, memberId)
+
   const updateAppointmentIssue = useUpdateAppointmentIssue(orderProductId, orderProduct.options)
   const cancelAppointment = useCancelAppointment(orderProductId, orderProduct.options)
 
@@ -286,21 +287,8 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
     if (!appointmentPlan) return message.error(formatMessage(appointmentMessages.AppointmentCard.noAppointmentPlan))
     if (!appointmentPlan.creator)
       return message.error(formatMessage(appointmentMessages.AppointmentCard.noAppointmentPlanCreator))
-    const { data } = await apolloClient.query<
-      hasura.GetMeetByTargetAndPeriodAndSpecifyMember,
-      hasura.GetMeetByTargetAndPeriodAndSpecifyMemberVariables
-    >({
-      query: GetMeetByTargetAndPeriodAndSpecifyMember,
-      variables: {
-        appId,
-        target: appointmentPlanId,
-        startedAt: orderProduct.startedAt,
-        endedAt: orderProduct.endedAt,
-        memberId: currentMemberId,
-      },
-    })
-    if (data.meet.length !== 0 && data.meet[0].options?.joinUrl) {
-      joinUrl = data.meet[0].options.joinUrl
+    if (meet?.options?.joinUrl) {
+      joinUrl = meet?.options.joinUrl
     } else if (enabledModules.meet_service && appointmentPlan.defaultMeetGateway === 'zoom') {
       // create zoom meeting than get joinUrl
       try {
@@ -408,24 +396,8 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                 return message.error(formatMessage(appointmentMessages.AppointmentCard.noAppointmentPlan))
               if (!currentMemberId)
                 return message.error(formatMessage(appointmentMessages.AppointmentCard.noCurrentUserId))
-              const { data } = await apolloClient.query<
-                hasura.GetMeetByTargetAndPeriodAndSpecifyMember,
-                hasura.GetMeetByTargetAndPeriodAndSpecifyMemberVariables
-              >({
-                query: GetMeetByTargetAndPeriodAndSpecifyMember,
-                variables: {
-                  appId,
-                  target: appointmentPlanId,
-                  startedAt: orderProduct.startedAt,
-                  endedAt: orderProduct.endedAt,
-                  memberId,
-                },
-              })
-              if (!data) return message.error(formatMessage(appointmentMessages.AppointmentCard.noMeetingInfo))
               const link = await getFileDownloadableLink(
-                data.meet[0].recording_url
-                  ? data.meet[0].recording_url
-                  : `meets/${data.meet[0].id}.${data.meet[0].recording_type}`,
+                meet?.recordingUrl ? meet?.recordingUrl : `meets/${meet?.id}.${meet?.recordingType}`,
                 authToken,
               )
               return downloadFile(
@@ -472,7 +444,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                     .replace('{{TITLE}}', appointmentPlan.title)
                     .replace('{{STARTED_AT}}', moment(orderProduct.startedAt).format('YYYYMMDDTHHmmss'))
                     .replace('{{ENDED_AT}}', moment(orderProduct.endedAt).format('YYYYMMDDTHHmmss'))
-                    .replace('{{DETAILS}}', orderProduct.appointmentUrl),
+                    .replace('{{DETAILS}}', meet?.options?.joinUrl || appointmentPlan.meetingLinkUrl),
                 )
               }
             >
@@ -481,7 +453,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
 
             {loadingAppointmentPlan ? (
               <SkeletonText noOfLines={1} spacing="4" w="90px" />
-            ) : !orderProduct.options?.joinUrl &&
+            ) : !meet?.options?.joinUrl &&
               !appointmentPlan.meetingLinkUrl &&
               appointmentPlan.meetGenerationMethod === 'manual' ? (
               <StyledLabel>{formatMessage(appointmentMessages.AppointmentCard.noLinkSet)}</StyledLabel>
