@@ -117,7 +117,6 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
   isAuthenticated: boolean
   podcastPrograms: PodcastProgramProps[]
   setActiveKey: any
-  onCheckoutModalOpen: (() => void) | undefined
   setAuthModalVisible: React.Dispatch<React.SetStateAction<boolean>> | undefined
 }> = ({
   creatorId,
@@ -126,7 +125,6 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
   isAuthenticated,
   podcastPrograms,
   setActiveKey,
-  onCheckoutModalOpen,
   setAuthModalVisible,
 }) => {
   const [selectedAppointmentPlanId, setSelectedAppointmentPlanId] = useState<string>(appointmentPlans[0].id)
@@ -177,7 +175,7 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
             previousPage={`creators_${creatorId}`}
             podcastPrograms={podcastPrograms}
             onChangeTab={key => setActiveKey(key)}
-            onSubscribe={() => (isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible?.(true))}
+            onSubscribe={() => (isAuthenticated ? onCheckOutModalOpen?.() : setAuthModalVisible?.(true))}
           />
         ) : (
           <Card
@@ -211,18 +209,22 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
               <Button variant="outline" onClick={onCheckOutModalOpen}>
                 立即購買
               </Button>
-              <MultiPeriodCheckoutModal
-                defaultProductId={`AppointmentPlan_${selectedAppointmentPlanId}`}
-                productDetails={
-                  pipe(
-                    project(['startedAt', 'endedAt']),
-                    map(mergeRight({ quantity: 1 })) as any,
-                  )(selectedPeriods) as any
-                }
-                isCheckOutModalOpen={isCheckOutModalOpen}
-                onCheckOutModalOpen={onCheckOutModalOpen}
-                onCheckOutModalClose={onCheckOutModalClose}
-              />
+              {isCheckOutModalOpen ? (
+                <MultiPeriodCheckoutModal
+                  defaultProductId={`AppointmentPlan_${selectedAppointmentPlanId}`}
+                  defaultProductDetails={
+                    pipe(
+                      project(['startedAt', 'endedAt']),
+                      map(mergeRight({ quantity: 1 })) as any,
+                    )(selectedPeriods) as any
+                  }
+                  isCheckOutModalOpen={isCheckOutModalOpen}
+                  onCheckOutModalOpen={onCheckOutModalOpen}
+                  onCheckOutModalClose={onCheckOutModalClose}
+                />
+              ) : (
+                <></>
+              )}
             </VStack>
           </Card>
         )}
