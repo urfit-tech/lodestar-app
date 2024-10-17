@@ -175,6 +175,10 @@ const pageMessages = {
       id: 'page.ContractPage.agreedOn',
       defaultMessage: 'Agreed to this contract on {date}',
     },
+    revokedOn: {
+      id: 'page.ContractPage.revokedOn',
+      defaultMessage: 'Revoked to this contract on {date}',
+    },
     terminatedOn: {
       id: 'page.ContractPage.terminatedOn',
       defaultMessage: 'This contract was terminated on {date}',

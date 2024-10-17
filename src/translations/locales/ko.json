@@ -1011,6 +1011,7 @@
   "page.CollapseContentBlock.podcastChannel": "팟캐스트 채널({count})",
   "page.ContractPage.agree": "동의 확인",
   "page.ContractPage.agreedOn": "{date}에 동의함",
+  "page.ContractPage.revokedOn": "{date}에 취소됨",
   "page.ContractPage.alreadyReadAndAgree": "위의 계약을 자세히 읽고 동의하며 규정을 준수할 것을 약속합니다",
   "page.ContractPage.cannotModifyAfterAgree": "동의 후 수정 불가",
   "page.ContractPage.confirmContractTerms": "이 계약 조건을 이해하고 동의했음을 확인하십시오. 계약 기간 동안 양측은 이 조건을 준수하며 임의로 수정할 수 없습니다.",

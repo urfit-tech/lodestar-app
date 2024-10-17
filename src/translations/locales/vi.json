@@ -1015,6 +1015,7 @@
   "page.CollapseContentBlock.podcastChannel": "Kênh podcast({count})",
   "page.ContractPage.agree": "Xác nhận đồng ý",
   "page.ContractPage.agreedOn": "Đã đồng ý vào ngày {date}",
+  "page.ContractPage.revokedOn": "Đã hủy bỏ vào ngày {date}",
   "page.ContractPage.alreadyReadAndAgree": "Tôi đã đọc kỹ và đồng ý với hợp đồng trên và cam kết tuân thủ quy định",
   "page.ContractPage.cannotModifyAfterAgree": "Không thể sửa đổi sau khi đồng ý",
   "page.ContractPage.confirmContractTerms": "Vui lòng xác nhận bạn đã hiểu và đồng ý với các điều khoản hợp đồng này, trong thời gian hợp đồng, cả hai bên sẽ tuân thủ các điều khoản này và không được thay đổi tuỳ ý.",
