@@ -5,7 +5,7 @@ import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import ReactGA from 'react-ga'
 import { useIntl } from 'react-intl'
@@ -19,6 +19,7 @@ import { AuthModalContext } from '../../components/auth/AuthModal'
 import CreatorCard from '../../components/common/CreatorCard'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import DefaultLayout from '../../components/layout/DefaultLayout'
+import LocaleContext from '../../contexts/LocaleContext'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useEnrolledActivity } from '../../hooks/activity'
 import { usePublicMember } from '../../hooks/member'
@@ -54,6 +55,7 @@ const ActivityPage: React.VFC = () => {
   const { id: appId } = useApp()
   const { resourceCollection } = useResourceCollection([`${appId}:activity:${activityId}`], true)
   const { loading, data: activityData, error } = useEnrolledActivity(activityId, currentMemberId || '')
+  const { currentLocale } = useContext(LocaleContext)
   const [isPlanListSticky, setIsPlanListSticky] = useState(false)
   const planListHeightRef = useRef<HTMLDivElement>(null)
 
@@ -92,7 +94,7 @@ const ActivityPage: React.VFC = () => {
     )
   }
 
-  if (error || !activityData) {
+  if (error || !activityData || !activityData?.supportLocales?.some(locale => locale === currentLocale)) {
     return <NotFoundPage />
   }
 

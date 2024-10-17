@@ -67,6 +67,7 @@ export type Program = ProgramBriefProps & {
   roles: ProgramRole[]
   displayHeader: boolean
   displayFooter: boolean
+  supportLocale: string[] | null
   programLayoutTemplateId: string
   moduleData: {
     [key: string]: string
