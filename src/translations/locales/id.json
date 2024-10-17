@@ -1015,6 +1015,7 @@
   "page.CollapseContentBlock.podcastChannel": "Saluran podcast({count})",
   "page.ContractPage.agree": "Konfirmasi setuju",
   "page.ContractPage.agreedOn": "Disetujui pada {date}",
+  "page.ContractPage.revokedOn": "Dicabut pada {date}",
   "page.ContractPage.alreadyReadAndAgree": "Saya telah membaca dengan seksama dan menyetujui kontrak di atas dan bersedia mematuhi peraturan",
   "page.ContractPage.cannotModifyAfterAgree": "Tidak dapat diubah setelah disetujui",
   "page.ContractPage.confirmContractTerms": "Harap pastikan Anda telah memahami dan menyetujui ketentuan kontrak ini, selama masa kontrak, kedua belah pihak akan mematuhi ketentuan ini dan tidak dapat diubah sembarangan.",
