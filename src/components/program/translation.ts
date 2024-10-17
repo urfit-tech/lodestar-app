@@ -23,6 +23,10 @@ const programMessages = {
     },
   }),
   ProgramContentMenu: defineMessages({
+    noNewContent: {
+      id: 'program.programContentMenu.noNewContent',
+      defaultMessage: '初次購買還沒有新的內容喔～',
+    },
     materialAmount: { id: 'program.ProgramContentMenu.materialAmount', defaultMessage: '{amount}個檔案' },
     totalQuestion: { id: 'program.ProgramContentMenu.totalAmount', defaultMessage: '共 {count} 題' },
     programList: { id: 'program.ProgramContentMenu.head', defaultMessage: '課程列表' },
@@ -58,6 +62,12 @@ const programMessages = {
   ProgramTab: defineMessages({
     singleEbook: { id: 'program.ProgramTab.singleEbook', defaultMessage: '單本' },
     packageEbook: { id: 'program.ProgramTab.packageEbook', defaultMessage: '套組' },
+  }),
+  ProgramContentTrialPlayer: defineMessages({
+    tryOut: {
+      id: 'program.ProgramContentTrialPlayer.tryOut',
+      defaultMessage: '試看',
+    },
   }),
 }
 

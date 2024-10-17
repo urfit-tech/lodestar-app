@@ -15,8 +15,10 @@ const StyledContainer = styled.div`
 
 const MembershipCardAdminBlock: React.VFC<{
   cardId: string
+  startedAt?: Date | null
+  endedAt?: Date | null
   updatedAt?: Date | null
-}> = ({ cardId, updatedAt }) => {
+}> = ({ cardId, startedAt, endedAt, updatedAt }) => {
   const { loadingMembershipCard, errorMembershipCard, membershipCard } = useMembershipCard(cardId)
   const { currentMember } = useAuth()
 
@@ -32,11 +34,13 @@ const MembershipCardAdminBlock: React.VFC<{
           avatar: currentMember.pictureUrl,
           name: currentMember.name || '',
           account: currentMember.username,
-          date: updatedAt ? dayjs(updatedAt).format('YYYY/MM/DD') : '',
+          date: startedAt ? dayjs(startedAt).format('YYYY/MM/DD') : '',
         }}
         title={membershipCard.title}
         description={membershipCard.description}
         membershipCardId={membershipCard.id}
+        startedAt={startedAt}
+        endedAt={endedAt}
       />
     </StyledContainer>
   )

@@ -1,4 +1,4 @@
-import { Menu, MenuButton, MenuList } from '@chakra-ui/react'
+import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -11,11 +11,13 @@ import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import AuthButton from '../../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
+import LocaleContext, { SUPPORTED_LOCALES } from '../../../contexts/LocaleContext'
 import MediaPlayerContext from '../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../../helpers/translation'
 import { useNav } from '../../../hooks/data'
 import { useMember } from '../../../hooks/member'
+import { EarthGlobalIcon } from '../../../images'
 import DefaultAvatar from '../../../images/avatar.svg'
 import AskLoginModal from '../../auth/AskLoginModal'
 import AuthModal, { AuthModalContext } from '../../auth/AuthModal'
@@ -49,7 +51,7 @@ const StyledLayoutWrapper = styled(StyledLayout)`
 `
 const StyledNotificationBar = styled.div<{ variant?: string }>`
   position: sticky;
-  z-index: 1000;
+  z-index: 500;
   top: 0;
   left: 0;
   height: 40px;
@@ -96,6 +98,7 @@ const DefaultLayout: React.FC<{
   const { navs } = useNav()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
+  const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
   const { renderCartButton, renderMyPageNavItem, renderCreatorPageNavItem } = useCustomRenderer()
   const [isBusinessMember, setIsBusinessMember] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -295,6 +298,28 @@ const DefaultLayout: React.FC<{
                       </Menu>
                     )))}
               </Responsive.Desktop>
+
+              {enabledModules.locale ? (
+                <Responsive.Desktop>
+                  <Menu>
+                    <MenuButton p="1rem">
+                      <EarthGlobalIcon height="24px" width="24px" />
+                    </MenuButton>
+                    <MenuList>
+                      {SUPPORTED_LOCALES.map(supportedLocale => (
+                        <MenuItem
+                          style={{ lineHeight: '2rem' }}
+                          defaultValue={currentLocale}
+                          onClick={() => setCurrentLocale?.(supportedLocale.locale)}
+                          value={supportedLocale.locale}
+                        >
+                          {supportedLocale.label}
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </Menu>
+                </Responsive.Desktop>
+              ) : null}
 
               {(enabledModules.search || enabledModules.search_advanced) && <GlobalSearchModal />}
               {!noCart &&

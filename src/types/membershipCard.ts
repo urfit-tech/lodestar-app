@@ -33,6 +33,11 @@ export type MembershipCardPlanDetails = {
   productName: string
   productPlanName?: string
   productId: string
+  creatorId?: string
+  mainProduct?: {
+    id: string
+    title?: string
+  }
 } | null
 
 export type CardDiscount = {

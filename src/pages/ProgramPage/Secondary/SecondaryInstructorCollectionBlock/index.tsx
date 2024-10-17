@@ -1,7 +1,9 @@
 import { TabList, TabPanels, Tabs } from '@chakra-ui/react'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Program, ProgramRole } from '../../../../types/program'
+import ProgramPageMessages from '../../translation'
 import CollapseContentBlock from './CollapseContentBlock'
 import InstructorPanel from './InstructorPanel'
 import InstructorTab from './InstructorTab'
@@ -13,6 +15,7 @@ const SecondaryInstructorCollectionBlock: React.VFC<{
   }
   title?: string
 }> = ({ program }) => {
+  const { formatMessage } = useIntl()
   return (
     <Tabs variant="unstyled">
       <TabList justifyContent="center" gap={8}>
@@ -34,7 +37,7 @@ const SecondaryInstructorCollectionBlock: React.VFC<{
                 instructorSubtitle: instructor.abstract || '',
               }}
             >
-              <NormalContent title="介紹">
+              <NormalContent title={formatMessage(ProgramPageMessages.SecondaryInstructorCollectionBlock.introduction)}>
                 <BraftContent>{instructor.description}</BraftContent>
               </NormalContent>
               <CollapseContentBlock creatorId={instructor.memberId} />

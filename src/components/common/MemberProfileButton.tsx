@@ -18,6 +18,7 @@ import { PlusIcon } from '../../images/index'
 import { AuthModalContext } from '../auth/AuthModal'
 import { MemberAdminMenu } from './AdminMenu'
 import GlobalSearchInput from './GlobalSearchInput'
+import LocaleCollapse from './LocaleCollapse'
 import MemberAvatar from './MemberAvatar'
 import Responsive from './Responsive'
 
@@ -153,7 +154,9 @@ const DefaultLogout: React.VFC<{ onClick?: React.MouseEventHandler<HTMLDivElemen
               isPushToMemberLearningPage ? window.location.origin : window.location.href
             }`,
           )
-          message.success('已成功登出')
+          logout && logout()
+          history.push('/')
+          message.success(formatMessage(commonMessages.button.logoutSuccess))
         })
       }
     >
@@ -227,6 +230,9 @@ const MemberProfileButton: React.VFC<{
                 {formatMessage(commonMessages.content.creatorPage)}
               </List.Item>
             ))}
+
+          {enabledModules.locale ? <LocaleCollapse /> : null}
+
           {renderMyPageNavItem?.({ memberId: member.id }) ||
             (!(settings['nav.my_page.disable'] === '1') && (
               <BorderedItem onClick={() => history.push(`/members/${member.id}`)} style={{ cursor: 'pointer' }}>

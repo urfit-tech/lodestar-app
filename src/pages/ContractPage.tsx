@@ -93,7 +93,11 @@ const ContractPage: React.VFC = () => {
     JSON.parse(settings['custom.contract.confirm.text'])[memberContract?.contract.id || '']
 
   const handleCheck = (e: CheckboxChangeEvent) => {
-    if (e.target.checked && window.confirm('同意後無法修改') && memberContract) {
+    if (
+      e.target.checked &&
+      window.confirm(formatMessage(pageMessages.ContractPage.cannotModifyAfterAgree)) &&
+      memberContract
+    ) {
       agreeMemberContract({
         variables: {
           memberContractId,
@@ -203,7 +207,7 @@ const ContractPage: React.VFC = () => {
         <ModalOverlay />
         <ModalContent>
           <ModalBody style={{ marginTop: 24 }}>
-            {customConfirmText || '請確認您已了解並同意此合約條款，在合約期間內，雙方將遵守此條款，不可任意修改。'}
+            {customConfirmText || formatMessage(pageMessages.ContractPage.confirmContractTerms)}
           </ModalBody>
           <ModalFooter>
             <Button

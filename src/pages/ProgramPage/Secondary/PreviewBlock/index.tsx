@@ -1,7 +1,9 @@
 import { Box, Text } from '@chakra-ui/react'
 import { forwardRef } from 'react'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { ProgramContent } from '../../../../types/program'
+import ProgramPageMessages from '../../translation'
 import { colors } from '../style'
 import PreviewPlayer from './PreviewPlayer'
 
@@ -33,10 +35,11 @@ interface Props {
 }
 
 export const PreviewBlock = forwardRef<HTMLDivElement, Props>((props, ref) => {
+  const { formatMessage } = useIntl()
   const { trialProgramContentMedias } = props
   return (
     <Box mt="2.5rem">
-      <Title>試看/試聽</Title>
+      <Title>{formatMessage(ProgramPageMessages.PreviewBlock.preview)}</Title>
       <Wrapper ref={ref}>
         <PreviewPlayer trialProgramContentMedias={trialProgramContentMedias} />
       </Wrapper>

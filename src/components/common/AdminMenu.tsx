@@ -67,7 +67,6 @@ export const AdminMenu: React.FC<MenuProps> = ({ children, ...menuProps }) => {
   const { routesMap } = useAppRouter()
   const { formatMessage } = useIntl()
   const history = useHistory()
-
   const { managementDomain } = useManagementDomain(appId)
 
   const handleClick = ({ key, item }: ClickParam) => {

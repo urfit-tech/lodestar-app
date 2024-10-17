@@ -12,6 +12,7 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react'
+import { ascend, defaultTo, path, prop, sortWith } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -77,7 +78,12 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({
     }
   }
 
-  const generateProductLink = (details: { productName: string; id: string }) => {
+  const generateProductLink = (details: {
+    productName: string
+    id: string
+    creatorId?: string
+    mainProductId?: string
+  }) => {
     switch (details.productName) {
       case 'ActivityTicket':
         return `/activities/${details.id}`
@@ -86,7 +92,15 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({
       case 'ProgramPackagePlan':
         return `/program-packages/${details.id}`
       case 'PodcastProgram':
-        return `/podcasts/${details.id}`
+        return `/podcasts?scrollTo=${details.id}`
+      case 'PodcastPlan':
+        return `/creators/${details.creatorId}?tabkey=podcasts`
+      case 'AppointmentPlan':
+        return `/creators/${details.creatorId}?tabkey=appointments`
+      case 'MerchandiseSpec':
+        return `/merchandises/${details.mainProductId}`
+      case 'ProjectPlan':
+        return `/projects/${details.mainProductId}`
       default:
         return '/'
     }
@@ -122,36 +136,46 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({
               </Tr>
             </Thead>
             <Tbody>
-              {cardTerm?.cardDiscounts
-                .filter(discount => !!discount.product.details)
-                .map(discount => {
-                  const discountProductId = discount?.product?.details?.productId
-                  const discountProductType = discount?.product?.type as MembershipCardTermsProductType
-                  const discountProductPlanName = discount?.product?.details?.productPlanName
-                  const discountProductName = discount?.product?.details?.productName
-                  const discountName = discountProductPlanName
-                    ? `${discountProductName} - ${discountProductPlanName}`
-                    : discountProductName
-
-                  return (
-                    <Tr key={discount.id}>
-                      <Td>{renderProductType(discountProductType)}</Td>
-                      <Td>
-                        <a
-                          href={generateProductLink({
-                            productName: discountProductType,
-                            id: discountProductId as string,
-                          })}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {discountName}
-                        </a>
-                      </Td>
-                      <Td>{renderDiscount(discount)}</Td>
-                    </Tr>
-                  )
-                })}
+              {sortWith(
+                [
+                  ascend(discount => defaultTo('', prop('type', discount))),
+                  ascend(discount => defaultTo('', path(['product', 'type'], discount))),
+                ],
+                cardTerm?.cardDiscounts.filter(discount => !!discount.product.details) || [],
+              ).map(discount => {
+                const discountProductId = discount?.product?.details?.productId
+                const discountProductType = discount?.product?.type as MembershipCardTermsProductType
+                const discountProductPlanName = discount?.product?.details?.productPlanName
+                const discountProductName = discount?.product?.details?.productName
+                const discountName = `${discount.product.details?.mainProduct?.title ?? discountProductName}${
+                  discountProductPlanName
+                    ? ` - ${discountProductPlanName}`
+                    : discount.product.details?.mainProduct?.title
+                    ? ` - ${discountProductName}`
+                    : ''
+                }`
+                return (
+                  <Tr key={discount.id}>
+                    <Td>{renderProductType(discountProductType)}</Td>
+                    <Td>
+                      <a
+                        href={generateProductLink({
+                          productName: discountProductType,
+                          id: discountProductId as string,
+                          creatorId: discount.product.details?.creatorId,
+                          mainProductId: discount.product.details?.mainProduct?.id,
+                        })}
+                        onClick={() => console.log()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {discountName}
+                      </a>
+                    </Td>
+                    <Td>{renderDiscount(discount)}</Td>
+                  </Tr>
+                )
+              })}
             </Tbody>
           </StyledTable>
         </ModalBody>

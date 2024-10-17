@@ -22,6 +22,7 @@ export type OrderDiscountProps = {
   target: string | null
   description: string | null
   price: number
+  productId?: string
   options: { [key: string]: any } | null
 }
 

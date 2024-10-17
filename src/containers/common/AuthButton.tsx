@@ -1,7 +1,9 @@
 import { Button, Popover } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { AuthModalContext } from '../../components/auth/AuthModal'
+import LocaleCollapse from '../../components/common/LocaleCollapse'
 import { CustomNavLinks, StyledList, Wrapper } from '../../components/common/MemberProfileButton'
 import Responsive from '../../components/common/Responsive'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
@@ -11,6 +13,7 @@ import { useAuthModal } from '../../hooks/auth'
 let isBtnSysCwlLoginSetted = false
 
 const AuthButton: React.VFC = () => {
+  const { enabledModules } = useApp()
   const { formatMessage } = useIntl()
   const { renderAuthButton } = useCustomRenderer()
   const { setVisible } = useContext(AuthModalContext)
@@ -52,6 +55,7 @@ const AuthButton: React.VFC = () => {
             <Wrapper>
               <StyledList split={false}>
                 <CustomNavLinks />
+                {enabledModules.locale ? <LocaleCollapse /> : null}
               </StyledList>
             </Wrapper>
           }

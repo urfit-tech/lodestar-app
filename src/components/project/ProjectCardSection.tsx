@@ -11,10 +11,12 @@ import {
 import { Carousel } from 'antd'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
 import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { ReactComponent as ArrowRightIcon } from '../../images/arrow-right.svg'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
 import ProgramContentTrialPlayer from '../program/ProgramContentTrialPlayer'
+import projectMessages from './translation'
 
 const StyledSection = styled.section`
   position: relative;
@@ -184,6 +186,7 @@ const ProjectCardSection: React.VFC<{
   title: string
   subtitle: string
 }> = ({ items, title, subtitle }) => {
+  const { formatMessage } = useIntl()
   const [selectedItem, setSelectedItem] = useState<{
     title: string
     abstract: string
@@ -230,7 +233,7 @@ const ProjectCardSection: React.VFC<{
                                 })
                               }
                             >
-                              <span className="mr-2">立即試看</span>
+                              <span className="mr-2">{formatMessage(projectMessages.ProjectCardSection.watchNow)}</span>
                               <Icon as={ArrowRightIcon} />
                             </TrialLink>
                           </div>
@@ -267,7 +270,7 @@ const ProjectCardSection: React.VFC<{
                               })
                             }
                           >
-                            <span className="mr-2">立即試看</span>
+                            <span className="mr-2">{formatMessage(projectMessages.ProjectCardSection.watchNow)}</span>
                             <Icon as={ArrowRightIcon} />
                           </TrialLink>
                         </div>

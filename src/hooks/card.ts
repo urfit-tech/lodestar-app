@@ -72,7 +72,7 @@ export const useEnrolledMembershipCards = (memberId: string) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_ENROLLED_CARDS, hasura.GET_ENROLLED_CARDSVariables>(
     gql`
       query GET_ENROLLED_CARDS($memberId: String!) {
-        card_enrollment(where: { member_id: { _eq: $memberId } }, distinct_on: card_id) {
+        card_enrollment(where: { member_id: { _eq: $memberId } }) {
           card {
             id
             title
@@ -80,6 +80,8 @@ export const useEnrolledMembershipCards = (memberId: string) => {
             template
           }
           updated_at
+          started_at
+          ended_at
         }
       }
     `,
@@ -96,6 +98,8 @@ export const useEnrolledMembershipCards = (memberId: string) => {
       template: string
     }
     updatedAt: Date | null
+    startedAt: Date | null
+    endedAt: Date | null
   }[] =
     loading || error || !data
       ? []
@@ -107,6 +111,8 @@ export const useEnrolledMembershipCards = (memberId: string) => {
             template: cardEnrollment.card?.template || '',
           },
           updatedAt: cardEnrollment.updated_at ? new Date(cardEnrollment.updated_at) : null,
+          startedAt: cardEnrollment.started_at ? new Date(cardEnrollment.started_at) : null,
+          endedAt: cardEnrollment.ended_at ? new Date(cardEnrollment.ended_at) : null,
         }))
 
   return {

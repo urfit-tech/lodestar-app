@@ -3,6 +3,7 @@ import { LayoutProps, SpaceProps } from '@chakra-ui/styled-system'
 import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common/index'
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { ProgramCover } from '../../components/common/Image'
@@ -10,6 +11,7 @@ import MemberAvatar from '../../components/common/MemberAvatar'
 import ProgressBar from '../../components/common/ProgressBar'
 import EmptyCover from '../../images/empty-cover.png'
 import { ProgramRole } from '../../types/program'
+import containersMessages from '../translation'
 
 const StyledCard = styled(Box)`
   overflow: hidden;
@@ -59,10 +61,15 @@ const ProgramDatetime: React.FC<{
   view?: string
   display?: LayoutProps['display']
 }> = ({ display, size, view, deliveredAt, lastViewedAt }) => {
+  const { formatMessage } = useIntl()
   return (
     <StyledDescription display={display} view={view} size={size}>
-      {`${dayjs(deliveredAt).format('YYYY-MM-DD')} 購買`}
-      {lastViewedAt ? ` / ${dayjs(lastViewedAt).format('YYYY-MM-DD')} 上次觀看` : ` / 尚未觀看`}
+      {formatMessage(containersMessages.program.purchaseDate, {
+        date: dayjs(deliveredAt).format('YYYY-MM-DD'),
+      })}
+      {lastViewedAt
+        ? formatMessage(containersMessages.program.lastViewedDate, { date: dayjs(lastViewedAt).format('YYYY-MM-DD') })
+        : formatMessage(containersMessages.program.notViewedYet)}
     </StyledDescription>
   )
 }
