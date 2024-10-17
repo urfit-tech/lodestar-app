@@ -1014,6 +1014,7 @@
   "page.CollapseContentBlock.podcastChannel": "广播频道({count})",
   "page.ContractPage.agree": "确认同意",
   "page.ContractPage.agreedOn": "已于 {date} 同意此契约",
+  "page.ContractPage.revokedOn": "已于 {date} 解除此契约",
   "page.ContractPage.alreadyReadAndAgree": "我已详细阅读并同意上述契约并愿意遵守规定",
   "page.ContractPage.cannotModifyAfterAgree": "同意后无法修改",
   "page.ContractPage.confirmContractTerms": "请确认您已了解并同意此合同条款，在合同期间内，双方将遵守此条款，不可任意修改。",

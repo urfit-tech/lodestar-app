@@ -156,7 +156,7 @@ const ContractPage: React.VFC = () => {
                     {formatMessage(pageMessages.ContractPage.email)}：{memberContract.memberEmail}
                   </p>
                   <b>
-                    {formatMessage(pageMessages.ContractPage.agreedOn, {
+                    {formatMessage(pageMessages.ContractPage.revokedOn, {
                       date: moment(memberContract.revokedAt).format('YYYY-MM-DD HH:mm:ss'),
                     })}
                   </b>
