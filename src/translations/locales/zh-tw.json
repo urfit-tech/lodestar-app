@@ -1015,6 +1015,7 @@
   "page.CollapseContentBlock.podcastChannel": "廣播頻道({count})",
   "page.ContractPage.agree": "確認同意",
   "page.ContractPage.agreedOn": "已於 {date} 同意此契約",
+  "page.ContractPage.revokedOn": "已於 {date} 解除此契約",
   "page.ContractPage.alreadyReadAndAgree": "我已詳細閱讀並同意上述契約並願意遵守規定",
   "page.ContractPage.cannotModifyAfterAgree": "同意後無法修改",
   "page.ContractPage.confirmContractTerms": "請確認您已了解並同意此合約條款，在合約期間內，雙方將遵守此條款，不可任意修改。",

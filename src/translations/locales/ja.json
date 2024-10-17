@@ -1011,6 +1011,7 @@
   "page.CollapseContentBlock.podcastChannel": "ポッドキャストチャンネル({count})",
   "page.ContractPage.agree": "確認して同意する",
   "page.ContractPage.agreedOn": "{date} に同意しました",
+  "page.ContractPage.revokedOn": "{date} に取り消されました",
   "page.ContractPage.alreadyReadAndAgree": "上記の契約をよく読み、同意し、規定を遵守することに同意します",
   "page.ContractPage.cannotModifyAfterAgree": "同意後は修正できません",
   "page.ContractPage.confirmContractTerms": "この契約条項を理解し同意していることを確認してください。契約期間中、両者はこの条項を遵守し、勝手に修正することはできません。",
