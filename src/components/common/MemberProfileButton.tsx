@@ -154,8 +154,6 @@ const DefaultLogout: React.VFC<{ onClick?: React.MouseEventHandler<HTMLDivElemen
               isPushToMemberLearningPage ? window.location.origin : window.location.href
             }`,
           )
-          logout && logout()
-          history.push('/')
           message.success(formatMessage(commonMessages.button.logoutSuccess))
         })
       }
