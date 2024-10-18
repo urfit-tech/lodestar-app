@@ -10,7 +10,7 @@ import { handleError } from 'lodestar-app-element/src/helpers'
 import { checkoutMessages, commonMessages } from 'lodestar-app-element/src/helpers/translation'
 import { useToastMessage } from 'lodestar-app-element/src/hooks/util'
 import { CouponProps, OrderDiscountProps, OrderProductProps } from 'lodestar-app-element/src/types/checkout'
-import { sum } from 'ramda'
+import { always, ifElse, isEmpty, map, sum } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -27,7 +27,6 @@ const MultiPeriodCouponSelectionModal: React.VFC<{
   memberId: string
   orderProducts: OrderProductProps[]
   orderDiscounts: OrderDiscountProps[]
-  currentlyUsedDiscountIds: Array<string>
   coupons: CouponProps[]
   loadingCoupons: boolean
   refetchCoupons: (
@@ -35,16 +34,7 @@ const MultiPeriodCouponSelectionModal: React.VFC<{
   ) => Promise<ApolloQueryResult<GET_COUPON_COLLECTION>>
   renderTrigger: (params: { onOpen: () => void; selectedCoupon?: CouponProps }) => React.ReactElement
   onSelect?: (coupon: CouponProps) => void
-}> = ({
-  orderProducts,
-  orderDiscounts,
-  currentlyUsedDiscountIds,
-  coupons,
-  loadingCoupons,
-  refetchCoupons,
-  onSelect,
-  renderTrigger,
-}) => {
+}> = ({ orderProducts, orderDiscounts, coupons, loadingCoupons, refetchCoupons, onSelect, renderTrigger }) => {
   const { formatMessage } = useIntl()
   const { authToken } = useAuth()
 
@@ -91,44 +81,50 @@ const MultiPeriodCouponSelectionModal: React.VFC<{
         {loadingCoupons ? (
           <Spinner />
         ) : (
-          coupons.map(coupon => {
-            const couponPlanScope = coupon.couponCode.couponPlan.scope
-            const couponPlanProductIds = coupon.couponCode.couponPlan.productIds || []
-            const isInCouponScope = (productId: string) => {
-              const [productType] = productId.split('_')
-              return (
-                couponPlanScope === null ||
-                couponPlanScope.includes(productType) ||
-                couponPlanProductIds.includes(productId)
+          ifElse(
+            isEmpty,
+            always(<p style={{ fontSize: '1.2em' }}>目前無可用折價券，請於下列輸入框中輸入代碼，新增折價券：</p>),
+            map((coupon: CouponProps) => {
+              const couponPlanScope = coupon.couponCode.couponPlan.scope
+              const couponPlanProductIds = coupon.couponCode.couponPlan.productIds || []
+              const isInCouponScope = (productId: string) => {
+                const [productType] = productId.split('_')
+                return (
+                  couponPlanScope === null ||
+                  couponPlanScope.includes(productType) ||
+                  couponPlanProductIds.includes(productId)
+                )
+              }
+
+              const filteredOrderProducts = orderProducts.filter(orderProduct =>
+                isInCouponScope(orderProduct.productId),
               )
-            }
+              const filteredOrderDiscounts = orderDiscounts.filter(orderDiscount => orderDiscount.type === 'DownPrice')
+              const price =
+                sum(filteredOrderProducts.map(orderProduct => orderProduct.price)) -
+                sum(filteredOrderDiscounts.map(orderDiscount => orderDiscount.price))
 
-            const filteredOrderProducts = orderProducts.filter(orderProduct => isInCouponScope(orderProduct.productId))
-            const filteredOrderDiscounts = orderDiscounts.filter(orderDiscount => orderDiscount.type === 'DownPrice')
-            const price =
-              sum(filteredOrderProducts.map(orderProduct => orderProduct.price)) -
-              sum(filteredOrderDiscounts.map(orderDiscount => orderDiscount.price))
-
-            const isDisabled = filteredOrderProducts.length === 0 || coupon.couponCode.couponPlan.constraint > price
-            return (
-              <CouponCard
-                key={coupon.id}
-                coupon={coupon}
-                onClick={() => {
-                  if (isDisabled) {
-                    return
-                  }
-                  onSelect && onSelect(coupon)
-                  setSelectedCoupon(coupon)
-                  setVisible(false)
-                }}
-                isDisabled={isDisabled}
-              />
-            )
-          })
+              const isDisabled = filteredOrderProducts.length === 0 || coupon.couponCode.couponPlan.constraint > price
+              return (
+                <CouponCard
+                  key={coupon.id}
+                  coupon={coupon}
+                  onClick={() => {
+                    if (isDisabled) {
+                      return
+                    }
+                    onSelect && onSelect(coupon)
+                    setSelectedCoupon(coupon)
+                    setVisible(false)
+                  }}
+                  isDisabled={isDisabled}
+                />
+              )
+            }),
+          )(coupons)
         )}
 
-        <Divider>{formatMessage(commonMessages.label.or)}</Divider>
+        {coupons.length > 0 ? <Divider>{formatMessage(commonMessages.label.or)}</Divider> : <></>}
 
         <div className="d-flex">
           <StyledInputWrapper className="flex-grow-1">

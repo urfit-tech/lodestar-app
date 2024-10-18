@@ -46,51 +46,46 @@ const DiscountSelectionCard: React.VFC<{
         <StyledRadio height="3rem" colorScheme="primary" value="None">
           {formatMessage(checkoutMessages.form.radio.noDiscount)}
         </StyledRadio>
-        {discountId || leftCoupons.length > 0 ? (
-          <div className="d-flex align-items-center">
-            <StyledRadio height="3rem" colorScheme="primary" value="Coupon">
-              <span>{formatMessage(checkoutMessages.form.radio.useCoupon)}</span>
-            </StyledRadio>
-            {discountType === 'Coupon' && (
-              <span className="ml-2">
-                {currentMemberId ? (
-                  <MultiPeriodCouponSelectionModal
-                    memberId={currentMemberId}
-                    orderProducts={check?.orderProducts || []}
-                    orderDiscounts={check?.orderDiscounts || []}
-                    currentlyUsedDiscountIds={currentlyUsedDiscountIds}
-                    coupons={leftCoupons}
-                    loadingCoupons={loadingCoupons}
-                    refetchCoupons={refetchCoupons}
-                    onSelect={coupon => {
-                      onChange?.(`Coupon_${coupon.id}`)
-                    }}
-                    renderTrigger={({ onOpen, selectedCoupon }) => (
-                      <>
-                        <Button variant="outline" onClick={onOpen}>
-                          {discountTarget
-                            ? formatMessage(commonMessages.button.reselectCoupon)
-                            : formatMessage(commonMessages.button.chooseCoupon)}
-                        </Button>
-                        {selectedCoupon && (
-                          <span className="ml-3">
-                            {selectedCoupon.couponCode.couponPlan.title} {selectedCoupon.couponCode.code}
-                          </span>
-                        )}
-                      </>
-                    )}
-                  />
-                ) : (
-                  <Button onClick={() => setAuthModalVisible && setAuthModalVisible(true)}>
-                    {formatMessage(commonMessages.button.chooseCoupon)}
-                  </Button>
-                )}
-              </span>
-            )}
-          </div>
-        ) : (
-          <></>
-        )}
+        <div className="d-flex align-items-center">
+          <StyledRadio height="3rem" colorScheme="primary" value="Coupon">
+            <span>{formatMessage(checkoutMessages.form.radio.useCoupon)}</span>
+          </StyledRadio>
+          {discountType === 'Coupon' && (
+            <span className="ml-2">
+              {currentMemberId ? (
+                <MultiPeriodCouponSelectionModal
+                  memberId={currentMemberId}
+                  orderProducts={check?.orderProducts || []}
+                  orderDiscounts={check?.orderDiscounts || []}
+                  coupons={leftCoupons}
+                  loadingCoupons={loadingCoupons}
+                  refetchCoupons={refetchCoupons}
+                  onSelect={coupon => {
+                    onChange?.(`Coupon_${coupon.id}`)
+                  }}
+                  renderTrigger={({ onOpen, selectedCoupon }) => (
+                    <>
+                      <Button variant="outline" onClick={onOpen}>
+                        {discountTarget
+                          ? formatMessage(commonMessages.button.reselectCoupon)
+                          : formatMessage(commonMessages.button.chooseCoupon)}
+                      </Button>
+                      {selectedCoupon && (
+                        <span className="ml-3">
+                          {selectedCoupon.couponCode.couponPlan.title} {selectedCoupon.couponCode.code}
+                        </span>
+                      )}
+                    </>
+                  )}
+                />
+              ) : (
+                <Button onClick={() => setAuthModalVisible && setAuthModalVisible(true)}>
+                  {formatMessage(commonMessages.button.chooseCoupon)}
+                </Button>
+              )}
+            </span>
+          )}
+        </div>
         {enrolledMembershipCardIds.length > 0 && (
           <StyledRadio height="3rem" value="Card" colorScheme="primary">
             <span>{formatMessage(checkoutMessages.content.useMemberCard)}</span>
