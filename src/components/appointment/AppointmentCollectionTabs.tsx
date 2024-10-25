@@ -280,6 +280,12 @@ const AppointmentCollectionTabs: React.VFC<{
   const appointmentPlanId = query.get('appointment_plan')
 
   useEffect(() => {
+    if (!!appointmentPlanId) {
+      setSelectedAppointmentPlanId(appointmentPlanId)
+    }
+  }, [appointmentPlanId, setSelectedAppointmentPlanId])
+
+  useEffect(() => {
     if (appointmentPlans) {
       appointmentPlans.forEach((appointmentPlan, index) => {
         ReactGA.plugin.execute('ec', 'addProduct', {
