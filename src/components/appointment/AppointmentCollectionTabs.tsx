@@ -280,11 +280,9 @@ const AppointmentCollectionTabs: React.VFC<{
   const query = new URLSearchParams(search)
   const appointmentPlanId = query.get('appointment_plan')
 
-  useEffect(() => {
-    if (!!appointmentPlanId) {
-      setSelectedAppointmentPlanId(appointmentPlanId)
-    }
-  }, [appointmentPlanId, setSelectedAppointmentPlanId])
+  if (!!appointmentPlanId && appointmentPlanId !== selectedAppointmentPlanId) {
+    setSelectedAppointmentPlanId(appointmentPlanId)
+  }
 
   useEffect(() => {
     if (appointmentPlans) {
