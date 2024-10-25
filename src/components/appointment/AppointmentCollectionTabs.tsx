@@ -247,7 +247,6 @@ const subtotalListItem =
             {dayjs(start).format('YYYY-MM-DD (ddd) HH:mm')} ~ {dayjs(end).format('HH:mm')}
           </p>
           <DeleteOutlined
-            rev={undefined}
             onClick={() =>
               (pipe(converge(without, [pickPeriodById(id), identity]), setSelectedPeriods) as any)(selectedPeriods)
             }
