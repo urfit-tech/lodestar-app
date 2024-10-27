@@ -136,7 +136,7 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
   const [appointmentPeriodLengthLimit, setAppointmentPeriodLengthLimit] = useState<number>(Infinity)
 
   const safelySetSelectedPeriods: Dispatch<SetStateAction<AppointmentPeriod[]>> = pipe(
-    ifElse(
+    (ifElse as any)(
       pipe(always(selectedPeriods.length + 1 > appointmentPeriodLengthLimit)),
       pipe(
         tap(() => window.alert('選取堂數超過設定總數！')),
@@ -201,7 +201,7 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
             </Card.Title>
             <VStack align="stretch">
               {map(
-                converge(subtotalListItem(setSelectedPeriods), [
+                converge(subtotalListItem(setSelectedPeriods) as any, [
                   pipe(props(['id', 'startedAt', 'endedAt'])),
                   always(selectedPeriods),
                 ]),
@@ -215,7 +215,7 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
                   defaultProductDetails={
                     pipe(
                       project(['startedAt', 'endedAt']),
-                      map(mergeRight({ quantity: 1 })) as any,
+                      (map as any)(mergeRight({ quantity: 1 })),
                     )(selectedPeriods) as any
                   }
                   isCheckOutModalOpen={isCheckOutModalOpen}
@@ -234,7 +234,7 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
 }
 
 const pickPeriodById: (id: string) => (selectedPeriods: Array<AppointmentPeriod>) => Array<AppointmentPeriod> = id =>
-  pipe(filter(pipe(prop('id') as any, equals(id))))
+  pipe(filter((pipe as any)(prop('id'), equals(id))))
 
 const subtotalListItem =
   (setSelectedPeriods: Dispatch<SetStateAction<Array<AppointmentPeriod>>>) =>
@@ -430,10 +430,10 @@ export const AppointmentPlanCollection: React.FC<{
                 setAuthModalVisible?.(true)
               } else {
                 setSelectedPeriods(
-                  ifElse(
+                  (ifElse as any)(
                     includes(period),
                     without([period]),
-                    pipe(append(period), sort(ascend(prop('startedAt'))) as any),
+                    pipe(append(period), sort(ascend((prop as any)('startedAt')))),
                   )(selectedPeriods),
                 )
                 ReactGA.plugin.execute('ec', 'addProduct', {

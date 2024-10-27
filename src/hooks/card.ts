@@ -122,3 +122,75 @@ export const useEnrolledMembershipCards = (memberId: string) => {
     refetchMembershipCards: refetch,
   }
 }
+
+export const useEnrolledMembershipCardsWithDiscountInfo = (memberId: string, productId: string) => {
+  const { loading, error, data, refetch } = useQuery<
+    hasura.GET_ENROLLED_CARDS_WITH_DISCOUNT_OF_PRODUCT,
+    hasura.GET_ENROLLED_CARDS_WITH_DISCOUNT_OF_PRODUCTVariables
+  >(
+    gql`
+      query GET_ENROLLED_CARDS_WITH_DISCOUNT_OF_PRODUCT($memberId: String!, $productId: String!) {
+        card_enrollment(where: { member_id: { _eq: $memberId } }) {
+          card {
+            id
+            title
+            description
+            template
+            card_discounts(where: { product_id: { _eq: $productId } }) {
+              amount
+              type
+            }
+          }
+          updated_at
+          started_at
+          ended_at
+        }
+      }
+    `,
+    {
+      variables: { memberId, productId },
+    },
+  )
+
+  type CardDiscount = {
+    amount: number
+    type: string
+  }
+
+  const enrolledMembershipCardsWithDiscountOfProduct: {
+    card: {
+      id: string
+      title: string
+      description: string
+      template: string
+      card_discounts: CardDiscount[] | undefined
+    }
+    updatedAt: Date | null
+    startedAt: Date | null
+    endedAt: Date | null
+  }[] =
+    loading || error || !data
+      ? []
+      : data.card_enrollment.map(cardEnrollment => ({
+          card: {
+            id: cardEnrollment.card?.id || '',
+            title: cardEnrollment.card?.title || '',
+            description: cardEnrollment.card?.description || '',
+            template: cardEnrollment.card?.template || '',
+            card_discounts: cardEnrollment.card?.card_discounts.map(discount => ({
+              amount: discount?.amount ?? 0,
+              type: discount?.type ?? 'cash',
+            })),
+          },
+          updatedAt: cardEnrollment.updated_at ? new Date(cardEnrollment.updated_at) : null,
+          startedAt: cardEnrollment.started_at ? new Date(cardEnrollment.started_at) : null,
+          endedAt: cardEnrollment.ended_at ? new Date(cardEnrollment.ended_at) : null,
+        }))
+
+  return {
+    loadingMembershipCards: loading,
+    errorMembershipCards: error,
+    enrolledMembershipCardsWithDiscountOfProduct,
+    refetchMembershipCards: refetch,
+  }
+}

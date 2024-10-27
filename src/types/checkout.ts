@@ -75,6 +75,24 @@ export type CouponProps = {
   }
 }
 
+export type MembershipCardProps = {
+  card: {
+    id: string
+    title: string
+    description: string
+    template: string
+    card_discounts:
+      | {
+          amount: number
+          type: string
+        }[]
+      | undefined
+  }
+  updatedAt: Date | null
+  startedAt: Date | null
+  endedAt: Date | null
+}
+
 export type ShippingProps = {
   name?: string
   phone?: string

@@ -46,8 +46,10 @@ const AppointmentPeriodBlock: React.VFC<{
       ) : null}
       <div className="d-flex flex-wrap justify-content-start">
         {Object.values(groupBy(period => dayjs(period.startedAt).format('YYYY-MM-DDTHH:mm:00Z'), periods))
-          .map(periods =>
-            periods.sort((a, b) => a.appointmentScheduleCreatedAt.getTime() - b.appointmentScheduleCreatedAt.getTime()),
+          .map((periods: any) =>
+            periods.sort(
+              (a: any, b: any) => a.appointmentScheduleCreatedAt.getTime() - b.appointmentScheduleCreatedAt.getTime(),
+            ),
           )
           .map(periods => periods[0])
           .map(period => {

@@ -10,7 +10,7 @@ import { handleError } from 'lodestar-app-element/src/helpers'
 import { checkoutMessages, commonMessages } from 'lodestar-app-element/src/helpers/translation'
 import { useToastMessage } from 'lodestar-app-element/src/hooks/util'
 import { CouponProps, OrderDiscountProps, OrderProductProps } from 'lodestar-app-element/src/types/checkout'
-import { always, ifElse, isEmpty, map, sum } from 'ramda'
+import { always, complement, equals, filter, head, ifElse, includes, isEmpty, map, pipe, prop, sum } from 'ramda'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -28,20 +28,40 @@ const MultiPeriodCouponSelectionModal: React.VFC<{
   orderProducts: OrderProductProps[]
   orderDiscounts: OrderDiscountProps[]
   coupons: CouponProps[]
+  currentlyUsedDiscountIds: string[]
   loadingCoupons: boolean
   refetchCoupons: (
     variables?: Partial<Exact<{ memberId: string }>> | undefined,
   ) => Promise<ApolloQueryResult<GET_COUPON_COLLECTION>>
+  selectedCoupontId: string | null
   renderTrigger: (params: { onOpen: () => void; selectedCoupon?: CouponProps }) => React.ReactElement
   onSelect?: (coupon: CouponProps) => void
-}> = ({ orderProducts, orderDiscounts, coupons, loadingCoupons, refetchCoupons, onSelect, renderTrigger }) => {
+}> = ({
+  orderProducts,
+  orderDiscounts,
+  coupons,
+  currentlyUsedDiscountIds,
+  loadingCoupons,
+  refetchCoupons,
+  onSelect,
+  selectedCoupontId,
+  renderTrigger,
+}) => {
   const { formatMessage } = useIntl()
   const { authToken } = useAuth()
 
   const [code, setCode] = useState('')
   const [visible, setVisible] = useState(false)
   const [inserting, setInserting] = useState(false)
-  const [selectedCoupon, setSelectedCoupon] = useState<CouponProps>()
+
+  const [selectedCoupon, setSelectedCoupon] = useState<CouponProps | undefined>(
+    selectedCoupontId
+      ? (pipe as any)(filter((pipe as any)(prop('id'), equals(selectedCoupontId))), head)(coupons)
+      : undefined,
+  )
+
+  const leftCoupons = coupons.filter(coupon => complement(includes(`Coupon_${coupon.id}`))(currentlyUsedDiscountIds))
+
   const toastMessage = useToastMessage()
 
   const handleCouponInsert = () => {
@@ -121,7 +141,7 @@ const MultiPeriodCouponSelectionModal: React.VFC<{
                 />
               )
             }),
-          )(coupons)
+          )(leftCoupons)
         )}
 
         {coupons.length > 0 ? <Divider>{formatMessage(commonMessages.label.or)}</Divider> : <></>}

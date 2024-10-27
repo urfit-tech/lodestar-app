@@ -1,17 +1,17 @@
 import { Button, Radio, RadioGroup, Stack } from '@chakra-ui/react'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useCouponCollection } from 'lodestar-app-element/src/hooks/data'
-import { complement, includes } from 'ramda'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { rgba } from '../../helpers'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
-import { useEnrolledMembershipCardIds } from '../../hooks/card'
+import { useEnrolledMembershipCardIds, useEnrolledMembershipCardsWithDiscountInfo } from '../../hooks/card'
 import { CheckProps } from '../../types/checkout'
 import { AuthModalContext } from '../auth/AuthModal'
-import MembershipCardSelectionModal from '../checkout/MembershipCardSelectionModal'
+import { getAvailableCoupons, getAvailableMembershipCards } from './discountUtilities'
 import MultiPeriodCouponSelectionModal from './MultiPeriodCouponSelectionModal'
+import MultiPeriodMembershipCardSelectionModal from './MultiPeriodMembershipCardSelectionModal'
 
 const StyledRadio = styled(Radio)`
   &&:focus {
@@ -20,20 +20,24 @@ const StyledRadio = styled(Radio)`
 `
 
 const DiscountSelectionCard: React.VFC<{
+  productId: string
   value?: string | null
   check?: CheckProps
   currentlyUsedDiscountIds: Array<string>
   onChange?: (discountId: string) => void
-}> = ({ value: discountId, check, currentlyUsedDiscountIds, onChange }) => {
+}> = ({ productId, value: discountId, check, currentlyUsedDiscountIds, onChange }) => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
 
   const { coupons, loadingCoupons, refetchCoupons } = useCouponCollection(currentMemberId ?? '')
-  const leftCoupons = coupons
-    .filter(coupon => complement(includes(`Coupon_${coupon.id}`))(currentlyUsedDiscountIds))
-    .filter(coupon => !coupon.status.outdated && !coupon.status.used)
+
+  const { enrolledMembershipCardsWithDiscountOfProduct: membershipCards, loadingMembershipCards } =
+    useEnrolledMembershipCardsWithDiscountInfo(currentMemberId || '', productId)
+
+  const availableCoupons = getAvailableCoupons(coupons)
+  const availableMembershipCards = getAvailableMembershipCards(membershipCards)
 
   const [discountType, discountTarget] = discountId?.split('_') || [null, null]
   return (
@@ -57,12 +61,14 @@ const DiscountSelectionCard: React.VFC<{
                   memberId={currentMemberId}
                   orderProducts={check?.orderProducts || []}
                   orderDiscounts={check?.orderDiscounts || []}
-                  coupons={leftCoupons}
+                  coupons={availableCoupons}
+                  currentlyUsedDiscountIds={currentlyUsedDiscountIds}
                   loadingCoupons={loadingCoupons}
                   refetchCoupons={refetchCoupons}
                   onSelect={coupon => {
                     onChange?.(`Coupon_${coupon.id}`)
                   }}
+                  selectedCoupontId={discountTarget}
                   renderTrigger={({ onOpen, selectedCoupon }) => (
                     <>
                       <Button variant="outline" onClick={onOpen}>
@@ -92,17 +98,20 @@ const DiscountSelectionCard: React.VFC<{
             {discountType === 'Card' && (
               <span className="ml-2">
                 {currentMemberId ? (
-                  <MembershipCardSelectionModal
+                  <MultiPeriodMembershipCardSelectionModal
                     memberId={currentMemberId}
+                    membershipCards={availableMembershipCards}
+                    loadingMembershipCards={loadingMembershipCards}
                     onSelect={membershipCardId => onChange?.(`Card_${membershipCardId}`)}
-                    render={({ setVisible, selectedMembershipCard }: any) => (
+                    selectedMembershipCardtId={discountTarget}
+                    render={({ setVisible, selectedMembershipCard }) => (
                       <>
                         <Button variant="outline" onClick={() => setVisible(true)}>
                           {discountTarget
                             ? formatMessage(commonMessages.button.reselectCoupon)
                             : formatMessage(checkoutMessages.title.chooseMemberCard)}
                         </Button>
-                        {selectedMembershipCard && <span className="ml-3">{selectedMembershipCard.title}</span>}
+                        {selectedMembershipCard && <span className="ml-3">{selectedMembershipCard.card.title}</span>}
                       </>
                     )}
                   />

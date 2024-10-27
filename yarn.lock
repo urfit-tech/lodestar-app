@@ -4062,14 +4062,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/ramda@0.27.45":
-  version "0.27.45"
-  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.27.45.tgz#1d692736da8f8c199e10c751d4799cab03cd9acd"
-  integrity sha512-WDH7bIuy+JQHzYx6jgo+ytSHco/J+DWaUfxXQ2eBjilxIj4rG0aqQNU56AtO5Tem9hmx8na2ouSAtn5Tz8RePQ==
-  dependencies:
-    ts-toolbelt "^6.15.1"
-
-"@types/ramda@^0.30.1":
+"@types/ramda@^0.30.1", "@types/ramda@^0.30.2":
   version "0.30.2"
   resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.30.2.tgz#70661b20c1bb969589a551b7134ae75008ffbfb6"
   integrity sha512-PyzHvjCalm2BRYjAU6nIB3TprYwMNOUY/7P/N8bSzp9W/yM2YrtGtAnnVtaCNSeOZ8DzKyFDvaqQs7LnWwwmBA==
@@ -11309,13 +11302,9 @@ lodash.uniq@^4.5.0:
 
 lodestar-app-element@urfit-tech/lodestar-app-element#master:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/99acc943d6d786f7f1e22dc79ea7d8e76cc0a34b"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/3e4f3954035f0271ab1beaf9de923d8cd98f5306"
   dependencies:
     "@apollo/client" "^3.7.11"
-    "@babel/cli" "^7.13.16"
-    "@babel/core" "^7.14.0"
-    "@babel/preset-env" "^7.14.1"
-    "@babel/preset-react" "^7.13.13"
     "@bobthered/tailwindcss-palette-generator" "2.0.0"
     "@chakra-ui/icons" "1.0.0"
     "@chakra-ui/react" "1.1.2"
@@ -11324,15 +11313,10 @@ lodestar-app-element@urfit-tech/lodestar-app-element#master:
     "@emotion/react" "11"
     "@emotion/styled" "11"
     "@fingerprintjs/fingerprintjs" "^3.3.6"
-    "@fullcalendar/core" "^6.1.15"
-    "@fullcalendar/interaction" "^6.1.15"
-    "@fullcalendar/react" "^6.1.15"
-    "@fullcalendar/rrule" "^6.1.15"
-    "@fullcalendar/timegrid" "^6.1.15"
     "@types/js-cookie" "^3.0.3"
     "@types/mustache" "4.0.1"
     "@types/node" "12.0.0"
-    "@types/ramda" "^0.30.1"
+    "@types/ramda" "0.27.45"
     "@types/react" "17.0.0"
     "@types/react-color" "^3.0.5"
     "@types/react-dom" "17.0.0"
@@ -11345,8 +11329,6 @@ lodestar-app-element@urfit-tech/lodestar-app-element#master:
     ajv "^8.11.2"
     antd "3"
     axios "0.21.4"
-    babel-plugin-import "^1.13.3"
-    babel-plugin-react-intl "^7.5.28"
     braft-editor "2.3.9"
     classnames "^2.3.1"
     dangerously-set-html-content "^1.0.13"
@@ -11360,7 +11342,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#master:
     moment "^2.29.1"
     mustache "4.2.0"
     query-string "7.0.1"
-    ramda "^0.30.1"
+    ramda "0.27.0"
     rc-progress "^3.1.4"
     react "17.0.2"
     react-color "2.19.3"
@@ -11370,22 +11352,18 @@ lodestar-app-element@urfit-tech/lodestar-app-element#master:
     react-hotjar "^4.0.0"
     react-icons "4.3.1"
     react-intl "5.20.9"
-    react-intl-translations-manager "^5.0.3"
     react-is "^17.0.2"
     react-responsive "8.1.0"
     react-router-dom "5.2.0"
     react-scripts "4.0.3"
     react-slick "0.28.1"
     react-style-editor "^0.4.0"
-    rrule "^2.8.1"
     styled-components "5.1.1"
-    swr "^2.2.5"
     ts-deep-pick "0.2.2"
     typescript "4.4.3"
     use-query-params "1.2.3"
     use-tw-zipcode "^2.0.4"
     uuid "8.3.2"
-    xss "^1.0.10"
 
 log-symbols@^4.0.0, log-symbols@^4.1.0:
   version "4.1.0"
@@ -13796,11 +13774,6 @@ raf@^3.4.0, raf@^3.4.1:
   integrity sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==
   dependencies:
     performance-now "^2.1.0"
-
-ramda@0.27.0:
-  version "0.27.0"
-  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.27.0.tgz#915dc29865c0800bf3f69b8fd6c279898b59de43"
-  integrity sha512-pVzZdDpWwWqEVVLshWUHjNwuVP7SfcmPraYuqocJp1yo2U1R7P+5QAfDhdItkuoGqIBnBYrtPp7rEPqDn9HlZA==
 
 ramda@^0.30.1:
   version "0.30.1"
@@ -16746,11 +16719,6 @@ ts-pnp@1.2.0, ts-pnp@^1.1.6:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/ts-pnp/-/ts-pnp-1.2.0.tgz#a500ad084b0798f1c3071af391e65912c86bca92"
   integrity sha512-csd+vJOb/gkzvcCHgTGSChYpy5f1/XKNsmvBGO4JXS+z1v2HobugDz4s1IeFXM3wZB44uczs+eazB5Q/ccdhQw==
-
-ts-toolbelt@^6.15.1:
-  version "6.15.5"
-  resolved "https://registry.yarnpkg.com/ts-toolbelt/-/ts-toolbelt-6.15.5.tgz#cb3b43ed725cb63644782c64fbcad7d8f28c0a83"
-  integrity sha512-FZIXf1ksVyLcfr7M317jbB67XFJhOO1YqdTcuGaq9q5jLUoTikukZ+98TPjKiP2jC5CgmYdWWYs0s2nLSU0/1A==
 
 ts-toolbelt@^9.6.0:
   version "9.6.0"
