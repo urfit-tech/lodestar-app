@@ -816,7 +816,6 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
           setProductDetailsOrderByStartedAt,
         ),
       )
-  console.log(788, selectedDiscountOptimizerName)
 
   return (
     <>
