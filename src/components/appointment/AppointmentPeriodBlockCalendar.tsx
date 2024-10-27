@@ -37,11 +37,10 @@ const periodKeyToDateString: (periodKey: string) => string = pipe(split('('), he
   new Date(date).toDateString(),
 )
 
-const periodsToDates: (periods: Record<string, AppointmentPeriod[]>) => Array<string> = pipe<
-  Record<string, AppointmentPeriod[]>,
-  Array<string>,
-  Array<string>
->(keys, map<string, string>(periodKeyToDateString))
+const periodsToDates: (periods: Record<string, AppointmentPeriod[]>) => Array<string> = pipe(
+  keys,
+  map<string, string>(periodKeyToDateString),
+)
 
 const isDateInPeriods: (periods: Record<string, AppointmentPeriod[]>, date: Date) => boolean = (periods, date) =>
   includes(date.toDateString())(periodsToDates(periods))
@@ -50,15 +49,9 @@ const getPeriodInDate: (date: Date) => (periods: Record<string, AppointmentPerio
   date: Date,
 ) =>
   pipe(
-    converge(props, [keys, identity]),
-    flatten,
-    filter(
-      pipe<AppointmentPeriod, Date, string, boolean>(
-        prop('startedAt'),
-        invoker(0, 'toDateString'),
-        equals(date.toDateString()),
-      ),
-    ),
+    converge(props as any, [keys, identity]),
+    flatten as any,
+    filter((pipe as any)(prop('startedAt'), invoker(0, 'toDateString'), equals(date.toDateString()))),
   )
 
 const intrusivelyChangeObject =
@@ -71,7 +64,7 @@ const changeObjectByCond: <O extends object>(
   keyValueMapForTrue: Partial<Record<keyof O, O[keyof O]>>,
   keyValueMapForFalse: Partial<Record<keyof O, O[keyof O]>>,
 ) => (obj: O) => O = (cond, keyValueMapForTrue, keyValueMapForFalse) =>
-  ifElse(cond, intrusivelyChangeObject(keyValueMapForTrue), intrusivelyChangeObject(keyValueMapForFalse))
+  (ifElse as any)(cond, intrusivelyChangeObject(keyValueMapForTrue), intrusivelyChangeObject(keyValueMapForFalse))
 
 const restyleElement = (styleMap: Partial<CSSStyleDeclaration>) => (element: ChildNode) =>
   intrusivelyChangeObject(styleMap)((element as any).style)
