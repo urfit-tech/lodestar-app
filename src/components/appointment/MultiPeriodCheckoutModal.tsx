@@ -209,7 +209,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
 
   const [productDetails, setProductDetails] = useState<Array<MultiPeriodProductDetail>>(defaultProductDetails)
 
-  console.log(199, productDetails)
+  console.log('productDetails', productDetails)
 
   const sortProductDetailsByStartedAt: (
     productDetails: Array<MultiPeriodProductDetail>,
@@ -417,7 +417,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
 
   const checkResults = map(useChecks)(productDetails)
 
-  console.log(checkResults)
+  console.log('checkResults', checkResults)
 
   const { coupons, loadingCoupons } = useCouponCollection(currentMemberId ?? '')
   const { enrolledMembershipCardsWithDiscountOfProduct, loadingMembershipCards } =
@@ -987,9 +987,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
               ))}
 
               {checkResults.map(result => {
-                console.log(979, result.check.orderDiscounts.length)
                 return result.check.orderDiscounts.map((orderDiscount, idx) => {
-                  console.log(981, orderDiscount)
                   return (
                     <CheckoutProductItem
                       key={orderDiscount.name}
