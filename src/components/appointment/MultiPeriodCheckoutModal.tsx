@@ -54,6 +54,7 @@ import {
 } from 'lodestar-app-element/src/types/checkout'
 import { ConversionApiContent, ConversionApiEvent } from 'lodestar-app-element/src/types/conversionApi'
 import {
+  apply,
   ascend,
   chain,
   complement,
@@ -61,6 +62,7 @@ import {
   defaultTo,
   equals,
   filter,
+  flip,
   head,
   identity,
   ifElse,
@@ -87,10 +89,10 @@ import { AuthModalContext } from '../../components/auth/AuthModal'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardsWithDiscountInfo } from '../../hooks/card'
 import { MembershipCardProps } from '../../types/checkout'
-import { DiscountForOptimizer, DiscountUsageOptimizer, optimizerSelector } from './discountOptimization'
+import { DiscountForOptimizer, DiscountUsageOptimizer, optimizerMap } from './discountOptimization'
 import {
-  availableDiscountGetterSelector,
-  discountAdaptorSelectorForMultiPeriod,
+  availableDiscountGetterMap,
+  discountAdaptorMapForMultiPeriod,
   optimizedResultToProductDetail,
   productAdaptorForMultiPeriod,
 } from './discountUtilities'
@@ -770,30 +772,10 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
       const adaptedDiscounts: Array<DiscountForOptimizer> = (chain as any)(
         pipe(
           converge(mergeLeft, [
-            (converge as any)(
-              pipe(
-                availableDiscountGetterSelector,
-                tap(_ => console.log('773-1', _)),
-              ),
-              [
-                pipe(
-                  prop('type'),
-                  tap(_ => console.log('773-1', _)),
-                ),
-                prop('data'),
-              ],
-            ),
+            (converge as any)(apply, [pipe(prop('type'), flip(prop)(availableDiscountGetterMap)), prop('data')]),
             identity,
           ]),
-          (converge as any)(map, [
-            pipe(
-              prop('type'),
-              tap(_ => console.log(779, _)),
-              discountAdaptorSelectorForMultiPeriod,
-              tap(_ => console.log(781, _)),
-            ),
-            prop('data'),
-          ]),
+          (converge as any)(map, [pipe(prop('type'), flip(prop)(discountAdaptorMapForMultiPeriod)), prop('data')]),
         ),
       )(discounts)
 
@@ -810,8 +792,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
         setSelectedDiscountOptimizerName,
         pipe(
           (tap as any)(setSelectedDiscountOptimizerName),
-          tap(console.log),
-          optimizerSelector,
+          flip(prop)(optimizerMap),
           optimizeDiscount(productDetails)(discounts) as any,
           setProductDetailsOrderByStartedAt,
         ),
