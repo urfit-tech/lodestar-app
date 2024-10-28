@@ -96,7 +96,7 @@ const MembershipCardTermsModal: React.FC<MembershipCardTermsModalProps> = ({
       case 'PodcastPlan':
         return `/creators/${details.creatorId}?tabkey=podcasts`
       case 'AppointmentPlan':
-        return `/creators/${details.creatorId}?tabkey=appointments&$appointment_plan=${details.id}`
+        return `/creators/${details.creatorId}?tabkey=appointments&appointment_plan=${details.id}`
       case 'MerchandiseSpec':
         return `/merchandises/${details.mainProductId}`
       case 'ProjectPlan':
