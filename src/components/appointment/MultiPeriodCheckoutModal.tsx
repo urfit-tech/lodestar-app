@@ -770,14 +770,27 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
       const adaptedDiscounts: Array<DiscountForOptimizer> = (chain as any)(
         pipe(
           converge(mergeLeft, [
-            (converge as any)(availableDiscountGetterSelector, [prop('type'), prop('data')]),
+            (converge as any)(
+              pipe(
+                availableDiscountGetterSelector,
+                tap(_ => console.log('773-1', _)),
+              ),
+              [
+                pipe(
+                  prop('type'),
+                  tap(_ => console.log('773-1', _)),
+                ),
+                prop('data'),
+              ],
+            ),
             identity,
           ]),
           (converge as any)(map, [
             pipe(
               prop('type'),
+              tap(_ => console.log(779, _)),
               discountAdaptorSelectorForMultiPeriod,
-              tap(_ => console.log(768, _)),
+              tap(_ => console.log(781, _)),
             ),
             prop('data'),
           ]),
