@@ -268,6 +268,7 @@ export const useProgram = (programId: string) => {
           display_footer
           cover_type
           mobile_cover_type
+          support_locales
           label
           label_color_type
           activated_layout_template_config_id
@@ -443,6 +444,7 @@ export const useProgram = (programId: string) => {
       editors: data?.program_by_pk?.editors.map(v => v?.member_id || ''),
       displayHeader: data?.program_by_pk?.display_header ?? true,
       displayFooter: data?.program_by_pk?.display_footer ?? true,
+      supportLocale: data?.program_by_pk?.support_locales,
       programLayoutTemplateId:
         data?.program_by_pk?.program_layout_template_config?.program_layout_template_id || undefined,
       moduleData: data?.program_by_pk?.program_layout_template_config?.module_data,
