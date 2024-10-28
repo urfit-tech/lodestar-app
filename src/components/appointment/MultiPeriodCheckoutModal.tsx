@@ -54,6 +54,7 @@ import {
 } from 'lodestar-app-element/src/types/checkout'
 import { ConversionApiContent, ConversionApiEvent } from 'lodestar-app-element/src/types/conversionApi'
 import {
+  apply,
   ascend,
   chain,
   complement,
@@ -61,6 +62,7 @@ import {
   defaultTo,
   equals,
   filter,
+  flip,
   head,
   identity,
   ifElse,
@@ -87,10 +89,10 @@ import { AuthModalContext } from '../../components/auth/AuthModal'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardsWithDiscountInfo } from '../../hooks/card'
 import { MembershipCardProps } from '../../types/checkout'
-import { DiscountForOptimizer, DiscountUsageOptimizer, optimizerSelector } from './discountOptimization'
+import { DiscountForOptimizer, DiscountUsageOptimizer, optimizerMap } from './discountOptimization'
 import {
-  availableDiscountGetterSelector,
-  discountAdaptorSelectorForMultiPeriod,
+  availableDiscountGetterMap,
+  discountAdaptorMapForMultiPeriod,
   optimizedResultToProductDetail,
   productAdaptorForMultiPeriod,
 } from './discountUtilities'
@@ -764,10 +766,10 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
       const adaptedDiscounts: Array<DiscountForOptimizer> = (chain as any)(
         pipe(
           converge(mergeLeft, [
-            (converge as any)(availableDiscountGetterSelector, [prop('type'), prop('data')]),
+            (converge as any)(apply, [pipe(prop('type'), flip(prop)(availableDiscountGetterMap)), prop('data')]),
             identity,
           ]),
-          (converge as any)(map, [pipe(prop('type'), discountAdaptorSelectorForMultiPeriod), prop('data')]),
+          (converge as any)(map, [pipe(prop('type'), flip(prop)(discountAdaptorMapForMultiPeriod)), prop('data')]),
         ),
       )(discounts)
 
@@ -783,9 +785,8 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
         equals('customized'),
         () => setSelectedDiscountOptimizer(undefined),
         pipe(
-          optimizerSelector,
-          (tap as any)(setSelectedDiscountOptimizer),
-          (tap as any)(pipe((prop as any)('name'), setSelectedDiscountOptimizerName)),
+          (tap as any)(setSelectedDiscountOptimizerName),
+          flip(prop)(optimizerMap),
           optimizeDiscount(productDetails)(discounts) as any,
           setProductDetailsOrderByStartedAt,
         ),
