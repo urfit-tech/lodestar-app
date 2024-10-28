@@ -23,11 +23,9 @@ import {
   prop,
   propEq,
   props,
-  tail,
 } from 'ramda'
 import { MembershipCardProps } from '../../types/checkout'
 import { DiscountForOptimizer, OptimizedResult, ProductForOptimizer } from './discountOptimization'
-import { functionSelector } from './functionSelector'
 import { MultiPeriodProductDetail } from './MultiPeriod.type'
 
 export const getAvailableCoupons = (coupon: CouponProps[]) =>
@@ -48,12 +46,7 @@ export const getAvailableMembershipCards: (membershipCards: MembershipCardProps[
     ]),
   )(membershipCards)
 
-const availableDiscountGetters = [getAvailableCoupons, getAvailableMembershipCards]
-const availableDiscountGettersNamePattern = (type: string) =>
-  `getAvailable${(head as any)(type).toUpperCase()}${tail(type)}s`
-export const availableDiscountGetterSelector = functionSelector(availableDiscountGettersNamePattern)(
-  availableDiscountGetters,
-)
+export const availableDiscountGetterMap = { coupon: getAvailableCoupons, membershipCard: getAvailableMembershipCards }
 
 const generateIdentifierOfProduct: (productDetail: MultiPeriodProductDetail) => Array<number> = pipe(
   props(['startedAt', 'endedAt']),
@@ -100,11 +93,10 @@ export const membershipCardAdaptorForMultiPeriod: (membershipCard: MembershipCar
     (ifElse as any)(propEq('percentage', 'unit'), modify('unit', always('percent')), identity),
   )(membershipCard)
 
-const discountAdaptorsForMultiPeriod = [couponAdaptorForMultiPeriod, membershipCardAdaptorForMultiPeriod]
-const discountAdaptorForMultiPeriodNamePattern = (type: string) => `${type}AdaptorForMultiPeriod`
-export const discountAdaptorSelectorForMultiPeriod = functionSelector(discountAdaptorForMultiPeriodNamePattern)(
-  discountAdaptorsForMultiPeriod,
-)
+export const discountAdaptorMapForMultiPeriod = {
+  coupon: couponAdaptorForMultiPeriod,
+  membershipCard: membershipCardAdaptorForMultiPeriod,
+}
 
 export const optimizedResultToProductDetail: (
   optimizedResults: Array<OptimizedResult>,

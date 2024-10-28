@@ -22,7 +22,6 @@ import {
   sort,
   splitWhen,
 } from 'ramda'
-import { functionSelector } from './functionSelector'
 
 export type ProductForOptimizer = { identifier: any; price: number }
 export type DiscountForOptimizer = { identifier: any; unit: 'percent' | 'cash'; amount: number; quantity: number }
@@ -137,8 +136,4 @@ export const greedyOptimizer: DiscountUsageOptimizer = products => discounts => 
   )(sortedProductsWithIndex)
 }
 
-const optimizers = [greedyOptimizer]
-const optimizerNamePattern = (type: string) => `${type}Optimizer`
-
-export const optimizerSelector: (name: string) => DiscountUsageOptimizer =
-  functionSelector(optimizerNamePattern)(optimizers)
+export const optimizerMap = { greedy: greedyOptimizer }
