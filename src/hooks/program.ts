@@ -154,11 +154,19 @@ export const usePublishedProgramCollection = (options?: {
             label: program.label || '',
             labelColorType: program.label_color_type || '',
             isEnrolledCountVisible: program.is_enrolled_count_visible,
-            categories: program.program_categories.map(programCategory => ({
-              id: programCategory.category.id,
-              name: programCategory.category.name,
-              position: programCategory.category.position,
-            })),
+            categories: program.program_categories
+              .map(programCategory => {
+                if (!programCategory.category) {
+                  return null
+                }
+
+                return {
+                  id: programCategory.category.id,
+                  name: programCategory.category.name,
+                  position: programCategory.category.position,
+                }
+              })
+              .filter(Boolean),
             roles: program.program_roles.map(programRole => ({
               id: programRole.id,
               name: programRole.name as ProgramRoleName,
