@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useMembershipCard } from 'lodestar-app-element/src/hooks/card'
 import styled from 'styled-components'
+import { useMember } from '../../hooks/member'
 import MembershipCardBlock from './MembershipCardBlock'
 
 const StyledContainer = styled.div`
@@ -18,11 +18,12 @@ const MembershipCardAdminBlock: React.VFC<{
   startedAt?: Date | null
   endedAt?: Date | null
   updatedAt?: Date | null
-}> = ({ cardId, startedAt, endedAt, updatedAt }) => {
+  memberId: string
+}> = ({ cardId, startedAt, endedAt, updatedAt, memberId }) => {
   const { loadingMembershipCard, errorMembershipCard, membershipCard } = useMembershipCard(cardId)
-  const { currentMember } = useAuth()
+  const { loadingMember, member } = useMember(memberId)
 
-  if (loadingMembershipCard || errorMembershipCard || !currentMember || !membershipCard) {
+  if (loadingMembershipCard || errorMembershipCard || !membershipCard || loadingMember || !member) {
     return null
   }
 
@@ -31,9 +32,9 @@ const MembershipCardAdminBlock: React.VFC<{
       <MembershipCardBlock
         template={membershipCard.template}
         templateVars={{
-          avatar: currentMember.pictureUrl,
-          name: currentMember.name || '',
-          account: currentMember.username,
+          avatar: member.pictureUrl,
+          name: member.name || '',
+          account: member.username,
           date: startedAt ? dayjs(startedAt).format('YYYY/MM/DD') : '',
         }}
         title={membershipCard.title}
