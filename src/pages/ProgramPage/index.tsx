@@ -61,7 +61,7 @@ const ProgramPage: React.VFC = () => {
     return <ForbiddenPage />
   }
 
-  if (!program.supportLocale?.some(locale => locale === currentLocale)) {
+  if (program?.supportLocale !== null && !program.supportLocale?.some(locale => locale === currentLocale)) {
     return <NotFoundPage />
   }
 
