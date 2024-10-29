@@ -202,7 +202,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [isOpen, onOpen, onClose] = [isCheckOutModalOpen, onCheckOutModalOpen, onCheckOutModalClose]
-  const [checkoutProductId] = useQueryParam('checkoutProductId', StringParam)
+  // const [checkoutProductId] = useQueryParam('checkoutProductId', StringParam)
   const { enabledModules, settings, id: appId, currencyId: appCurrencyId } = useApp()
   const { currentMemberId, isAuthenticating, authToken } = useAuth()
   const { member: currentMember } = useMember(currentMemberId || '')
@@ -342,7 +342,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
   const groupBuyingRef = useRef<HTMLDivElement | null>(null)
   const paymentMethodRef = useRef<HTMLDivElement | null>(null)
   const contactInfoRef = useRef<HTMLDivElement | null>(null)
-  // const [discountId, setDiscountId] = useState('')
+
   useEffect(() => {
     if (
       productTarget?.currencyId === 'LSC' &&
@@ -422,6 +422,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
   console.log('checkResults', checkResults)
 
   const { coupons, loadingCoupons } = useCouponCollection(currentMemberId ?? '')
+
   const { enrolledMembershipCardsWithDiscountOfProduct, loadingMembershipCards } =
     useEnrolledMembershipCardsWithDiscountInfo(currentMemberId ?? '', productId)
 
@@ -804,8 +805,8 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
           <RadioGroup
             defaultValue="customized"
             onChange={handleOptimizerChange(productDetails)([
-              { type: 'coupon', data: coupons },
-              { type: 'membershipCard', data: enrolledMembershipCardsWithDiscountOfProduct },
+              { type: 'coupon', data: coupons ?? [] },
+              { type: 'membershipCard', data: enrolledMembershipCardsWithDiscountOfProduct ?? [] },
             ])}
             value={selectedDiscountOptimizerName}
           >

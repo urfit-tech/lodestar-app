@@ -31,6 +31,7 @@ import {
   pipe,
   project,
   prop,
+  propEq,
   props,
   sort,
   tap,
@@ -52,6 +53,7 @@ import { AuthModalContext } from '../auth/AuthModal'
 import OverviewBlock from '../common/OverviewBlock'
 import AppointmentPeriodCollection from './AppointmentPeriodCollection'
 import MultiPeriodCheckoutModal from './MultiPeriodCheckoutModal'
+import MultiPeriodCoinCheckoutModal from './MultiPeriodCoinCheckoutModal'
 import appointmentMessages from './translation'
 
 const StyledTab = styled.div`
@@ -128,6 +130,7 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
   setAuthModalVisible,
 }) => {
   const [selectedAppointmentPlanId, setSelectedAppointmentPlanId] = useState<string>(appointmentPlans[0].id)
+  const [selectedAppointmentPlan] = filter(propEq(selectedAppointmentPlanId, 'id'))(appointmentPlans)
   const [selectedPeriods, setSelectedPeriods] = useState<Array<AppointmentPeriod>>([])
   const { currentMemberId, isAuthenticating, authToken } = useAuth()
   const { member: currentMember } = useMember(currentMemberId || '')
@@ -209,7 +212,23 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
               <Button variant="outline" onClick={onCheckOutModalOpen}>
                 立即購買
               </Button>
-              {isCheckOutModalOpen ? (
+              {!isCheckOutModalOpen ? (
+                <></>
+              ) : selectedAppointmentPlan.currency.id === 'LSC' ? (
+                <MultiPeriodCoinCheckoutModal
+                  selectedAppointmentPlan={selectedAppointmentPlan}
+                  defaultProductDetails={
+                    pipe(
+                      project(['startedAt', 'endedAt']),
+                      (map as any)(mergeRight({ quantity: 1 })),
+                    )(selectedPeriods) as any
+                  }
+                  phoneInputEnabled={true}
+                  isCheckOutModalOpen={isCheckOutModalOpen}
+                  onCheckOutModalOpen={onCheckOutModalOpen}
+                  onCheckOutModalClose={onCheckOutModalClose}
+                />
+              ) : (
                 <MultiPeriodCheckoutModal
                   defaultProductId={`AppointmentPlan_${selectedAppointmentPlanId}`}
                   defaultProductDetails={
@@ -222,8 +241,6 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
                   onCheckOutModalOpen={onCheckOutModalOpen}
                   onCheckOutModalClose={onCheckOutModalClose}
                 />
-              ) : (
-                <></>
               )}
             </VStack>
           </Card>
@@ -343,7 +360,12 @@ const AppointmentCollectionTabs: React.VFC<{
                     },
                     {
                       duration: appointmentPlan.duration,
-                      price: <PriceLabel currencyId={appointmentPlan.currency.id} listPrice={appointmentPlan.price} />,
+                      price: (
+                        <PriceLabel
+                          currencyId={appointmentPlan.currency?.id ?? '點'}
+                          listPrice={appointmentPlan.price}
+                        />
+                      ),
                     },
                   )}
                 </div>
