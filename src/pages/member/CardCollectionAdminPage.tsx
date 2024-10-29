@@ -39,6 +39,7 @@ const CardCollectionAdminPage: React.VFC = () => {
               updatedAt={membershipCard.updatedAt}
               startedAt={membershipCard.startedAt}
               endedAt={membershipCard.endedAt}
+              memberId={currentMemberId || ''}
             />
           </div>
         ))}
