@@ -94,7 +94,11 @@ const ActivityPage: React.VFC = () => {
     )
   }
 
-  if (error || !activityData || !activityData?.supportLocales?.some(locale => locale === currentLocale)) {
+  if (
+    error ||
+    !activityData ||
+    (activityData?.supportLocales !== null && !activityData?.supportLocales?.some(locale => locale === currentLocale))
+  ) {
     return <NotFoundPage />
   }
 

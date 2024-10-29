@@ -400,6 +400,7 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
           filename
           published_at
           creator_id
+          support_locales
           podcast_program_categories {
             id
             category {
@@ -454,6 +455,7 @@ export const usePodcastProgramContent = (podcastProgramId: string) => {
       description: data.podcast_program_by_pk.podcast_program_body?.description || null,
       coverUrl: data.podcast_program_by_pk.cover_url || null,
       publishedAt: data.podcast_program_by_pk.published_at && new Date(data.podcast_program_by_pk.published_at),
+      supportLocales: data.podcast_program_by_pk.support_locales,
       tags: data.podcast_program_by_pk.podcast_program_tags.map(podcastProgramTag => podcastProgramTag.tag.name),
       categories: (data.podcast_program_by_pk.podcast_program_categories || []).map(programCategory => ({
         id: programCategory.category.id || '',

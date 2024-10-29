@@ -33,6 +33,7 @@ export type PodcastProgramContent = {
   tags: string[]
   url: string
   instructorIds: string[]
+  supportLocales: string[] | null
 }
 
 export type PodcastRole = {
