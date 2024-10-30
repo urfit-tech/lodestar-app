@@ -748,7 +748,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
   const getProductDetailsWithPrice: (
     productDetails: Array<MultiPeriodProductDetail>,
   ) => Array<MultiPeriodProductDetail & { price: number }> = mergeLeft({
-    price: checkResults[0].check.orderProducts[0].price,
+    price: checkResults[0].check.orderProducts[0]?.price ?? 0,
   }) as any
 
   const optimizeDiscount =
@@ -757,8 +757,18 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
     (optimizer: DiscountUsageOptimizer) => {
       const adaptedProducts = (pipe as any)(
         sortProductDetailsByStartedAt,
-        map((pipe as any)(getProductDetailsWithPrice, productAdaptorForMultiPeriod)),
+        tap(_ => console.log(757, _)),
+        map(
+          (pipe as any)(
+            tap(_ => console.log('758-1', _)),
+            getProductDetailsWithPrice,
+            tap(_ => console.log('758-2', _)),
+            productAdaptorForMultiPeriod,
+          ),
+        ),
+        tap(_ => console.log(758, _)),
       )(productDetails)
+      console.log(760, adaptedProducts)
 
       const adaptedDiscounts: Array<DiscountForOptimizer> = (chain as any)(
         pipe(
