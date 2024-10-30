@@ -748,7 +748,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
   const getProductDetailsWithPrice: (
     productDetails: Array<MultiPeriodProductDetail>,
   ) => Array<MultiPeriodProductDetail & { price: number }> = mergeLeft({
-    price: checkResults[0].check.orderProducts[0].price,
+    price: checkResults[0].check.orderProducts[0]?.price ?? 0,
   }) as any
 
   const optimizeDiscount =
