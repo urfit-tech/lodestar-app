@@ -95,12 +95,10 @@ export const greedyOptimizer: DiscountUsageOptimizer = products => discounts => 
 
   const reduceFn = (result: reducedResult, targetProduct: ProductForOptimizer & WithIndex): reducedResult => {
     const leftProductAmount = targetProduct.length - targetProduct.index - 1
-    console.log('leftProductAmount', leftProductAmount)
     const sortedDiscounts = pipe(
       sortStandardized(targetProduct),
       unpackDiscounts(leftProductAmount),
     )(result.leftDiscounts)
-    console.log(67, sortedDiscounts)
 
     const discountsExtraAmount = max(0, result.leftDiscounts.length - leftProductAmount - 1)
     const justFullDiscountIndex = findJustFullDiscountIndexInSortedDiscounts(targetProduct)(sortedDiscounts) ?? 0
@@ -117,17 +115,10 @@ export const greedyOptimizer: DiscountUsageOptimizer = products => discounts => 
       discountsWithPartialDiscount.length >= leftProductAmount ? discountsWithFullDiscount : discountsExtra,
     )
 
-    console.log(
-      discountsWithPartialDiscount.length >= leftProductAmount,
-      discountsWithPartialDiscount,
-      discountsReservedForLeftProducts,
-    )
     const leftDiscounts: DiscountForOptimizer[] =
       discountsWithPartialDiscount.length >= leftProductAmount
         ? discountsWithPartialDiscount
         : discountsReservedForLeftProducts
-
-    console.log(112, leftDiscounts)
 
     return {
       dealtProducts: result.dealtProducts.concat({

@@ -211,7 +211,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
 
   const [productDetails, setProductDetails] = useState<Array<MultiPeriodProductDetail>>(defaultProductDetails)
 
-  console.log(199, productDetails)
+  console.log('productDetails', productDetails)
 
   const sortProductDetailsByStartedAt: (
     productDetails: Array<MultiPeriodProductDetail>,
@@ -419,16 +419,12 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
 
   const checkResults = map(useChecks)(productDetails)
 
-  console.log(checkResults)
+  console.log('checkResults', checkResults)
 
   const { coupons, loadingCoupons } = useCouponCollection(currentMemberId ?? '')
 
   const { enrolledMembershipCardsWithDiscountOfProduct, loadingMembershipCards } =
     useEnrolledMembershipCardsWithDiscountInfo(currentMemberId ?? '', productId)
-
-  const [selectedDiscountOptimizer, setSelectedDiscountOptimizer] = useState<DiscountUsageOptimizer | undefined>(
-    undefined,
-  )
 
   const [selectedDiscountOptimizerName, setSelectedDiscountOptimizerName] = useState<string>('customized')
 
@@ -752,7 +748,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
   const getProductDetailsWithPrice: (
     productDetails: Array<MultiPeriodProductDetail>,
   ) => Array<MultiPeriodProductDetail & { price: number }> = mergeLeft({
-    price: checkResults[0].check.orderProducts[0].price,
+    price: checkResults[0].check.orderProducts[0]?.price ?? 0,
   }) as any
 
   const optimizeDiscount =
@@ -784,7 +780,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
     (discounts: Array<{ type: string; data: Array<CouponProps | MembershipCardProps> }>) =>
       ifElse(
         equals('customized'),
-        () => setSelectedDiscountOptimizer(undefined),
+        setSelectedDiscountOptimizerName,
         pipe(
           (tap as any)(setSelectedDiscountOptimizerName),
           flip(prop)(optimizerMap),
@@ -812,7 +808,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
               { type: 'coupon', data: coupons ?? [] },
               { type: 'membershipCard', data: enrolledMembershipCardsWithDiscountOfProduct ?? [] },
             ])}
-            value={selectedDiscountOptimizer ? selectedDiscountOptimizerName : 'customized'}
+            value={selectedDiscountOptimizerName}
           >
             <Stack direction="row">
               <Radio value="customized">自訂</Radio>
@@ -842,7 +838,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
                 )}
                 onChange={discountId => {
                   period.discountId = discountId ?? ''
-                  setSelectedDiscountOptimizer(undefined)
+                  setSelectedDiscountOptimizerName('customized')
                   setProductDetailsOrderByStartedAt(productDetails)
                 }}
               />
@@ -989,9 +985,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
               ))}
 
               {checkResults.map(result => {
-                console.log(979, result.check.orderDiscounts.length)
                 return result.check.orderDiscounts.map((orderDiscount, idx) => {
-                  console.log(981, orderDiscount)
                   return (
                     <CheckoutProductItem
                       key={orderDiscount.name}
