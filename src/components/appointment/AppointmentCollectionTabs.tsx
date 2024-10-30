@@ -360,12 +360,7 @@ const AppointmentCollectionTabs: React.VFC<{
                     },
                     {
                       duration: appointmentPlan.duration,
-                      price: (
-                        <PriceLabel
-                          currencyId={appointmentPlan.currency?.id ?? '點'}
-                          listPrice={appointmentPlan.price}
-                        />
-                      ),
+                      price: <PriceLabel currencyId={appointmentPlan.currency.id} listPrice={appointmentPlan.price} />,
                     },
                   )}
                 </div>
