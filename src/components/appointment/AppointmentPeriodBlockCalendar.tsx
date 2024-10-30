@@ -126,7 +126,7 @@ const AppointmentPeriodBlockCalendar: React.VFC<{
     })(FC_DAYGRID_DAY_TOP_ELEMENT)
 
     restyleElement({
-      fontSize: '2em',
+      fontSize: '1.75em',
       lineHeight: '0',
       textAlign: 'center',
       cursor: 'default',

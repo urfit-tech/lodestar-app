@@ -54,6 +54,7 @@ import {
 } from 'lodestar-app-element/src/types/checkout'
 import { ConversionApiContent, ConversionApiEvent } from 'lodestar-app-element/src/types/conversionApi'
 import {
+  anyPass,
   apply,
   ascend,
   chain,
@@ -66,11 +67,14 @@ import {
   head,
   identity,
   ifElse,
+  includes,
+  isEmpty,
   isNil,
   join,
   last,
   map,
   mergeLeft,
+  path,
   pipe,
   pluck,
   prop,
@@ -422,6 +426,12 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
   console.log('checkResults', checkResults)
 
   const { coupons, loadingCoupons } = useCouponCollection(currentMemberId ?? '')
+  const couponsForProducts = filter(
+    (pipe as any)(
+      path(['couponCode', 'couponPlan', 'productIds']),
+      anyPass([includes(defaultProductId), equals('AppointmentPlan'), isEmpty]),
+    ),
+  )(coupons) as Array<CouponProps>
 
   const { enrolledMembershipCardsWithDiscountOfProduct, loadingMembershipCards } =
     useEnrolledMembershipCardsWithDiscountInfo(currentMemberId ?? '', productId)
@@ -757,18 +767,8 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
     (optimizer: DiscountUsageOptimizer) => {
       const adaptedProducts = (pipe as any)(
         sortProductDetailsByStartedAt,
-        tap(_ => console.log(757, _)),
-        map(
-          (pipe as any)(
-            tap(_ => console.log('758-1', _)),
-            getProductDetailsWithPrice,
-            tap(_ => console.log('758-2', _)),
-            productAdaptorForMultiPeriod,
-          ),
-        ),
-        tap(_ => console.log(758, _)),
+        map((pipe as any)(getProductDetailsWithPrice, productAdaptorForMultiPeriod)),
       )(productDetails)
-      console.log(760, adaptedProducts)
 
       const adaptedDiscounts: Array<DiscountForOptimizer> = (chain as any)(
         pipe(
@@ -812,19 +812,32 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
         }}
       >
         <div className="mb-4">
-          <RadioGroup
-            defaultValue="customized"
-            onChange={handleOptimizerChange(productDetails)([
-              { type: 'coupon', data: coupons ?? [] },
-              { type: 'membershipCard', data: enrolledMembershipCardsWithDiscountOfProduct ?? [] },
-            ])}
-            value={selectedDiscountOptimizerName}
+          <Stack
+            direction="column"
+            style={{
+              padding: '2vmin',
+              margin: '2vmin 0',
+              borderRadius: '1vmin',
+              boxShadow: '0 0 1vmin 0.5vmin rgba(0,0,0,0.1)',
+            }}
           >
-            <Stack direction="row">
-              <Radio value="customized">自訂</Radio>
-              <Radio value="greedy">貪婪最佳化</Radio>
-            </Stack>
-          </RadioGroup>
+            <span style={{ fontSize: '1.2em', fontWeight: 'bold' }}>折抵模式</span>
+            <Divider />
+            <RadioGroup
+              style={{ fontSize: '1em' }}
+              defaultValue="customized"
+              onChange={handleOptimizerChange(productDetails)([
+                { type: 'coupon', data: couponsForProducts ?? [] },
+                { type: 'membershipCard', data: enrolledMembershipCardsWithDiscountOfProduct ?? [] },
+              ])}
+              value={selectedDiscountOptimizerName}
+            >
+              <Stack direction="row" spacing="5vmin">
+                <Radio value="customized">手動設定</Radio>
+                <Radio value="greedy">自動推薦</Radio>
+              </Stack>
+            </RadioGroup>
+          </Stack>
           {map((period: MultiPeriodProductDetail) => (
             <>
               <ProductItem
