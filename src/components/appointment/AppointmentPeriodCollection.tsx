@@ -1,13 +1,17 @@
+import { CalendarOutlined, TableOutlined } from '@ant-design/icons'
+import { Button } from '@chakra-ui/button'
+import { HStack, Spacer } from '@chakra-ui/layout'
+import dayjs from 'dayjs'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
-import dayjs from 'dayjs'
 import { groupBy } from 'ramda'
 import React, { useContext, useState } from 'react'
 import styled from 'styled-components'
 import { useService } from '../../hooks/service'
-import { AppointmentPeriod, ReservationType } from '../../types/appointment'
+import { AppointmentPeriod, ReservationType, UiMode } from '../../types/appointment'
 import { AuthModalContext } from '../auth/AuthModal'
 import AppointmentItem from './AppointmentItem'
+import AppointmentPeriodBlockCalendar from './AppointmentPeriodBlockCalendar'
 
 const StyledScheduleTitle = styled.h3`
   margin-bottom: 1.25rem;
@@ -42,12 +46,14 @@ const AppointmentPeriodBlock: React.VFC<{
       ) : null}
       <div className="d-flex flex-wrap justify-content-start">
         {Object.values(groupBy(period => dayjs(period.startedAt).format('YYYY-MM-DDTHH:mm:00Z'), periods))
-          .map(periods =>
-            periods.sort((a, b) => a.appointmentScheduleCreatedAt.getTime() - b.appointmentScheduleCreatedAt.getTime()),
+          .map((periods: any) =>
+            periods.sort(
+              (a: any, b: any) => a.appointmentScheduleCreatedAt.getTime() - b.appointmentScheduleCreatedAt.getTime(),
+            ),
           )
           .map(periods => periods[0])
           .map(period => {
-            const ItemElem = (
+            return (
               <AppointmentItem
                 key={period.id}
                 creatorId={creatorId}
@@ -65,32 +71,11 @@ const AppointmentPeriodBlock: React.VFC<{
                 isPeriodExcluded={!period.available}
                 isEnrolled={period.currentMemberBooked}
                 onClick={() =>
-                  !period.currentMemberBooked && !period.isBookedReachLimit && !period.available
-                    ? onClick(period)
-                    : null
+                  !period.currentMemberBooked && !period.isBookedReachLimit && period.available ? onClick(period) : null
                 }
                 overLapPeriods={overLapPeriods}
                 onOverlapPeriodsChange={setOverLapPeriods}
               />
-            )
-
-            return isAuthenticated && !period.currentMemberBooked ? (
-              <div key={period.id} onClick={() => onClick && onClick(period)}>
-                {ItemElem}
-              </div>
-            ) : isAuthenticated && period.currentMemberBooked ? (
-              <div
-                key={period.id}
-                onClick={() => {
-                  return
-                }}
-              >
-                {ItemElem}
-              </div>
-            ) : (
-              <div key={period.id} onClick={() => setAuthModalVisible && setAuthModalVisible(true)}>
-                {ItemElem}
-              </div>
             )
           })}
       </div>
@@ -121,10 +106,44 @@ const AppointmentPeriodCollection: React.VFC<{
     ),
   )
 
+  const [uiMode, setUiMode] = useState<UiMode>('calendar')
+
   return (
     <>
-      {Object.values(periods).map(periods => (
-        <AppointmentPeriodBlock
+      <HStack padding="1em">
+        <span className="col-lg-4 col-12" style={{ fontSize: '1.5em', fontWeight: 'bold' }}>
+          選擇時段
+        </span>
+        <Spacer className="col-lg-5 col-12" />
+        <Button
+          variant="outline"
+          className="col-lg-3 col-12"
+          style={{ verticalAlign: 'middle', fontSize: '1em', fontWeight: 'bold' }}
+          onClick={() => setUiMode(uiMode === 'grid' ? 'calendar' : 'grid')}
+          leftIcon={
+            uiMode === 'grid' ? (
+              <CalendarOutlined style={{ fontSize: '1.2em', verticalAlign: 'middle' }} />
+            ) : (
+              <TableOutlined style={{ fontSize: '1.2em', verticalAlign: 'middle' }} />
+            )
+          }
+        >
+          {uiMode === 'grid' ? '切換月曆' : '切換格狀'}
+        </Button>
+      </HStack>
+      {uiMode === 'grid' ? (
+        Object.values(periods).map(periods => (
+          <AppointmentPeriodBlock
+            periods={periods}
+            creatorId={creatorId}
+            appointmentPlan={appointmentPlan}
+            onClick={onClick}
+            services={services}
+            loadingServices={loadingServices}
+          />
+        ))
+      ) : (
+        <AppointmentPeriodBlockCalendar
           periods={periods}
           creatorId={creatorId}
           appointmentPlan={appointmentPlan}
@@ -132,7 +151,7 @@ const AppointmentPeriodCollection: React.VFC<{
           services={services}
           loadingServices={loadingServices}
         />
-      ))}
+      )}
     </>
   )
 }

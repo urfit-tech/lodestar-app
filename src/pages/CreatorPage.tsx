@@ -11,7 +11,7 @@ import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import ActivityBlock from '../components/activity/ActivityBlock'
-import AppointmentCollectionTabs from '../components/appointment/AppointmentCollectionTabs'
+import AppointmentCollectionTabsWrapper from '../components/appointment/AppointmentCollectionTabs'
 import { AuthModalContext } from '../components/auth/AuthModal'
 import PostItemCollection from '../components/blog/PostItemCollection'
 import CheckoutPodcastPlanModal from '../components/checkout/CheckoutPodcastPlanModal'
@@ -385,21 +385,15 @@ const CreatorTabs: React.VFC<{
       name: formatMessage(usersMessages.tab.appointments),
       isVisible: Boolean(enabledModules.appointment) && appointmentPlans.length > 0,
       content: (
-        <div className="row">
-          <div className="col-lg-8 col-12 mb-3">
-            <AppointmentCollectionTabs creatorId={creatorId} appointmentPlans={appointmentPlans} />
-          </div>
-
-          <div className="col-lg-4 col-12">
-            <OverviewBlock
-              programs={programs}
-              previousPage={`creators_${creatorId}`}
-              podcastPrograms={podcastPrograms}
-              onChangeTab={key => setActiveKey(key)}
-              onSubscribe={() => (isAuthenticated ? onCheckoutModalOpen?.() : setAuthModalVisible?.(true))}
-            />
-          </div>
-        </div>
+        <AppointmentCollectionTabsWrapper
+          creatorId={creatorId}
+          appointmentPlans={appointmentPlans}
+          programs={programs}
+          podcastPrograms={podcastPrograms}
+          setActiveKey={setActiveKey}
+          isAuthenticated={isAuthenticated}
+          setAuthModalVisible={setAuthModalVisible}
+        />
       ),
     },
     {

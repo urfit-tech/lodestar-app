@@ -14,6 +14,7 @@ export type OrderProductProps = {
     currencyPrice?: number
     productGiftPlan?: ProductGiftPlan
   }
+  customPrice?: number
 }
 
 export type OrderDiscountProps = {
@@ -72,6 +73,24 @@ export type CouponProps = {
       productIds?: string[]
     }
   }
+}
+
+export type MembershipCardProps = {
+  card: {
+    id: string
+    title: string
+    description: string
+    template: string
+    card_discounts:
+      | {
+          amount: number
+          type: string
+        }[]
+      | undefined
+  }
+  updatedAt: Date | null
+  startedAt: Date | null
+  endedAt: Date | null
 }
 
 export type ShippingProps = {

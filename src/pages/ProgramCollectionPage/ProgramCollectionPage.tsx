@@ -55,7 +55,7 @@ const ProgramCollectionPage: React.VFC = () => {
   const filteredPrograms = programs.filter(
     program =>
       (!selectedCategoryId || program.categories?.some(category => category.id === selectedCategoryId)) &&
-      (!program.supportLocales || program.supportLocales.find(locale => locale === currentLocale)),
+      (program?.supportLocales?.some(locale => locale === currentLocale) || program.supportLocales === null),
   )
 
   useEffect(() => {

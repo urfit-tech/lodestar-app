@@ -5,7 +5,7 @@ import styled from 'styled-components'
 const StyledWrapper = styled.div<{ width?: { desktop: string; mobile: string } }>`
   position: relative;
   overflow: ${props => (props.width ? 'visible' : 'hidden')};
-  height: ${props => (props.width ? props.width.mobile : 'auto')};
+  height: calc(100vw * (9 / 16));
   @media (min-width: ${BREAK_POINT}px) {
     height: ${props => (props.width ? props.width.desktop : 'auto')};
   }
@@ -33,6 +33,7 @@ const ContentWrapper = styled.div<{ gradient?: boolean }>`
   position: relative;
   background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
   height: 100%;
+  z-index: 10;
 `
 
 const PictureBanner: React.FC<{

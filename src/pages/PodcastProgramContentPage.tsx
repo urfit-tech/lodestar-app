@@ -2,7 +2,7 @@ import { SkeletonText } from '@chakra-ui/react'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React from 'react'
+import React, { useContext } from 'react'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -11,8 +11,10 @@ import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import PodcastProgramCover from '../components/podcast/PodcastProgramCover'
 import CreatorCard from '../containers/common/CreatorCard'
+import LocaleContext from '../contexts/LocaleContext'
 import { usePodcastProgramContent } from '../hooks/podcast'
 import { usePodcastAlbumPreview } from '../hooks/podcastAlbum'
+import NotFoundPage from './NotFoundPage'
 
 const StyledContentWrapper = styled.div`
   padding: 2.5rem 1rem 4rem;
@@ -36,6 +38,7 @@ const PodcastProgramContentPage: React.VFC = () => {
   const { settings } = useApp()
   const { loadingPodcastProgram, podcastProgram } = usePodcastProgramContent(podcastProgramId)
   const { loadingPodcastAlbumPreview, podcastAlbumPreview } = usePodcastAlbumPreview(podcastAlbumId || '')
+  const { currentLocale } = useContext(LocaleContext)
 
   if (loadingPodcastProgram || !podcastProgram || loadingPodcastAlbumPreview || !podcastAlbumPreview) {
     return (
@@ -43,6 +46,13 @@ const PodcastProgramContentPage: React.VFC = () => {
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
       </DefaultLayout>
     )
+  }
+
+  if (
+    podcastProgram?.supportLocales !== null &&
+    !podcastProgram.supportLocales.some(locale => locale === currentLocale)
+  ) {
+    return <NotFoundPage />
   }
 
   return (

@@ -171,6 +171,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/orders/:orderId',
     pageName: 'OrderPage',
   },
+  order_payment: {
+    path: '/orders/:orderId/payment',
+    pageName: 'OrderPaymentPage',
+  },
   order_product: {
     path: '/orders/:orderId/products/:orderProductId',
     pageName: 'OrderProductPage',

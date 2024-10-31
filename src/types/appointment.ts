@@ -1,5 +1,8 @@
 import { CurrencyProps } from './program'
+
 export type ReservationType = 'hour' | 'day' | null
+
+export type UiMode = 'grid' | 'calendar'
 
 export type AppointmentPlan = {
   id: string
@@ -18,6 +21,7 @@ export type AppointmentPlan = {
   capacity: number
   defaultMeetGateway: string
   meetGenerationMethod: string
+  meetingLinkUrl: string | null
 }
 
 export type AppointmentPeriod = {
