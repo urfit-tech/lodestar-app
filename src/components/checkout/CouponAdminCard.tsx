@@ -96,7 +96,7 @@ const CouponAdminCard: React.VFC<{
             <StyledTitle>{coupon.couponCode.couponPlan.title}</StyledTitle>
             <StyledPriceLabel className="ml-4" currentTab={currentTab}>
               {coupon.couponCode.couponPlan.type === 'cash' ? (
-                <PriceLabel listPrice={coupon.couponCode.couponPlan.amount} />
+                <PriceLabel listPrice={Math.floor(coupon.couponCode.couponPlan.amount)} />
               ) : coupon.couponCode.couponPlan.type === 'percent' ? (
                 coupon.couponCode.couponPlan.amount % 10 === 0 ? (
                   `${10 - coupon.couponCode.couponPlan.amount / 10} ${formatMessage(commonMessages.unit.off)}`
@@ -118,7 +118,7 @@ const CouponAdminCard: React.VFC<{
           : formatMessage(checkoutMessages.content.discountDirectly)}
         {coupon.couponCode.couponPlan.type === 'cash'
           ? formatMessage(checkoutMessages.coupon.amount, {
-              amount: <PriceLabel listPrice={coupon.couponCode.couponPlan.amount} />,
+              amount: <PriceLabel listPrice={Math.floor(coupon.couponCode.couponPlan.amount)} />,
             })
           : coupon.couponCode.couponPlan.type === 'percent'
           ? formatMessage(checkoutMessages.coupon.proportion, {

@@ -4,7 +4,7 @@ import { camelCase } from 'lodash'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
-import { sum } from 'ramda'
+import * as R from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { checkoutMessages } from '../../helpers/translation'
@@ -38,6 +38,29 @@ const CheckoutCard: React.VFC<
   const theme = useAppTheme()
   const { currencyId: appCurrencyId } = useApp()
 
+  const calculateOriginalTotal = R.pipe(R.map(R.prop('price')), R.sum) as (products: OrderProductProps[]) => number
+
+  const applyDiscountToProduct = R.curry(
+    (orderDiscounts: OrderDiscountProps[], orderProducts: OrderProductProps[], checkoutAmount: number): number => {
+      return orderProducts.reduce((acc: number, orderProduct: OrderProductProps) => {
+        const discount = orderDiscounts.find(orderDiscount => orderDiscount.productId === orderProduct.productId)
+        const effectiveDiscount =
+          (discount?.price || 0) > orderProduct.price ? orderProduct.price : discount?.price || 0
+
+        return Math.max(0, acc - effectiveDiscount)
+      }, checkoutAmount)
+    },
+  )
+
+  const applyNonProductSpecificDiscounts = R.curry(
+    (orderDiscounts: OrderDiscountProps[], checkoutAmount: number): number => {
+      const nonProductSpecificDiscounts = orderDiscounts.filter(orderDiscount => !orderDiscount.productId)
+      return nonProductSpecificDiscounts.reduce((acc: number, orderDiscount: OrderDiscountProps) => {
+        return Math.max(0, acc - orderDiscount.price)
+      }, checkoutAmount)
+    },
+  )
+
   return (
     <AdminCard {...cardProps}>
       {check.orderProducts.map((orderProduct, index) => (
@@ -48,7 +71,11 @@ const CheckoutCard: React.VFC<
           <div className="col-6 col-md-4 text-right">
             <PriceLabel
               listPrice={
-                orderProduct.options?.currencyId ? orderProduct.options?.currencyPrice || 0 : orderProduct.price
+                orderProduct.customPrice
+                  ? orderProduct.customPrice
+                  : orderProduct.options?.currencyId
+                  ? orderProduct.options?.currencyPrice || 0
+                  : orderProduct.price
               }
               currencyId={orderProduct.options?.currencyId || appCurrencyId}
             />
@@ -100,19 +127,17 @@ const CheckoutCard: React.VFC<
           >
             <span className="mr-2">{formatMessage(checkoutMessages.content.total)}</span>
             <PriceLabel
-              listPrice={
-                sum(
-                  check.orderProducts.map(orderProduct => {
-                    const salePrice =
-                      orderProduct.price -
-                      Number(
-                        check.orderDiscounts.find(orderDiscount => orderDiscount.productId === orderProduct.productId)
-                          ?.price ?? 0,
-                      )
-                    return salePrice < 0 ? 0 : salePrice
-                  }),
-                ) + (check.shippingOption?.fee || 0)
-              }
+              listPrice={((): number => {
+                type PipeFunction = (x: number) => number
+
+                const total = R.pipe(
+                  calculateOriginalTotal,
+                  applyDiscountToProduct(check.orderDiscounts, check.orderProducts) as PipeFunction,
+                  applyNonProductSpecificDiscounts(check.orderDiscounts) as PipeFunction,
+                )(check.orderProducts)
+
+                return total
+              })()}
             />
           </div>
         </div>

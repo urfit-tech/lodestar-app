@@ -87,7 +87,10 @@ const ActivityCollectionPage = () => {
 
   const filteredActivities = activities
     .filter(activity => classification === null || activity.categories.some(category => category.id === classification))
-    .filter(activity => !activity.supportLocales || activity.supportLocales.find(locale => locale === currentLocale))
+    .filter(
+      activity =>
+        activity?.supportLocales === null || activity?.supportLocales?.some(locale => locale === currentLocale),
+    )
 
   return (
     <DefaultLayout white>

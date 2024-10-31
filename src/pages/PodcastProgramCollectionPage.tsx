@@ -34,6 +34,17 @@ const PodcastProgramCollectionPage: React.VFC = () => {
     uniqBy(category => category?.id, flatten(podcastPrograms.map(podcastProgram => podcastProgram.categories))),
   )
 
+  const filteredPodcastPrograms = podcastPrograms
+    .filter(
+      podcastProgram =>
+        !selectedCategoryId || podcastProgram.categories?.some(category => category.id === selectedCategoryId),
+    )
+    .filter(
+      podcastProgram =>
+        podcastProgram?.supportLocales === null ||
+        podcastProgram?.supportLocales?.some(locale => locale === currentLocale),
+    )
+
   useEffect(() => {
     if (podcastPrograms) {
       podcastPrograms.forEach((podcastProgram, index) => {
@@ -110,17 +121,7 @@ const PodcastProgramCollectionPage: React.VFC = () => {
             <div className="row">
               <div className="col-12 col-lg-8 mb-5">
                 <PodcastProgramTimeline
-                  podcastPrograms={podcastPrograms
-                    .filter(
-                      podcastProgram =>
-                        !selectedCategoryId ||
-                        podcastProgram.categories?.some(category => category.id === selectedCategoryId),
-                    )
-                    .filter(
-                      podcastProgram =>
-                        !podcastProgram.supportLocales ||
-                        podcastProgram.supportLocales.find(locale => locale === currentLocale),
-                    )}
+                  podcastPrograms={filteredPodcastPrograms}
                   renderItem={({ podcastProgram, isEnrolled, isSubscribed }) => (
                     <div id={podcastProgram.id}>
                       <CheckoutPodcastPlanModal

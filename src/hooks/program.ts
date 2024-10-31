@@ -154,11 +154,19 @@ export const usePublishedProgramCollection = (options?: {
             label: program.label || '',
             labelColorType: program.label_color_type || '',
             isEnrolledCountVisible: program.is_enrolled_count_visible,
-            categories: program.program_categories.map(programCategory => ({
-              id: programCategory.category.id,
-              name: programCategory.category.name,
-              position: programCategory.category.position,
-            })),
+            categories: program.program_categories
+              .map(programCategory => {
+                if (!programCategory.category) {
+                  return null
+                }
+
+                return {
+                  id: programCategory.category.id,
+                  name: programCategory.category.name,
+                  position: programCategory.category.position,
+                }
+              })
+              .filter(Boolean),
             roles: program.program_roles.map(programRole => ({
               id: programRole.id,
               name: programRole.name as ProgramRoleName,
@@ -268,6 +276,7 @@ export const useProgram = (programId: string) => {
           display_footer
           cover_type
           mobile_cover_type
+          support_locales
           label
           label_color_type
           activated_layout_template_config_id
@@ -443,6 +452,7 @@ export const useProgram = (programId: string) => {
       editors: data?.program_by_pk?.editors.map(v => v?.member_id || ''),
       displayHeader: data?.program_by_pk?.display_header ?? true,
       displayFooter: data?.program_by_pk?.display_footer ?? true,
+      supportLocale: data?.program_by_pk?.support_locales,
       programLayoutTemplateId:
         data?.program_by_pk?.program_layout_template_config?.program_layout_template_id || undefined,
       moduleData: data?.program_by_pk?.program_layout_template_config?.module_data,

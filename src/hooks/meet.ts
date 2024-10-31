@@ -74,6 +74,37 @@ export const useMeetByTargetAndPeriod = (target: string, startedAt: Date, endedA
   }
 }
 
+export const useGetMeetByTargetAndPeriodAndSpecifyMember = (
+  appointmentPlanId: string,
+  orderProduct: { startedAt: Date | null; endedAt: Date | null },
+  memberId: string,
+) => {
+  const { id: appId } = useApp()
+  const { data, error, loading } = useQuery<
+    hasura.GetMeetByTargetAndPeriodAndSpecifyMember,
+    hasura.GetMeetByTargetAndPeriodAndSpecifyMemberVariables
+  >(GetMeetByTargetAndPeriodAndSpecifyMember, {
+    variables: {
+      appId,
+      target: appointmentPlanId,
+      startedAt: orderProduct.startedAt,
+      endedAt: orderProduct.endedAt,
+      memberId: memberId || '',
+    },
+    skip: !memberId,
+  })
+  const meet =
+    loading || !data?.meet || error
+      ? null
+      : {
+          id: data.meet[0]?.id,
+          recordingUrl: data.meet[0]?.recording_url,
+          recordingType: data.meet[0]?.recording_type,
+          options: data.meet[0]?.options,
+        }
+  return { meet }
+}
+
 export const GetMeetByTargetAndPeriod = gql`
   query GetMeetByTargetAndPeriod($appId: String!, $target: uuid!, $startedAt: timestamptz!, $endedAt: timestamptz!) {
     meet(
