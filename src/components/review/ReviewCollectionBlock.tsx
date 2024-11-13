@@ -10,12 +10,12 @@ import hasura from '../../hasura'
 import { reviewMessages } from '../../helpers/translation'
 import { useProductEditorIds, useReviewAggregate } from '../../hooks/review'
 import { ReactComponent as StarEmptyIcon } from '../../images/star-empty.svg'
-import { ReactComponent as StarIcon } from '../../images/star.svg'
 import { MemberReviewProps } from '../../types/review'
 import ReviewAdminItemCollection from './ReviewAdminItemCollection'
 import ReviewMemberItemCollection, { ReviewMemberItemRef } from './ReviewMemberItemCollection'
 import ReviewModal from './ReviewModal'
 import ReviewPublicItemCollection from './ReviewPublicItemCollection'
+import ReviewScorePanel from './ReviewScorePanel'
 
 const Wrapper = styled.div`
   div {
@@ -32,16 +32,7 @@ export const StyledTitle = styled.h2`
   letter-spacing: 0.2px;
   font-weight: bold;
 `
-export const StyledAvgScore = styled.div`
-  font-weight: bold;
-  font-size: 40px;
-  letter-spacing: 1px;
-`
-export const StyledReviewAmount = styled.div`
-  color: #9b9b9b;
-  font-size: 14px;
-  letter-spacing: 0.4px;
-`
+
 const StyledEmptyText = styled.div`
   color: #9b9b9b;
   font-size: 14px;
@@ -111,17 +102,7 @@ const ReviewCollectionBlock: React.VFC<{
       <StyledDivider mt={1} />
 
       <div className="d-flex align-items-center my-3">
-        <StyledAvgScore className="mr-1">
-          {isMoreThanReviewLowerBound || isProductAdmin ? (averageScore === 0 ? 0 : averageScore?.toFixed(1)) : 0}
-        </StyledAvgScore>
-        <div className="mr-2">
-          <Icon as={StarIcon} w="24px" h="24px" />
-        </div>
-        <StyledReviewAmount className="flex-grow-1">
-          {formatMessage(reviewMessages.text.reviewAmount, {
-            amount: isMoreThanReviewLowerBound || isProductAdmin ? reviewCount : 0,
-          })}
-        </StyledReviewAmount>
+        {isMoreThanReviewLowerBound || isProductAdmin ? <ReviewScorePanel path={path} appId={appId} /> : <></>}
         {isCurrentMemberEnrollment ? (
           <ReviewModal
             path={path}

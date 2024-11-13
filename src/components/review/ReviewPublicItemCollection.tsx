@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
 import { Box, Button, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
+import { useReviewable } from 'lodestar-app-element/src/hooks/review'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import hasura from '../../hasura'
@@ -17,8 +18,10 @@ const ReviewPublicItemCollection: React.VFC<{
   const [loading, setLoading] = useState(false)
 
   const { loadingReviews, publicReviews, loadMoreReviews } = useReviewPublicCollection(path, appId)
+  const { data: reviewableRawData, loading: reviewableLoading } = useReviewable(path, appId)
+  const reviewable = reviewableRawData?.reviewable?.[0]
 
-  if (loadingReviews) {
+  if (loadingReviews && reviewableLoading) {
     return (
       <Box padding="6" boxShadow="lg" bg="white">
         <SkeletonCircle size="36" />
@@ -27,7 +30,9 @@ const ReviewPublicItemCollection: React.VFC<{
     )
   }
 
-  return (
+  return !reviewable?.is_item_viewable ? (
+    <></>
+  ) : (
     <>
       <div>
         {publicReviews.map(v => (
