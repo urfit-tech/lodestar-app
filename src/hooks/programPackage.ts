@@ -27,6 +27,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
               id
               title
               cover_url
+              cover_thumbnail_url
               program_categories {
                 id
                 category {
@@ -100,6 +101,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
             id: packageProgram.program.id,
             title: packageProgram.program.title,
             coverUrl: packageProgram.program.cover_url || null,
+            coverThumbnailUrl: packageProgram.program.cover_thumbnail_url || null,
             categories: packageProgram.program.program_categories.map(programCategory => ({
               id: programCategory.category.id,
               name: programCategory.category.name,
