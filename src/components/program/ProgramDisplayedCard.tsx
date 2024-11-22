@@ -28,7 +28,7 @@ export const ProgramDisplayedCard: React.VFC<{
 }> = ({ program, memberId }) => {
   return (
     <div className="mb-4">
-      <StyledProgramCover className="mb-3" src={program.coverUrl || EmptyCover} />
+      <StyledProgramCover className="mb-3" src={program.coverThumbnailUrl || program.coverUrl || EmptyCover} />
       <StyledProgramTitle level={2} ellipsis={{ rows: 2 }} className="mb-3">
         {program.title}
       </StyledProgramTitle>
