@@ -95,8 +95,6 @@ const CartProductItem: React.VFC<{
     case 'ProjectPlan':
     case 'PodcastProgram':
     case 'MerchandiseSpec':
-      listPrice = product.salePrice || product.listPrice || 0
-      break
     case 'ActivityTicket':
     case 'Card':
       listPrice = product.listPrice
