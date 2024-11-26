@@ -99,8 +99,6 @@ const ReviewCollectionBlock: React.VFC<{
     )
   }
 
-  console.log(102, reviewable)
-
   return !isProductAdmin &&
     !reviewable?.is_score_viewable &&
     !reviewable?.is_item_viewable &&

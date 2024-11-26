@@ -199,7 +199,6 @@ const PrimaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
   }
 
   if (reviewableLoading) return <></>
-  if (path === '/programs/4759ac4a-c838-40ce-92d5-142ff0ee8c31') console.log(path, reviewable?.is_score_viewable)
 
   return (
     <>

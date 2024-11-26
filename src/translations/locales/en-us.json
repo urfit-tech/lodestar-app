@@ -1539,6 +1539,7 @@
   "review.text.amount": "{amount} is a review",
   "review.text.notEnoughReviews": "Not enough reviews for {amount} people to show",
   "review.text.reply": "Reply to...",
+  "review.text.reviewCount": "{count} pieces",
   "review.text.reviewModalDescription": "Welcome to give encouragement, share your experience or make suggestions! To maintain the fairness of the evaluation, only three or more evaluations will be made public!",
   "review.title.bestReview": "Best Review",
   "review.title.privateMessage": "Private Message to Teacher",

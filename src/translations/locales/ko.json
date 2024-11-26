@@ -1535,6 +1535,7 @@
   "review.text.amount": "{amount} 개의 리뷰",
   "review.text.notEnoughReviews": "리뷰가 {amount}개 미만이어서 표시할 수 없습니다",
   "review.text.reply": "답글...",
+  "review.text.reviewCount": "{count} 개의",
   "review.text.reviewModalDescription": "격려의 말씀, 경험 공유 또는 제안을 부탁드립니다! 리뷰의 공정성을 유지하기 위해 세 개 이상의 리뷰가 모이면 공개됩니다!",
   "review.title.bestReview": "베스트 리뷰",
   "review.title.privateMessage": "선생님께 드리는 비공개 메시지",
