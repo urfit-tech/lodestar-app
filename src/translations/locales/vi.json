@@ -1538,6 +1538,7 @@
   "review.status.edited": "Đã chỉnh sửa",
   "review.text.amount": "{amount} đánh giá",
   "review.text.notEnoughReviews": "Không đủ {amount} đánh giá để hiển thị",
+  "review.text.noReviews": "Chưa có đánh giá nào",
   "review.text.reply": "Trả lời...",
   "review.text.reviewCount": "{count} bài",
   "review.text.reviewModalDescription": "Hãy đưa ra lời động viên, chia sẻ kinh nghiệm hoặc đề xuất! Để đảm bảo tính công bằng của đánh giá, phải có ít nhất ba đánh giá thì mới được công khai!",
