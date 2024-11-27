@@ -1651,7 +1651,7 @@ export const reviewMessages = {
     edited: { id: 'review.status.edited', defaultMessage: '已編輯' },
   }),
   text: defineMessages({
-    reviewCountUnit: { id: 'review.text.reviewCount', defaultMessage: '{count} 則' },
+    reviewCount: { id: 'review.text.reviewCount', defaultMessage: '{count} 則' },
     noReviews: { id: 'review.text.noReviews', defaultMessage: '目前無評價' },
     reviewAmount: { id: 'review.text.amount', defaultMessage: '{amount} 則評價' },
     notEnoughReviews: { id: 'review.text.notEnoughReviews', defaultMessage: '評價不足{amount}人無法顯示' },

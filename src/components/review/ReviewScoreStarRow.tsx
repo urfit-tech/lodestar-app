@@ -30,7 +30,7 @@ const ReviewScoreStarRow: FC<{ path: string; appId: string }> = ({ path, appId }
       reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3)) ? (
       <StyledReviewRating className="d-flex mb-2">
         <StarRating score={Math.round((Math.round(averageScore * 10) / 10) * 2) / 2} max={5} size="20px" />
-        <span>({formatMessage(reviewMessages.text.reviewCountUnit, { count: reviewCount })})</span>
+        <span>({formatMessage(reviewMessages.text.reviewCount, { count: reviewCount })})</span>
       </StyledReviewRating>
     ) : (
       <StyledReviewRating className="mb-2">{formatMessage(reviewMessages.text.noReviews)}</StyledReviewRating>
