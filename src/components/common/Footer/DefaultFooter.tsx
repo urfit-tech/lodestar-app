@@ -38,7 +38,23 @@ const StyledCopyright = styled.div`
 
 const DefaultFooter: React.VFC = () => {
   const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
-  const { enabledModules, name } = useApp()
+  const { enabledModules, name, settings } = useApp()
+
+  let settingLanguageList: string[] = []
+  if (!!settings['layout.language_sorted_list']) {
+    try {
+      settingLanguageList = JSON.parse(settings['layout.language_sorted_list'])
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const sortedLanguagesList = SUPPORTED_LOCALES.filter(language => settingLanguageList.includes(language.label)).sort(
+    (a, b) => {
+      return settingLanguageList.indexOf(a.label) - settingLanguageList.indexOf(b.label)
+    },
+  )
+  const languagesList = sortedLanguagesList.length > 0 ? sortedLanguagesList : SUPPORTED_LOCALES
 
   return (
     <StyledFooter>
@@ -56,7 +72,7 @@ const DefaultFooter: React.VFC = () => {
                 trigger={['click']}
                 overlay={
                   <Menu>
-                    {SUPPORTED_LOCALES.map(supportedLocale => (
+                    {languagesList.map(supportedLocale => (
                       <Menu.Item key={supportedLocale.locale}>
                         <StyledButton
                           type="link"

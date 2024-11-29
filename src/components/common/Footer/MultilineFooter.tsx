@@ -4,7 +4,7 @@ import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { NavLinks, SocialLinks, StyledFooter } from '.'
 import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
-import LocaleContext from '../../../contexts/LocaleContext'
+import LocaleContext, { SUPPORTED_LOCALES } from '../../../contexts/LocaleContext'
 
 const StyledLinkBlock = styled.div`
   padding-top: 1.25rem;
@@ -21,9 +21,25 @@ const StyledCopyright = styled.div`
 `
 
 const MultilineFooter: React.VFC = () => {
-  const { name, enabledModules } = useApp()
+  const { name, enabledModules, settings } = useApp()
   const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
   const { renderCopyright } = useCustomRenderer()
+
+  let settingLanguageList: string[] = []
+  if (!!settings['layout.language_sorted_list']) {
+    try {
+      settingLanguageList = JSON.parse(settings['layout.language_sorted_list'])
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const sortedLanguagesList = SUPPORTED_LOCALES.filter(language => settingLanguageList.includes(language.label)).sort(
+    (a, b) => {
+      return settingLanguageList.indexOf(a.label) - settingLanguageList.indexOf(b.label)
+    },
+  )
+  const languagesList = sortedLanguagesList.length > 0 ? sortedLanguagesList : SUPPORTED_LOCALES
 
   return (
     <StyledFooter>
@@ -39,36 +55,17 @@ const MultilineFooter: React.VFC = () => {
                 trigger={['click']}
                 overlay={
                   <Menu>
-                    <Menu.Item key="zh-tw">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('zh-tw')}>
-                        繁體中文
-                      </StyledButton>
-                    </Menu.Item>
-                    <Menu.Item key="en-us">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('en-us')}>
-                        English
-                      </StyledButton>
-                    </Menu.Item>
-                    <Menu.Item key="vi">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('vi')}>
-                        Tiếng việt
-                      </StyledButton>
-                    </Menu.Item>
-                    <Menu.Item key="id">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('id')}>
-                        Indonesia
-                      </StyledButton>
-                    </Menu.Item>
-                    <Menu.Item key="ja">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('ja')}>
-                        日本語
-                      </StyledButton>
-                    </Menu.Item>
-                    <Menu.Item key="ko">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('ko')}>
-                        한국어
-                      </StyledButton>
-                    </Menu.Item>
+                    {languagesList.map(supportedLocale => (
+                      <Menu.Item key={supportedLocale.locale}>
+                        <StyledButton
+                          type="link"
+                          size="small"
+                          onClick={() => setCurrentLocale?.(supportedLocale.locale)}
+                        >
+                          {supportedLocale.label}
+                        </StyledButton>
+                      </Menu.Item>
+                    ))}
                   </Menu>
                 }
               >
