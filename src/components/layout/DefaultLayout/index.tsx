@@ -96,6 +96,21 @@ const DefaultLayout: React.FC<{
   const [isBusinessMember, setIsBusinessMember] = useState(false)
   const [visible, setVisible] = useState(false)
 
+  let settingLanguageList: string[] = []
+  if (!!settings['layout.language_sorted_list']) {
+    try {
+      settingLanguageList = JSON.parse(settings['layout.language_sorted_list'])
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  const sortedLanguagesList = SUPPORTED_LOCALES.filter(language => settingLanguageList.includes(language.label)).sort(
+    (a, b) => {
+      return settingLanguageList.indexOf(a.label) - settingLanguageList.indexOf(b.label)
+    },
+  )
+  const languagesList = sortedLanguagesList.length > 0 ? sortedLanguagesList : SUPPORTED_LOCALES
+
   const isUnVerifiedEmails = member ? !member.verifiedEmails?.includes(member.email) : false
 
   return (
@@ -263,8 +278,9 @@ const DefaultLayout: React.FC<{
                       <EarthGlobalIcon height="24px" width="24px" />
                     </MenuButton>
                     <MenuList>
-                      {SUPPORTED_LOCALES.map(supportedLocale => (
+                      {languagesList.map(supportedLocale => (
                         <MenuItem
+                          key={supportedLocale.locale}
                           style={{ lineHeight: '2rem' }}
                           defaultValue={currentLocale}
                           onClick={() => setCurrentLocale?.(supportedLocale.locale)}
