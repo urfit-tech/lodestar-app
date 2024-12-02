@@ -1,5 +1,6 @@
 import { Box, Icon, Text } from '@chakra-ui/react'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
+import ReviewScoreStarRow from 'lodestar-app-element/src/components/common/ReviewScoreStarRow'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAdaptedReviewable } from 'lodestar-app-element/src/hooks/review'
@@ -17,7 +18,6 @@ import { Category } from '../../types/general'
 import { ProgramBriefProps, ProgramPlan, ProgramRole } from '../../types/program'
 import { CustomRatioImage } from '../common/Image'
 import MemberAvatar from '../common/MemberAvatar'
-import ReviewScoreStarRow from '../review/ReviewScoreStarRow'
 import programMessages from './translation'
 
 const InstructorPlaceHolder = styled.div`
