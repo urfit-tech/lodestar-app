@@ -4,7 +4,7 @@ import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { NavLinks, SocialLinks, StyledFooter } from '.'
 import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
-import LocaleContext, { SUPPORTED_LOCALES } from '../../../contexts/LocaleContext'
+import LocaleContext from '../../../contexts/LocaleContext'
 
 const StyledLinkBlock = styled.div`
   padding-top: 1.25rem;
@@ -21,25 +21,9 @@ const StyledCopyright = styled.div`
 `
 
 const MultilineFooter: React.VFC = () => {
-  const { name, enabledModules, settings } = useApp()
-  const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
+  const { name, enabledModules } = useApp()
+  const { currentLocale, setCurrentLocale, languagesList } = useContext(LocaleContext)
   const { renderCopyright } = useCustomRenderer()
-
-  let settingLanguageList: string[] = []
-  if (!!settings['layout.language_sorted_list']) {
-    try {
-      settingLanguageList = JSON.parse(settings['layout.language_sorted_list'])
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  const sortedLanguagesList = SUPPORTED_LOCALES.filter(language => settingLanguageList.includes(language.label)).sort(
-    (a, b) => {
-      return settingLanguageList.indexOf(a.label) - settingLanguageList.indexOf(b.label)
-    },
-  )
-  const languagesList = sortedLanguagesList.length > 0 ? sortedLanguagesList : SUPPORTED_LOCALES
 
   return (
     <StyledFooter>

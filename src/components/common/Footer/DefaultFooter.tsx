@@ -37,24 +37,8 @@ const StyledCopyright = styled.div`
 `
 
 const DefaultFooter: React.VFC = () => {
-  const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
-  const { enabledModules, name, settings } = useApp()
-
-  let settingLanguageList: string[] = []
-  if (!!settings['layout.language_sorted_list']) {
-    try {
-      settingLanguageList = JSON.parse(settings['layout.language_sorted_list'])
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  const sortedLanguagesList = SUPPORTED_LOCALES.filter(language => settingLanguageList.includes(language.label)).sort(
-    (a, b) => {
-      return settingLanguageList.indexOf(a.label) - settingLanguageList.indexOf(b.label)
-    },
-  )
-  const languagesList = sortedLanguagesList.length > 0 ? sortedLanguagesList : SUPPORTED_LOCALES
+  const { currentLocale, setCurrentLocale, languagesList } = useContext(LocaleContext)
+  const { enabledModules, name } = useApp()
 
   return (
     <StyledFooter>

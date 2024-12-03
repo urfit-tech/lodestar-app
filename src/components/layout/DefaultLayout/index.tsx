@@ -8,7 +8,7 @@ import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import AuthButton from '../../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
-import LocaleContext, { SUPPORTED_LOCALES } from '../../../contexts/LocaleContext'
+import LocaleContext from '../../../contexts/LocaleContext'
 import MediaPlayerContext from '../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../../helpers/translation'
@@ -91,25 +91,10 @@ const DefaultLayout: React.FC<{
   const { navs } = useNav()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
-  const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
+  const { currentLocale, setCurrentLocale, languagesList } = useContext(LocaleContext)
   const { renderCartButton, renderMyPageNavItem, renderCreatorPageNavItem } = useCustomRenderer()
   const [isBusinessMember, setIsBusinessMember] = useState(false)
   const [visible, setVisible] = useState(false)
-
-  let settingLanguageList: string[] = []
-  if (!!settings['layout.language_sorted_list']) {
-    try {
-      settingLanguageList = JSON.parse(settings['layout.language_sorted_list'])
-    } catch (err) {
-      console.log(err)
-    }
-  }
-  const sortedLanguagesList = SUPPORTED_LOCALES.filter(language => settingLanguageList.includes(language.label)).sort(
-    (a, b) => {
-      return settingLanguageList.indexOf(a.label) - settingLanguageList.indexOf(b.label)
-    },
-  )
-  const languagesList = sortedLanguagesList.length > 0 ? sortedLanguagesList : SUPPORTED_LOCALES
 
   const isUnVerifiedEmails = member ? !member.verifiedEmails?.includes(member.email) : false
 
