@@ -22,7 +22,7 @@ const StyledCopyright = styled.div`
 
 const MultilineFooter: React.VFC = () => {
   const { name, enabledModules } = useApp()
-  const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
+  const { currentLocale, setCurrentLocale, languagesList } = useContext(LocaleContext)
   const { renderCopyright } = useCustomRenderer()
 
   return (
@@ -39,36 +39,17 @@ const MultilineFooter: React.VFC = () => {
                 trigger={['click']}
                 overlay={
                   <Menu>
-                    <Menu.Item key="zh-tw">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('zh-tw')}>
-                        繁體中文
-                      </StyledButton>
-                    </Menu.Item>
-                    <Menu.Item key="en-us">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('en-us')}>
-                        English
-                      </StyledButton>
-                    </Menu.Item>
-                    <Menu.Item key="vi">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('vi')}>
-                        Tiếng việt
-                      </StyledButton>
-                    </Menu.Item>
-                    <Menu.Item key="id">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('id')}>
-                        Indonesia
-                      </StyledButton>
-                    </Menu.Item>
-                    <Menu.Item key="ja">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('ja')}>
-                        日本語
-                      </StyledButton>
-                    </Menu.Item>
-                    <Menu.Item key="ko">
-                      <StyledButton type="link" size="small" onClick={() => setCurrentLocale?.('ko')}>
-                        한국어
-                      </StyledButton>
-                    </Menu.Item>
+                    {languagesList.map(supportedLocale => (
+                      <Menu.Item key={supportedLocale.locale}>
+                        <StyledButton
+                          type="link"
+                          size="small"
+                          onClick={() => setCurrentLocale?.(supportedLocale.locale)}
+                        >
+                          {supportedLocale.label}
+                        </StyledButton>
+                      </Menu.Item>
+                    ))}
                   </Menu>
                 }
               >
