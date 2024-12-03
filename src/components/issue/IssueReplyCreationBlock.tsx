@@ -2,9 +2,12 @@ import { Button } from '@chakra-ui/react'
 import { Form, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import BraftEditor from 'braft-editor'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { createUploadFn } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import { useMutateIssue } from '../../hooks/issue'
 import MemberAvatar from '../common/MemberAvatar'
@@ -21,6 +24,8 @@ type IssueReplyCreationBlockProps = FormComponentProps & {
 }
 const IssueReplyCreationBlock: React.VFC<IssueReplyCreationBlockProps> = ({ memberId, issueId, form, onRefetch }) => {
   const { formatMessage } = useIntl()
+  const { id: appId } = useApp()
+  const { authToken } = useAuth()
   const { insertIssueReply } = useMutateIssue(issueId)
   const [replying, setReplying] = useState(false)
 
@@ -64,6 +69,7 @@ const IssueReplyCreationBlock: React.VFC<IssueReplyCreationBlockProps> = ({ memb
             language="zh-hant"
             placeholder={formatMessage(issueMessages.form.placeholder.reply)}
             controls={['bold', 'italic', 'underline', 'separator', 'media']}
+            media={{ uploadFn: createUploadFn(appId, authToken), accepts: { video: false, audio: false } }}
           />,
         )}
       </Form.Item>

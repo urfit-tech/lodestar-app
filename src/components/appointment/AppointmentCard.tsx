@@ -15,7 +15,7 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import hasura from '../../hasura'
-import { dateRangeFormatter, downloadFile, getFileDownloadableLink, handleError } from '../../helpers'
+import { createUploadFn, dateRangeFormatter, downloadFile, getFileDownloadableLink, handleError } from '../../helpers'
 import { useAppointmentPlan, useCancelAppointment, useUpdateAppointmentIssue } from '../../hooks/appointment'
 import { useGetMeetByTargetAndPeriodAndSpecifyMember } from '../../hooks/meet'
 import { useService } from '../../hooks/service'
@@ -181,7 +181,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
   onRefetch,
   form,
 }) => {
-  const { enabledModules } = useApp()
+  const { enabledModules, id: appId } = useApp()
   const { formatMessage } = useIntl()
   const { authToken, currentMemberId, currentMember } = useAuth()
   const [issueModalVisible, setIssueModalVisible] = useState(false)
@@ -541,6 +541,7 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                   'hr',
                   'media',
                 ]}
+                media={{ uploadFn: createUploadFn(appId, authToken), accepts: { video: false, audio: false } }}
               />,
             )}
           </Form.Item>
