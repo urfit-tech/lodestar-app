@@ -14,6 +14,8 @@ import AdminCard from '../components/common/AdminCard'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
+import { useFetchPayFormToken } from '../hooks/payment'
+import LoadingPage from './LoadingPage'
 
 const messages = defineMessages({
   bankCodeMessage: {
@@ -56,6 +58,7 @@ const PaymentPage: React.VFC = () => {
   const tracking = useTracking()
   const { paymentNo } = useParams<{ paymentNo: string }>()
   const [payToken] = useQueryParam('token', StringParam)
+  const [cacheToken] = useQueryParam('cacheToken', StringParam)
   const [method] = useQueryParam('method', StringParam)
   const { data: payment, loading } = useQuery<hasura.GetPaymentInfo, hasura.GetPaymentInfoVariables>(
     gql`
@@ -70,7 +73,19 @@ const PaymentPage: React.VFC = () => {
   )
   const [bankCode, setBankCode] = useState('')
 
-  const decodedToken = payToken && jwt.decode(payToken)
+  let decodedToken = payToken && jwt.decode(payToken)
+
+  const { result: payFormResult, loading: payFormLoading } = useFetchPayFormToken(paymentNo, cacheToken || '')
+
+  if (cacheToken) {
+    if (payFormLoading) {
+      return <LoadingPage />
+    }
+
+    if (payFormResult?.token) {
+      decodedToken = jwt.decode(payFormResult.token)
+    }
+  }
 
   if (decodedToken) {
     const payload = decodedToken as { gateway: string; method: string; payForm: { html?: string; url?: string } }
