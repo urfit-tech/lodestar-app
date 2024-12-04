@@ -99,6 +99,8 @@ const ReviewCollectionBlock: React.VFC<{
     )
   }
 
+  console.log(currentMemberId, currentMemberReview)
+
   return !isProductAdmin &&
     !reviewable?.is_score_viewable &&
     !reviewable?.is_item_viewable &&
@@ -123,7 +125,7 @@ const ReviewCollectionBlock: React.VFC<{
         ) : null}
       </div>
 
-      {isMoreThanReviewLowerBound || isProductAdmin ? (
+      {isMoreThanReviewLowerBound || isProductAdmin || currentMemberReview.length > 0 ? (
         <Wrapper>
           {isProductAdmin ? (
             <ReviewAdminItemCollection targetId={targetId} path={path} appId={appId} />
