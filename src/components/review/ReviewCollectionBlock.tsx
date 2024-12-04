@@ -102,6 +102,7 @@ const ReviewCollectionBlock: React.VFC<{
   return !isProductAdmin &&
     !reviewable?.is_score_viewable &&
     !reviewable?.is_item_viewable &&
+    currentMemberReview.length === 0 &&
     !reviewable?.is_writable ? (
     <></>
   ) : (
