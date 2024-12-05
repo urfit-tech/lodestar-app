@@ -2,7 +2,6 @@ import { Button, Checkbox } from '@chakra-ui/react'
 import { Divider, Icon as AntdIcon, List, Skeleton, Typography } from 'antd'
 import axios from 'axios'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
-import InvoiceInput from 'lodestar-app-element/src/components/inputs/InvoiceInput'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
@@ -314,7 +313,7 @@ const PaymentBlock: React.VFC<{
         </AdminCard>
       </div>
 
-      <div className="mb-3">
+      {/* <div className="mb-3">
         <AdminCard>
           <InvoiceInput
             value={{
@@ -330,7 +329,7 @@ const PaymentBlock: React.VFC<{
             hidePhoneInput
           />
         </AdminCard>
-      </div>
+      </div> */}
       {/* {settings['checkout.approvement'] === 'true' && (
         <AdminCard className="mb-3">
           <StyledCheckbox
