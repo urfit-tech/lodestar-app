@@ -37,7 +37,7 @@ const StyledCopyright = styled.div`
 `
 
 const DefaultFooter: React.VFC = () => {
-  const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
+  const { currentLocale, setCurrentLocale, languagesList } = useContext(LocaleContext)
   const { enabledModules, name } = useApp()
 
   return (
@@ -56,7 +56,7 @@ const DefaultFooter: React.VFC = () => {
                 trigger={['click']}
                 overlay={
                   <Menu>
-                    {SUPPORTED_LOCALES.map(supportedLocale => (
+                    {languagesList.map(supportedLocale => (
                       <Menu.Item key={supportedLocale.locale}>
                         <StyledButton
                           type="link"

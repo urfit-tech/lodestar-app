@@ -1538,6 +1538,7 @@
   "review.text.amount": "{amount} 条评价",
   "review.text.notEnoughReviews": "评价不足{amount}人，无法显示",
   "review.text.reply": "回复...",
+  "review.text.reviewCount": "{count} 条",
   "review.text.reviewModalDescription": "欢迎给予鼓励、分享心得或提出建议！为保持评价的公正性，累计三条以上评价才会公开哦！",
   "review.title.bestReview": "最佳评论",
   "review.title.privateMessage": "私下给老师的信息",

@@ -124,8 +124,7 @@ const ProgramContentBlock: React.VFC<{
 
   const shouldUpdateProgress = !(
     loadingProgramContent ||
-    programContentBodyType === 'video' ||
-    programContentBodyType === 'audio' ||
+    (programContentBodyType && ['video', 'audio', 'practice', 'exam'].includes(programContentBodyType)) ||
     !insertProgress ||
     !refetchProgress ||
     initialProgress === 1 ||
@@ -133,7 +132,7 @@ const ProgramContentBlock: React.VFC<{
     !isAuthenticated ||
     !isEquityProgramContent ||
     (programContentBodyType &&
-      ['text', 'practice', 'exam'].includes(programContentBodyType) &&
+      ['text'].includes(programContentBodyType) &&
       dayjs().isBefore(dayjs(programContent?.publishedAt))) ||
     programContent?.publishedAt === null
   )

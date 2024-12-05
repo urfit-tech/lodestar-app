@@ -1,8 +1,9 @@
 import { Box, Icon, Text } from '@chakra-ui/react'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
+import ReviewScoreStarRow from 'lodestar-app-element/src/components/common/ReviewScoreStarRow'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useAdaptedReviewable } from 'lodestar-app-element/src/hooks/review'
 import React from 'react'
 import { AiOutlineClockCircle, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -10,14 +11,13 @@ import { Link, useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { durationFormatter } from '../../helpers'
 import { useProgramEnrollmentAggregate } from '../../hooks/program'
-import { useProductEditorIds, useReviewAggregate } from '../../hooks/review'
+import { useReviewAggregate } from '../../hooks/review'
 import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as StarIcon } from '../../images/star-current-color.svg'
 import { Category } from '../../types/general'
 import { ProgramBriefProps, ProgramPlan, ProgramRole } from '../../types/program'
 import { CustomRatioImage } from '../common/Image'
 import MemberAvatar from '../common/MemberAvatar'
-import StarRating from '../common/StarRating'
 import programMessages from './translation'
 
 const InstructorPlaceHolder = styled.div`
@@ -150,8 +150,6 @@ const PrimaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
   programLink,
 }) => {
   const { formatMessage } = useIntl()
-  const { currentMemberId, currentUserRole } = useAuth()
-  const { productEditorIds } = useProductEditorIds(program.id)
   const { enabledModules, settings } = useApp()
   const history = useHistory()
 
@@ -165,7 +163,10 @@ const PrimaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
       : undefined
   const periodAmount = program.plans.length > 1 ? program.plans[0]?.periodAmount : null
   const periodType = program.plans.length > 1 ? program.plans[0]?.periodType : null
-  const { averageScore, reviewCount } = useReviewAggregate(`/programs/${program.id}`)
+
+  const { id: appId } = useApp()
+  const path = `/programs/${program.id}`
+  const { data: reviewable, loading: reviewableLoading } = useAdaptedReviewable(path, appId)
   const { data: enrolledCount } = useProgramEnrollmentAggregate(program.id, { skip: !program.isEnrolledCountVisible })
 
   const programAdditionalSoldHeadcountSetting = settings['program.additional.sold.headcount'] || '[]'
@@ -196,6 +197,8 @@ const PrimaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
     backgroundColor: '#ececec',
     textColor: '#585858',
   }
+
+  if (reviewableLoading) return <></>
 
   return (
     <>
@@ -245,20 +248,7 @@ const PrimaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
             </Link>
           </StyledTitle>
 
-          {enabledModules.customer_review ? (
-            currentUserRole === 'app-owner' ||
-            (currentMemberId && productEditorIds.includes(currentMemberId)) ||
-            reviewCount >= (settings.review_lower_bound ? Number(settings.review_lower_bound) : 3) ? (
-              <StyledReviewRating className="d-flex mb-2">
-                <StarRating score={Math.round((Math.round(averageScore * 10) / 10) * 2) / 2} max={5} size="20px" />
-                <span>({formatMessage(programMessages.ProgramCard.reviewCount, { count: reviewCount })})</span>
-              </StyledReviewRating>
-            ) : (
-              <StyledReviewRating className="mb-2">
-                {formatMessage(programMessages.ProgramCard.noReviews)}
-              </StyledReviewRating>
-            )
-          ) : null}
+          <ReviewScoreStarRow path={path} appId={appId} />
 
           {renderCustomDescription && renderCustomDescription()}
           <StyledDescription>{program.abstract}</StyledDescription>
