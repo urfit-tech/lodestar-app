@@ -87,7 +87,10 @@ export const ProgramDisplayedListItem: React.VFC<{
   return (
     <StyledProgramDisplayItem>
       <StyledWrapper className="d-flex justify-content-between align-items-center">
-        <StyledProgramCover className="flex-shrink-0 mr-4" src={program.coverUrl || EmptyCover} />
+        <StyledProgramCover
+          className="flex-shrink-0 mr-4"
+          src={program.coverThumbnailUrl || program.coverUrl || EmptyCover}
+        />
         <StyledProgramInfo className="flex-grow-1">
           <div>
             <StyledProgramTitle level={2} ellipsis={{ rows: 2 }}>
