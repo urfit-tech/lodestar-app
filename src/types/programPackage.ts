@@ -30,6 +30,7 @@ export type ProgramPackageProgram = {
   id: string
   title: string
   coverUrl?: string | null
+  coverThumbnailUrl?: string | null
   viewRate?: number
   categories: Category[]
 }

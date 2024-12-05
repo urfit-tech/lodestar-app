@@ -212,8 +212,8 @@ const ExamBlock: React.VFC<{
         const totalGainedPoints = questions.reduce((sum, question) => sum + (question.gainedPoints || 0), 0)
 
         insertProgress(programId, programContentId, {
-          progress: max([existProgramContent?.progress ?? 0.5, totalGainedPoints > exam.passingScore ? 1 : 0.5]),
-          lastProgress: totalGainedPoints > exam.passingScore ? 1 : 0.5,
+          progress: max([existProgramContent?.progress, totalGainedPoints >= exam.passingScore ? 1 : 0.5]),
+          lastProgress: totalGainedPoints >= exam.passingScore ? 1 : 0.5,
         })
       })
       .catch(error => handleError(error))

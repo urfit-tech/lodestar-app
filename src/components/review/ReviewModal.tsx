@@ -13,6 +13,7 @@ import {
 import BraftEditor, { EditorState } from 'braft-editor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useAdaptedReviewable } from 'lodestar-app-element/src/hooks/review'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { AiOutlineEdit as EditIcon } from 'react-icons/ai'
@@ -125,6 +126,8 @@ const ReviewModal: React.VFC<{
     },
   })
 
+  const { data: reviewable, loading: reviewableLoading } = useAdaptedReviewable(path, appId)
+
   const validateTitle = (value: string) => !!value || formatMessage(reviewMessages.validate.titleIsRequired)
 
   const handleSave = handleSubmit(({ starRating, title, content, privateContent }) => {
@@ -169,47 +172,50 @@ const ReviewModal: React.VFC<{
           onClose()
         })
     } else {
-      insertReview({
-        variables: {
-          path,
-          memberId: currentMemberId,
-          score: starRating,
-          title,
-          content: content.toRAW(),
-          privateContent: privateContent.toRAW(),
-          appId: appId,
-        },
-      })
-        .then(() => {
-          toast({
-            title: formatMessage(commonMessages.event.successfullySaved),
-            status: 'success',
-            duration: 3000,
-            isClosable: false,
-            position: 'top',
+      reviewable.is_item_viewable &&
+        insertReview({
+          variables: {
+            path,
+            memberId: currentMemberId,
+            score: starRating,
+            title,
+            content: content.toRAW(),
+            privateContent: privateContent.toRAW(),
+            appId: appId,
+          },
+        })
+          .then(() => {
+            toast({
+              title: formatMessage(commonMessages.event.successfullySaved),
+              status: 'success',
+              duration: 3000,
+              isClosable: false,
+              position: 'top',
+            })
+            reset()
+            onRefetchReviewMemberItem?.()
+            onRefetchReviewAggregate?.()
+            window.location.replace(`/programs/${programId}?moveToBlock=customer-review&visitIntro=1`)
           })
-          reset()
-          onRefetchReviewMemberItem?.()
-          onRefetchReviewAggregate?.()
-          window.location.replace(`/programs/${programId}?moveToBlock=customer-review&visitIntro=1`)
-        })
-        .catch(error => process.env.NODE_ENV === 'development' && console.error(error))
-        .finally(() => {
-          setIsSubmitting(false)
-          onClose()
-        })
+          .catch(error => process.env.NODE_ENV === 'development' && console.error(error))
+          .finally(() => {
+            setIsSubmitting(false)
+            onClose()
+          })
     }
   })
 
+  if (reviewableLoading) return <></>
+
   return (
     <>
-      {authToken && (
+      {authToken && (reviewable?.is_writable || memberReviews?.length > 0) && (
         <StyledButtonReview
           variant={memberReviews && memberReviews.length !== 0 ? 'outline' : 'primary'}
           reviewed={(!!(memberReviews !== null && memberReviews.length !== 0)).toString()}
           onClick={onOpen}
         >
-          {memberReviews && memberReviews.length !== 0
+          {memberReviews?.length > 0
             ? formatMessage(reviewMessages.button.editReview)
             : formatMessage(reviewMessages.button.toReview)}
         </StyledButtonReview>

@@ -1,6 +1,7 @@
 import { gql, useQuery } from '@apollo/client'
 import { Box, Button, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useAdaptedReviewable } from 'lodestar-app-element/src/hooks/review'
 import React, { HTMLAttributes, useState } from 'react'
 import { useIntl } from 'react-intl'
 import hasura from '../../hasura'
@@ -24,17 +25,31 @@ const ReviewMemberItemCollection: React.ForwardRefRenderFunction<
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const [loading, setLoading] = useState(false)
+
+  const { data: reviewable, loading: reviewableLoading } = useAdaptedReviewable(path, appId)
+
+  const {
+    loadingReviews: loadingCurrentMemberReviews,
+    memberReviews: currentMemberReviews,
+    memberPrivateContent: currentMemberPrivateContent,
+    onRefetch: onRefetchCurrentMemberReviews,
+  } = useReviewMemberCollection(path, appId, currentMemberId, reviewable?.is_item_viewable, true)
+
   const { loadingReviews, memberReviews, memberPrivateContent, onRefetch, loadMoreReviews } = useReviewMemberCollection(
     path,
     appId,
     currentMemberId,
+    reviewable?.is_item_viewable,
   )
 
   React.useImperativeHandle(ref, () => ({
-    onRefetchReviewMemberItem: () => onRefetch(),
+    onRefetchReviewMemberItem: () => {
+      onRefetch()
+      onRefetchCurrentMemberReviews()
+    },
   }))
 
-  if (loadingReviews) {
+  if (loadingCurrentMemberReviews && loadingReviews && reviewableLoading) {
     return (
       <Box padding="6" boxShadow="lg" bg="white">
         <SkeletonCircle size="36" />
@@ -46,7 +61,7 @@ const ReviewMemberItemCollection: React.ForwardRefRenderFunction<
   return (
     <>
       <div>
-        {memberReviews.map(v => (
+        {currentMemberReviews.concat(memberReviews).map(v => (
           <div key={v.id} className="review-item">
             <ReviewItem
               isLiked={v.isLiked}
@@ -91,10 +106,21 @@ const ReviewMemberItemCollection: React.ForwardRefRenderFunction<
   )
 }
 
-const useReviewMemberCollection = (path: string, appId: string, currentMemberId: string | null) => {
+const useReviewMemberCollection = (
+  path: string,
+  appId: string,
+  currentMemberId: string | null,
+  isItemViewable: boolean = true,
+  isBelongedToCurrentMember: boolean = false,
+) => {
   const condition: hasura.GET_REVIEW_MEMBERVariables['condition'] = {
     path: { _eq: path },
     app_id: { _eq: appId },
+    member_id: isBelongedToCurrentMember
+      ? { _eq: currentMemberId }
+      : isItemViewable
+      ? { _neq: currentMemberId }
+      : { _eq: '' },
   }
 
   const { loading, error, data, refetch, fetchMore } = useQuery<

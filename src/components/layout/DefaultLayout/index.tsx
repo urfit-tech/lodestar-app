@@ -11,7 +11,7 @@ import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import AuthButton from '../../../containers/common/AuthButton'
 import { useCustomRenderer } from '../../../contexts/CustomRendererContext'
-import LocaleContext, { SUPPORTED_LOCALES } from '../../../contexts/LocaleContext'
+import LocaleContext from '../../../contexts/LocaleContext'
 import MediaPlayerContext from '../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../../helpers/translation'
@@ -98,7 +98,7 @@ const DefaultLayout: React.FC<{
   const { navs } = useNav()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
-  const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
+  const { currentLocale, setCurrentLocale, languagesList } = useContext(LocaleContext)
   const { renderCartButton, renderMyPageNavItem, renderCreatorPageNavItem } = useCustomRenderer()
   const [isBusinessMember, setIsBusinessMember] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -306,8 +306,9 @@ const DefaultLayout: React.FC<{
                       <EarthGlobalIcon height="24px" width="24px" />
                     </MenuButton>
                     <MenuList>
-                      {SUPPORTED_LOCALES.map(supportedLocale => (
+                      {languagesList.map(supportedLocale => (
                         <MenuItem
+                          key={supportedLocale.locale}
                           style={{ lineHeight: '2rem' }}
                           defaultValue={currentLocale}
                           onClick={() => setCurrentLocale?.(supportedLocale.locale)}

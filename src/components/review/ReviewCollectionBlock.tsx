@@ -3,6 +3,7 @@ import { Divider, Icon } from '@chakra-ui/react'
 import { Skeleton } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useAdaptedReviewable } from 'lodestar-app-element/src/hooks/review'
 import React, { useRef } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -10,12 +11,12 @@ import hasura from '../../hasura'
 import { reviewMessages } from '../../helpers/translation'
 import { useProductEditorIds, useReviewAggregate } from '../../hooks/review'
 import { ReactComponent as StarEmptyIcon } from '../../images/star-empty.svg'
-import { ReactComponent as StarIcon } from '../../images/star.svg'
 import { MemberReviewProps } from '../../types/review'
 import ReviewAdminItemCollection from './ReviewAdminItemCollection'
 import ReviewMemberItemCollection, { ReviewMemberItemRef } from './ReviewMemberItemCollection'
 import ReviewModal from './ReviewModal'
 import ReviewPublicItemCollection from './ReviewPublicItemCollection'
+import ReviewScorePanel from './ReviewScorePanel'
 
 const Wrapper = styled.div`
   div {
@@ -32,16 +33,7 @@ export const StyledTitle = styled.h2`
   letter-spacing: 0.2px;
   font-weight: bold;
 `
-export const StyledAvgScore = styled.div`
-  font-weight: bold;
-  font-size: 40px;
-  letter-spacing: 1px;
-`
-export const StyledReviewAmount = styled.div`
-  color: #9b9b9b;
-  font-size: 14px;
-  letter-spacing: 0.4px;
-`
+
 const StyledEmptyText = styled.div`
   color: #9b9b9b;
   font-size: 14px;
@@ -67,6 +59,7 @@ const ReviewCollectionBlock: React.VFC<{
   const { formatMessage } = useIntl()
   const { currentMemberId, currentUserRole } = useAuth()
   const { settings, id: appId } = useApp()
+  const { data: reviewable, loading: reviewableLoading } = useAdaptedReviewable(path, appId)
   const { loadingReviewAggregate, averageScore, reviewCount, refetchReviewAggregate } = useReviewAggregate(path)
   const { loadingIsCurrentMemberEnrollment, isCurrentMemberEnrollment } = useIsCurrentMemberEnrollment(
     targetId,
@@ -91,6 +84,7 @@ const ReviewCollectionBlock: React.VFC<{
   )
 
   if (
+    reviewableLoading ||
     loadingIsCurrentMemberEnrollment ||
     loadingProductEditorIds ||
     loadingReviewAggregate ||
@@ -105,23 +99,21 @@ const ReviewCollectionBlock: React.VFC<{
     )
   }
 
-  return (
+  console.log(currentMemberId, currentMemberReview)
+
+  return !isProductAdmin &&
+    !reviewable?.is_score_viewable &&
+    !reviewable?.is_item_viewable &&
+    currentMemberReview.length === 0 &&
+    !reviewable?.is_writable ? (
+    <></>
+  ) : (
     <>
       <StyledTitle>{title || formatMessage(reviewMessages.title.programReview)}</StyledTitle>
       <StyledDivider mt={1} />
 
       <div className="d-flex align-items-center my-3">
-        <StyledAvgScore className="mr-1">
-          {isMoreThanReviewLowerBound || isProductAdmin ? (averageScore === 0 ? 0 : averageScore?.toFixed(1)) : 0}
-        </StyledAvgScore>
-        <div className="mr-2">
-          <Icon as={StarIcon} w="24px" h="24px" />
-        </div>
-        <StyledReviewAmount className="flex-grow-1">
-          {formatMessage(reviewMessages.text.reviewAmount, {
-            amount: isMoreThanReviewLowerBound || isProductAdmin ? reviewCount : 0,
-          })}
-        </StyledReviewAmount>
+        {isMoreThanReviewLowerBound || isProductAdmin ? <ReviewScorePanel path={path} appId={appId} /> : <></>}
         {isCurrentMemberEnrollment ? (
           <ReviewModal
             path={path}
@@ -133,7 +125,7 @@ const ReviewCollectionBlock: React.VFC<{
         ) : null}
       </div>
 
-      {isMoreThanReviewLowerBound || isProductAdmin ? (
+      {isMoreThanReviewLowerBound || isProductAdmin || currentMemberReview.length > 0 ? (
         <Wrapper>
           {isProductAdmin ? (
             <ReviewAdminItemCollection targetId={targetId} path={path} appId={appId} />

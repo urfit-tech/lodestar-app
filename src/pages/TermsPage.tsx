@@ -155,7 +155,7 @@ const TermsPage: React.VFC = () => {
           </StyledCard>
 
           <StyledCard>
-            <StyledTitle level={2}>{termMessages.title.purchaseNotice}</StyledTitle>
+            <StyledTitle level={2}>{formatMessage(termMessages.title.purchaseNotice)}</StyledTitle>
             <p>{formatMessage(termMessages.paragraph.purchaseNotice1)}</p>
             <p>{formatMessage(termMessages.paragraph.purchaseNotice2)}</p>
           </StyledCard>

@@ -137,11 +137,15 @@ export const useProgramContentProgress = (programId: string, memberId: string) =
         contentBody.program_contents.map(content => {
           const extendProgramType = ['exercise', 'exam', 'ebook', 'practice']
           const passingScore = content.exercises?.[0]?.exam?.passing_score || 0
-          const gainedPointsTotal =
-            content.exercises?.[0]?.exercise_publics.reduce((acc, cur) => acc + Number(cur.gained_points), 0) || 0
+          const gainedPointsTotal = Math.max(
+            ...content.exercises.map(exercise =>
+              exercise.exercise_publics.reduce((acc, cur) => acc + Number(cur.gained_points), 0),
+            ),
+          )
+
           let progress =
             contentBody.type === 'exercise' || contentBody.type === 'exam'
-              ? content.exercises.length < 0
+              ? content.exercises.length <= 0
                 ? 0
                 : gainedPointsTotal >= passingScore
                 ? 1

@@ -16,14 +16,22 @@ export const SUPPORTED_LOCALES = [
   { locale: 'ja', label: '日本語' },
   { locale: 'ko', label: '한국어' },
 ]
+type SupportedLocales = {
+  locale: string
+  label: string
+}[]
+
 type LocaleContextProps = {
   defaultLocale: string
   currentLocale: string
+  languagesList: SupportedLocales
   setCurrentLocale?: (language: string) => void
 }
+
 const defaultLocaleContextValue: LocaleContextProps = {
   defaultLocale: '',
   currentLocale: 'zh-tw',
+  languagesList: SUPPORTED_LOCALES,
 }
 
 export const LocaleContext = createContext<LocaleContextProps>(defaultLocaleContextValue)
@@ -32,6 +40,24 @@ export const LocaleProvider: React.FC = ({ children }) => {
   const { enabledModules, settings, id: appId } = useApp()
   const [currentLocale, setCurrentLocale] = useState(defaultLocaleContextValue.currentLocale)
   const defaultLocale = settings['language'] || 'en-us'
+  const layoutLanguageSortedListSettings = settings['layout.language_sorted_list']
+
+  let sortedLanguagesList: SupportedLocales = []
+
+  if (!!layoutLanguageSortedListSettings) {
+    try {
+      const settingLanguageList = JSON.parse(layoutLanguageSortedListSettings)
+      sortedLanguagesList = SUPPORTED_LOCALES.filter(language => settingLanguageList.includes(language.label)).sort(
+        (a, b) => {
+          return settingLanguageList.indexOf(a.label) - settingLanguageList.indexOf(b.label)
+        },
+      )
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const languagesList = sortedLanguagesList.length > 0 ? sortedLanguagesList : SUPPORTED_LOCALES
 
   const { data } = useQuery<hasura.GET_APP_LANGUAGE, hasura.GET_APP_LANGUAGEVariables>(
     gql`
@@ -88,6 +114,7 @@ export const LocaleProvider: React.FC = ({ children }) => {
             setCurrentLocale(newLocale)
           }
         },
+        languagesList,
       }}
     >
       <IntlProvider defaultLocale="zh-tw" locale={currentLocale} messages={localeMessages}>
