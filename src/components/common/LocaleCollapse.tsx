@@ -18,7 +18,7 @@ const BlankIcon = styled.i`
 
 const LocaleCollapse: React.FC = () => {
   const { isOpen, onToggle } = useDisclosure()
-  const { currentLocale, setCurrentLocale } = useContext(LocaleContext)
+  const { currentLocale, setCurrentLocale, languagesList } = useContext(LocaleContext)
   return (
     <>
       <Box d="flex" justifyContent="space-between" cursor="pointer" onClick={onToggle}>
@@ -33,14 +33,16 @@ const LocaleCollapse: React.FC = () => {
         </StyledCollapseIconWrapper>
       </Box>
       <Collapse in={isOpen} animateOpacity style={{ background: '#f7f8f8', margin: '0 -12px' }}>
-        {SUPPORTED_LOCALES.filter(v => v.locale !== currentLocale).map(v => (
-          <Box ml="3rem" style={{ cursor: 'pointer' }}>
-            <List.Item key={v.locale} onClick={() => setCurrentLocale?.(v.locale)}>
-              <BlankIcon className="mr-2" />
-              {v.label}
-            </List.Item>
-          </Box>
-        ))}
+        {languagesList
+          .filter(v => v.locale !== currentLocale)
+          .map(v => (
+            <Box ml="3rem" style={{ cursor: 'pointer' }}>
+              <List.Item key={v.locale} onClick={() => setCurrentLocale?.(v.locale)}>
+                <BlankIcon className="mr-2" />
+                {v.label}
+              </List.Item>
+            </Box>
+          ))}
       </Collapse>
     </>
   )
