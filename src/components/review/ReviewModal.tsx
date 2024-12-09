@@ -263,7 +263,7 @@ const ReviewModal: React.VFC<{
               <StyledEditor
                 language="zh-hant"
                 controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
-                media={{ uploadFn: createUploadFn(appId, authToken) }}
+                media={{ uploadFn: createUploadFn(appId, authToken), accepts: { video: false, audio: false } }}
               />
             }
             control={control}
@@ -279,7 +279,7 @@ const ReviewModal: React.VFC<{
               <StyledEditor
                 language="zh-hant"
                 controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
-                media={{ uploadFn: createUploadFn(appId, authToken) }}
+                media={{ uploadFn: createUploadFn(appId, authToken), accepts: { video: false, audio: false } }}
               />
             }
             control={control}
