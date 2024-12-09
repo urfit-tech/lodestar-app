@@ -222,7 +222,7 @@ const IssueItem: React.VFC<IssueItemProps> = ({
               })(
                 <StyledEditor
                   controls={['bold', 'italic', 'underline', 'separator', 'media']}
-                  media={{ uploadFn: createUploadFn(appId, authToken) }}
+                  media={{ uploadFn: createUploadFn(appId, authToken), accepts: { video: false, audio: false } }}
                 />,
               )}
             </Form.Item>
