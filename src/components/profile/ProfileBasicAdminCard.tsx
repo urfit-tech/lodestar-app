@@ -179,7 +179,11 @@ const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, me
                 'separator',
                 'fullscreen',
               ]}
-              media={{ uploadFn: createUploadFn(appId, authToken), accepts: { video: false, audio: false } }}
+              media={{
+                  uploadFn: createUploadFn(appId, authToken),
+                  accepts: { video: false, audio: false },
+                  externals: { video: false, audio: false },
+                }}
               placeholder={formatMessage(profileMessages.form.message.introPlaceHolder)}
             />,
           )}
