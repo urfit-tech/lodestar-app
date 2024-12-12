@@ -69,11 +69,7 @@ const IssueReplyCreationBlock: React.VFC<IssueReplyCreationBlockProps> = ({ memb
             language="zh-hant"
             placeholder={formatMessage(issueMessages.form.placeholder.reply)}
             controls={['bold', 'italic', 'underline', 'separator', 'media']}
-            media={{
-              uploadFn: createUploadFn(appId, authToken),
-              accepts: { video: false, audio: false },
-              externals: { video: false, audio: false },
-            }}
+            media={{ uploadFn: createUploadFn(appId, authToken), accepts: { video: false, audio: false } }}
           />,
         )}
       </Form.Item>

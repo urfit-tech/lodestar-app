@@ -112,11 +112,7 @@ const IssueCreationModal: React.VFC<IssueCreationModalProps> = ({ threadId, form
                   'media',
                 ]}
                 contentClassName="short-bf-content"
-                media={{
-                  uploadFn: createUploadFn(appId, authToken),
-                  accepts: { video: false, audio: false },
-                  externals: { video: false, audio: false },
-                }}
+                media={{ uploadFn: createUploadFn(appId, authToken), accepts: { video: false, audio: false } }}
               />,
             )}
           </Form.Item>
