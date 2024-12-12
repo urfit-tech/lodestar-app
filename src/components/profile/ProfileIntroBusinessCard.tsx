@@ -4,10 +4,12 @@ import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import BraftEditor from 'braft-editor'
 import StyledBraftEditor from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { FormEvent, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { braftLanguageFn, handleError } from '../../helpers'
+import { braftLanguageFn, createUploadFn, handleError } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useMember, useUpdateMember } from '../../hooks/member'
 import AdminCard from '../common/AdminCard'
@@ -32,6 +34,8 @@ const ProfileIntroBusinessCard: React.VFC<ProfileIntroBusinessCardProps> = ({ fo
   const { formatMessage } = useIntl()
   const { member, refetchMember } = useMember(memberId)
   const updateMember = useUpdateMember()
+  const { id: appId } = useApp()
+  const { authToken } = useAuth()
 
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -118,6 +122,7 @@ const ProfileIntroBusinessCard: React.VFC<ProfileIntroBusinessCardProps> = ({ fo
                 'separator',
                 'fullscreen',
               ]}
+              media={{ uploadFn: createUploadFn(appId, authToken), accepts: { video: false, audio: false } }}
               placeholder={formatMessage(profileMessages.ProfileIntroBusinessCard.companyIntroPlaceholder)}
             ></StyledBraftEditor>,
           )}
