@@ -110,7 +110,11 @@ const MessageReplyItem: React.VFC<{
                 value={contentState}
                 onChange={value => setContentState(value)}
                 controls={['bold', 'italic', 'underline', 'separator', 'media']}
-                media={{ uploadFn: createUploadFn(appId, authToken) }}
+                media={{
+                  uploadFn: createUploadFn(appId, authToken),
+                  accepts: { video: false, audio: false },
+                  externals: { video: false, audio: false },
+                }}
               />
               <div>
                 <Button variant="outline" className="mr-2" onClick={() => setEditing(false)}>

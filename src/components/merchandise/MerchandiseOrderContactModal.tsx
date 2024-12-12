@@ -160,7 +160,11 @@ const MerchandiseOrderContactModal: React.VFC<{ orderId: string }> = ({ orderId 
                 isInvalid={!!errors?.message}
                 language="zh-hant"
                 controls={['bold', 'italic', 'underline', 'remove-styles', 'separator', 'media']}
-                media={{ uploadFn: createUploadFn(appId, authToken) }}
+                media={{
+                  uploadFn: createUploadFn(appId, authToken),
+                  accepts: { video: false, audio: false },
+                  externals: { video: false, audio: false },
+                }}
                 placeholder={formatMessage(messages.fillMessageContent)}
               />
             }
