@@ -32,6 +32,10 @@ const ContentWrapper = styled.div`
     left: 80px;
     bottom: 60px;
   }
+
+  @media (max-width: 576px) {
+    bottom: 16px;
+  }
 `
 
 const IconWrapper = styled.a`
