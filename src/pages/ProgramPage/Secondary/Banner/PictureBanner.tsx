@@ -6,6 +6,11 @@ const StyledWrapper = styled.div<{ width?: { desktop: string; mobile: string } }
   position: relative;
   overflow: ${props => (props.width ? 'visible' : 'hidden')};
   height: calc(100vw * (9 / 16));
+
+  @media (max-width: ${BREAK_POINT}px) {
+    height: 40vh;
+  }
+
   @media (min-width: ${BREAK_POINT}px) {
     height: ${props => (props.width ? props.width.desktop : 'auto')};
   }
