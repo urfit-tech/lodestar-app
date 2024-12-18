@@ -125,7 +125,7 @@ const ProfileIntroBusinessCard: React.VFC<ProfileIntroBusinessCardProps> = ({ fo
               media={{
                   uploadFn: createUploadFn(appId, authToken),
                   accepts: { video: false, audio: false },
-                  externals: { video: false, audio: false },
+                  externals: { image: true, video: false, audio: false, embed: false },
                 }}
               placeholder={formatMessage(profileMessages.ProfileIntroBusinessCard.companyIntroPlaceholder)}
             ></StyledBraftEditor>,
