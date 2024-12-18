@@ -44,7 +44,7 @@ const StyledProgramAbstract = styled.span`
 `
 const StyledPlayer = styled.div`
   width: 100%;
-  height: 315px;
+  aspect-ratio: 16 / 9;
 `
 
 const StyledContentWrapper = styled.div`
