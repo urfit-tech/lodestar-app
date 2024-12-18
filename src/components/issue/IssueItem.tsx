@@ -225,7 +225,7 @@ const IssueItem: React.VFC<IssueItemProps> = ({
                   media={{
                     uploadFn: createUploadFn(appId, authToken),
                     accepts: { video: false, audio: false },
-                    externals: { video: false, audio: false },
+                    externals: { image: true, video: false, audio: false, embed: false },
                   }}
                 />,
               )}
