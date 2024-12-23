@@ -4,7 +4,7 @@ import { AxiosError } from 'axios'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { BackendServerError, BindDeviceError, LoginDeviceError } from 'lodestar-app-element/src/helpers/error'
+import { BackendServerError, LoginDeviceError } from 'lodestar-app-element/src/helpers/error'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -56,9 +56,10 @@ const LoginSection: React.VFC<{
   const history = useHistory()
   const [returnTo] = useQueryParam('returnTo', StringParam)
   const { login, forceLogin } = useAuth()
-  const { setVisible, setIsBusinessMember } = useContext(AuthModalContext)
+  const { setVisible: setAuthModalVisible, setIsBusinessMember } = useContext(AuthModalContext)
   const [loading, setLoading] = useState(false)
   const [forceLoginLoading, setForceLoginLoading] = useState(false)
+  const [currentMember, setCurrentMember] = useState<{ id: string; email: string }>({ id: '', email: '' })
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
       account: '',
@@ -70,11 +71,10 @@ const LoginSection: React.VFC<{
   const [passwordShow, setPasswordShow] = useState(false)
 
   const handleLogin = handleSubmit(
-    ({ account, password }) => {
+    async ({ account, password }) => {
       if (login === undefined) {
         return
       }
-
       setLoading(true)
       login({
         account: account.trim().toLowerCase(),
@@ -83,14 +83,16 @@ const LoginSection: React.VFC<{
       })
         .then(() => {
           tracking.login()
-          setVisible?.(false)
+          setAuthModalVisible?.(false)
           reset()
           returnTo && history.push(returnTo)
         })
         .catch(error => {
           if (error instanceof LoginDeviceError) {
             setIsOverLoginDeviceModalVisible(true)
-          } else if (error instanceof BindDeviceError) {
+          }
+          if (error?.code === 'E_BIND_DEVICE') {
+            setCurrentMember({ id: error?.result?.member?.id || '', email: error?.result?.member?.email || '' })
             setIsOverBindDeviceModalVisible(true)
           }
 
@@ -123,7 +125,7 @@ const LoginSection: React.VFC<{
       })
         .then(() => {
           tracking.login()
-          setVisible?.(false)
+          setAuthModalVisible?.(false)
           reset()
           returnTo && history.push(returnTo)
           message.success(formatMessage(localAuthMessages.default.LoginSection.loginSuccess))
@@ -233,13 +235,16 @@ const LoginSection: React.VFC<{
             loading={forceLoginLoading}
           />
 
-          <OverBindDeviceModal
-            visible={isOverBindDeviceModalVisible}
-            onClose={() => {
-              setIsOverBindDeviceModalVisible(false)
-              setLoading(false)
-            }}
-          />
+          {currentMember.email !== '' && currentMember.id !== '' ? (
+            <OverBindDeviceModal
+              member={currentMember}
+              visible={isOverBindDeviceModalVisible}
+              onClose={() => {
+                setIsOverBindDeviceModalVisible(false)
+                setLoading(false)
+              }}
+            />
+          ) : null}
         </>
       )}
     </>
