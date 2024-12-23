@@ -4,11 +4,11 @@ import styled from 'styled-components'
 
 const StyledWrapper = styled.div<{ width?: { desktop: string; mobile: string } }>`
   position: relative;
-  overflow: ${props => (props.width ? 'visible' : 'hidden')};
+  overflow: ${props => (props.width ? 'visible' : 'hidden')}
   height: calc(100vw * (9 / 16));
 
   @media (max-width: ${BREAK_POINT}px) {
-    height: 40vh;
+    height: 100vw;
   }
 
   @media (min-width: ${BREAK_POINT}px) {
@@ -21,7 +21,6 @@ const BackgroundWrapper = styled.div`
   right: 0;
   bottom: 0;
   left: 0;
-  transform: scale(1.1);
 `
 const Cover = styled.div<{ coverUrl?: { mobileUrl?: string; desktopUrl?: string } }>`
   width: 100%;
@@ -29,17 +28,11 @@ const Cover = styled.div<{ coverUrl?: { mobileUrl?: string; desktopUrl?: string 
   background-image: url(${props => props.coverUrl?.mobileUrl || props.coverUrl?.desktopUrl});
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-
-  @media (max-width: ${BREAK_POINT}px) {
-    transform: scale(1.05);
-  }
 
   @media (min-width: ${BREAK_POINT}px) {
     background-image: url(${props => props.coverUrl?.desktopUrl || props.coverUrl?.mobileUrl});
   }
 `
-
 const ContentWrapper = styled.div<{ gradient?: boolean }>`
   position: relative;
   background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
