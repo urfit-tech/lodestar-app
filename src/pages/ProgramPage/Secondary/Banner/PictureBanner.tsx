@@ -29,11 +29,17 @@ const Cover = styled.div<{ coverUrl?: { mobileUrl?: string; desktopUrl?: string 
   background-image: url(${props => props.coverUrl?.mobileUrl || props.coverUrl?.desktopUrl});
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
+  background-repeat: no-repeat;
+
+  @media (max-width: ${BREAK_POINT}px) {
+    transform: scale(1.05);
+  }
+
   @media (min-width: ${BREAK_POINT}px) {
     background-image: url(${props => props.coverUrl?.desktopUrl || props.coverUrl?.mobileUrl});
   }
 `
+
 const ContentWrapper = styled.div<{ gradient?: boolean }>`
   position: relative;
   background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
