@@ -89,6 +89,12 @@ const defaultRoutesMap: RoutesMap = {
     path: '/oauth2/:provider',
     pageName: 'OAuth2Page',
   },
+
+  over_bind_device: {
+    path: '/over-bind-device',
+    pageName: 'OverBindDevicePage',
+  },
+
   join: {
     path: '/join',
     pageName: 'JoinPage',
