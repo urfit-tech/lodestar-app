@@ -72,7 +72,7 @@ const IssueReplyCreationBlock: React.VFC<IssueReplyCreationBlockProps> = ({ memb
             media={{
               uploadFn: createUploadFn(appId, authToken),
               accepts: { video: false, audio: false },
-              externals: { image: true, video: false, audio: false, embed: false },
+              externals: { image: true, video: false, audio: false, embed: true },
             }}
           />,
         )}
