@@ -1,6 +1,7 @@
 import { Button } from '@chakra-ui/react'
 import { Dropdown, Icon, Menu, message, Tag } from 'antd'
 import BraftEditor from 'braft-editor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -16,7 +17,6 @@ import { ProductRoleName } from '../../types/general'
 import { ProgramRole } from '../../types/program'
 import MemberAvatar from '../common/MemberAvatar'
 import ProductRoleFormatter from '../common/ProductRoleFormatter'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { StyledEditor } from './IssueReplyCreationBlock'
 
 const IssueReplyContentBlock = styled.div`
@@ -152,7 +152,11 @@ const IssueReplyItem: React.VFC<{
                 value={contentState}
                 onChange={value => setContentState(value)}
                 controls={['bold', 'italic', 'underline', 'separator', 'media']}
-                media={{ uploadFn: createUploadFn(appId, authToken), accepts: { video: false, audio: false } }}
+                media={{
+                  uploadFn: createUploadFn(appId, authToken),
+                  accepts: { video: false, audio: false },
+                  externals: { image: true, video: false, audio: false, embed: true },
+                }}
               />
               <div>
                 <Button variant="outline" className="mr-2" onClick={() => setEditing(false)}>

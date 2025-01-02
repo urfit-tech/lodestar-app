@@ -2,6 +2,7 @@ import { Button } from '@chakra-ui/react'
 import { Dropdown, Form, Icon, Input, Menu, message, Tag, Typography } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import BraftEditor from 'braft-editor'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -17,7 +18,6 @@ import { ProductRoleName } from '../../types/general'
 import { ProgramRole } from '../../types/program'
 import MemberAvatar from '../common/MemberAvatar'
 import ProductRoleFormatter from '../common/ProductRoleFormatter'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import IssueReplyCollectionBlock from './IssueReplyCollectionBlock'
 import { StyledEditor } from './IssueReplyCreationBlock'
 
@@ -222,7 +222,11 @@ const IssueItem: React.VFC<IssueItemProps> = ({
               })(
                 <StyledEditor
                   controls={['bold', 'italic', 'underline', 'separator', 'media']}
-                  media={{ uploadFn: createUploadFn(appId, authToken), accepts: { video: false, audio: false } }}
+                  media={{
+                    uploadFn: createUploadFn(appId, authToken),
+                    accepts: { video: false, audio: false },
+                    externals: { image: true, video: false, audio: false, embed: true },
+                  }}
                 />,
               )}
             </Form.Item>

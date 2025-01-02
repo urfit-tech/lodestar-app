@@ -541,7 +541,11 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
                   'hr',
                   'media',
                 ]}
-                media={{ uploadFn: createUploadFn(appId, authToken), accepts: { video: false, audio: false } }}
+                media={{
+                  uploadFn: createUploadFn(appId, authToken),
+                  accepts: { video: false, audio: false },
+                  externals: { image: true, video: false, audio: false, embed: true },
+                }}
               />,
             )}
           </Form.Item>

@@ -95,7 +95,11 @@ const SuggestionCreationModal: React.VFC<SuggestionCreationModalProps> = ({ thre
                 'media',
               ]}
               contentClassName="short-bf-content"
-              media={{ uploadFn: createUploadFn(appId, authToken) }}
+              media={{
+                uploadFn: createUploadFn(appId, authToken),
+                accepts: { video: false, audio: false },
+                externals: { image: true, video: false, audio: false, embed: true },
+              }}
             />
           }
           control={control}
