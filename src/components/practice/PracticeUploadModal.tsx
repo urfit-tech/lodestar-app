@@ -19,7 +19,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import hasura from '../../hasura'
-import { handleError } from '../../helpers'
+import { createUploadFn, handleError } from '../../helpers'
 import { uploadFile } from '../../helpers/index'
 import { commonMessages } from '../../helpers/translation'
 import { useUploadAttachments } from '../../hooks/data'
@@ -220,7 +220,17 @@ const PracticeUploadModal: React.VFC<{
         </FormControl>
         <Controller
           name="description"
-          as={<BraftEditor className="mb-4" placeholder={formatMessage(messages.fillDescriptionPlease)} />}
+          as={
+            <BraftEditor
+              className="mb-4"
+              placeholder={formatMessage(messages.fillDescriptionPlease)}
+              media={{
+                uploadFn: createUploadFn(appId, authToken),
+                accepts: { video: false, audio: false },
+                externals: { video: false, audio: false },
+              }}
+            />
+          }
           control={control}
         />
         <div className="mb-4">
