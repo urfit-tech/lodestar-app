@@ -43,7 +43,7 @@ const CommonModal: React.FC<
     renderFooter?: () => React.ReactElement
   } & ModalProps
 > = ({ title, isFullWidth, renderHeaderIcon, renderCloseButtonBlock, renderFooter, children, ...ModalProps }) => (
-  <Modal {...ModalProps}>
+  <Modal {...ModalProps} trapFocus={false}>
     <ModalOverlay />
     <StyledModalContent isFullWidth={isFullWidth}>
       <StyledWrapper>
