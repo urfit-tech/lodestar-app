@@ -16,6 +16,7 @@ export type ProgramPackagePlanProps = {
   description: string | null
   isSubscription: boolean
   isParticipantsVisible: boolean
+  isCountdownTimerVisible: boolean
   periodAmount: number
   periodType: PeriodType
   listPrice: number
