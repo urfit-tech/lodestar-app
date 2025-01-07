@@ -47,6 +47,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
             description
             is_subscription
             is_participants_visible
+            is_countdown_timer_visible
             period_amount
             period_type
             list_price
@@ -89,6 +90,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
             description: programPackagePlan.description || '',
             isSubscription: programPackagePlan.is_subscription,
             isParticipantsVisible: programPackagePlan.is_participants_visible,
+            isCountdownTimerVisible: programPackagePlan.is_countdown_timer_visible,
             periodAmount: programPackagePlan.period_amount,
             periodType: programPackagePlan.period_type as PeriodType,
             listPrice: programPackagePlan.list_price,
