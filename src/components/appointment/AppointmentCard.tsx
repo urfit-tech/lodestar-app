@@ -493,7 +493,13 @@ const AppointmentCard: React.VFC<AppointmentCardProps> = ({
       </StyledStatusBar>
 
       {/* issue modal */}
-      <Modal width={660} visible={issueModalVisible} footer={null} onCancel={() => setIssueModalVisible(false)}>
+      <Modal
+        width={660}
+        style={{ zIndex: '2147483648', paddingBottom: '10vh' }}
+        visible={issueModalVisible}
+        footer={null}
+        onCancel={() => setIssueModalVisible(false)}
+      >
         <StyledModalTitle className="mb-3">
           {formatMessage(appointmentMessages.AppointmentCard.appointmentIssue)}
         </StyledModalTitle>
