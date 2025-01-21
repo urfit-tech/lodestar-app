@@ -100,7 +100,7 @@ const OrderCollectionAdminCard: React.VFC<
   }
 > = ({ memberId, ...props }) => {
   const theme = useAppTheme()
-  const { settings } = useApp()
+  const { settings, enabledModules, id: appId } = useApp()
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { authToken } = useAuth()
@@ -270,26 +270,57 @@ const OrderCollectionAdminCard: React.VFC<
                 color: theme.colors.primary[500],
                 borderColor: theme.colors.primary[500],
               }}
-              onClick={() =>
-                axios
-                  .post(
-                    `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
-                    {
-                      orderId: record.id,
-                      clientBackUrl: window.location.origin,
-                      invoiceGatewayId: record.paymentLogs[0].invoiceGatewayId,
-                    },
-                    { headers: { authorization: `Bearer ${authToken}` } },
-                  )
-                  .then(({ data: { code, result } }) => {
-                    if (code === 'SUCCESS') {
-                      history.push(`/tasks/payment/${result.id}`)
-                    } else {
-                      message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-                    }
-                  })
-                  .catch(handleError)
-              }
+              onClick={() => {
+                const mode = enabledModules.split_payment_mode ? 'split' : 'single'
+                switch (mode) {
+                  case 'split':
+                    axios
+                      .get(`${process.env.REACT_APP_API_BASE_ROOT}/order/${record.id}/multi-payment/url`, {
+                        params: {
+                          appId,
+                        },
+                        headers: {
+                          authorization: `Bearer ${authToken}`,
+                        },
+                      })
+                      .then(
+                        ({
+                          data: {
+                            code,
+                            result: { paymentUrl },
+                          },
+                        }) => {
+                          if (code === 'SUCCESS') {
+                            window.open(paymentUrl, '_blank')
+                          } else {
+                            message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+                          }
+                        },
+                      )
+                      .catch(handleError)
+                    break
+                  default:
+                    axios
+                      .post(
+                        `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
+                        {
+                          orderId: record.id,
+                          clientBackUrl: window.location.origin,
+                          invoiceGatewayId: record.paymentLogs[0].invoiceGatewayId,
+                        },
+                        { headers: { authorization: `Bearer ${authToken}` } },
+                      )
+                      .then(({ data: { code, result } }) => {
+                        if (code === 'SUCCESS') {
+                          history.push(`/tasks/payment/${result.id}`)
+                        } else {
+                          message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+                        }
+                      })
+                      .catch(handleError)
+                    break
+                }
+              }}
               className="mr-2"
             >
               {formatMessage(commonMessages.ui.repay)}
