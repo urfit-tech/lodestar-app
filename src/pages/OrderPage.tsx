@@ -64,10 +64,6 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
   >(PH_GET_ORDERS_PRODUCT, { variables: { orderId: orderId } })
   const order = data?.order_log_by_pk
 
-  console.log('enabledModules.split_payment_mode', enabledModules)
-
-  const splitPaymentMode = enabledModules.split_payment_mode ? 'mutiplePayment' : 'singlePayment'
-
   const { resourceCollection: productResourceCollection, loading: productResourceCollectionLoading } =
     useResourceCollection(
       order?.order_products.map(v => {
