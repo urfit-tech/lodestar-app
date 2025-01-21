@@ -56,7 +56,7 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
   const history = useHistory()
   const [withTracking] = useQueryParam('tracking', BooleanParam)
   const [errorCode] = useQueryParam('code', StringParam)
-  const { settings, id: appId, loading: isAppLoading } = useApp()
+  const { settings, id: appId, loading: isAppLoading, enabledModules } = useApp()
   const { currentMemberId, isAuthenticating, authToken } = useAuth()
   const { loading: isOrderLoading, data } = useQuery<
     hasura.PH_GET_ORDERS_PRODUCT,
@@ -265,24 +265,55 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                     <Button
                       style={{ display: 'flex', alignItems: 'center', gap: 4 }}
                       onClick={param => {
-                        axios
-                          .post(
-                            `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
-                            {
-                              orderId: orderId,
-                              clientBackUrl: window.location.origin,
-                              invoiceGatewayId: order.payment_logs[0]?.invoice_gateway_id,
-                            },
-                            { headers: { authorization: `Bearer ${authToken}` } },
-                          )
-                          .then(({ data: { code, result } }) => {
-                            if (code === 'SUCCESS') {
-                              history.push(`/tasks/payment/${result.id}`)
-                            } else {
-                              message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-                            }
-                          })
-                          .catch(handleError)
+                        const mode = enabledModules.split_payment_mode ? 'split' : 'single'
+                        switch (mode) {
+                          case 'split':
+                            axios
+                              .get(`${process.env.REACT_APP_API_BASE_ROOT}/order/${orderId}/multi-payment/url`, {
+                                params: {
+                                  appId: appId,
+                                },
+                                headers: {
+                                  authorization: `Bearer ${authToken}`,
+                                },
+                              })
+                              .then(
+                                ({
+                                  data: {
+                                    code,
+                                    result: { paymentUrl },
+                                  },
+                                }) => {
+                                  if (code === 'SUCCESS') {
+                                    window.open(paymentUrl, '_blank')
+                                  } else {
+                                    message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+                                  }
+                                },
+                              )
+                              .catch(handleError)
+                            break
+                          default:
+                            axios
+                              .post(
+                                `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
+                                {
+                                  orderId: orderId,
+                                  clientBackUrl: window.location.origin,
+                                  invoiceGatewayId: order.payment_logs[0]?.invoice_gateway_id,
+                                },
+                                { headers: { authorization: `Bearer ${authToken}` } },
+                              )
+                              .then(({ data: { code, result } }) => {
+                                if (code === 'SUCCESS') {
+                                  history.push(`/tasks/payment/${result.id}`)
+                                } else {
+                                  message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+                                }
+                              })
+                              .catch(handleError)
+                            break
+                        }
                       }}
                     >
                       <div>{formatMessage(commonMessages.ui.repay)}</div>
