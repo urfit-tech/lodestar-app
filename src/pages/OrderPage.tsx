@@ -1,10 +1,9 @@
 import { gql, useQuery } from '@apollo/client'
 import { Button, Icon, message, Typography } from 'antd'
-import axios from 'axios'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { handleError, notEmpty } from 'lodestar-app-element/src/helpers'
+import { notEmpty } from 'lodestar-app-element/src/helpers'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
@@ -17,7 +16,8 @@ import AdminCard from '../components/common/AdminCard'
 import PageHelmet from '../components/common/PageHelmet'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
-import { codeMessages, commonMessages } from '../helpers/translation'
+import { commonMessages } from '../helpers/translation'
+import { OpenPageMethod, OrderPaymentStrategyContext, PaymentMode } from '../services/orderPayment/OrderPaymentStrategy'
 import LoadingPage from './LoadingPage'
 import NotFoundPage from './NotFoundPage'
 
@@ -264,54 +264,27 @@ const OrderPage: CustomVFC<{}, { order: hasura.PH_GET_ORDERS_PRODUCT['order_log_
                     </Link>
                     <Button
                       style={{ display: 'flex', alignItems: 'center', gap: 4 }}
-                      onClick={param => {
-                        const mode = enabledModules.split_payment_mode ? 'split' : 'single'
-                        switch (mode) {
-                          case 'split':
-                            axios
-                              .get(`${process.env.REACT_APP_API_BASE_ROOT}/order/${orderId}/multi-payment/url`, {
-                                params: {
-                                  appId: appId,
-                                },
-                                headers: {
-                                  authorization: `Bearer ${authToken}`,
-                                },
-                              })
-                              .then(
-                                ({
-                                  data: {
-                                    code,
-                                    result: { paymentUrl },
-                                  },
-                                }) => {
-                                  if (code === 'SUCCESS') {
-                                    window.open(paymentUrl, '_blank')
-                                  } else {
-                                    message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-                                  }
-                                },
-                              )
-                              .catch(handleError)
+                      onClick={async param => {
+                        const mode = enabledModules.split_payment_mode ? PaymentMode.Split : PaymentMode.Default
+                        const result = await OrderPaymentStrategyContext.execute(mode, {
+                          orderLogId: orderId,
+                          appId,
+                          authToken,
+                          invoiceGatewayId: order.payment_logs[0].invoice_gateway_id,
+                          clientBackUrl: window.location.origin,
+                        })
+
+                        if (!result.success) {
+                          message.error(result.message)
+                          return
+                        }
+
+                        switch (result.openPageMethod) {
+                          case OpenPageMethod.HISTORY_PUSH:
+                            history.push(result.paymentUrl || '')
                             break
-                          default:
-                            axios
-                              .post(
-                                `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
-                                {
-                                  orderId: orderId,
-                                  clientBackUrl: window.location.origin,
-                                  invoiceGatewayId: order.payment_logs[0]?.invoice_gateway_id,
-                                },
-                                { headers: { authorization: `Bearer ${authToken}` } },
-                              )
-                              .then(({ data: { code, result } }) => {
-                                if (code === 'SUCCESS') {
-                                  history.push(`/tasks/payment/${result.id}`)
-                                } else {
-                                  message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-                                }
-                              })
-                              .catch(handleError)
+                          case OpenPageMethod.OPEN_WINDOW:
+                            window.location.replace(result.paymentUrl || '')
                             break
                         }
                       }}
