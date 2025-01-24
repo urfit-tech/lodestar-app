@@ -151,6 +151,10 @@ const pageMessages = {
     TitleSecondText: { id: 'page.ResetPasswordPage.TitleSecondText', defaultMessage: '請輸入密碼來完成帳號設定' },
   }),
   ContractPage: defineMessages({
+    contractDuration: {
+      id: 'page.ContractPage.contractDuration',
+      defaultMessage: 'Contract Duration',
+    },
     onlineCourseServiceTerms: {
       id: 'page.ContractPage.onlineCourseServiceTerms',
       defaultMessage: 'Online Course Service Terms',
