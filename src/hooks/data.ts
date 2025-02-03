@@ -11,6 +11,7 @@ import { GET_NOTIFICATIONS, NotificationProps } from '../contexts/NotificationCo
 import hasura from '../hasura'
 import { handleError, uploadFile } from '../helpers/index'
 import { CouponProps } from '../types/checkout'
+import { MemberContract } from '../types/contract'
 import { CouponFromLodestarAPI } from '../types/coupon'
 
 export const useNotifications = (limit: number) => {
@@ -146,10 +147,12 @@ export const useNav = () => {
 
 export const useMemberContract = (memberContractId: string) => {
   const { authToken } = useAuth()
-  const { data, ...result } = useQuery<hasura.GET_MEMBER_CONTRACT, hasura.GET_MEMBER_CONTRACTVariables>(
+  const [memberContractData, setMemberContractData] = useState<MemberContract | null>(null)
+  const { loading, refetch, data } = useQuery<hasura.GetMemberContract, hasura.GetMemberContractVariables>(
     gql`
-      query GET_MEMBER_CONTRACT($memberContractId: uuid!) {
+      query GetMemberContract($memberContractId: uuid!) {
         member_contract_by_pk(id: $memberContractId) {
+          id
           started_at
           ended_at
           values
@@ -158,6 +161,7 @@ export const useMemberContract = (memberContractId: string) => {
           revoked_at
           agreed_options
           member {
+            id
             name
             email
             member_properties(where: { property: { name: { _eq: "本名" } } }) {
@@ -176,30 +180,38 @@ export const useMemberContract = (memberContractId: string) => {
     { variables: { memberContractId }, skip: !authToken },
   )
 
+  useEffect(() => {
+    if (!loading && data?.member_contract_by_pk) {
+      setMemberContractData({
+        id: memberContractId,
+        startedAt: data.member_contract_by_pk.started_at || null,
+        endedAt: data.member_contract_by_pk.ended_at || null,
+        values: data.member_contract_by_pk.values,
+        agreedAt: data.member_contract_by_pk.agreed_at || null,
+        agreedIp: data.member_contract_by_pk.agreed_ip || null,
+        agreedOptions: data.member_contract_by_pk.agreed_options || {},
+        memberId: data.member_contract_by_pk.member.id,
+        memberName:
+          data.member_contract_by_pk.member.member_properties[0]?.value ||
+          data.member_contract_by_pk.member.name ||
+          null,
+        memberEmail: data.member_contract_by_pk.member.email || null,
+        revokedAt: data.member_contract_by_pk.revoked_at || null,
+        contract: {
+          id: data.member_contract_by_pk.contract.id,
+          name: data.member_contract_by_pk.contract.name || '',
+          description: data.member_contract_by_pk.contract.description || '',
+          template: data.member_contract_by_pk.contract.template || '',
+        },
+      })
+    }
+  }, [loading, data])
+
   return {
-    ...result,
-    memberContract: data?.member_contract_by_pk
-      ? {
-          startedAt: data.member_contract_by_pk.started_at || null,
-          endedAt: data.member_contract_by_pk.ended_at || null,
-          values: data.member_contract_by_pk.values,
-          agreedAt: data.member_contract_by_pk.agreed_at || null,
-          agreedIp: data.member_contract_by_pk.agreed_ip || null,
-          agreedOptions: data.member_contract_by_pk.agreed_options || {},
-          memberName:
-            data.member_contract_by_pk.member.member_properties[0]?.value ||
-            data.member_contract_by_pk.member.name ||
-            null,
-          memberEmail: data.member_contract_by_pk.member.email || null,
-          revokedAt: data.member_contract_by_pk.revoked_at || null,
-          contract: {
-            id: data.member_contract_by_pk.contract.id,
-            name: data.member_contract_by_pk.contract.name || '',
-            description: data.member_contract_by_pk.contract.description || '',
-            template: data.member_contract_by_pk.contract.template || '',
-          },
-        }
-      : null,
+    loading,
+    refetch,
+    memberContract: memberContractData,
+    setMemberContractData,
   }
 }
 
