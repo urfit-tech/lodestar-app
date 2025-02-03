@@ -7,7 +7,10 @@ const AdminCard = styled(Card)<{ variant?: string }>`
   .ant-card-meta-title {
     white-space: normal;
   }
-
+  .ant-card-body {
+    width: 100%;
+  }
+  
   ${props =>
     props.variant === 'program' &&
     css`

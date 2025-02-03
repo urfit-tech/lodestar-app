@@ -1,4 +1,4 @@
-import { Button, Checkbox } from '@chakra-ui/react'
+import { Button } from '@chakra-ui/react'
 import { Divider, Icon as AntdIcon, List, Skeleton, Typography } from 'antd'
 import axios from 'axios'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
@@ -16,6 +16,9 @@ import CheckoutCard from '../components/checkout/CheckoutCard'
 import AdminCard from '../components/common/AdminCard'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { desktopViewMixin, handleError } from '../helpers'
+import { Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon, Box } from '@chakra-ui/react'
+import ContractBlock from '../components/contract/ContractBlock'
+import { useMemberContract } from '../hooks/data'
 
 const StyledContentBlock = styled.div`
   ${desktopViewMixin(css`
@@ -35,33 +38,10 @@ const StyledMeta = styled.span`
     text-align: right;
   `)}
 `
-const StyledCheckbox = styled(Checkbox)`
-  .chakra-checkbox__control {
-    border: 1px solid #cdcece;
-  }
-`
-
-const StyledLabel = styled.span`
-  font-weight: bold;
-`
-const StyledApprovementBox = styled.div`
-  padding-left: 46px;
-  margin-top: 8px;
-`
-
 const StyledTitle = styled.h1`
   margin-bottom: 0.75rem;
   line-height: 1.5;
   ${CommonTitleMixin}
-`
-
-const StyledContractButton = styled.div`
-  cursor: pointer;
-  text-decoration: underline;
-  color: ${props => props.theme['@primary-color']};
-  &:hover {
-    opacity: 0.8;
-  }
 `
 
 type Invoice = {
@@ -173,7 +153,6 @@ const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
 
   const invoice = order?.invoiceOptions?.invoices?.[0]
   const orderProducts = order?.orderProducts || []
-  console.log(order)
 
   return (
     <div className="container py-5">
@@ -248,7 +227,7 @@ const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
   )
 }
 
-const PaymentBlock: React.VFC<{
+const PaymentBlock: React.FC<{
   order: Order
   payment: Payment
   invoice?: Invoice
@@ -257,18 +236,10 @@ const PaymentBlock: React.VFC<{
   memberContractId: string
 }> = ({ order, payment, invoice, orderProducts, memberId, memberContractId }) => {
   const { formatMessage } = useIntl()
-  const { settings, id: appId } = useApp()
+  const { id: appId } = useApp()
   const [token] = useQueryParam('token', StringParam)
-  const [isChecked, setIscChecked] = useState(!memberContractId)
-  // const [isApproved, setIsApproved] = useState(localStorage.getItem('kolable.checkout.approvement') === 'true')
+  const { memberContract, setMemberContractData, loading: memberContractLoading } = useMemberContract(memberContractId)
 
-  console.log(payment, invoice, orderProducts)
-
-  // 讓「我同意」按鈕在使用者重新進入後保持一樣
-  // useEffect(() => {
-  //   localStorage.setItem('kolable.checkout.approvement', JSON.stringify(isApproved))
-  //   setIsApproved(localStorage.getItem('kolable.checkout.approvement') === 'true')
-  // }, [isApproved])
   return (
     <>
       <div className="mb-3">
@@ -313,67 +284,31 @@ const PaymentBlock: React.VFC<{
         </AdminCard>
       </div>
 
-      {/* <div className="mb-3">
-        <AdminCard>
-          <InvoiceInput
-            value={{
-              name: invoice?.buyerName || '',
-              email: invoice?.buyerEmail || '',
-              uniformNumber: invoice?.buyerUBN || '',
-              uniformTitle: invoice?.buyerName || '',
-              phone: '',
-            }}
-            onChange={value => {
-              console.log(value)
-            }}
-            hidePhoneInput
-          />
-        </AdminCard>
-      </div> */}
-      {/* {settings['checkout.approvement'] === 'true' && (
-        <AdminCard className="mb-3">
-          <StyledCheckbox
-            className="mr-2"
-            size="lg"
-            colorScheme="primary"
-            isChecked={isApproved}
-            onChange={() => setIsApproved(prev => !prev)}
-          />
-          <StyledLabel>
-            {formatMessage(defineMessage({ id: 'checkoutMessages.ui.approved', defaultMessage: '我同意' }))}
-          </StyledLabel>
-          <StyledApprovementBox
-            className="mt-2"
-            dangerouslySetInnerHTML={{ __html: settings['checkout.approvement_content'] }}
-          />
-        </AdminCard>
-      )} */}
-
-      {memberContractId && (
+      {memberContractLoading ? (
+        <Skeleton />
+      ) : memberContract ? (
         <AdminCard className="mb-3 d-flex">
-          <StyledCheckbox
-            className="mr-2"
-            size="lg"
-            colorScheme="primary"
-            isChecked={isChecked}
-            onChange={() => {
-              setIscChecked(!isChecked)
-            }}
-          />
-          <StyledLabel>簽署合約</StyledLabel>
-          <StyledContractButton
-            onClick={() => {
-              window.open(`${window.location.origin}/members/${memberId}/contracts/${memberContractId}`)
-            }}
-          >
-            合約內容
-          </StyledContractButton>
+          <Accordion allowToggle>
+            <AccordionItem w="100%">
+              <h2>
+                <AccordionButton>
+                  <Box as="span" flex="1" textAlign="left">
+                    請展開此區塊，詳閱並簽署合約
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel pb={4}>
+                <ContractBlock memberContract={memberContract} onMemberContractDataChange={setMemberContractData} />
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
         </AdminCard>
-      )}
+      ) : null}
 
       <div className="mb-3">
         <CheckoutCard
-          isDisabled={!isChecked}
+          isDisabled={!memberContract?.agreedAt}
           check={{
             orderProducts: orderProducts.map(product => ({
               productId: product.productId,
