@@ -1018,7 +1018,6 @@
   "page.CollapseContentBlock.introduction": "紹介",
   "page.CollapseContentBlock.mediaArticle": "メディア記事({count})",
   "page.CollapseContentBlock.podcastChannel": "ポッドキャストチャンネル({count})",
-  "page.ContractPage.contractDuration": "契約期間",
   "page.ContractPage.agree": "確認して同意する",
   "page.ContractPage.agreedOn": "{date} に同意しました",
   "page.ContractPage.revokedOn": "{date} に取り消されました",

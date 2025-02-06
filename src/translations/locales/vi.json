@@ -1022,7 +1022,6 @@
   "page.CollapseContentBlock.introduction": "Giới thiệu",
   "page.CollapseContentBlock.mediaArticle": "Bài viết truyền thông({count})",
   "page.CollapseContentBlock.podcastChannel": "Kênh podcast({count})",
-  "page.ContractPage.contractDuration": "Thời hạn hợp đồng",
   "page.ContractPage.agree": "Xác nhận đồng ý",
   "page.ContractPage.agreedOn": "Đã đồng ý vào ngày {date}",
   "page.ContractPage.revokedOn": "Đã hủy bỏ vào ngày {date}",

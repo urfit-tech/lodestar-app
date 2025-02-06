@@ -1018,7 +1018,6 @@
   "page.CollapseContentBlock.introduction": "소개",
   "page.CollapseContentBlock.mediaArticle": "미디어 기사({count})",
   "page.CollapseContentBlock.podcastChannel": "팟캐스트 채널({count})",
-  "page.ContractPage.contractDuration": "계약 기간",
   "page.ContractPage.agree": "동의 확인",
   "page.ContractPage.agreedOn": "{date}에 동의함",
   "page.ContractPage.revokedOn": "{date}에 취소됨",

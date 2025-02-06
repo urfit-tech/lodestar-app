@@ -150,13 +150,6 @@ const ContractPage: React.VFC = () => {
         {!isAuthenticating && !memberContractLoading && memberContract && (
           <StyledCard>
             <div className="text-center">
-              <p>
-                {`${formatMessage(pageMessages.ContractPage.contractDuration)}:${dayjs(memberContract.startedAt).format(
-                  'YYYY-MM-DD HH:mm',
-                )} ~
-                ${dayjs(memberContract.endedAt).format('YYYY-MM-DD HH:mm')}`}
-              </p>
-
               {memberContract.revokedAt ? (
                 <>
                   <p>

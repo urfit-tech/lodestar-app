@@ -1022,7 +1022,6 @@
   "page.CollapseContentBlock.introduction": "Introduction",
   "page.CollapseContentBlock.mediaArticle": "Media Articles ({count})",
   "page.CollapseContentBlock.podcastChannel": "Podcast Channels ({count})",
-  "page.ContractPage.contractDuration": "Contract Duration",
   "page.ContractPage.agree": "Agree",
   "page.ContractPage.agreedOn": "Agreed to this contract on {date}",
   "page.ContractPage.revokedOn": "Revoked to this contract on {date}",
