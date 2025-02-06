@@ -30,7 +30,7 @@ const OAuth2Page: React.VFC = () => {
   return <DefaultOauth2Section />
 }
 
-const DefaultOauth2Section: React.FC = () => {
+const DefaultOauth2Section: React.VFC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [code] = useQueryParam('code', StringParam)
@@ -41,7 +41,6 @@ const DefaultOauth2Section: React.FC = () => {
   const [isOverLoginDeviceModalVisible, setIsOverLoginDeviceModalVisible] = useState(false)
   const [isOverBindDeviceModalVisible, setIsOverBindDeviceModalVisible] = useState(false)
   const [forceLoginLoading, setForceLoginLoading] = useState(false)
-  const [currentMember, setCurrentMember] = useState<{ id: string; email: string }>({ id: '', email: '' })
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const accessToken = params.get('access_token')
@@ -150,7 +149,6 @@ const DefaultOauth2Section: React.FC = () => {
           if (error instanceof LoginDeviceError) {
             setIsOverLoginDeviceModalVisible(true)
           } else if (error instanceof BindDeviceError) {
-            setCurrentMember({ id: error?.result?.member?.id || '', email: error?.result?.member?.email || '' })
             setIsOverBindDeviceModalVisible(true)
           }
 
@@ -168,7 +166,6 @@ const DefaultOauth2Section: React.FC = () => {
     <>
       <LoadingPage />
       <OverBindDeviceModal
-        member={currentMember}
         visible={isOverBindDeviceModalVisible}
         onClose={() => {
           window.location.href = redirect
