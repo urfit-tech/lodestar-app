@@ -4,7 +4,6 @@ import { Button, SkeletonText } from '@chakra-ui/react'
 import { message, Table, Tooltip } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { ColumnProps } from 'antd/lib/table'
-import axios from 'axios'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
 import TokenTypeLabel from 'lodestar-app-element/src/components/labels/TokenTypeLabel'
@@ -18,8 +17,13 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import hasura from '../../hasura'
-import { dateFormatter, dateRangeFormatter, handleError } from '../../helpers'
-import { codeMessages, commonMessages, saleMessages } from '../../helpers/translation'
+import { dateFormatter, dateRangeFormatter } from '../../helpers'
+import { commonMessages, saleMessages } from '../../helpers/translation'
+import {
+  OpenPageMethod,
+  OrderPaymentStrategyContext,
+  PaymentMode,
+} from '../../services/orderPayment/OrderPaymentStrategy'
 import { OrderDiscountProps } from '../../types/checkout'
 import { ShippingMethodType } from '../../types/merchandise'
 import { ProductType } from '../../types/product'
@@ -103,7 +107,7 @@ const OrderCollectionAdminCard: React.VFC<
   }
 > = ({ memberId, ...props }) => {
   const theme = useAppTheme()
-  const { settings } = useApp()
+  const { settings, enabledModules, id: appId } = useApp()
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { authToken } = useAuth()
@@ -273,26 +277,30 @@ const OrderCollectionAdminCard: React.VFC<
                 color: theme.colors.primary[500],
                 borderColor: theme.colors.primary[500],
               }}
-              onClick={() =>
-                axios
-                  .post(
-                    `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
-                    {
-                      orderId: record.id,
-                      clientBackUrl: window.location.origin,
-                      invoiceGatewayId: record.paymentLogs[0].invoiceGatewayId,
-                    },
-                    { headers: { authorization: `Bearer ${authToken}` } },
-                  )
-                  .then(({ data: { code, result } }) => {
-                    if (code === 'SUCCESS') {
-                      history.push(`/tasks/payment/${result.id}`)
-                    } else {
-                      message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-                    }
-                  })
-                  .catch(handleError)
-              }
+              onClick={async () => {
+                const mode = enabledModules.split_payment_mode ? PaymentMode.Split : PaymentMode.Default
+                const result = await OrderPaymentStrategyContext.execute(mode, {
+                  orderLogId: record.id,
+                  appId,
+                  authToken,
+                  invoiceGatewayId: record.paymentLogs[0].invoiceGatewayId,
+                  clientBackUrl: window.location.origin,
+                })
+
+                if (!result.success) {
+                  message.error(result.message)
+                  return
+                }
+
+                switch (result.openPageMethod) {
+                  case OpenPageMethod.HISTORY_PUSH:
+                    history.push(result.paymentUrl || '')
+                    break
+                  case OpenPageMethod.OPEN_WINDOW:
+                    window.location.replace(result.paymentUrl || '')
+                    break
+                }
+              }}
               className="mr-2"
             >
               {formatMessage(commonMessages.ui.repay)}

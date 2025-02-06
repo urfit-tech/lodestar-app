@@ -67,7 +67,7 @@ const OverviewBlock: React.VFC<{
               <div className="d-flex align-items-center mb-3">
                 <StyledImage
                   className="flex-shrink-0"
-                  src={program.coverUrl || EmptyCover}
+                  src={program.coverThumbnailUrl || program.coverUrl || EmptyCover}
                   alt={program.title || program.id}
                 />
                 <StyledTitle>{program.title}</StyledTitle>

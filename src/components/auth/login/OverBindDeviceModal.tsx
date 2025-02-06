@@ -1,6 +1,13 @@
 import { useIntl } from 'react-intl'
 import * as localAuthMessages from '../translation'
 import { StyledModal, StyledModalTitle } from './LoginSection'
+import { Input, Text, Flex, Box, Button, useToast } from '@chakra-ui/react'
+import { useContext, useState } from 'react'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { handleError } from '../../../helpers'
+import { AuthModalContext } from '../AuthModal'
+import axios from 'axios'
+import { fetchCurrentGeolocation } from '../../../hooks/util'
 
 const OverBindDeviceModal: React.VFC<{
   visible: boolean

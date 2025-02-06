@@ -20,6 +20,7 @@ import { dateFormatter, handleError } from '../helpers'
 import { useAuthModal } from '../hooks/auth'
 import { useMemberContract } from '../hooks/data'
 import pageMessages from './translation'
+import dayjs from 'dayjs'
 
 const StyledTitle = styled(Typography.Title)`
   && {

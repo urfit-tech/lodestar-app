@@ -8,6 +8,9 @@ import styled from 'styled-components'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { ProgramPackagePlanProps } from '../../types/programPackage'
 import PaymentButton from '../common/PaymentButton'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import CountDownTimeBlock from '../common/CountDownTimeBlock'
 
 const StyledCard = styled.div`
   padding: 1.5rem;
@@ -33,6 +36,13 @@ const StyledEnrollment = styled.div`
   letter-spacing: 0.18px;
 `
 
+const StyledCountDownBlock = styled.div`
+  margin-top: 20px;
+  span {
+    font-size: 14px;
+  }
+`
+
 const ProgramPackagePlanCard: React.VFC<
   ProgramPackagePlanProps & {
     programPackageId: string
@@ -46,6 +56,7 @@ const ProgramPackagePlanCard: React.VFC<
   description,
   isSubscription,
   isParticipantsVisible,
+  isCountdownTimerVisible,
   periodAmount,
   periodType,
   listPrice,
@@ -71,6 +82,11 @@ const ProgramPackagePlanCard: React.VFC<
         periodType={isSubscription ? periodType : undefined}
         periodAmount={isSubscription ? periodAmount : undefined}
       />
+      {isCountdownTimerVisible && soldAt && isOnSale && (
+        <StyledCountDownBlock>
+          <CountDownTimeBlock expiredAt={soldAt} />
+        </StyledCountDownBlock>
+      )}
       <Divider className="my-3" />
       {!isSubscription && periodAmount && periodType && (
         <StyledHighlight className="mb-3">
