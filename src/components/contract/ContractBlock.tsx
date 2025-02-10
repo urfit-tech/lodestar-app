@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import Axios from 'axios'
@@ -119,6 +119,13 @@ const ContractBlock: React.FC<{
     })
   }
 
+  const handleContractChange = useCallback(
+    updatedContract => {
+      onMemberContractDataChange?.(updatedContract)
+    },
+    [onMemberContractDataChange],
+  )
+
   const handleCheck = (e: CheckboxChangeEvent) => {
     if (
       e.target.checked &&
@@ -127,7 +134,7 @@ const ContractBlock: React.FC<{
     ) {
       handleAgreeMemberContract(memberContract)
         .then(() => {
-          onMemberContractDataChange?.({
+          const updatedContract = {
             ...memberContract,
             agreedAt: new Date(),
             agreedIp,
@@ -135,7 +142,10 @@ const ContractBlock: React.FC<{
               agreedName: memberContract.values?.invoice?.name,
               agreedPhone: memberContract.values?.invoice?.phone,
             },
-          })
+          }
+          if (JSON.stringify(updatedContract) !== JSON.stringify(memberContract)) {
+            handleContractChange(updatedContract)
+          }
         })
         .catch(handleError)
     }
@@ -246,7 +256,7 @@ const ContractBlock: React.FC<{
                 memberContract &&
                   handleAgreeMemberContract(memberContract)
                     .then(() => {
-                      onMemberContractDataChange?.({
+                      const updatedContract = {
                         ...memberContract,
                         agreedAt: new Date(),
                         agreedIp,
@@ -254,7 +264,10 @@ const ContractBlock: React.FC<{
                           agreedName: memberContract.values?.invoice?.name,
                           agreedPhone: memberContract.values?.invoice?.phone,
                         },
-                      })
+                      }
+                      if (JSON.stringify(updatedContract) !== JSON.stringify(memberContract)) {
+                        handleContractChange(updatedContract)
+                      }
                       setIsOpenApproveModal(false)
                     })
                     .catch(handleError)
