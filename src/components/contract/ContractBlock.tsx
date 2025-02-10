@@ -168,7 +168,6 @@ const ContractBlock: React.FC<{
         {!isAuthenticating && memberContract && (
           <StyledCard>
             <div className="text-center">
-              current page
               {memberContract.revokedAt ? (
                 <>
                   <p>
@@ -218,7 +217,6 @@ const ContractBlock: React.FC<{
         )}
       </StyledSection>
 
-      {/* settings['contract_page.v2.enabled'] === '1' */}
       <Modal
         onClose={() => {
           setIsOpenApproveModal(false)
