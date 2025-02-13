@@ -122,16 +122,43 @@ const authMessages = {
     },
     deviceReachLimitTitle: {
       id: 'auth.LoginSection.deviceReachLimitTitle',
-      defaultMessage: '裝置綁定已達上限',
+      defaultMessage: '裝置已達上限',
     },
     deviceReachLimitDescription: {
       id: 'auth.LoginSection.deviceReachLimitDescription',
-      defaultMessage: '裝置綁定已達上限，請至裝置管理頁移除裝置，方可於當前裝置登入。',
+      defaultMessage:
+        'Your account has reached the device usage limit. Please receive a verification email and enter the verification code to log in.',
     },
     deviceReachLimitConfirm: {
       id: 'auth.LoginSection.deviceReachLimitConfirm',
-      defaultMessage: '確定',
+      defaultMessage: 'Send',
     },
+    yourEmail: {
+      id: 'auth.LoginSection.yourEmail',
+      defaultMessage: 'your email: {email}',
+    },
+  }),
+  OverBindDeviceModal: defineMessages({
+    deviceVerificationCode: {
+      id: 'auth.OverBindDeiceModal.deviceVerificationCode',
+      defaultMessage: 'Device verification code',
+    },
+    validationSuccessfulText: {
+      id: 'auth.OverBindDeiceModal.validationSuccessful',
+      defaultMessage: 'Validation successful. Please log in again',
+    },
+    validationCodeError: {
+      id: 'auth.OverBindDeiceModal.validationCodeError',
+      defaultMessage: 'Verification code error',
+    },
+    didNotReceiveVerificationCode: {
+      id: 'auth.OverBindDeiceModal.didNotReceiveVerificationCode',
+      defaultMessage: 'Did not receive the verification code?',
+    },
+    reSend: { id: 'auth.OverBindDeiceModal.reSend', defaultMessage: 'Resend' },
+    validationFailed: { id: 'auth.OverBindDeiceModal.validationFailed', defaultMessage: 'Validation failed' },
+    sentSuccessfully: { id: 'auth.OverBindDeiceModal.sentSuccessfully', defaultMessage: 'Sent successfully' },
+    failedToSend: { id: 'auth.OverBindDeiceModal.failedToSend', defaultMessage: 'Failed to send' },
   }),
 }
 
