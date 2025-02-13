@@ -6,7 +6,7 @@ import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
 import { PaymentGatewayType, PaymentMethodType } from 'lodestar-app-element/src/types/checkout'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useContext, useEffect, useState } from 'react'
 import { AiOutlineArrowLeft } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
@@ -19,6 +19,8 @@ import { desktopViewMixin, handleError } from '../helpers'
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon, Box } from '@chakra-ui/react'
 import ContractBlock from '../components/contract/ContractBlock'
 import { useMemberContract } from '../hooks/data'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import AuthModal, { AuthModalContext } from '../components/auth/AuthModal'
 
 const StyledContentBlock = styled.div`
   ${desktopViewMixin(css`
@@ -237,6 +239,8 @@ const PaymentBlock: React.FC<{
 }> = ({ order, payment, invoice, orderProducts, memberId, memberContractId }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
+  const { isAuthenticated } = useAuth()
+  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const [token] = useQueryParam('token', StringParam)
   const { memberContract, setMemberContractData, loading: memberContractLoading } = useMemberContract(memberContractId)
 
@@ -284,27 +288,31 @@ const PaymentBlock: React.FC<{
         </AdminCard>
       </div>
 
-      {memberContractLoading ? (
-        <Skeleton />
-      ) : memberContract ? (
-        <AdminCard className="mb-3 d-flex">
-          <Accordion allowToggle>
-            <AccordionItem w="100%">
-              <h2>
-                <AccordionButton>
-                  <Box as="span" flex="1" textAlign="left">
-                    請展開此區塊，詳閱並簽署合約
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-              </h2>
-              <AccordionPanel pb={4}>
+      <AdminCard className="mb-3 d-flex">
+        <Accordion allowToggle>
+          <AccordionItem w="100%">
+            <h2>
+              <AccordionButton
+                onClick={() => {
+                  !isAuthenticated && setAuthModalVisible(true)
+                }}
+              >
+                <Box as="span" flex="1" textAlign="left">
+                  請展開此區塊，詳閱並簽署合約
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4}>
+              {memberContractLoading ? (
+                <Skeleton />
+              ) : memberContract ? (
                 <ContractBlock memberContract={memberContract} onMemberContractDataChange={setMemberContractData} />
-              </AccordionPanel>
-            </AccordionItem>
-          </Accordion>
-        </AdminCard>
-      ) : null}
+              ) : null}
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      </AdminCard>
 
       <div className="mb-3">
         <CheckoutCard
