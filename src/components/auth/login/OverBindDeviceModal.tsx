@@ -9,12 +9,13 @@ import { AuthModalContext } from '../AuthModal'
 import axios from 'axios'
 import { fetchCurrentGeolocation } from '../../../hooks/util'
 import Cookies from 'js-cookie'
+import { EventType } from '../../../types/mailVerificationCode'
 
 const OverBindDeviceModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
-  const eventType = 'bind-device-limit'
+  const eventType = EventType.BIND_DEVICE_LIMIT
   const toast = useToast()
   const { id: appId } = useApp()
   const { formatMessage } = useIntl()
