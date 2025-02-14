@@ -294,7 +294,7 @@ const PaymentBlock: React.FC<{
             <h2>
               <AccordionButton
                 onClick={() => {
-                  !isAuthenticated && setAuthModalVisible(true)
+                  !isAuthenticated && setAuthModalVisible?.(true)
                 }}
               >
                 <Box as="span" flex="1" textAlign="left">
