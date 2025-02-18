@@ -1026,6 +1026,7 @@
   "contract.ContractBlock.agreedOn": "Disetujui pada {date}",
   "contract.ContractBlock.revokedOn": "Dicabut pada {date}",
   "contract.ContractBlock.alreadyReadAndAgree": "Saya telah membaca dengan seksama dan menyetujui kontrak di atas dan bersedia mematuhi peraturan",
+  "contract.ContractBlock.contractDuration": "Durasi Kontrak",
   "contract.ContractBlock.cannotModifyAfterAgree": "Tidak dapat diubah setelah disetujui",
   "contract.ContractBlock.confirmContractTerms": "Harap pastikan Anda telah memahami dan menyetujui ketentuan kontrak ini, selama masa kontrak, kedua belah pihak akan mematuhi ketentuan ini dan tidak dapat diubah sembarangan.",
   "contract.ContractBlock.contract": "Kontrak",

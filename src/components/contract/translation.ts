@@ -2,6 +2,10 @@ import { defineMessages } from 'react-intl'
 
 const contractMessages = {
   ContractBlock: defineMessages({
+    contractDuration: {
+      id: 'contract.ContractBlock.contractDuration',
+      defaultMessage: `Contract duration`,
+    },
     cannotModifyAfterAgree: {
       id: 'contract.ContractBlock.cannotModifyAfterAgree',
       defaultMessage: `Can't modify after consent`,
