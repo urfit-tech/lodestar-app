@@ -38,6 +38,16 @@ const ContentWrapper = styled.div`
   }
 `
 
+const StyledCoverLabelWrapper = styled.div`
+  position: absolute;
+  width: 100%;
+  left: 16px;
+
+  @media (min-width: ${BREAK_POINT}px) {
+    left: 80px;
+  }
+`
+
 const IconWrapper = styled.a`
   position: absolute;
   top: 24px;
@@ -79,6 +89,22 @@ const EnrollButton = styled(SecondaryEnrollButton)`
   }
 `
 
+const StyledCoverLabel = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+  padding: 6px;
+  width: 100px;
+  height: 45px;
+  background-color: ${colors.orange};
+  font-weight: 600;
+  color: ${colors.white};
+  @media (min-width: ${BREAK_POINT}px) {
+    width: 100px;
+  }
+`
+
 const PreviewButton = styled(SecondaryOutlineButton)`
   && {
     width: 140px;
@@ -111,6 +137,10 @@ const WordingWrapper = styled.div`
     margin-bottom: 32px;
   }
 `
+
+const layoutTemplateConfigMap: Record<string, string> = {
+  coverLabel: 'ef021415-0a5f-44a1-9530-de419f9431e0',
+}
 
 const SecondaryProgramBanner: React.VFC<{
   program: Program & {
@@ -159,6 +189,12 @@ const SecondaryProgramBanner: React.VFC<{
         }}
       >
         <StyledTitleBlock>
+          <StyledCoverLabelWrapper>
+            <StyledCoverLabel>
+              <p>{program.moduleData?.[layoutTemplateConfigMap.coverLabel]}</p>
+            </StyledCoverLabel>
+          </StyledCoverLabelWrapper>
+
           <IconWrapper>
             <SocialSharePopover url={window.location.href} />
           </IconWrapper>
