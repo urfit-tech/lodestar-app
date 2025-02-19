@@ -5,6 +5,7 @@ import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import * as R from 'ramda'
+import { addIndex, assoc, map, pipe } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { checkoutMessages } from '../../helpers/translation'
@@ -18,6 +19,7 @@ import {
   ShippingProps,
 } from '../../types/checkout'
 import AdminCard from '../common/AdminCard'
+import CheckoutCardDetailCard from './CheckoutCardDetailCard'
 
 const CheckoutCard: React.VFC<
   CardProps & {
@@ -26,6 +28,7 @@ const CheckoutCard: React.VFC<
     check: {
       orderProducts: OrderProductProps[]
       orderDiscounts: OrderDiscountProps[]
+      payments: Array<{ itemName: string; itemAmt: number; itemCount: number }> | undefined
       shippingOption: ShippingOptionProps | null
     }
     cartProducts: CartProductProps[]
@@ -37,7 +40,6 @@ const CheckoutCard: React.VFC<
   const { formatMessage } = useIntl()
   const theme = useAppTheme()
   const { currencyId: appCurrencyId } = useApp()
-
   const calculateOriginalTotal = R.pipe(R.map(R.prop('price')), R.sum) as (products: OrderProductProps[]) => number
 
   const applyDiscountToProduct = R.curry(
@@ -63,25 +65,19 @@ const CheckoutCard: React.VFC<
 
   return (
     <AdminCard {...cardProps}>
-      {check.orderProducts.map((orderProduct, index) => (
-        <div key={index} className="row mb-2">
-          <div className="col-6 offset-md-4 col-md-4">
-            {orderProduct.name} x{orderProduct?.options?.quantity || 1}
-          </div>
-          <div className="col-6 col-md-4 text-right">
-            <PriceLabel
-              listPrice={
-                orderProduct.customPrice
-                  ? orderProduct.customPrice
-                  : orderProduct.options?.currencyId
-                  ? orderProduct.options?.currencyPrice || 0
-                  : orderProduct.price
-              }
-              currencyId={orderProduct.options?.currencyId || appCurrencyId}
-            />
-          </div>
-        </div>
-      ))}
+      {addIndex(map)((detail, idx: number) => (pipe as any)(assoc('key', String(idx)), CheckoutCardDetailCard)(detail))(
+        check.payments
+          ? check.payments.map(payment => ({
+              name: payment.itemName,
+              price: payment.itemAmt,
+              quantity: payment.itemCount,
+            }))
+          : check.orderProducts.map(orderProduct => ({
+              name: orderProduct.name,
+              price: orderProduct.price,
+              quantity: orderProduct?.options?.quantity,
+            })),
+      )}
 
       {check.orderProducts.map((orderProduct, index) => {
         return orderProduct.options?.productGiftPlan?.giftPlan?.gifts?.map(v => {

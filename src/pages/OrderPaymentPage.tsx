@@ -1,26 +1,26 @@
-import { Button } from '@chakra-ui/react'
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button } from '@chakra-ui/react'
 import { Divider, Icon as AntdIcon, List, Skeleton, Typography } from 'antd'
 import axios from 'axios'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
 import { PaymentGatewayType, PaymentMethodType } from 'lodestar-app-element/src/types/checkout'
+import { evolve, map, pick, pipe, props, split, transpose, zipObj } from 'ramda'
 import { Fragment, useContext, useEffect, useState } from 'react'
 import { AiOutlineArrowLeft } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
+import { AuthModalContext } from '../components/auth/AuthModal'
 import CheckoutCard from '../components/checkout/CheckoutCard'
 import AdminCard from '../components/common/AdminCard'
+import ContractBlock from '../components/contract/ContractBlock'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { desktopViewMixin, handleError } from '../helpers'
-import { Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon, Box } from '@chakra-ui/react'
-import ContractBlock from '../components/contract/ContractBlock'
 import { useMemberContract } from '../hooks/data'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import AuthModal, { AuthModalContext } from '../components/auth/AuthModal'
 
 const StyledContentBlock = styled.div`
   ${desktopViewMixin(css`
@@ -244,6 +244,21 @@ const PaymentBlock: React.FC<{
   const [token] = useQueryParam('token', StringParam)
   const { memberContract, setMemberContractData, loading: memberContractLoading } = useMemberContract(memberContractId)
 
+  const getObjectFromStupidSymbolSeparateString: <T extends Record<string, string>, K extends keyof T>(
+    separateSymbol: string,
+  ) => (keys: Array<K>) => (obj: T) => Array<Record<K, string>> = separateSymbol => keys =>
+    (pipe as any)(props(keys as string[]), map(split(separateSymbol)), transpose, map(zipObj(keys) as any))
+
+  const details = invoice
+    ? (getObjectFromStupidSymbolSeparateString('|')(['itemName', 'itemAmt', 'itemCount'])(
+        pick(['itemName', 'itemAmt', 'itemCount'], invoice) as Pick<Invoice, 'itemName' | 'itemAmt' | 'itemCount'>,
+      ).map((evolve as any)({ itemAmt: Number, itemCount: Number })) as {
+        itemName: string
+        itemAmt: number
+        itemCount: number
+      }[])
+    : undefined
+
   return (
     <>
       <div className="mb-3">
@@ -322,13 +337,13 @@ const PaymentBlock: React.FC<{
               productId: product.productId,
               name: product.name,
               description: '',
-              price: payment.price,
+              price: product.price,
               endedAt: null,
               startedAt: null,
               autoRenewed: false,
               options: product.options,
-              customPrice: payment.price,
             })),
+            payments: details,
             orderDiscounts: [],
             shippingOption: null,
           }}
