@@ -706,7 +706,7 @@
   "common.ui.checkMerchandises": "Lihat Barang",
   "common.ui.checkPlease": "Harap centang",
   "common.ui.clear": "Bersihkan",
-  "common.ui.ctaButton": "Beli Kursus Sekarang",
+  "common.ui.ctaButton": "Beli sekarang {price}",
   "common.ui.duration": "Durasi (menit)",
   "common.ui.enterKeyword": "Masukkan kata kunci",
   "common.ui.filterCategory": "Filter berdasarkan kategori",

@@ -706,7 +706,7 @@
   "common.ui.checkMerchandises": "查看商品",
   "common.ui.checkPlease": "请勾选",
   "common.ui.clear": "清除",
-  "common.ui.ctaButton": "立即购买课程",
+  "common.ui.ctaButton": "立即购买 {price}",
   "common.ui.duration": "时长（分钟）",
   "common.ui.enterKeyword": "输入关键字",
   "common.ui.filterCategory": "筛选分类",
