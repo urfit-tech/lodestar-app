@@ -4,7 +4,7 @@ import { AxiosError } from 'axios'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { BackendServerError, LoginDeviceError } from 'lodestar-app-element/src/helpers/error'
+import { BackendServerError, BindDeviceError, LoginDeviceError } from 'lodestar-app-element/src/helpers/error'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -59,7 +59,6 @@ const LoginSection: React.VFC<{
   const { setVisible: setAuthModalVisible, setIsBusinessMember } = useContext(AuthModalContext)
   const [loading, setLoading] = useState(false)
   const [forceLoginLoading, setForceLoginLoading] = useState(false)
-  const [currentMember, setCurrentMember] = useState<{ id: string; email: string }>({ id: '', email: '' })
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
       account: '',
@@ -91,11 +90,9 @@ const LoginSection: React.VFC<{
           if (error instanceof LoginDeviceError) {
             setIsOverLoginDeviceModalVisible(true)
           }
-          if (error?.code === 'E_BIND_DEVICE') {
-            setCurrentMember({ id: error?.result?.member?.id || '', email: error?.result?.member?.email || '' })
+          if (error instanceof BindDeviceError) {
             setIsOverBindDeviceModalVisible(true)
           }
-
           if (error instanceof BackendServerError) {
             const code = error.code as keyof typeof codeMessages
             message.error(formatMessage(codeMessages[code]))
@@ -228,23 +225,17 @@ const LoginSection: React.VFC<{
           </StyledAction>
           <OverLoginDeviceModal
             visible={isOverLoginDeviceModalVisible}
-            onClose={() => {
-              setIsOverLoginDeviceModalVisible(false)
-            }}
+            onClose={() => setIsOverLoginDeviceModalVisible(false)}
             onOk={handleForceLogin}
             loading={forceLoginLoading}
           />
-
-          {currentMember.email !== '' && currentMember.id !== '' ? (
-            <OverBindDeviceModal
-              member={currentMember}
-              visible={isOverBindDeviceModalVisible}
-              onClose={() => {
-                setIsOverBindDeviceModalVisible(false)
-                setLoading(false)
-              }}
-            />
-          ) : null}
+          <OverBindDeviceModal
+            visible={isOverBindDeviceModalVisible}
+            onClose={() => {
+              setIsOverBindDeviceModalVisible(false)
+              setLoading(false)
+            }}
+          />{' '}
         </>
       )}
     </>

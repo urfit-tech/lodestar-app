@@ -8,19 +8,27 @@ import { handleError } from '../../../helpers'
 import { AuthModalContext } from '../AuthModal'
 import axios from 'axios'
 import { fetchCurrentGeolocation } from '../../../hooks/util'
+import Cookies from 'js-cookie'
+import { EventType } from '../../../types/mailVerificationCode'
 
 const OverBindDeviceModal: React.FC<{
-  member: { id: string; email: string }
   visible: boolean
   onClose: () => void
-}> = ({ member, visible, onClose }) => {
-  const eventType = 'login-device-limit'
+}> = ({ visible, onClose }) => {
+  const eventType = EventType.BIND_DEVICE_LIMIT
   const toast = useToast()
   const { id: appId } = useApp()
   const { formatMessage } = useIntl()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const [currentCode, setCurrentCode] = useState('')
   const [error, setError] = useState(false)
+
+  let member: { id: string; email: string }
+  try {
+    member = JSON.parse(decodeURIComponent(Cookies.get('member')) || '{}')
+  } catch (error) {
+    member = { id: '', email: '' }
+  }
 
   const handleConfirm = async () => {
     try {
@@ -41,9 +49,6 @@ const OverBindDeviceModal: React.FC<{
               isClosable: false,
               position: 'top',
             })
-            if (result?.intervalTime) {
-              localStorage.setItem('mail-last-sent-time', result?.intervalTime || '0')
-            }
             setError(true)
           } else {
             toast({
@@ -53,12 +58,12 @@ const OverBindDeviceModal: React.FC<{
               isClosable: false,
               position: 'top',
             })
-            localStorage.removeItem('mail-last-sent-time')
             setError(false)
             onClose()
           }
           setAuthModalVisible?.(true)
         })
+        .finally(() => Cookies.remove('member'))
     } catch (error) {
       handleError(error)
     }
@@ -91,7 +96,6 @@ const OverBindDeviceModal: React.FC<{
               isClosable: false,
               position: 'top',
             })
-            localStorage.setItem('mail-last-sent-time', result?.lastSentTime)
           }
         })
     } catch (error) {
