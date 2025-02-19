@@ -1,4 +1,3 @@
-// import { message } from 'antd'
 import { message } from 'antd'
 import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -6,18 +5,15 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { BackendServerError, BindDeviceError, LoginDeviceError } from 'lodestar-app-element/src/helpers/error'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-// import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
 import OverBindDeviceModal from '../components/auth/login/OverBindDeviceModal'
 import OverLoginDeviceModal from '../components/auth/login/OverLoginDeviceModal'
 import { handleError } from '../helpers'
 import { codeMessages } from '../helpers/translation'
-// import { profileMessages } from '../helpers/translation'
-// import { useUpdateMemberYouTubeChannelIds } from '../hooks/member'
 import LoadingPage from '../pages/LoadingPage'
 
-type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth' | 'cw'
+export type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth' | 'cw'
 
 const OAuth2Page: React.VFC = () => {
   const { provider } = useParams<{ provider: ProviderType }>()
@@ -41,7 +37,6 @@ const DefaultOauth2Section: React.FC = () => {
   const [isOverLoginDeviceModalVisible, setIsOverLoginDeviceModalVisible] = useState(false)
   const [isOverBindDeviceModalVisible, setIsOverBindDeviceModalVisible] = useState(false)
   const [forceLoginLoading, setForceLoginLoading] = useState(false)
-  const [currentMember, setCurrentMember] = useState<{ id: string; email: string }>({ id: '', email: '' })
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const accessToken = params.get('access_token')
@@ -119,7 +114,8 @@ const DefaultOauth2Section: React.FC = () => {
           }).catch(error => {
             if (error instanceof LoginDeviceError) {
               setIsOverLoginDeviceModalVisible(true)
-            } else if (error instanceof BindDeviceError) {
+            }
+            if (error instanceof BindDeviceError) {
               setIsOverBindDeviceModalVisible(true)
             }
 
@@ -149,8 +145,8 @@ const DefaultOauth2Section: React.FC = () => {
         .catch(error => {
           if (error instanceof LoginDeviceError) {
             setIsOverLoginDeviceModalVisible(true)
-          } else if (error instanceof BindDeviceError) {
-            setCurrentMember({ id: error?.result?.member?.id || '', email: error?.result?.member?.email || '' })
+          }
+          if (error instanceof BindDeviceError) {
             setIsOverBindDeviceModalVisible(true)
           }
 
@@ -168,7 +164,6 @@ const DefaultOauth2Section: React.FC = () => {
     <>
       <LoadingPage />
       <OverBindDeviceModal
-        member={currentMember}
         visible={isOverBindDeviceModalVisible}
         onClose={() => {
           window.location.href = redirect
