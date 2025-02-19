@@ -1026,6 +1026,7 @@
   "contract.ContractBlock.agreedOn": "Đã đồng ý vào ngày {date}",
   "contract.ContractBlock.revokedOn": "Đã hủy bỏ vào ngày {date}",
   "contract.ContractBlock.alreadyReadAndAgree": "Tôi đã đọc kỹ và đồng ý với hợp đồng trên và cam kết tuân thủ quy định",
+  "contract.ContractBlock.contractDuration": "Thời hạn hợp đồng",
   "contract.ContractBlock.cannotModifyAfterAgree": "Không thể sửa đổi sau khi đồng ý",
   "contract.ContractBlock.confirmContractTerms": "Vui lòng xác nhận bạn đã hiểu và đồng ý với các điều khoản hợp đồng này, trong thời gian hợp đồng, cả hai bên sẽ tuân thủ các điều khoản này và không được thay đổi tuỳ ý.",
   "contract.ContractBlock.contract": "Hợp đồng",

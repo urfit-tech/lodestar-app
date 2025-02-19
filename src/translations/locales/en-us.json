@@ -1026,6 +1026,7 @@
   "contract.ContractBlock.agreedOn": "Agreed to this contract on {date}",
   "contract.ContractBlock.revokedOn": "Revoked to this contract on {date}",
   "contract.ContractBlock.alreadyReadAndAgree": "I have carefully read and agree to the above contract and am willing to abide by the terms.",
+  "contract.ContractBlock.contractDuration": "Contract Duration",
   "contract.ContractBlock.cannotModifyAfterAgree": "Cannot be modified after agreement",
   "contract.ContractBlock.confirmContractTerms": "Please confirm that you understand and agree to these contract terms. Both parties will adhere to these terms during the contract period and cannot modify them arbitrarily.",
   "contract.ContractBlock.contract": "Contract",
