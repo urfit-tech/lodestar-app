@@ -8,6 +8,8 @@ import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
+import CountDownTimeBlock from '../../../components/common/CountDownTimeBlock'
+import { Text } from '@chakra-ui/react'
 import { BREAK_POINT } from '../../../components/common/Responsive'
 import CartContext from '../../../contexts/CartContext'
 import { camelCaseToSnake } from '../../../helpers'
@@ -124,6 +126,7 @@ const ButtonWrapper = styled.div`
   grid-row-gap: 12px;
   width: 150px;
   @media (min-width: ${BREAK_POINT}px) {
+    width: 100%;
     grid-template-columns: 1fr;
   }
 `
@@ -136,6 +139,18 @@ const WordingWrapper = styled.div`
   @media (min-width: ${BREAK_POINT}px) {
     margin-bottom: 32px;
   }
+`
+
+const StyledCountDownBlock = styled.div`
+  display: flex;
+  @media (min-width: ${BREAK_POINT}px) {
+    display: inline-block;
+  }
+`
+
+const StyledSaleButtonWrapper = styled.div`
+  display: flex;
+  align-items: flex-end;
 `
 
 const layoutTemplateConfigMap: Record<string, string> = {
@@ -178,6 +193,8 @@ const SecondaryProgramBanner: React.VFC<{
       sharingCode,
     }).catch(handleError)
   }
+  const firstProgramPlan = program.plans[0]
+  const firstProgramPlanIsOnSale = (firstProgramPlan?.soldAt?.getTime() || 0) > Date.now()
 
   return (
     <Box overflow="hidden">
@@ -209,25 +226,45 @@ const SecondaryProgramBanner: React.VFC<{
               <StyledTitle className="text-start">{program.title}</StyledTitle>
             </WordingWrapper>
             <ButtonWrapper>
-              {firstPurchaseProgramPlan && (
-                <EnrollButton
-                  onClick={() => {
-                    const resource = resourceCollection?.find(notEmpty)
-                    resource && tracking.addToCart(resource, { direct: true })
-                    handleAddCart()?.then(() => {
-                      history.push('/cart?direct=true', { productUrn: resource?.urn })
-                    })
-                  }}
-                >
-                  {formatMessage(commonMessages.ui.ctaButton)}
-                </EnrollButton>
-              )}
               {hasIntroductionVideo ? (
                 <PreviewButton colorScheme="outlined" onClick={scrollToPreview} leftIcon={<PlayIcon />}>
                   {formatMessage(commonMessages.ui.previewButton)}
                 </PreviewButton>
               ) : (
                 <div />
+              )}
+              {firstPurchaseProgramPlan && (
+                <>
+                  <StyledSaleButtonWrapper>
+                    <EnrollButton
+                      onClick={() => {
+                        const resource = resourceCollection?.find(notEmpty)
+                        resource && tracking.addToCart(resource, { direct: true })
+                        handleAddCart()?.then(() => {
+                          history.push('/cart?direct=true', { productUrn: resource?.urn })
+                        })
+                      }}
+                    >
+                      {firstProgramPlan?.salePrice === null && firstProgramPlan?.listPrice === 0
+                        ? formatMessage(commonMessages.button.join)
+                        : formatMessage(commonMessages.ui.ctaButton, {
+                            price: `$${
+                              firstProgramPlan?.salePrice !== null
+                                ? firstProgramPlan?.salePrice
+                                : firstProgramPlan?.listPrice
+                            }`,
+                          })}
+                    </EnrollButton>
+                    {firstProgramPlan?.salePrice !== null && (
+                      <Text as="del" marginLeft="4px">{`$${firstProgramPlan?.listPrice}`}</Text>
+                    )}
+                  </StyledSaleButtonWrapper>
+                  {firstProgramPlan?.isCountdownTimerVisible && firstProgramPlan?.soldAt && firstProgramPlanIsOnSale && (
+                    <StyledCountDownBlock>
+                      <CountDownTimeBlock yellow renderIcon={() => <div />} expiredAt={firstProgramPlan?.soldAt} />
+                    </StyledCountDownBlock>
+                  )}
+                </>
               )}
             </ButtonWrapper>
           </ContentWrapper>
