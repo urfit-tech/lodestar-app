@@ -706,7 +706,7 @@
   "common.ui.checkMerchandises": "상품 보기",
   "common.ui.checkPlease": "선택해주세요",
   "common.ui.clear": "지우기",
-  "common.ui.ctaButton": "지금 코스 구매",
+  "common.ui.ctaButton": "지금 구입하세요 {price}",
   "common.ui.duration": "시간(분)",
   "common.ui.enterKeyword": "키워드를 입력하세요",
   "common.ui.filterCategory": "카테고리 필터",
