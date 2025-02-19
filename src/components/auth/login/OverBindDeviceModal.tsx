@@ -96,7 +96,6 @@ const OverBindDeviceModal: React.FC<{
               isClosable: false,
               position: 'top',
             })
-            localStorage.setItem('mail-last-sent-time', result?.lastSentTime)
           }
         })
     } catch (error) {
