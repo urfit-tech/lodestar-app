@@ -1,22 +1,22 @@
+import { gql, useMutation } from '@apollo/client'
+import { Button } from '@chakra-ui/button'
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay } from '@chakra-ui/modal'
+import { Skeleton } from '@chakra-ui/react'
+import { Card, Checkbox, Typography } from 'antd'
+import { CheckboxChangeEvent } from 'antd/lib/checkbox'
+import Axios from 'axios'
+import dayjs from 'dayjs'
+import Embedded from 'lodestar-app-element/src/components/common/Embedded'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { render } from 'mustache'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import Axios from 'axios'
-import { render } from 'mustache'
-import { Card, Checkbox, Typography } from 'antd'
-import { CheckboxChangeEvent } from 'antd/lib/checkbox'
-import { Skeleton } from '@chakra-ui/react'
-import { Button } from '@chakra-ui/button'
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay } from '@chakra-ui/modal'
 import hasura from '../../hasura'
 import { dateFormatter, handleError } from '../../helpers'
-import { gql, useMutation } from '@apollo/client'
-import contractMessages from './translation'
-import Embedded from 'lodestar-app-element/src/components/common/Embedded'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import dayjs from 'dayjs'
 import { MemberContract } from '../../types/contract'
+import contractMessages from './translation'
 
 const StyledTitle = styled(Typography.Title)`
   && {
@@ -178,6 +178,12 @@ const ContractBlock: React.FC<{
         {!isAuthenticating && memberContract && (
           <StyledCard>
             <div className="text-center">
+              <p>
+                {formatMessage(contractMessages.ContractBlock.contractDuration)}:
+                {dayjs(memberContract.startedAt).format('YYYY-MM-DD')} ~
+                {dayjs(memberContract.endedAt).format('YYYY-MM-DD')}
+              </p>
+
               {memberContract.revokedAt ? (
                 <>
                   <p>
