@@ -183,15 +183,15 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
           alert(formatMessage(pageMessages.AppPage.logoutAlert))
         }
       }
-
-      const trackingEvent = Cookies.get('tracking')
-      if (trackingEvent === 'register') {
-        pathway && tracking.register(pathway, window.location.pathname)
-        Cookies.remove('tracking')
-      }
-
       refreshTokenAsync()
     }
+
+    const trackingEvent = Cookies.get('tracking')
+    if (trackingEvent === 'register') {
+      pathway && tracking.register(pathway, window.location.pathname)
+      Cookies.remove('tracking')
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname])
 
