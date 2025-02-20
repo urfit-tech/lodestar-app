@@ -712,7 +712,7 @@
   "common.ui.checkMerchandises": "Xem hàng hóa",
   "common.ui.checkPlease": "Vui lòng chọn",
   "common.ui.clear": "Xóa",
-  "common.ui.ctaButton": "Mua khóa học ngay",
+  "common.ui.ctaButton": "Mua ngay {price}",
   "common.ui.duration": "Thời lượng (phút)",
   "common.ui.enterKeyword": "Nhập từ khóa",
   "common.ui.filterCategory": "Lọc theo danh mục",

@@ -706,7 +706,7 @@
   "common.ui.checkMerchandises": "商品を見る",
   "common.ui.checkPlease": "チェックしてください",
   "common.ui.clear": "クリア",
-  "common.ui.ctaButton": "今すぐコースを購入",
+  "common.ui.ctaButton": "今すぐ購入 {price}",
   "common.ui.duration": "時間（分）",
   "common.ui.enterKeyword": "キーワードを入力",
   "common.ui.filterCategory": "カテゴリーでフィルタ",
