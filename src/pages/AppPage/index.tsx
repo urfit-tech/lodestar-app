@@ -6,12 +6,14 @@ import * as CraftElement from 'lodestar-app-element/src/components/common/CraftE
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { fetchCurrentGeolocation, getFingerPrintId } from 'lodestar-app-element/src/hooks/util'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParams } from 'use-query-params'
+import { AuthModalContext } from '../../components/auth/AuthModal'
 import MessengerChat from '../../components/common/MessengerChat'
 import PageHelmet from '../../components/common/PageHelmet'
 import DefaultLayout from '../../components/layout/DefaultLayout'
@@ -127,7 +129,8 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
   const { loadingAppPages, appPages } = usePage(location.pathname)
   const ogLocale = getOgLocale(defaultLocale)
-
+  const { pathway } = useContext(AuthModalContext)
+  const tracking = useTracking()
   const { formatMessage } = useIntl()
 
   const [utmQuery] = useQueryParams({
@@ -179,6 +182,12 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
         if (code === 'E_NO_DEVICE') {
           alert(formatMessage(pageMessages.AppPage.logoutAlert))
         }
+      }
+
+      const trackingEvent = Cookies.get('tracking')
+      if (trackingEvent === 'register') {
+        pathway && tracking.register(pathway, window.location.pathname)
+        Cookies.remove('tracking')
       }
 
       refreshTokenAsync()
