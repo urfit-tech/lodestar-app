@@ -143,6 +143,8 @@ const WordingWrapper = styled.div`
 
 const StyledCountDownBlock = styled.div`
   display: flex;
+  margin-top: 5px;
+  margin-left: 8px;
   @media (min-width: ${BREAK_POINT}px) {
     display: inline-block;
   }
@@ -193,8 +195,8 @@ const SecondaryProgramBanner: React.VFC<{
       sharingCode,
     }).catch(handleError)
   }
-  const firstProgramPlan = program.plans[0]
-  const firstProgramPlanIsOnSale = (firstProgramPlan?.soldAt?.getTime() || 0) > Date.now()
+  const firstPublishProgramPlan = program.plans.filter(plan => !!plan.publishedAt)[0]
+  const firstProgramPlanIsOnSale = (firstPublishProgramPlan?.soldAt?.getTime() || 0) > Date.now()
 
   return (
     <Box overflow="hidden">
@@ -206,11 +208,13 @@ const SecondaryProgramBanner: React.VFC<{
         }}
       >
         <StyledTitleBlock>
-          <StyledCoverLabelWrapper>
-            <StyledCoverLabel>
-              <p>{program.moduleData?.[layoutTemplateConfigMap.coverLabel]}</p>
-            </StyledCoverLabel>
-          </StyledCoverLabelWrapper>
+          {program.moduleData?.[layoutTemplateConfigMap.coverLabel] && (
+            <StyledCoverLabelWrapper>
+              <StyledCoverLabel>
+                <p>{program.moduleData?.[layoutTemplateConfigMap.coverLabel]}</p>
+              </StyledCoverLabel>
+            </StyledCoverLabelWrapper>
+          )}
 
           <IconWrapper>
             <SocialSharePopover url={window.location.href} />
@@ -230,9 +234,7 @@ const SecondaryProgramBanner: React.VFC<{
                 <PreviewButton colorScheme="outlined" onClick={scrollToPreview} leftIcon={<PlayIcon />}>
                   {formatMessage(commonMessages.ui.previewButton)}
                 </PreviewButton>
-              ) : (
-                <div />
-              )}
+              ) : null}
               {firstPurchaseProgramPlan && (
                 <>
                   <StyledSaleButtonWrapper>
@@ -245,28 +247,30 @@ const SecondaryProgramBanner: React.VFC<{
                         })
                       }}
                     >
-                      {firstProgramPlan?.salePrice === null && firstProgramPlan?.listPrice === 0
-                        ? formatMessage(commonMessages.button.join)
+                      {firstPublishProgramPlan?.salePrice === null && firstPublishProgramPlan?.listPrice === 0
+                        ? `${formatMessage(commonMessages.button.join)} $${firstPublishProgramPlan?.listPrice}`
                         : formatMessage(commonMessages.ui.ctaButton, {
-                            price: `$${
-                              firstProgramPlan?.salePrice !== null
-                                ? firstProgramPlan?.salePrice
-                                : firstProgramPlan?.listPrice
+                            price: ` $${
+                              firstPublishProgramPlan?.salePrice !== null
+                                ? firstPublishProgramPlan?.salePrice
+                                : firstPublishProgramPlan?.listPrice
                             }`,
                           })}
                     </EnrollButton>
-                    {firstProgramPlan?.salePrice !== null && (
-                      <Text as="del" marginLeft="4px">{`$${firstProgramPlan?.listPrice}`}</Text>
+                    {firstPublishProgramPlan?.salePrice !== null && (
+                      <Text as="del" marginLeft="4px">{`$${firstPublishProgramPlan?.listPrice}`}</Text>
                     )}
                   </StyledSaleButtonWrapper>
-                  {firstProgramPlan?.isCountdownTimerVisible && firstProgramPlan?.soldAt && firstProgramPlanIsOnSale && (
-                    <StyledCountDownBlock>
-                      <CountDownTimeBlock yellow renderIcon={() => <div />} expiredAt={firstProgramPlan?.soldAt} />
-                    </StyledCountDownBlock>
-                  )}
                 </>
               )}
             </ButtonWrapper>
+            {firstPublishProgramPlan?.isCountdownTimerVisible &&
+              firstPublishProgramPlan?.soldAt &&
+              firstProgramPlanIsOnSale && (
+                <StyledCountDownBlock>
+                  <CountDownTimeBlock yellow renderIcon={() => <div />} expiredAt={firstPublishProgramPlan?.soldAt} />
+                </StyledCountDownBlock>
+              )}
           </ContentWrapper>
         </StyledTitleBlock>
       </Banner>
