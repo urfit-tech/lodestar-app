@@ -124,7 +124,41 @@ const CreatorCard: React.VFC<{
   noPadding,
 }) => {
   const { formatMessage } = useIntl()
-  const { enabledModules } = useApp()
+  const { enabledModules, settings } = useApp()
+
+  // optional condition
+  const tabs = settings['creator.content.tab']?.split(',') || []
+
+  // module -> tabs ? tabs : sys default -> none
+  const actions = [
+    {
+      condition: tabs.length !== 0 ? (tabs.includes('program') ? withProgram : false) : withProgram,
+      link: `/creators/${id}?tabkey=programs`,
+      label: formatMessage(commonMessages.content.addCourse),
+    },
+    {
+      condition:
+        enabledModules.podcast && tabs.length === 0 ? withPodcast : tabs.includes('podcast') ? withPodcast : false,
+      link: `/creators/${id}?tabkey=podcasts`,
+      label: formatMessage(commonMessages.content.podcasts),
+    },
+    {
+      condition:
+        enabledModules.appointment && tabs.length === 0
+          ? withAppointment
+          : tabs.includes('appointment')
+          ? withAppointment
+          : false,
+      link: `/creators/${id}?tabkey=appointments`,
+      label: formatMessage(commonMessages.content.appointments),
+    },
+    {
+      condition:
+        enabledModules.blog && tabs.length === 0 ? enabledModules : tabs.includes('blog') ? enabledModules : false,
+      link: `/creators/${id}?tabkey=posts`,
+      label: formatMessage(commonMessages.content.blog),
+    },
+  ]
 
   return (
     <StyledWrapper className={noPadding ? 'p-0' : ''}>
@@ -149,7 +183,14 @@ const CreatorCard: React.VFC<{
         {!!description && <StyledDescription>{description}</StyledDescription>}
 
         <div>
-          {withProgram && (
+          {actions.map(action =>
+            action.condition ? (
+              <StyledAction>
+                <StyledLink to={action.link}>{action.label}</StyledLink>
+              </StyledAction>
+            ) : null,
+          )}
+          {/* {withProgram && (
             <StyledAction>
               <StyledLink to={`/creators/${id}?tabkey=programs`}>
                 {formatMessage(commonMessages.content.addCourse)}
@@ -174,7 +215,7 @@ const CreatorCard: React.VFC<{
             <StyledAction>
               <StyledLink to={`/creators/${id}?tabkey=posts`}>{formatMessage(commonMessages.content.blog)}</StyledLink>
             </StyledAction>
-          )}
+          )} */}
         </div>
       </div>
     </StyledWrapper>
