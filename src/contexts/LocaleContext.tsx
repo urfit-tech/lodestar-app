@@ -59,9 +59,9 @@ export const LocaleProvider: React.FC = ({ children }) => {
 
   const languagesList = sortedLanguagesList.length > 0 ? sortedLanguagesList : SUPPORTED_LOCALES
 
-  const { data } = useQuery<hasura.GET_APP_LANGUAGE, hasura.GET_APP_LANGUAGEVariables>(
+  const { data } = useQuery<hasura.GetAppLanguage, hasura.GetAppLanguageVariables>(
     gql`
-      query GET_APP_LANGUAGE($appId: String!) {
+      query GetAppLanguage($appId: String!) {
         app_language(where: { app_id: { _eq: $appId } }) {
           id
           language
