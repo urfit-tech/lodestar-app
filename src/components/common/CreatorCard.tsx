@@ -1,5 +1,6 @@
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common/index'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { Module } from 'lodestar-app-element/src/types/app'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -126,39 +127,33 @@ const CreatorCard: React.VFC<{
   const { formatMessage } = useIntl()
   const { enabledModules, settings } = useApp()
 
-  // optional condition
-  const tabs = settings['creator.content.tab']?.split(',') || []
+  const tabsContents = settings['creator.content.tab']?.split(',') || []
+  const hasTabSetting = Boolean(settings['creator.content.tab'])
 
-  // module -> tabs ? tabs : sys default -> none
-  const actions = [
+  const actionContents: {
+    key: Module
+    withKey: boolean | undefined
+    tabkey: string
+    contentKey: {
+      id: string
+      defaultMessage: string
+    }
+  }[] = [
+    { key: 'program', withKey: withProgram, tabkey: 'programs', contentKey: commonMessages.content.addCourse },
+    { key: 'podcast', tabkey: 'podcasts', withKey: withPodcast, contentKey: commonMessages.content.podcasts },
     {
-      condition: tabs.length !== 0 ? (tabs.includes('program') ? withProgram : false) : withProgram,
-      link: `/creators/${id}?tabkey=programs`,
-      label: formatMessage(commonMessages.content.addCourse),
+      key: 'appointment',
+      tabkey: 'appointments',
+      withKey: withAppointment,
+      contentKey: commonMessages.content.appointments,
     },
-    {
-      condition:
-        enabledModules.podcast && tabs.length === 0 ? withPodcast : tabs.includes('podcast') ? withPodcast : false,
-      link: `/creators/${id}?tabkey=podcasts`,
-      label: formatMessage(commonMessages.content.podcasts),
-    },
-    {
-      condition:
-        enabledModules.appointment && tabs.length === 0
-          ? withAppointment
-          : tabs.includes('appointment')
-          ? withAppointment
-          : false,
-      link: `/creators/${id}?tabkey=appointments`,
-      label: formatMessage(commonMessages.content.appointments),
-    },
-    {
-      condition:
-        enabledModules.blog && tabs.length === 0 ? enabledModules : tabs.includes('blog') ? enabledModules : false,
-      link: `/creators/${id}?tabkey=posts`,
-      label: formatMessage(commonMessages.content.blog),
-    },
+    { key: 'blog', tabkey: 'blogs', withKey: withBlog, contentKey: commonMessages.content.blog },
   ]
+  const actions = actionContents.map(({ key, withKey, tabkey, contentKey }) => ({
+    condition: enabledModules[key] && (hasTabSetting ? tabsContents.includes(key) : withKey),
+    link: `/creators/${id}?tabkey=${tabkey}`,
+    label: formatMessage(contentKey),
+  }))
 
   return (
     <StyledWrapper className={noPadding ? 'p-0' : ''}>
@@ -190,32 +185,6 @@ const CreatorCard: React.VFC<{
               </StyledAction>
             ) : null,
           )}
-          {/* {withProgram && (
-            <StyledAction>
-              <StyledLink to={`/creators/${id}?tabkey=programs`}>
-                {formatMessage(commonMessages.content.addCourse)}
-              </StyledLink>
-            </StyledAction>
-          )}
-          {withPodcast && enabledModules.podcast && (
-            <StyledAction>
-              <StyledLink to={`/creators/${id}?tabkey=podcasts`}>
-                {formatMessage(commonMessages.content.podcasts)}
-              </StyledLink>
-            </StyledAction>
-          )}
-          {withAppointment && enabledModules.appointment && (
-            <StyledAction>
-              <StyledLink to={`/creators/${id}?tabkey=appointments`}>
-                {formatMessage(commonMessages.content.appointments)}
-              </StyledLink>
-            </StyledAction>
-          )}
-          {withBlog && enabledModules.blog && (
-            <StyledAction>
-              <StyledLink to={`/creators/${id}?tabkey=posts`}>{formatMessage(commonMessages.content.blog)}</StyledLink>
-            </StyledAction>
-          )} */}
         </div>
       </div>
     </StyledWrapper>
