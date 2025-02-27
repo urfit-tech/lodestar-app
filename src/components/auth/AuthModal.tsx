@@ -43,22 +43,28 @@ export const StyledAction = styled.div`
   text-align: center;
 `
 
+type Pathway = 'general' | 'checkout' | 'trial' 
+
+type AuthModalProps = {
+  defaultAuthState?: AuthState
+  noGeneralLogin?: boolean
+  pathway?: Pathway
+  onAuthStateChange?: (authState: AuthState) => void
+  renderTitle?: () => React.ReactNode
+}
+
 export const AuthModalContext = React.createContext<{
   visible: boolean
   setVisible?: React.Dispatch<React.SetStateAction<boolean>>
   isBusinessMember?: boolean
   setIsBusinessMember?: React.Dispatch<React.SetStateAction<boolean>>
-}>({ visible: false, isBusinessMember: false })
+  pathway?: Pathway
+  setPathway?: React.Dispatch<React.SetStateAction<string>>
+}>({ visible: false, isBusinessMember: false, pathway: 'general' })
 
-type AuthModalProps = {
-  defaultAuthState?: AuthState
-  noGeneralLogin?: boolean
-  onAuthStateChange?: (authState: AuthState) => void
-  renderTitle?: () => React.ReactNode
-}
-const AuthModal: React.FC<AuthModalProps> = ({ defaultAuthState, noGeneralLogin, onAuthStateChange, renderTitle }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ defaultAuthState, noGeneralLogin, renderTitle }) => {
   const { renderAuthModal } = useCustomRenderer()
-  const { visible, setVisible, isBusinessMember, setIsBusinessMember } = useContext(AuthModalContext)
+  const { visible, setVisible, isBusinessMember, setIsBusinessMember, pathway } = useContext(AuthModalContext)
   const [authState, setAuthState] = useState(defaultAuthState || 'login')
 
   return (
@@ -84,7 +90,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ defaultAuthState, noGeneralLogin,
               isBusinessMember={isBusinessMember}
             />
           ) : authState === 'register' ? (
-            <RegisterSection onAuthStateChange={setAuthState} isBusinessMember={isBusinessMember} />
+            <RegisterSection onAuthStateChange={setAuthState} isBusinessMember={isBusinessMember} pathway={pathway} />
           ) : null}
         </StyledContainer>
       </Modal>

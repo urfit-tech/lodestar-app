@@ -91,7 +91,7 @@ const CheckoutBlock: React.VFC<{
   const history = useHistory()
   const { isAuthenticating, isAuthenticated, currentMemberId, authToken } = useAuth()
   const { settings, enabledModules } = useApp()
-  const { setVisible } = useContext(AuthModalContext)
+  const { setVisible: setAuthModalVisible, setPathway } = useContext(AuthModalContext)
   const { removeCartProducts } = useContext(CartContext)
   const { memberShop } = useMemberShop(shopId)
   const [isApproved, setIsApproved] = useState(localStorage.getItem('kolable.checkout.approvement') === 'true')
@@ -255,7 +255,8 @@ const CheckoutBlock: React.VFC<{
 
   const handleCheckoutAsync = async () => {
     if (!isAuthenticated || !member) {
-      setVisible?.(true)
+      setPathway?.('checkout')
+      setAuthModalVisible?.(true)
       return
     }
 
