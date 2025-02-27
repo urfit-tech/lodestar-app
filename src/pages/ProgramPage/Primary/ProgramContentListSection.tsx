@@ -118,7 +118,7 @@ const ProgramContentListSection: React.VFC<{
   const history = useHistory()
   const theme = useAppTheme()
   const { isAuthenticated } = useAuth()
-  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
+  const { setVisible: setAuthModalVisible, setPathway } = useContext(AuthModalContext)
   const { isEquityProgram } = useEquityProgramByProgramId(program.id)
 
   const layoutContent = document.getElementById('layout-content')
@@ -245,6 +245,7 @@ const ProgramContentListSection: React.VFC<{
                   url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
                   url.searchParams.set('programContentId', item.id)
                   window.history.pushState({}, '', url.toString())
+                  setPathway?.('trial')
                   setAuthModalVisible?.(true)
                 } else if (isEbookTrial) {
                   history.push(`/programs/${program.id}/contents/${item.id}?back=programs_${program.id}`)
@@ -320,6 +321,7 @@ const ProgramContentListSection: React.VFC<{
                   url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
                   url.searchParams.set('programContentId', item.id)
                   window.history.pushState({}, '', url.toString())
+                  setPathway?.('trial')
                   setAuthModalVisible?.(true)
                 } else if (isEbookTrial) {
                   history.push(`/programs/${program.id}/contents/${item.id}?back=programs_${program.id}`)
