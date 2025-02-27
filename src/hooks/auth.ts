@@ -33,9 +33,11 @@ export const useAuthModal = () => {
           JSON.stringify({
             provider: 'cw',
             redirect:
-              window.location.pathname +
-              '?' +
-              new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
+              window.location.pathname.includes('over-bind-device') || window.location.pathname.includes('over-login-device')
+                ? ''
+                : window.location.pathname +
+                  '?' +
+                  new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
           }),
         )
         const redirectUri = encodeURIComponent(`${window.location.origin}/oauth2/cw`)
