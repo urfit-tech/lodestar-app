@@ -22,15 +22,15 @@ type SupportedLocales = {
 }[]
 
 type LocaleContextProps = {
-  defaultLocale: string
-  currentLocale: string
+  defaultLocale: string | null
+  currentLocale: string | null
   languagesList: SupportedLocales
   setCurrentLocale?: (language: string) => void
 }
 
 const defaultLocaleContextValue: LocaleContextProps = {
-  defaultLocale: '',
-  currentLocale: 'zh-tw',
+  defaultLocale: null,
+  currentLocale: null,
   languagesList: SUPPORTED_LOCALES,
 }
 
@@ -38,8 +38,8 @@ export const LocaleContext = createContext<LocaleContextProps>(defaultLocaleCont
 
 export const LocaleProvider: React.FC = ({ children }) => {
   const { enabledModules, settings, id: appId } = useApp()
-  const [currentLocale, setCurrentLocale] = useState(defaultLocaleContextValue.currentLocale)
-  const defaultLocale = settings['language'] || 'en-us'
+  const defaultLocale = settings['language'] || 'zh-tw'
+  const [currentLocale, setCurrentLocale] = useState(defaultLocaleContextValue.currentLocale || defaultLocale)
   const layoutLanguageSortedListSettings = settings['layout.language_sorted_list']
 
   let sortedLanguagesList: SupportedLocales = []
@@ -59,9 +59,9 @@ export const LocaleProvider: React.FC = ({ children }) => {
 
   const languagesList = sortedLanguagesList.length > 0 ? sortedLanguagesList : SUPPORTED_LOCALES
 
-  const { data } = useQuery<hasura.GET_APP_LANGUAGE, hasura.GET_APP_LANGUAGEVariables>(
+  const { data } = useQuery<hasura.GetAppLanguage, hasura.GetAppLanguageVariables>(
     gql`
-      query GET_APP_LANGUAGE($appId: String!) {
+      query GetAppLanguage($appId: String!) {
         app_language(where: { app_id: { _eq: $appId } }) {
           id
           language
@@ -81,6 +81,8 @@ export const LocaleProvider: React.FC = ({ children }) => {
       SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === cachedLocale.toLowerCase())
     ) {
       currentLocale = cachedLocale
+    } else if (Boolean(settings['language'])) {
+      currentLocale = settings['language']
     } else if (
       enabledModules.locale &&
       navigator.language &&
@@ -88,7 +90,6 @@ export const LocaleProvider: React.FC = ({ children }) => {
     ) {
       currentLocale = navigator.language.toLowerCase()
     }
-
     setCurrentLocale(currentLocale)
   }, [defaultLocale, enabledModules, settings])
 
