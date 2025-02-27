@@ -77,7 +77,7 @@ const SocialSharePopover: React.FC<{ url: string }> = ({ url, children }) => {
       visible={visible}
       onVisibleChange={handleVisibleOnChange}
     >
-      {children ? children : <ShareIcon />}
+      {children ? children : <ShareIcon style={{ height: size, width: size }} />}
     </Popover>
   )
 }
