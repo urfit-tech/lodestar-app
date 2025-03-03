@@ -24,20 +24,20 @@ const MultiPeriodMembershipCardSelectionModal: React.VFC<{
   membershipCards: MembershipCardProps[]
   loadingMembershipCards: boolean
   onSelect?: (membershipCardId: string) => void
-  selectedMembershipCardtId: string | null
+  selectedMembershipCardId: string | null
   render?: React.VFC<{
     setVisible: React.Dispatch<React.SetStateAction<boolean>>
     selectedMembershipCard?: MembershipCardProps
   }>
-}> = ({ memberId, membershipCards, loadingMembershipCards, onSelect, selectedMembershipCardtId, render }) => {
+}> = ({ memberId, membershipCards, loadingMembershipCards, onSelect, selectedMembershipCardId, render }) => {
   const { loadingMember, errorMember, member } = useMember(memberId)
   const [visible, setVisible] = useState(false)
   const { formatMessage } = useIntl()
 
   const [selectedMembershipCard, setSelectedMembershipCard] = useState<MembershipCardProps | undefined>(
-    selectedMembershipCardtId
+    selectedMembershipCardId
       ? (pipe as any)(
-          filter((pipe as any)(path(['card', 'id']), equals(selectedMembershipCardtId))),
+          filter((pipe as any)(path(['card', 'id']), equals(selectedMembershipCardId))),
           head,
         )(membershipCards)
       : undefined,
