@@ -103,6 +103,7 @@ import {
 import { useMuiltiPeriodProduct } from './muiltiPeriodDataFetcher'
 import { CheckoutPeriodsModalProps, MultiPeriodProductDetail } from './MultiPeriod.type'
 import DiscountSelectionCard from './MultiPeriodDiscountSelectionCard'
+import appointmentMessages from './translation'
 
 export const StyledTitle = styled.h1`
   ${CommonTitleMixin}
@@ -433,8 +434,10 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
     ),
   )(coupons) as Array<CouponProps>
 
-  const { enrolledMembershipCardsWithDiscountOfProduct, loadingMembershipCards } =
-    useEnrolledMembershipCardsWithDiscountInfo(currentMemberId ?? '', productId)
+  const { enrolledMembershipCardsWithDiscountOfProduct } = useEnrolledMembershipCardsWithDiscountInfo(
+    currentMemberId ?? '',
+    productId,
+  )
 
   const [selectedDiscountOptimizerName, setSelectedDiscountOptimizerName] = useState<string>('customized')
 
@@ -821,7 +824,9 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
               boxShadow: '0 0 1vmin 0.5vmin rgba(0,0,0,0.1)',
             }}
           >
-            <span style={{ fontSize: '1.2em', fontWeight: 'bold' }}>折抵模式</span>
+            <span style={{ fontSize: '1.2em', fontWeight: 'bold' }}>
+              {formatMessage(appointmentMessages.MultiPeriodCheckoutModal.discountMode)}
+            </span>
             <Divider />
             <RadioGroup
               style={{ fontSize: '1em' }}
@@ -833,8 +838,12 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
               value={selectedDiscountOptimizerName}
             >
               <Stack direction="row" spacing="5vmin">
-                <Radio value="customized">手動設定</Radio>
-                <Radio value="greedy">自動推薦</Radio>
+                <Radio value="customized">
+                  {formatMessage(appointmentMessages.MultiPeriodCheckoutModal.manualSetting)}
+                </Radio>
+                <Radio value="greedy">
+                  {formatMessage(appointmentMessages.MultiPeriodCheckoutModal.autoRecommendation)}
+                </Radio>
               </Stack>
             </RadioGroup>
           </Stack>
