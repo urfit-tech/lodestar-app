@@ -103,7 +103,7 @@ const DiscountSelectionCard: React.VFC<{
                     membershipCards={availableMembershipCards}
                     loadingMembershipCards={loadingMembershipCards}
                     onSelect={membershipCardId => onChange?.(`Card_${membershipCardId}`)}
-                    selectedMembershipCardtId={discountTarget}
+                    selectedMembershipCardId={discountTarget}
                     render={({ setVisible, selectedMembershipCard }) => (
                       <>
                         <Button variant="outline" onClick={() => setVisible(true)}>

@@ -105,7 +105,7 @@ const StyledTimeStandardBlock = styled.div`
   background-color: var(--gray-lighter);
 `
 
-const AppointmentCollectionTabsWrapper: React.VFC<{
+const AppointmentCollectionTabsWrapper: React.FC<{
   creatorId: string
   appointmentPlans: Array<AppointmentPlan & { periods: AppointmentPeriod[] }>
   programs: Array<
@@ -129,10 +129,11 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
   setActiveKey,
   setAuthModalVisible,
 }) => {
+  const { formatMessage } = useIntl()
   const [selectedAppointmentPlanId, setSelectedAppointmentPlanId] = useState<string>(appointmentPlans[0].id)
   const [selectedAppointmentPlan] = filter(propEq(selectedAppointmentPlanId, 'id'))(appointmentPlans)
   const [selectedPeriods, setSelectedPeriods] = useState<Array<AppointmentPeriod>>([])
-  const { currentMemberId, isAuthenticating, authToken } = useAuth()
+  const { currentMemberId, isAuthenticating } = useAuth()
   const { member: currentMember } = useMember(currentMemberId || '')
   const { isOpen: isCheckOutModalOpen, onOpen: onCheckOutModalOpen, onClose: onCheckOutModalClose } = useDisclosure()
 
@@ -142,7 +143,7 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
     (ifElse as any)(
       pipe(always(selectedPeriods.length + 1 > appointmentPeriodLengthLimit)),
       pipe(
-        tap(() => window.alert('選取堂數超過設定總數！')),
+        tap(() => window.alert(formatMessage(appointmentMessages.AppointmentCollectionTabs.setSelectedPeriodsAlert))),
         always(selectedPeriods),
       ),
       identity,
@@ -199,8 +200,10 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
             }
           >
             <Card.Title style={{ fontSize: '1.2em', fontWeight: 'bold', padding: '1.2em 0' }}>
-              已選擇 {selectedPeriods.length}{' '}
-              {appointmentPeriodLengthLimit === Infinity ? `` : `/ ${appointmentPeriodLengthLimit}`} 堂
+              {`${formatMessage(appointmentMessages.AppointmentCollectionTabs.selected)}：
+              ${selectedPeriods.length}
+              ${appointmentPeriodLengthLimit === Infinity ? `` : `/ ${appointmentPeriodLengthLimit}`}
+              ${formatMessage(appointmentMessages.AppointmentCollectionTabs.classes)}`}
             </Card.Title>
             <VStack align="stretch">
               {map(
@@ -210,7 +213,7 @@ const AppointmentCollectionTabsWrapper: React.VFC<{
                 ]),
               )(selectedPeriods)}
               <Button variant="outline" onClick={onCheckOutModalOpen}>
-                立即購買
+                {formatMessage(appointmentMessages.AppointmentCollectionTabs.bookNow)}
               </Button>
               {!isCheckOutModalOpen ? (
                 <></>
@@ -326,7 +329,10 @@ const AppointmentCollectionTabs: React.VFC<{
   }, [appointmentPlans])
 
   const handleAppointmentClick = (appointmentPlan: AppointmentPlan) => {
-    if (isEmpty(selectedPeriods) || window.confirm('尚有課程等待結帳，是否跳至其他系列？')) {
+    if (
+      isEmpty(selectedPeriods) ||
+      window.confirm(formatMessage(appointmentMessages.AppointmentCollectionTabs.clickConfirm))
+    ) {
       setSelectedAppointmentPlanId(appointmentPlan.id)
       setSelectedPeriods([])
     }
@@ -355,8 +361,8 @@ const AppointmentCollectionTabs: React.VFC<{
                 <div className="info">
                   {formatMessage(
                     {
-                      id: 'product.appointment.unit',
-                      defaultMessage: '每 {duration} 分鐘 {price}',
+                      id: 'appointment.AppointmentCollectionTabs.priceLabel',
+                      defaultMessage: 'Every {duration} minutes {price}',
                     },
                     {
                       duration: appointmentPlan.duration,
@@ -371,7 +377,7 @@ const AppointmentCollectionTabs: React.VFC<{
 
       <HStack padding="1em">
         <span className="col-lg-4 col-12" style={{ fontSize: '1.5em', fontWeight: 'bold' }}>
-          選擇堂數
+          {formatMessage(appointmentMessages.AppointmentCollectionTabs.selectCourse)}
         </span>
         <Spacer />
         <Input
