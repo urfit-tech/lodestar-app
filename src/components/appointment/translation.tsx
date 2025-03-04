@@ -87,7 +87,6 @@ const appointmentMessages = {
     downloadMeetingRecord: { id: 'appointment.AppointmentCard.downloadMeetingRecord', defaultMessage: '下載錄影' },
   }),
   MultiPeriodCheckoutModal: defineMessages({
-    
     selectTimePeriod: {
       id: 'appointment.MultiPeriodCheckoutModal.selectTimePeriod',
       defaultMessage: 'Select Time Period',
@@ -106,6 +105,12 @@ const appointmentMessages = {
     },
     coupon: { id: 'appointment.MultiPeriodCheckoutModal.coupon', defaultMessage: 'Coupon' },
     bookingPlan: { id: 'appointment.MultiPeriodCheckoutModal.bookingPlan', defaultMessage: 'Booking Plan' },
+  }),
+  AppointmentPeriodBlockCalendar: defineMessages({
+    noAvailableBookingSlots: {
+      id: 'appointment.AppointmentPeriodBlockCalendar.noAvailableBookingSlots',
+      defaultMessage: 'There are no booking slots available for this date',
+    },
   }),
   AppointmentPeriodCollection: defineMessages({
     selectTimeSlot: {
@@ -139,7 +144,7 @@ const appointmentMessages = {
       defaultMessage: 'Selected',
     },
     classes: {
-      id: 'appointment.AppointmentCollectionTabs.Classes',
+      id: 'appointment.AppointmentCollectionTabs.classes',
       defaultMessage: 'Classes',
     },
     priceLabel: {
