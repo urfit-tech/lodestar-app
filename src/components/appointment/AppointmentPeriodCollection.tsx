@@ -1,6 +1,6 @@
 import { CalendarOutlined, TableOutlined } from '@ant-design/icons'
 import { Button } from '@chakra-ui/button'
-import { HStack, Spacer } from '@chakra-ui/layout'
+import { Text, Box, HStack, Spacer } from '@chakra-ui/layout'
 import dayjs from 'dayjs'
 import moment from 'moment'
 import { groupBy } from 'ramda'
@@ -110,27 +110,33 @@ const AppointmentPeriodCollection: React.VFC<{
   return (
     <>
       <HStack padding="1em">
-        <span className="col-lg-4 col-12" style={{ fontSize: '1.5em', fontWeight: 'bold' }}>
+        <Text fontSize="1.5em" fontWeight="bold">
           {formatMessage(appointmentMessages.AppointmentPeriodCollection.selectTimeSlot)}
-        </span>
-        <Spacer className="col-lg-5 col-12" />
-        <Button
-          variant="outline"
-          className="col-lg-3 col-12"
-          style={{ verticalAlign: 'middle', fontSize: '1em', fontWeight: 'bold' }}
-          onClick={() => setUiMode(uiMode === 'grid' ? 'calendar' : 'grid')}
-          leftIcon={
-            uiMode === 'grid' ? (
-              <CalendarOutlined style={{ fontSize: '1.2em', verticalAlign: 'middle' }} />
-            ) : (
-              <TableOutlined style={{ fontSize: '1.2em', verticalAlign: 'middle' }} />
-            )
-          }
-        >
-          {uiMode === 'grid'
-            ? formatMessage(appointmentMessages.AppointmentPeriodCollection.switchToCalendarView)
-            : formatMessage(appointmentMessages.AppointmentPeriodCollection.switchToGridView)}
-        </Button>
+        </Text>
+        <Spacer />
+        <Box>
+          <Button
+            maxW="100%"
+            variant="outline"
+            position="relative"
+            overflow="hidden"
+            fontSize="1em"
+            fontWeight="bold"
+            verticalAlign="middle"
+            onClick={() => setUiMode(uiMode === 'grid' ? 'calendar' : 'grid')}
+            leftIcon={
+              uiMode === 'grid' ? (
+                <CalendarOutlined style={{ fontSize: '1.2em', verticalAlign: 'middle' }} />
+              ) : (
+                <TableOutlined style={{ fontSize: '1.2em', verticalAlign: 'middle' }} />
+              )
+            }
+          >
+            {uiMode === 'grid'
+              ? formatMessage(appointmentMessages.AppointmentPeriodCollection.switchToCalendarView)
+              : formatMessage(appointmentMessages.AppointmentPeriodCollection.switchToGridView)}
+          </Button>
+        </Box>
       </HStack>
       {uiMode === 'grid' ? (
         Object.values(periods).map(
