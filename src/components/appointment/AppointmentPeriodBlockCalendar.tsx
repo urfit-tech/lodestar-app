@@ -28,8 +28,10 @@ import {
   tap,
 } from 'ramda'
 import { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { AppointmentPeriod, ReservationType } from '../../types/appointment'
 import AppointmentItem from './AppointmentItem'
+import appointmentMessages from './translation'
 
 dayjs.extend(utc as any)
 
@@ -95,6 +97,7 @@ const AppointmentPeriodBlockCalendar: React.VFC<{
   loadingServices: boolean
   onClick: (period: AppointmentPeriod) => void
 }> = ({ periods, creatorId, appointmentPlan, services, loadingServices, onClick }) => {
+  const { formatMessage } = useIntl()
   const {
     colors: {
       primary: { 500: primaryColor },
@@ -210,7 +213,7 @@ const AppointmentPeriodBlockCalendar: React.VFC<{
       ) : (
         <>
           <Divider margin="0.5em auto" />
-          <p>該日期無可預約時段</p>
+          <p>{formatMessage(appointmentMessages.AppointmentPeriodBlockCalendar.noAvailableBookingSlots)}</p>
         </>
       )}
     </>

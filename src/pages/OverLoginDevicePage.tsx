@@ -1,9 +1,9 @@
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import OverLoginDeviceModal from '../components/auth/login/OverLoginDeviceModal'
-import DefaultLayout from '../components/layout/DefaultLayout'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { getFingerPrintId } from 'lodestar-app-element/src/hooks/util'
+import OverLoginDeviceModal from '../components/auth/login/OverLoginDeviceModal'
+import DefaultLayout from '../components/layout/DefaultLayout'
 import { handleError } from '../helpers'
 
 const OverLoginDevicePage: React.FC = () => {

@@ -1,17 +1,17 @@
 import { CalendarOutlined, TableOutlined } from '@ant-design/icons'
 import { Button } from '@chakra-ui/button'
-import { HStack, Spacer } from '@chakra-ui/layout'
+import { Text, Box, HStack, Spacer } from '@chakra-ui/layout'
 import dayjs from 'dayjs'
-import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
 import { groupBy } from 'ramda'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { useService } from '../../hooks/service'
 import { AppointmentPeriod, ReservationType, UiMode } from '../../types/appointment'
-import { AuthModalContext } from '../auth/AuthModal'
 import AppointmentItem from './AppointmentItem'
 import AppointmentPeriodBlockCalendar from './AppointmentPeriodBlockCalendar'
+import appointmentMessages from './translation'
 
 const StyledScheduleTitle = styled.h3`
   margin-bottom: 1.25rem;
@@ -35,8 +35,6 @@ const AppointmentPeriodBlock: React.VFC<{
   loadingServices: boolean
   onClick: (period: AppointmentPeriod) => void
 }> = ({ periods, creatorId, appointmentPlan, services, loadingServices, onClick }) => {
-  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
-  const { isAuthenticated } = useAuth()
   const [overLapPeriods, setOverLapPeriods] = useState<string[]>([])
 
   return (
@@ -95,6 +93,7 @@ const AppointmentPeriodCollection: React.VFC<{
   appointmentPeriods: AppointmentPeriod[]
   onClick: (period: AppointmentPeriod) => void
 }> = ({ creatorId, appointmentPlan, appointmentPeriods, onClick }) => {
+  const { formatMessage } = useIntl()
   const { loading: loadingServices, services } = useService()
   const periods = groupBy(
     period => dayjs(period.startedAt).format('YYYY-MM-DD(dd)'),
@@ -111,40 +110,51 @@ const AppointmentPeriodCollection: React.VFC<{
   return (
     <>
       <HStack padding="1em">
-        <span className="col-lg-4 col-12" style={{ fontSize: '1.5em', fontWeight: 'bold' }}>
-          選擇時段
-        </span>
-        <Spacer className="col-lg-5 col-12" />
-        <Button
-          variant="outline"
-          className="col-lg-3 col-12"
-          style={{ verticalAlign: 'middle', fontSize: '1em', fontWeight: 'bold' }}
-          onClick={() => setUiMode(uiMode === 'grid' ? 'calendar' : 'grid')}
-          leftIcon={
-            uiMode === 'grid' ? (
-              <CalendarOutlined style={{ fontSize: '1.2em', verticalAlign: 'middle' }} />
-            ) : (
-              <TableOutlined style={{ fontSize: '1.2em', verticalAlign: 'middle' }} />
-            )
-          }
-        >
-          {uiMode === 'grid' ? '切換月曆' : '切換格狀'}
-        </Button>
+        <Text fontSize="1.5em" fontWeight="bold">
+          {formatMessage(appointmentMessages.AppointmentPeriodCollection.selectTimeSlot)}
+        </Text>
+        <Spacer />
+        <Box>
+          <Button
+            maxW="100%"
+            variant="outline"
+            position="relative"
+            overflow="hidden"
+            fontSize="1em"
+            fontWeight="bold"
+            verticalAlign="middle"
+            onClick={() => setUiMode(uiMode === 'grid' ? 'calendar' : 'grid')}
+            leftIcon={
+              uiMode === 'grid' ? (
+                <CalendarOutlined style={{ fontSize: '1.2em', verticalAlign: 'middle' }} />
+              ) : (
+                <TableOutlined style={{ fontSize: '1.2em', verticalAlign: 'middle' }} />
+              )
+            }
+          >
+            {uiMode === 'grid'
+              ? formatMessage(appointmentMessages.AppointmentPeriodCollection.switchToCalendarView)
+              : formatMessage(appointmentMessages.AppointmentPeriodCollection.switchToGridView)}
+          </Button>
+        </Box>
       </HStack>
       {uiMode === 'grid' ? (
-        Object.values(periods).map(periods => (
-          <AppointmentPeriodBlock
-            periods={periods}
-            creatorId={creatorId}
-            appointmentPlan={appointmentPlan}
-            onClick={onClick}
-            services={services}
-            loadingServices={loadingServices}
-          />
-        ))
+        Object.values(periods).map(
+          periods =>
+            periods && (
+              <AppointmentPeriodBlock
+                periods={periods}
+                creatorId={creatorId}
+                appointmentPlan={appointmentPlan}
+                onClick={onClick}
+                services={services}
+                loadingServices={loadingServices}
+              />
+            ),
+        )
       ) : (
         <AppointmentPeriodBlockCalendar
-          periods={periods}
+          periods={periods as Record<string, AppointmentPeriod[]>}
           creatorId={creatorId}
           appointmentPlan={appointmentPlan}
           onClick={onClick}

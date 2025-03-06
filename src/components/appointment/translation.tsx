@@ -86,7 +86,75 @@ const appointmentMessages = {
     canceledReason: { id: 'appointment.AppointmentCard.canceledReason', defaultMessage: '取消原因' },
     downloadMeetingRecord: { id: 'appointment.AppointmentCard.downloadMeetingRecord', defaultMessage: '下載錄影' },
   }),
+  MultiPeriodCheckoutModal: defineMessages({
+    selectTimePeriod: {
+      id: 'appointment.MultiPeriodCheckoutModal.selectTimePeriod',
+      defaultMessage: 'Select Time Period',
+    },
+    discountMode: {
+      id: 'appointment.MultiPeriodCheckoutModal.discountMode',
+      defaultMessage: 'Discount Mode',
+    },
+    manualSetting: {
+      id: 'appointment.MultiPeriodCheckoutModal.manualSetting',
+      defaultMessage: 'Manual Setting',
+    },
+    autoRecommendation: {
+      id: 'appointment.MultiPeriodCheckoutModal.autoRecommendation',
+      defaultMessage: 'Auto Recommendation',
+    },
+    coupon: { id: 'appointment.MultiPeriodCheckoutModal.coupon', defaultMessage: 'Coupon' },
+    bookingPlan: { id: 'appointment.MultiPeriodCheckoutModal.bookingPlan', defaultMessage: 'Booking Plan' },
+  }),
+  AppointmentPeriodBlockCalendar: defineMessages({
+    noAvailableBookingSlots: {
+      id: 'appointment.AppointmentPeriodBlockCalendar.noAvailableBookingSlots',
+      defaultMessage: 'There are no booking slots available for this date',
+    },
+  }),
+  AppointmentPeriodCollection: defineMessages({
+    selectTimeSlot: {
+      id: 'appointment.AppointmentPeriodCollection.selectTimeSlot',
+      defaultMessage: 'Select Time Slot',
+    },
+    switchToGridView: {
+      id: 'appointment.AppointmentPeriodCollection.switchToGridView',
+      defaultMessage: 'Switch to Grid View',
+    },
+    switchToCalendarView: {
+      id: 'appointment.AppointmentPeriodCollection.switchToCalendarView',
+      defaultMessage: 'Switch to Calendar View',
+    },
+  }),
   AppointmentCollectionTabs: defineMessages({
+    clickConfirm: {
+      id: 'appointment.AppointmentCollectionTabs.clickConfirm',
+      defaultMessage: 'There are courses waiting to be checked out. Would you like to switch to another series?',
+    },
+    setSelectedPeriodsAlert: {
+      id: 'appointment.AppointmentCollectionTabs.setSelectedPeriodsAlert',
+      defaultMessage: 'The selected number of classes exceeds the set total.',
+    },
+    bookNow: {
+      id: 'appointment.AppointmentCollectionTabs.bookNow',
+      defaultMessage: 'Book Now',
+    },
+    selected: {
+      id: 'appointment.AppointmentCollectionTabs.selected',
+      defaultMessage: 'Selected',
+    },
+    classes: {
+      id: 'appointment.AppointmentCollectionTabs.classes',
+      defaultMessage: 'Classes',
+    },
+    priceLabel: {
+      id: 'appointment.AppointmentCollectionTabs.priceLabel',
+      defaultMessage: 'Every {duration} minutes {price}',
+    },
+    selectCourse: {
+      id: 'appointment.AppointmentCollectionTabs.selectCourse',
+      defaultMessage: 'Select Course',
+    },
     timezone: {
       id: 'appointment.AppointmentCollectionTabs.timezone',
       defaultMessage: '時間以 {city} (GMT{timezone}) 顯示',

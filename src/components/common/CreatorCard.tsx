@@ -1,5 +1,6 @@
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common/index'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { Module } from 'lodestar-app-element/src/types/app'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -124,7 +125,35 @@ const CreatorCard: React.VFC<{
   noPadding,
 }) => {
   const { formatMessage } = useIntl()
-  const { enabledModules } = useApp()
+  const { enabledModules, settings } = useApp()
+
+  const tabsContents = settings['creator.content.tab']?.split(',') || []
+  const hasTabSetting = Boolean(settings['creator.content.tab'])
+
+  const actionContents: {
+    key: Module
+    withKey: boolean | undefined
+    tabkey: string
+    contentKey: {
+      id: string
+      defaultMessage: string
+    }
+  }[] = [
+    { key: 'program', withKey: withProgram, tabkey: 'programs', contentKey: commonMessages.content.addCourse },
+    { key: 'podcast', tabkey: 'podcasts', withKey: withPodcast, contentKey: commonMessages.content.podcasts },
+    {
+      key: 'appointment',
+      tabkey: 'appointments',
+      withKey: withAppointment,
+      contentKey: commonMessages.content.appointments,
+    },
+    { key: 'blog', tabkey: 'blogs', withKey: withBlog, contentKey: commonMessages.content.blog },
+  ]
+  const actions = actionContents.map(({ key, withKey, tabkey, contentKey }) => ({
+    condition: enabledModules[key] && (hasTabSetting ? tabsContents.includes(key) : withKey),
+    link: `/creators/${id}?tabkey=${tabkey}`,
+    label: formatMessage(contentKey),
+  }))
 
   return (
     <StyledWrapper className={noPadding ? 'p-0' : ''}>
@@ -149,31 +178,12 @@ const CreatorCard: React.VFC<{
         {!!description && <StyledDescription>{description}</StyledDescription>}
 
         <div>
-          {withProgram && (
-            <StyledAction>
-              <StyledLink to={`/creators/${id}?tabkey=programs`}>
-                {formatMessage(commonMessages.content.addCourse)}
-              </StyledLink>
-            </StyledAction>
-          )}
-          {withPodcast && enabledModules.podcast && (
-            <StyledAction>
-              <StyledLink to={`/creators/${id}?tabkey=podcasts`}>
-                {formatMessage(commonMessages.content.podcasts)}
-              </StyledLink>
-            </StyledAction>
-          )}
-          {/* {withAppointment && enabledModules.appointment && (
-            <StyledAction>
-              <StyledLink to={`/creators/${id}?tabkey=appointments`}>
-                {formatMessage(commonMessages.content.appointments)}
-              </StyledLink>
-            </StyledAction>
-          )} */}
-          {withBlog && enabledModules.blog && (
-            <StyledAction>
-              <StyledLink to={`/creators/${id}?tabkey=posts`}>{formatMessage(usersMessages.tab.mediaPost)}</StyledLink>
-            </StyledAction>
+          {actions.map(action =>
+            action.condition ? (
+              <StyledAction>
+                <StyledLink to={action.link}>{action.label}</StyledLink>
+              </StyledAction>
+            ) : null,
           )}
         </div>
       </div>
