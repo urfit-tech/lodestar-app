@@ -1,6 +1,4 @@
 import { Button, Divider } from '@chakra-ui/react'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
