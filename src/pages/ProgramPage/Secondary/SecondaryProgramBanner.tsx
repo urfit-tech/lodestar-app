@@ -208,69 +208,75 @@ const SecondaryProgramBanner: React.VFC<{
         }}
       >
         <StyledTitleBlock>
-          {program.moduleData?.[layoutTemplateConfigMap.coverLabel] && (
-            <StyledCoverLabelWrapper>
-              <StyledCoverLabel>
-                <p>{program.moduleData?.[layoutTemplateConfigMap.coverLabel]}</p>
-              </StyledCoverLabel>
-            </StyledCoverLabelWrapper>
-          )}
-
-          <IconWrapper>
-            <SocialSharePopover url={window.location.href} />
-          </IconWrapper>
           <ContentWrapper>
-            <WordingWrapper>
-              <StyledInstructor className="text-start">
-                {program.roles
-                  .filter(role => role.name === 'instructor')
-                  .map(role => role.memberName)
-                  .join(', ')}
-              </StyledInstructor>
-              <StyledTitle className="text-start">{program.title}</StyledTitle>
-            </WordingWrapper>
-            <ButtonWrapper>
-              {hasIntroductionVideo ? (
-                <PreviewButton colorScheme="outlined" onClick={scrollToPreview} leftIcon={<PlayIcon />}>
-                  {formatMessage(commonMessages.ui.previewButton)}
-                </PreviewButton>
-              ) : null}
-              {firstPurchaseProgramPlan && (
-                <>
-                  <StyledSaleButtonWrapper>
-                    <EnrollButton
-                      onClick={() => {
-                        const resource = resourceCollection?.find(notEmpty)
-                        resource && tracking.addToCart(resource, { direct: true })
-                        handleAddCart()?.then(() => {
-                          history.push('/cart?direct=true', { productUrn: resource?.urn })
-                        })
-                      }}
-                    >
-                      {firstPublishProgramPlan?.salePrice === null && firstPublishProgramPlan?.listPrice === 0
-                        ? `${formatMessage(commonMessages.button.join)} $${firstPublishProgramPlan?.listPrice}`
-                        : formatMessage(commonMessages.ui.ctaButton, {
-                            price: ` $${
-                              firstPublishProgramPlan?.salePrice !== null
-                                ? firstPublishProgramPlan?.salePrice
-                                : firstPublishProgramPlan?.listPrice
-                            }`,
-                          })}
-                    </EnrollButton>
-                    {firstPublishProgramPlan?.salePrice !== null && (
-                      <Text as="del" marginLeft="4px">{`$${firstPublishProgramPlan?.listPrice}`}</Text>
-                    )}
-                  </StyledSaleButtonWrapper>
-                </>
-              )}
-            </ButtonWrapper>
-            {firstPublishProgramPlan?.isCountdownTimerVisible &&
-              firstPublishProgramPlan?.soldAt &&
-              firstProgramPlanIsOnSale && (
-                <StyledCountDownBlock>
-                  <CountDownTimeBlock yellow renderIcon={() => <div />} expiredAt={firstPublishProgramPlan?.soldAt} />
-                </StyledCountDownBlock>
-              )}
+            {program.moduleData?.[layoutTemplateConfigMap.coverLabel] && (
+              <StyledCoverLabelWrapper>
+                <StyledCoverLabel style={{ margin: 0 }}>
+                  <p>{program.moduleData?.[layoutTemplateConfigMap.coverLabel]}</p>
+                </StyledCoverLabel>
+                <IconWrapper>
+                  <SocialSharePopover url={window.location.href} />
+                </IconWrapper>
+              </StyledCoverLabelWrapper>
+            )}
+
+            <div>
+              <WordingWrapper>
+                <StyledInstructor className="text-start">
+                  {program.roles
+                    .filter(role => role.name === 'instructor')
+                    .map(role => role.memberName)
+                    .join(', ')}
+                </StyledInstructor>
+                <StyledTitle className="text-start">{program.title}</StyledTitle>
+              </WordingWrapper>
+              <ButtonWrapper>
+                {hasIntroductionVideo ? (
+                  <PreviewButton colorScheme="outlined" onClick={scrollToPreview} leftIcon={<PlayIcon />}>
+                    {formatMessage(commonMessages.ui.previewButton)}
+                  </PreviewButton>
+                ) : null}
+                {firstPurchaseProgramPlan && (
+                  <>
+                    <StyledSaleButtonWrapper>
+                      <EnrollButton
+                        onClick={() => {
+                          const resource = resourceCollection?.find(notEmpty)
+                          resource && tracking.addToCart(resource, { direct: true })
+                          handleAddCart()?.then(() => {
+                            history.push('/cart?direct=true', { productUrn: resource?.urn })
+                          })
+                        }}
+                      >
+                        {firstPublishProgramPlan?.salePrice === null && firstPublishProgramPlan?.listPrice === 0
+                          ? `${formatMessage(commonMessages.button.join)} $${firstPublishProgramPlan?.listPrice}`
+                          : formatMessage(commonMessages.ui.ctaButton, {
+                              price: ` $${
+                                firstPublishProgramPlan?.salePrice !== null
+                                  ? firstPublishProgramPlan?.salePrice
+                                  : firstPublishProgramPlan?.listPrice
+                              }`,
+                            })}
+                      </EnrollButton>
+                      {firstPublishProgramPlan?.salePrice !== null && (
+                        <Text
+                          as="del"
+                          style={{ color: '#D3D3D3', textShadow: '2px 2px 3px #333333', padding: '2px' }}
+                          marginLeft="4px"
+                        >{`$${firstPublishProgramPlan?.listPrice}`}</Text>
+                      )}
+                    </StyledSaleButtonWrapper>
+                  </>
+                )}
+              </ButtonWrapper>
+              {firstPublishProgramPlan?.isCountdownTimerVisible &&
+                firstPublishProgramPlan?.soldAt &&
+                firstProgramPlanIsOnSale && (
+                  <StyledCountDownBlock>
+                    <CountDownTimeBlock yellow renderIcon={() => <div />} expiredAt={firstPublishProgramPlan?.soldAt} />
+                  </StyledCountDownBlock>
+                )}
+            </div>
           </ContentWrapper>
         </StyledTitleBlock>
       </Banner>
