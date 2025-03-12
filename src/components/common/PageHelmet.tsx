@@ -34,6 +34,18 @@ const PageHelmet: React.FC<
     ? `${props.keywords}${keywordsConcat ? `,${app.settings['keywords']}` : ''}`
     : app.settings['keywords']
 
+  const prefetchingList = [
+    'https://cdnjs.cloudflare.com',
+    'https://fonts.googleapis.com',
+    `https://${window.location.host}/api/v1/`,
+    `https://${window.location.host}/api/v2/`,
+    `https://${window.location.host}/api/v2/`,
+    `https://${window.location.host}/api/enterprise`,
+    process.env.REACT_APP_S3_BUCKET,
+    process.env.REACT_APP_GRAPHQL_PH_ENDPOINT,
+    process.env.REACT_APP_GRAPHQL_RH_ENDPOINT,
+  ]
+
   const defaultOpenGraph = [
     { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
     { property: 'og:site_name', content: app.settings['name'] },
@@ -66,6 +78,10 @@ const PageHelmet: React.FC<
         content={xss(getBraftContent(props.description || '{}').slice(0, 150) || app.settings['description']) || ''}
       />
       <meta key="keywords" name="keywords" content={xss(keywords)} />
+      <meta http-equiv="x-dns-prefetch-control" content="on" />
+      {prefetchingList.map(url => (
+        <link rel="dns-prefetch" href={url} />
+      ))}
       {props.jsonLd && <script type="application/ld+json">{xss(JSON.stringify(props.jsonLd))}</script>}
       {props.isNoIndex ? <meta name="robots" content="noindex,nofollow" /> : null}
       {openGraph.map(({ property, content }, index) => (
