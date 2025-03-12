@@ -26,6 +26,8 @@ import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './Au
 import { FacebookLoginButton, GoogleLoginButton, LineLoginButton } from './SocialLoginButton'
 import authMessages from './translation'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import Cookies from 'js-cookie'
+import { RegisterEvent, TrackingEvent } from '../../types/tracking'
 
 const StyledParagraph = styled.p`
   color: var(--gray-dark);
@@ -208,7 +210,21 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
             )
           }
           if (currentMemberId) {
-            pathway && tracking.register(pathway, window.location.pathname)
+            try {
+              const trackingData = JSON.parse(decodeURIComponent(Cookies.get('tracking')))
+              const trackingRegisterData = trackingData.find((data: TrackingEvent) => data.event === 'register')
+              const method = trackingRegisterData.method
+              const page = trackingRegisterData.pages
+              tracking.register(method, page)
+              const omitRegisterTracking = trackingData.filter((data: TrackingEvent) => data.event !== 'register')
+              if (omitRegisterTracking.length > 1) {
+                Cookies.set('tracking', encodeURIComponent(JSON.stringify(omitRegisterTracking)))
+              } else {
+                Cookies.remove('tracking')
+              }
+            } catch (error) {
+              console.error(`tracking failed: ${error}`)
+            }
           }
           setVisible?.(false)
           setIsBusinessMember?.(false)

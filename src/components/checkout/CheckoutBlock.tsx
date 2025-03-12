@@ -42,6 +42,7 @@ import { CartProductProps, InvoiceProps, ShippingProps } from '../../types/check
 import { MemberProps } from '../../types/member'
 import { AuthModalContext } from '../auth/AuthModal'
 import GroupBuyingRuleModal from './CheckoutGroupBuyingForm/GroupBuyingRuleModal'
+import Cookies from 'js-cookie'
 
 const StyledTitle = styled.div`
   ${CommonTitleMixin}
@@ -91,7 +92,7 @@ const CheckoutBlock: React.VFC<{
   const history = useHistory()
   const { isAuthenticating, isAuthenticated, currentMemberId, authToken } = useAuth()
   const { settings, enabledModules } = useApp()
-  const { setVisible: setAuthModalVisible, setPathway } = useContext(AuthModalContext)
+  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { removeCartProducts } = useContext(CartContext)
   const { memberShop } = useMemberShop(shopId)
   const [isApproved, setIsApproved] = useState(localStorage.getItem('kolable.checkout.approvement') === 'true')
@@ -255,7 +256,15 @@ const CheckoutBlock: React.VFC<{
 
   const handleCheckoutAsync = async () => {
     if (!isAuthenticated || !member) {
-      setPathway?.('checkout')
+      Cookies.set(
+        'tracking',
+        JSON.stringify({
+          event: 'register',
+          method: 'purchase',
+          page: window.location.href,
+        }),
+        { expires: 1 },
+      )
       setAuthModalVisible?.(true)
       return
     }
