@@ -72,7 +72,13 @@ const SecondaryPriceLabel: React.VFC<{
             {salePriceSuffix}
             {periodElem}
           </StyledDisplayPrice>
-          <StyledPriceDescription>
+          <StyledPriceDescription
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
             <Text as="del">
               {listPricePrefix}
               {formatCurrency(listPrice)}
