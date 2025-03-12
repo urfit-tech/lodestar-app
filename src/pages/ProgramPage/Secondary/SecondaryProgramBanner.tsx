@@ -99,16 +99,12 @@ const StyledCoverLabel = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 16px;
-  padding: 6px;
-  width: 100px;
-  height: 45px;
+  font-size: 0.8rem;
+  padding: 0.4rem;
+  height: 1.8rem;
   background-color: ${colors.orange};
   font-weight: 600;
   color: ${colors.white};
-  @media (min-width: ${BREAK_POINT}px) {
-    width: 100px;
-  }
 `
 
 const PreviewButton = styled(SecondaryOutlineButton)`
@@ -263,7 +259,11 @@ const SecondaryProgramBanner: React.VFC<{
                             })}
                       </EnrollButton>
                       {firstPublishProgramPlan?.salePrice !== null && (
-                        <Text as="del" marginLeft="4px">{`$${firstPublishProgramPlan?.listPrice}`}</Text>
+                        <Text
+                          as="del"
+                          style={{ color: '#D3D3D3', textShadow: '2px 2px 3px #333333', padding: '2px' }}
+                          marginLeft="4px"
+                        >{`$${firstPublishProgramPlan?.listPrice}`}</Text>
                       )}
                     </StyledSaleButtonWrapper>
                   </>
