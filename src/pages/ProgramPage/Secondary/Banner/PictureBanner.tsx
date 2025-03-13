@@ -12,7 +12,7 @@ const StyledWrapper = styled.div<{ width?: { desktop: string; mobile: string } }
   }
 
   @media (min-width: ${BREAK_POINT}px) {
-    height: ${props => (props.width ? props.width.desktop : 'auto')};
+    height: 100%;
   }
 `
 const BackgroundWrapper = styled.div`
