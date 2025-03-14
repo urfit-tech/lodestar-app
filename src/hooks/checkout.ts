@@ -42,12 +42,14 @@ export const useCheck = ({
   const [check, setCheck] = useState<{
     orderProducts: OrderProductProps[]
     orderDiscounts: EnhancedOrderDiscount[]
+    payments?: Array<{ itemName: string; itemAmt: number; itemCount: number }>
     shippingOption: ShippingOptionProps | null
   }>({
     orderProducts: [],
     orderDiscounts: [],
     shippingOption: null,
   })
+
   const [orderChecking, setOrderChecking] = useState(false)
   const [orderPlacing, setOrderPlacing] = useState(false)
   const [checkError, setCheckError] = useState<Error | null>(null)

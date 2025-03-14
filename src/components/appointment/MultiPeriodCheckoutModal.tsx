@@ -104,6 +104,7 @@ import { useMuiltiPeriodProduct } from './muiltiPeriodDataFetcher'
 import { CheckoutPeriodsModalProps, MultiPeriodProductDetail } from './MultiPeriod.type'
 import DiscountSelectionCard from './MultiPeriodDiscountSelectionCard'
 import appointmentMessages from './translation'
+import Cookies from 'js-cookie'
 
 export const StyledTitle = styled.h1`
   ${CommonTitleMixin}
@@ -490,14 +491,9 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
 
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
 
-  if (isAuthenticating) {
+  if (isAuthenticating || currentMember === null) {
     setAuthModalVisible?.(true)
-    return <></>
-  }
-
-  if (currentMember === null) {
-    setAuthModalVisible?.(true)
-    return <></>
+    return null
   }
 
   if (productTarget === null || payment === undefined) {
