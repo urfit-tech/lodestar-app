@@ -210,16 +210,16 @@ const SecondaryProgramBanner: React.VFC<{
         <StyledTitleBlock>
           <ContentWrapper>
             <StyledCoverLabelWrapper>
-              {program.moduleData?.[layoutTemplateConfigMap.coverLabel] && (
-                <>
-                  <StyledCoverLabel style={{ margin: 0 }}>
-                    <p>{program.moduleData?.[layoutTemplateConfigMap.coverLabel]}</p>
-                  </StyledCoverLabel>
-                  <IconWrapper>
-                    <SocialSharePopover url={window.location.href} />
-                  </IconWrapper>
-                </>
+              {program.moduleData?.[layoutTemplateConfigMap.coverLabel] ? (
+                <StyledCoverLabel style={{ margin: 0 }}>
+                  <p>{program.moduleData?.[layoutTemplateConfigMap.coverLabel]}</p>
+                </StyledCoverLabel>
+              ) : (
+                <div />
               )}
+              <IconWrapper>
+                <SocialSharePopover url={window.location.href} />
+              </IconWrapper>
             </StyledCoverLabelWrapper>
 
             <div>
