@@ -257,8 +257,8 @@ const CheckoutBlock: React.VFC<{
 
   const handleCheckoutAsync = async () => {
     if (!isAuthenticated || !member) {
-      Cookies.set(TrackingEvent.REGISTER_METHOD, RegistrationMethod.PURCHASE, { expires: 10 })
-      Cookies.set(TrackingEvent.REGISTER_PAGE, window.location.href, { expires: 10 })
+      Cookies.set(TrackingEvent.REGISTER_METHOD, RegistrationMethod.PURCHASE, { expires: 1 })
+      Cookies.set(TrackingEvent.REGISTER_PAGE, window.location.href, { expires: 1 })
       setAuthModalVisible?.(true)
       return
     }

@@ -336,8 +336,8 @@ const ProgramContentListSection: React.VFC<{
                   url.searchParams.set('programContentId', item.id)
                   window.history.pushState({}, '', url.toString())
 
-                  Cookies.set(TrackingEvent.REGISTER_METHOD, RegistrationMethod.TRIAL, { expires: 10 })
-                  Cookies.set(TrackingEvent.REGISTER_PAGE, window.location.href, { expires: 10 })
+                  Cookies.set(TrackingEvent.REGISTER_METHOD, RegistrationMethod.TRIAL, { expires: 1 })
+                  Cookies.set(TrackingEvent.REGISTER_PAGE, window.location.href, { expires: 1 })
 
                   setAuthModalVisible?.(true)
                 } else if (isEbookTrial) {

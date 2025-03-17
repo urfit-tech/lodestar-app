@@ -20,8 +20,8 @@ const AuthButton: React.VFC = () => {
   const authModal = useAuthModal()
 
   const handleClick = () => {
-    Cookies.set(TrackingEvent.REGISTER_METHOD, RegistrationMethod.STANDARD, { expires: 10 })
-    Cookies.set(TrackingEvent.REGISTER_PAGE, window.location.href, { expires: 10 })
+    Cookies.set(TrackingEvent.REGISTER_METHOD, RegistrationMethod.STANDARD, { expires: 1 })
+    Cookies.set(TrackingEvent.REGISTER_PAGE, window.location.href, { expires: 1 })
 
     authModal.open(setVisible)
     window.history.pushState(null, '', '#')

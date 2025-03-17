@@ -210,8 +210,8 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
             )
           }
           if (currentMemberId) {
-            Cookies.set(TrackingEvent.REGISTER_METHOD, RegistrationMethod.STANDARD , { expires: 10 })
-            Cookies.set(TrackingEvent.REGISTER_PAGE, window.location.href, { expires: 10 })
+            Cookies.set(TrackingEvent.REGISTER_METHOD, RegistrationMethod.STANDARD , { expires: 1 })
+            Cookies.set(TrackingEvent.REGISTER_PAGE, window.location.href, { expires: 1 })
           }
           setVisible?.(false)
           setIsBusinessMember?.(false)
