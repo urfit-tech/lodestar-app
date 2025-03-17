@@ -185,16 +185,18 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
       refreshTokenAsync()
     }
     try {
-      const trackingData = JSON.parse(decodeURIComponent(Cookies.get('tracking')))
-      const trackingRegisterData = trackingData.find((data: TrackingEvent) => data.event === 'register')
-      const method = trackingRegisterData.method
-      const page = trackingRegisterData.pages
-      tracking.register(method, page)
-      const omitRegisterTracking = trackingData.filter((data: TrackingEvent) => data.event !== 'register')
-      if (omitRegisterTracking.length > 1) {
-        Cookies.set('tracking', encodeURIComponent(JSON.stringify(omitRegisterTracking)))
-      } else {
-        Cookies.remove('tracking')
+      try {
+        const trackingEvent = Cookies.get(TrackingEvent.REGISTER_EVENT)
+        const trackingPage = Cookies.get(TrackingEvent.REGISTER_PAGE)
+        const trackingRegisterMethod = Cookies.get(TrackingEvent.REGISTER_METHOD)
+        if (trackingEvent === 'register') {
+          tracking.register(trackingRegisterMethod, trackingPage)
+        }
+        Cookies.remove(TrackingEvent.REGISTER_EVENT)
+        Cookies.remove(TrackingEvent.REGISTER_PAGE)
+        Cookies.remove(TrackingEvent.REGISTER_METHOD)
+      } catch (error) {
+        console.error(`tracking failed: ${error}`)
       }
     } catch (error) {
       console.error(`tracking failed: ${error}`)

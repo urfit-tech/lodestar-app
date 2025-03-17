@@ -27,7 +27,7 @@ import { FacebookLoginButton, GoogleLoginButton, LineLoginButton } from './Socia
 import authMessages from './translation'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import Cookies from 'js-cookie'
-import { RegisterEvent, TrackingEvent } from '../../types/tracking'
+import { TrackingEvent, RegistrationMethod } from '../../types/tracking'
 
 const StyledParagraph = styled.p`
   color: var(--gray-dark);
@@ -210,21 +210,8 @@ const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMemb
             )
           }
           if (currentMemberId) {
-            try {
-              const trackingData = JSON.parse(decodeURIComponent(Cookies.get('tracking')))
-              const trackingRegisterData = trackingData.find((data: TrackingEvent) => data.event === 'register')
-              const method = trackingRegisterData.method
-              const page = trackingRegisterData.pages
-              tracking.register(method, page)
-              const omitRegisterTracking = trackingData.filter((data: TrackingEvent) => data.event !== 'register')
-              if (omitRegisterTracking.length > 1) {
-                Cookies.set('tracking', encodeURIComponent(JSON.stringify(omitRegisterTracking)))
-              } else {
-                Cookies.remove('tracking')
-              }
-            } catch (error) {
-              console.error(`tracking failed: ${error}`)
-            }
+            Cookies.set(TrackingEvent.REGISTER_METHOD, RegistrationMethod.STANDARD , { expires: 10 })
+            Cookies.set(TrackingEvent.REGISTER_PAGE, window.location.href, { expires: 10 })
           }
           setVisible?.(false)
           setIsBusinessMember?.(false)
