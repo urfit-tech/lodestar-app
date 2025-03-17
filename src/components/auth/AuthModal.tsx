@@ -43,6 +43,13 @@ export const StyledAction = styled.div`
   text-align: center;
 `
 
+type AuthModalProps = {
+  defaultAuthState?: AuthState
+  noGeneralLogin?: boolean
+  onAuthStateChange?: (authState: AuthState) => void
+  renderTitle?: () => React.ReactNode
+}
+
 export const AuthModalContext = React.createContext<{
   visible: boolean
   setVisible?: React.Dispatch<React.SetStateAction<boolean>>
@@ -50,13 +57,7 @@ export const AuthModalContext = React.createContext<{
   setIsBusinessMember?: React.Dispatch<React.SetStateAction<boolean>>
 }>({ visible: false, isBusinessMember: false })
 
-type AuthModalProps = {
-  defaultAuthState?: AuthState
-  noGeneralLogin?: boolean
-  onAuthStateChange?: (authState: AuthState) => void
-  renderTitle?: () => React.ReactNode
-}
-const AuthModal: React.FC<AuthModalProps> = ({ defaultAuthState, noGeneralLogin, onAuthStateChange, renderTitle }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ defaultAuthState, noGeneralLogin, renderTitle }) => {
   const { renderAuthModal } = useCustomRenderer()
   const { visible, setVisible, isBusinessMember, setIsBusinessMember } = useContext(AuthModalContext)
   const [authState, setAuthState] = useState(defaultAuthState || 'login')
