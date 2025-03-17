@@ -1,5 +1,6 @@
 import { Collapse, IconButton } from '@chakra-ui/react'
 import { Divider, Icon, Tag, Typography } from 'antd'
+import Cookies from 'js-cookie'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment-timezone'
@@ -16,6 +17,7 @@ import { useEquityProgramByProgramId } from '../../../hooks/program'
 import { BookIcon, MicrophoneIcon } from '../../../images'
 import PinIcon from '../../../images/pin-v-2.svg'
 import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../../types/program'
+import { TrackingEvent,RegistrationMethod } from '../../../types/tracking'
 
 const StyledTitle = styled.h2`
   display: flex;
@@ -118,7 +120,7 @@ const ProgramContentListSection: React.VFC<{
   const history = useHistory()
   const theme = useAppTheme()
   const { isAuthenticated } = useAuth()
-  const { setVisible: setAuthModalVisible, setPathway } = useContext(AuthModalContext)
+  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { isEquityProgram } = useEquityProgramByProgramId(program.id)
 
   const layoutContent = document.getElementById('layout-content')
@@ -245,7 +247,19 @@ const ProgramContentListSection: React.VFC<{
                   url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
                   url.searchParams.set('programContentId', item.id)
                   window.history.pushState({}, '', url.toString())
-                  setPathway?.('trial')
+                  Cookies.set(
+                    'tracking',
+                    encodeURIComponent(
+                      JSON.stringify([
+                        {
+                          event: 'register',
+                          method: 'trial',
+                          page: window.location.href,
+                        },
+                      ]),
+                    ),
+                    { expires: 1 },
+                  )
                   setAuthModalVisible?.(true)
                 } else if (isEbookTrial) {
                   history.push(`/programs/${program.id}/contents/${item.id}?back=programs_${program.id}`)
@@ -321,7 +335,10 @@ const ProgramContentListSection: React.VFC<{
                   url.searchParams.set('position', Math.floor(layoutContent?.scrollTop || 0).toString())
                   url.searchParams.set('programContentId', item.id)
                   window.history.pushState({}, '', url.toString())
-                  setPathway?.('trial')
+
+                  Cookies.set(TrackingEvent.REGISTER_METHOD, RegistrationMethod.TRIAL, { expires: 1 })
+                  Cookies.set(TrackingEvent.REGISTER_PAGE, window.location.href, { expires: 1 })
+
                   setAuthModalVisible?.(true)
                 } else if (isEbookTrial) {
                   history.push(`/programs/${program.id}/contents/${item.id}?back=programs_${program.id}`)

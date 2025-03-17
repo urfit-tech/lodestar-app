@@ -13,7 +13,6 @@ import { useIntl } from 'react-intl'
 import { Link, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParams } from 'use-query-params'
-import { AuthModalContext } from '../../components/auth/AuthModal'
 import MessengerChat from '../../components/common/MessengerChat'
 import PageHelmet from '../../components/common/PageHelmet'
 import DefaultLayout from '../../components/layout/DefaultLayout'
@@ -48,6 +47,7 @@ import hasura from '../../hasura'
 import { getBraftContent, getOgLocale } from '../../helpers'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { MetaTag } from '../../types/general'
+import { TrackingEvent } from '../../types/tracking'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 import pageMessages from '../translation'
@@ -128,8 +128,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   const { defaultLocale, currentLocale } = useContext(LocaleContext)
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
   const { loadingAppPages, appPages } = usePage(location.pathname)
-  const ogLocale = getOgLocale(defaultLocale)
-  const { pathway } = useContext(AuthModalContext)
+  const ogLocale = getOgLocale(defaultLocale || '')
   const tracking = useTracking()
   const { formatMessage } = useIntl()
 
@@ -185,13 +184,23 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
       }
       refreshTokenAsync()
     }
-
-    const trackingEvent = Cookies.get('tracking')
-    if (trackingEvent === 'register') {
-      pathway && tracking.register(pathway, window.location.pathname)
-      Cookies.remove('tracking')
+    try {
+      try {
+        const trackingEvent = Cookies.get(TrackingEvent.REGISTER_EVENT)
+        const trackingPage = Cookies.get(TrackingEvent.REGISTER_PAGE)
+        const trackingRegisterMethod = Cookies.get(TrackingEvent.REGISTER_METHOD)
+        if (trackingEvent === 'register') {
+          tracking.register(trackingRegisterMethod, trackingPage)
+        }
+        Cookies.remove(TrackingEvent.REGISTER_EVENT)
+        Cookies.remove(TrackingEvent.REGISTER_PAGE)
+        Cookies.remove(TrackingEvent.REGISTER_METHOD)
+      } catch (error) {
+        console.error(`tracking failed: ${error}`)
+      }
+    } catch (error) {
+      console.error(`tracking failed: ${error}`)
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname])
 
