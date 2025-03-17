@@ -28,7 +28,7 @@ const CheckoutCard: React.VFC<
     check: {
       orderProducts: OrderProductProps[]
       orderDiscounts: OrderDiscountProps[]
-      payments: Array<{ itemName: string; itemAmt: number; itemCount: number }> | undefined
+      payments?: Array<{ itemName: string; itemAmt: number; itemCount: number }>
       shippingOption: ShippingOptionProps | null
     }
     cartProducts: CartProductProps[]
@@ -126,7 +126,7 @@ const CheckoutCard: React.VFC<
               listPrice={((): number => {
                 type PipeFunction = (x: number) => number
 
-                const total = R.pipe<OrderProductProps[], number, number, number>(
+                const total = R.pipe(
                   calculateOriginalTotal,
                   applyDiscountToProduct(check.orderDiscounts, check.orderProducts) as PipeFunction,
                   applyNonProductSpecificDiscounts(check.orderDiscounts) as PipeFunction,
