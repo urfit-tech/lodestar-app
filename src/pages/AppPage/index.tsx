@@ -185,18 +185,14 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
       refreshTokenAsync()
     }
     try {
-      try {
-        const trackingEvent = Cookies.get(TrackingEvent.REGISTER_EVENT)
-        const trackingPage = Cookies.get(TrackingEvent.REGISTER_PAGE)
-        const trackingRegisterMethod = Cookies.get(TrackingEvent.REGISTER_METHOD)
-        if (trackingEvent === 'register') {
-          tracking.register(trackingRegisterMethod, trackingPage)
-        }
+      const trackingEvent = Cookies.get(TrackingEvent.REGISTER_EVENT)
+      const trackingPage = Cookies.get(TrackingEvent.REGISTER_PAGE)
+      const trackingRegisterMethod = Cookies.get(TrackingEvent.REGISTER_METHOD)
+      if (trackingEvent === 'register') {
+        tracking.register(trackingRegisterMethod, trackingPage)
         Cookies.remove(TrackingEvent.REGISTER_EVENT)
         Cookies.remove(TrackingEvent.REGISTER_PAGE)
-        Cookies.remove(TrackingEvent.REGISTER_METHOD)
-      } catch (error) {
-        console.error(`tracking failed: ${error}`)
+        Cookies.remove(TrackingEvent.REGISTER_METHOD)  
       }
     } catch (error) {
       console.error(`tracking failed: ${error}`)
