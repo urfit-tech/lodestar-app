@@ -41,7 +41,6 @@ type RegisterSectionProps = FormComponentProps & {
 }
 
 const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMember, onAuthStateChange, pathway }) => {
-  const tracking = useTracking()
   const { settings, enabledModules, id: appId } = useApp()
   const { formatMessage } = useIntl()
   const apolloClient = useApolloClient()
