@@ -182,22 +182,17 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
           alert(formatMessage(pageMessages.AppPage.logoutAlert))
         }
       }
-
       refreshTokenAsync()
     }
     try {
-      try {
-        const trackingEvent = Cookies.get(TrackingEvent.REGISTER_EVENT)
-        const trackingPage = Cookies.get(TrackingEvent.REGISTER_PAGE)
-        const trackingRegisterMethod = Cookies.get(TrackingEvent.REGISTER_METHOD)
-        if (trackingEvent === 'register') {
-          tracking.register(trackingRegisterMethod, trackingPage)
-        }
-        Cookies.remove(TrackingEvent.REGISTER_EVENT)
+      const trackingEvent = Cookies.get(TrackingEvent.EVENT)
+      const trackingPage = Cookies.get(TrackingEvent.REGISTER_PAGE)
+      const trackingRegisterMethod = Cookies.get(TrackingEvent.REGISTER_METHOD)
+      if (trackingEvent === 'register') {
+        tracking.register(trackingRegisterMethod, trackingPage)
+        Cookies.remove(TrackingEvent.EVENT)
         Cookies.remove(TrackingEvent.REGISTER_PAGE)
-        Cookies.remove(TrackingEvent.REGISTER_METHOD)
-      } catch (error) {
-        console.error(`tracking failed: ${error}`)
+        Cookies.remove(TrackingEvent.REGISTER_METHOD)  
       }
     } catch (error) {
       console.error(`tracking failed: ${error}`)
@@ -363,7 +358,7 @@ export const usePage = (path: string) => {
               defaultImg = craftData[node]?.props?.customStyle?.backgroundImage?.match(
                 /(?:\(['"]?)(.*?)(?:['"]?\))/,
                 '',
-              )?.[1]
+              )[1]
             }
             if (!defaultDescription && craftData && craftData[node].type.resolvedName === 'CraftParagraph') {
               defaultDescription = craftData[node]?.props?.content
