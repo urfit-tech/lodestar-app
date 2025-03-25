@@ -1,5 +1,5 @@
 export enum TrackingEvent {
-  REGISTER_EVENT = 'tracking.register.event',
+  EVENT = 'tracking.event',
   REGISTER_PAGE = 'tracking.register.page',
   REGISTER_METHOD = 'tracking.register.method',
 }
