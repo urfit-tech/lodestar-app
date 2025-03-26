@@ -6,6 +6,7 @@ import * as CraftElement from 'lodestar-app-element/src/components/common/CraftE
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { fetchCurrentGeolocation, getFingerPrintId } from 'lodestar-app-element/src/hooks/util'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
