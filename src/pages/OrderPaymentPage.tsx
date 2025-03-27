@@ -21,6 +21,7 @@ import ContractBlock from '../components/contract/ContractBlock'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { desktopViewMixin, handleError } from '../helpers'
 import { useMemberContract } from '../hooks/data'
+import pageMessages from './translation'
 
 const StyledContentBlock = styled.div`
   ${desktopViewMixin(css`
@@ -148,6 +149,7 @@ const OrderPaymentPage = () => {
 }
 
 const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
+  const { formatMessage } = useIntl()
   const [selectedPayment, setSelectedPayment] = useState<Payment>()
   const unpaidPayments = order?.paymentLogs
     .filter(p => p.status === 'UNPAID')
@@ -170,10 +172,10 @@ const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
           </div>
         )}
         <AntdIcon type="shopping-cart" className="mr-2" />
-        付款資訊
+        {formatMessage(pageMessages.OrderPaymentPage.paymentMethod)}
       </Typography.Title>
       {!order || !unpaidPayments || unpaidPayments.length === 0 ? (
-        <AdminCard>無付款資訊</AdminCard>
+        <AdminCard>{formatMessage(pageMessages.OrderPaymentPage.noPaymentInformation)}</AdminCard>
       ) : unpaidPayments.length === 1 || selectedPayment ? (
         <PaymentBlock
           order={order}
@@ -213,7 +215,7 @@ const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
                               setSelectedPayment(p)
                             }}
                           >
-                            前往付款
+                            {formatMessage(pageMessages.OrderPaymentPage.goToCheckout)}
                           </Button>
                         </div>
                       </div>
@@ -292,7 +294,7 @@ const PaymentBlock: React.FC<{
 
       <div className="mb-3">
         <AdminCard>
-          <StyledTitle>付款方式</StyledTitle>
+          <StyledTitle>{formatMessage(pageMessages.OrderPaymentPage.paymentInformation)}</StyledTitle>
           {payment.method
             ? formatMessage(checkoutMessages.label[payment.method as PaymentMethodType])
             : formatMessage(
@@ -313,7 +315,7 @@ const PaymentBlock: React.FC<{
                 }}
               >
                 <Box as="span" flex="1" textAlign="left">
-                  請展開此區塊，詳閱並簽署合約
+                  {formatMessage(pageMessages.OrderPaymentPage.contractBlock)}
                 </Box>
                 <AccordionIcon />
               </AccordionButton>
