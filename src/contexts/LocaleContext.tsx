@@ -29,7 +29,7 @@ type LocaleContextProps = {
 }
 
 const defaultLocaleContextValue: LocaleContextProps = {
-  defaultLocale: null,
+  defaultLocale: 'zh-tw',
   currentLocale: null,
   languagesList: SUPPORTED_LOCALES,
 }
