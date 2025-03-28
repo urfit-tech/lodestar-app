@@ -72,7 +72,7 @@ const SecondaryProgramPlanCard: React.VFC<{
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { isAuthenticated } = useAuth()
-  const { setVisible: setAuthModalVisible, setPathway } = useContext(AuthModalContext)
+  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { enabledModules } = useApp()
 
   const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds()
@@ -183,7 +183,6 @@ const SecondaryProgramPlanCard: React.VFC<{
               isDisabled={(isAuthenticated && isLoading) || !programPlan.publishedAt}
               onClick={() => {
                 if (!isAuthenticated) {
-                  setPathway?.('checkout')
                   setAuthModalVisible?.(true)
                 } else {
                   ReactGA.plugin.execute('ec', 'addProduct', {
