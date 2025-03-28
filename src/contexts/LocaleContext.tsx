@@ -22,14 +22,14 @@ type SupportedLocales = {
 }[]
 
 type LocaleContextProps = {
-  defaultLocale: string | null
-  currentLocale: string | null
+  defaultLocale: string
+  currentLocale: string
   languagesList: SupportedLocales
   setCurrentLocale?: (language: string) => void
 }
 
 const defaultLocaleContextValue: LocaleContextProps = {
-  defaultLocale: null,
+  defaultLocale: 'zh-tw',
   currentLocale: null,
   languagesList: SUPPORTED_LOCALES,
 }
