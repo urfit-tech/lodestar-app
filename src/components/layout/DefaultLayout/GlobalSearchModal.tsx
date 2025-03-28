@@ -538,11 +538,12 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
   )
   const categories = map(
     ([categoryName, subCategories]) => ({
-      id: subCategories.filter(cat => cat.name === categoryName)[0]?.id,
+      id: subCategories?.filter(cat => cat.name === categoryName)[0]?.id || '',
       name: categoryName,
-      subCategories: subCategories
-        .filter(cat => cat.name !== categoryName)
-        .map(cat => ({ id: cat.id, name: cat.name.split('/')[1] })),
+      subCategories:
+        subCategories
+          ?.filter(cat => cat.name !== categoryName)
+          .map(cat => ({ id: cat.id, name: cat.name.split('/')[1] })) || [],
     }),
     toPairs(groupBy<{ id: string; name: string }>(category => category.name.split('/')[0], data?.category || [])),
   )
@@ -551,17 +552,17 @@ const useFilterOptions: (type?: 'program' | 'activity' | 'member' | 'merchandise
   const tags = sortByPosition(
     map(
       ([tagName, subTags]) => ({
-        id: subTags.filter(tag => tag.name === tagName)[0]?.name ?? '',
+        id: subTags?.filter(tag => tag.name === tagName)[0]?.name ?? '',
         name: tagName,
-        position: subTags.filter(tag => tag.name === tagName)[0]?.position,
+        position: subTags?.filter(tag => tag.name === tagName)[0]?.position,
         subTags: sortByPosition(
           subTags
-            .filter(tag => tag.name !== tagName)
+            ?.filter(tag => tag.name !== tagName)
             .map(tag => ({
-              id: tag.name ?? '',
+              id: tag.name || '',
               name: tag.name?.split('/')[1] ?? '',
               position: tag.position,
-            })),
+            })) || [],
         ),
       }),
       toPairs(groupBy(tag => tag.name?.split('/')[0] ?? '', data?.search_tag || [])),
