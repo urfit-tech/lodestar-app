@@ -20,7 +20,7 @@ import AdminCard from '../components/common/AdminCard'
 import ContractBlock from '../components/contract/ContractBlock'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { desktopViewMixin, handleError } from '../helpers'
-import { useMemberContract } from '../hooks/data'
+import { useMemberContract, useMemberPropertyMemberType } from '../hooks/data'
 import pageMessages from './translation'
 
 const StyledContentBlock = styled.div`
@@ -117,6 +117,8 @@ type Order = {
   orderProducts: OrderProduct[]
 }
 
+const exemptMember = (memberType: string) => ['B', 'G'].some(v => v === memberType?.trim().match(/^[A-Z]+/)?.[0])
+
 const OrderPaymentPage = () => {
   const { id: appId } = useApp()
   const { orderId } = useParams<{ orderId: string }>()
@@ -144,7 +146,7 @@ const OrderPaymentPage = () => {
       .finally(() => {
         setLoading(false)
       })
-  }, [orderId, token])
+  }, [appId, orderId, token])
   return <DefaultLayout>{loading ? <Skeleton active /> : <OrderPaymentBlock order={order} />}</DefaultLayout>
 }
 
@@ -244,6 +246,7 @@ const PaymentBlock: React.FC<{
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const [token] = useQueryParam('token', StringParam)
+  const { loading: memberTypeLoading, memberType } = useMemberPropertyMemberType(memberId)
   const { memberContract, setMemberContractData, loading: memberContractLoading } = useMemberContract(memberContractId)
 
   const getObjectFromStupidSymbolSeparateString: <T extends Record<string, string>, K extends keyof T>(
@@ -291,7 +294,6 @@ const PaymentBlock: React.FC<{
           </List>
         </AdminCard>
       </div>
-
       <div className="mb-3">
         <AdminCard>
           <StyledTitle>{formatMessage(pageMessages.OrderPaymentPage.paymentInformation)}</StyledTitle>
@@ -304,85 +306,88 @@ const PaymentBlock: React.FC<{
               )}
         </AdminCard>
       </div>
-
-      <AdminCard className="mb-3 d-flex">
-        <Accordion allowToggle>
-          <AccordionItem w="100%">
-            <h2>
-              <AccordionButton
-                onClick={() => {
-                  !isAuthenticated && setAuthModalVisible?.(true)
-                }}
-              >
-                <Box as="span" flex="1" textAlign="left">
-                  {formatMessage(pageMessages.OrderPaymentPage.contractBlock)}
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              {memberContractLoading ? (
-                <Skeleton />
-              ) : memberContract ? (
-                <ContractBlock memberContract={memberContract} onMemberContractDataChange={setMemberContractData} />
-              ) : null}
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
-      </AdminCard>
-
+      {!memberTypeLoading && memberType && !exemptMember(memberType) ? (
+        <AdminCard className="mb-3 d-flex">
+          <Accordion allowToggle>
+            <AccordionItem w="100%">
+              <h2>
+                <AccordionButton
+                  onClick={() => {
+                    !isAuthenticated && setAuthModalVisible?.(true)
+                  }}
+                >
+                  <Box as="span" flex="1" textAlign="left">
+                    {formatMessage(pageMessages.OrderPaymentPage.contractBlock)}
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel pb={4}>
+                {memberContractLoading ? (
+                  <Skeleton />
+                ) : memberContract ? (
+                  <ContractBlock memberContract={memberContract} onMemberContractDataChange={setMemberContractData} />
+                ) : null}
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+        </AdminCard>
+      ) : null}
       <div className="mb-3">
-        <CheckoutCard
-          isDisabled={!memberContract?.agreedAt}
-          check={{
-            orderProducts: orderProducts.map(product => ({
-              productId: product.productId,
-              name: product.name,
-              description: '',
-              price: product.price,
-              endedAt: null,
-              startedAt: null,
-              autoRenewed: false,
-              options: product.options,
-            })),
-            payments: details,
-            orderDiscounts: [],
-            shippingOption: null,
-          }}
-          cartProducts={[]}
-          discountId={null}
-          invoice={{
-            name: '',
-            email: '',
-            phone: '',
-          }}
-          shipping={null}
-          loading={false}
-          onCheckout={() => {
-            axios
-              .post(
-                `${process.env.REACT_APP_API_BASE_ROOT}/order/${order.id}/pay`,
-                {
-                  appId,
-                  paymentNo: payment.no,
-                  memberContractId,
-                },
-                { headers: { authorization: `Bearer ${token}` } },
-              )
-              .then(({ data: { code, result } }) => {
-                if (code === 'SUCCESS') {
-                  if (result.payForm?.url) {
-                    window.location.assign(result.payForm.url)
-                  } else if (result.payForm?.html) {
-                    document.write(result.payForm.html)
-                  } else {
-                    window.location.href = `/payments/${payment.no}?method=${payment.method}`
+        {!memberTypeLoading && memberType ? (
+          <CheckoutCard
+            isDisabled={exemptMember(memberType) ? false : !memberContract?.agreedAt}
+            check={{
+              orderProducts: orderProducts.map(product => ({
+                productId: product.productId,
+                name: product.name,
+                description: '',
+                price: product.price,
+                endedAt: null,
+                startedAt: null,
+                autoRenewed: false,
+                options: product.options,
+              })),
+              payments: details,
+              orderDiscounts: [],
+              shippingOption: null,
+            }}
+            cartProducts={[]}
+            discountId={null}
+            invoice={{
+              name: '',
+              email: '',
+              phone: '',
+            }}
+            shipping={null}
+            loading={false}
+            onCheckout={() => {
+              if (exemptMember(memberType) ? false : !memberContract?.agreedAt) return
+              axios
+                .post(
+                  `${process.env.REACT_APP_API_BASE_ROOT}/order/${order.id}/pay`,
+                  {
+                    appId,
+                    paymentNo: payment.no,
+                    memberContractId,
+                  },
+                  { headers: { authorization: `Bearer ${token}` } },
+                )
+                .then(({ data: { code, result } }) => {
+                  if (code === 'SUCCESS') {
+                    if (result.payForm?.url) {
+                      window.location.assign(result.payForm.url)
+                    } else if (result.payForm?.html) {
+                      document.write(result.payForm.html)
+                    } else {
+                      window.location.href = `/payments/${payment.no}?method=${payment.method}`
+                    }
                   }
-                }
-              })
-              .catch(handleError)
-          }}
-        />
+                })
+                .catch(handleError)
+            }}
+          />
+        ) : null}
       </div>
     </>
   )
