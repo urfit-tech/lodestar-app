@@ -215,6 +215,25 @@ export const useMemberContract = (memberContractId: string) => {
   }
 }
 
+export const useMemberPropertyMemberType = (memberId: string) => {
+  const { loading, data } = useQuery<hasura.GetMemberPropertyMemberType, hasura.GetMemberPropertyMemberTypeVariables>(
+    gql`
+      query GetMemberPropertyMemberType($memberId: String!) {
+        member_property(where: { member_id: { _eq: $memberId }, property: { name: { _eq: "會員類型" } } }) {
+          value
+        }
+      }
+    `,
+    { variables: { memberId } },
+  )
+  const memberType = data?.member_property[0]?.value || null
+
+  return {
+    loading,
+    memberType,
+  }
+}
+
 export const useUploadAttachments = () => {
   const { authToken } = useAuth()
   const { id: appId } = useApp()
