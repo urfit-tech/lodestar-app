@@ -1,11 +1,9 @@
-import { ApolloQueryResult } from '@apollo/client'
 import { Button, Input, Spinner } from '@chakra-ui/react'
 import axios from 'axios'
 import CouponCard from 'lodestar-app-element/src/components/cards/CouponCard'
 import Divider from 'lodestar-app-element/src/components/common/Divider'
 import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { Exact, GET_COUPON_COLLECTION } from 'lodestar-app-element/src/hasura'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import { checkoutMessages, commonMessages } from 'lodestar-app-element/src/helpers/translation'
 import { useToastMessage } from 'lodestar-app-element/src/hooks/util'
@@ -30,9 +28,7 @@ const MultiPeriodCouponSelectionModal: React.VFC<{
   coupons: CouponProps[]
   currentlyUsedDiscountIds: string[]
   loadingCoupons: boolean
-  refetchCoupons: (
-    variables?: Partial<Exact<{ memberId: string }>> | undefined,
-  ) => Promise<ApolloQueryResult<GET_COUPON_COLLECTION>>
+  refetchCoupons: () => Promise<void>
   selectedCoupontId: string | null
   renderTrigger: (params: { onOpen: () => void; selectedCoupon?: CouponProps }) => React.ReactElement
   onSelect?: (coupon: CouponProps) => void
