@@ -139,8 +139,8 @@ const CheckoutCard: React.VFC<
         </div>
       )}
 
-      <div className="row">
-        <div className="col-12 offset-md-8 col-md-4 offset-lg-10 col-lg-2">
+      <div className="row justify-content-end">
+        <div>
           <Button
             colorScheme="primary"
             isFullWidth
