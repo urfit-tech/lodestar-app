@@ -1,12 +1,17 @@
+import { Spinner } from '@chakra-ui/react'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common/index'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { Module } from 'lodestar-app-element/src/types/app'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { desktopViewMixin } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
+import {
+  useGetAggregateByCreatorId,
+  useGetAggregateByMemberIdAndRoleName,
+  useGetPostAggregateByMemberIdAndRoleName,
+} from '../../hooks/creator'
 import { ProgramRoleName } from '../../types/program'
 import { AvatarImage } from './Image'
 import ProductRoleFormatter from './ProductRoleFormatter'
@@ -129,9 +134,30 @@ const CreatorCard: React.VFC<{
 
   const tabsContents = settings['creator.content.tab']?.split(',') || []
   const hasTabSetting = Boolean(settings['creator.content.tab'])
+  const tabsWithCount =
+    settings['creator.content.tab.with_count'] && Boolean(JSON.parse(settings['creator.content.tab.with_count']))
+  const {
+    isLoading: getAggregateByMemberIdLoading,
+    programCount,
+    podcastProgramCount,
+  } = useGetAggregateByMemberIdAndRoleName(id, 'instructor')
+  const { isLoading: getAggregateByCreatorIdLoading, appointmentPlanCount } = useGetAggregateByCreatorId(id)
+  const { isLoading: getPostAggregateByMemberIdAndRoleName, postCount } = useGetPostAggregateByMemberIdAndRoleName(
+    id,
+    'author',
+  )
+  const isCountLoading =
+    getAggregateByMemberIdLoading || getAggregateByCreatorIdLoading || getPostAggregateByMemberIdAndRoleName
 
-  const actionContents: {
-    key: Module
+  const count = {
+    program: programCount || 0,
+    podcast: podcastProgramCount || 0,
+    appointment: appointmentPlanCount || 0,
+    blog: postCount || 0,
+  }
+
+  const tabLinkContents: {
+    key: 'program' | 'podcast' | 'appointment' | 'blog'
     withKey: boolean | undefined
     tabkey: string
     contentKey: {
@@ -149,8 +175,10 @@ const CreatorCard: React.VFC<{
     },
     { key: 'blog', tabkey: 'blogs', withKey: withBlog, contentKey: commonMessages.content.blog },
   ]
-  const actions = actionContents.map(({ key, withKey, tabkey, contentKey }) => ({
-    condition: enabledModules[key] && (hasTabSetting ? tabsContents.includes(key) : withKey),
+  const tabLinks = tabLinkContents.map(({ key, withKey, tabkey, contentKey }) => ({
+    condition:
+      enabledModules[key] &&
+      (hasTabSetting ? tabsContents.includes(key) : tabsWithCount ? (count[key] > 0 ? true : false) : withKey),
     link: `/creators/${id}?tabkey=${tabkey}`,
     label: formatMessage(contentKey),
   }))
@@ -178,12 +206,18 @@ const CreatorCard: React.VFC<{
         {!!description && <StyledDescription>{description}</StyledDescription>}
 
         <div>
-          {actions.map(action =>
-            action.condition ? (
-              <StyledAction>
-                <StyledLink to={action.link}>{action.label}</StyledLink>
-              </StyledAction>
-            ) : null,
+          {isCountLoading ? (
+            <StyledAction>
+              <Spinner size="sm" />
+            </StyledAction>
+          ) : (
+            tabLinks.map(action =>
+              action.condition ? (
+                <StyledAction>
+                  <StyledLink to={action.link}>{action.label}</StyledLink>
+                </StyledAction>
+              ) : null,
+            )
           )}
         </div>
       </div>
