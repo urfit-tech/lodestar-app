@@ -125,6 +125,7 @@ const OrderPaymentPage = () => {
   const [token] = useQueryParam('token', StringParam)
   const [order, setOrder] = useState<Order>()
   const [loading, setLoading] = useState(false)
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
     setLoading(true)
@@ -146,21 +147,22 @@ const OrderPaymentPage = () => {
       .finally(() => {
         setLoading(false)
       })
-}, [appId, orderId, token])
-return (
-  <DefaultLayout>
-    {loading ? (
-      <Skeleton active />
-    ) : !order ? (
-      <>No order information available.</>  
-    ) : (
-      <OrderPaymentBlock order={order} />
-    )}
-  </DefaultLayout>
-)}
+  }, [appId, orderId, token])
+  return (
+    <DefaultLayout>
+      {loading ? (
+        <Skeleton active />
+      ) : !order ? (
+        <>{formatMessage(pageMessages.OrderPaymentPage.noOrderInformation)}</>
+      ) : (
+        <OrderPaymentBlock order={order} />
+      )}
+    </DefaultLayout>
+  )
+}
 
-const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => { 
-  const { formatMessage } = useIntl()  
+const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
+  const { formatMessage } = useIntl()
   const [selectedPayment, setSelectedPayment] = useState<Payment>()
   const unpaidPayments = order.paymentLogs
     .filter(p => p.status === 'UNPAID')
@@ -188,7 +190,7 @@ const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
         {formatMessage(pageMessages.OrderPaymentPage.paymentMethod)}
       </Typography.Title>
       {!unpaidPayments || hasInvalidOrderStatus || unpaidPayments.length === 0 ? (
-        <AdminCard>無付款資訊</AdminCard>
+        <AdminCard>{formatMessage(pageMessages.OrderPaymentPage.noPaymentInformation)}</AdminCard>
       ) : unpaidPayments.length === 1 || selectedPayment ? (
         <PaymentBlock
           order={order}
