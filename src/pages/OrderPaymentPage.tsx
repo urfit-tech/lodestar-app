@@ -146,19 +146,30 @@ const OrderPaymentPage = () => {
       .finally(() => {
         setLoading(false)
       })
-  }, [appId, orderId, token])
-  return <DefaultLayout>{loading ? <Skeleton active /> : <OrderPaymentBlock order={order} />}</DefaultLayout>
-}
+}, [appId, orderId, token])
+return (
+  <DefaultLayout>
+    {loading ? (
+      <Skeleton active />
+    ) : !order ? (
+      <>No order information available.</>  
+    ) : (
+      <OrderPaymentBlock order={order} />
+    )}
+  </DefaultLayout>
+)}
 
-const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
-  const { formatMessage } = useIntl()
+const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => { 
+  const { formatMessage } = useIntl()  
   const [selectedPayment, setSelectedPayment] = useState<Payment>()
-  const unpaidPayments = order?.paymentLogs
+  const unpaidPayments = order.paymentLogs
     .filter(p => p.status === 'UNPAID')
     .sort((a, b) => Number(a.no[a.no.length - 1]) - Number(b.no[b.no.length - 1]))
 
-  const invoice = order?.invoiceOptions?.invoices?.[0]
-  const orderProducts = order?.orderProducts || []
+  const invoice = order.invoiceOptions?.invoices?.[0]
+  const orderProducts = order.orderProducts || []
+  const invalidPaymentStatuses = ['SUCCESS', 'REFUND', 'EXPIRED', 'DELETED']
+  const hasInvalidOrderStatus = invalidPaymentStatuses.includes(order.status)
 
   return (
     <div className="container py-5">
@@ -176,8 +187,8 @@ const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
         <AntdIcon type="shopping-cart" className="mr-2" />
         {formatMessage(pageMessages.OrderPaymentPage.paymentMethod)}
       </Typography.Title>
-      {!order || !unpaidPayments || unpaidPayments.length === 0 ? (
-        <AdminCard>{formatMessage(pageMessages.OrderPaymentPage.noPaymentInformation)}</AdminCard>
+      {!unpaidPayments || hasInvalidOrderStatus || unpaidPayments.length === 0 ? (
+        <AdminCard>無付款資訊</AdminCard>
       ) : unpaidPayments.length === 1 || selectedPayment ? (
         <PaymentBlock
           order={order}
