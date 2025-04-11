@@ -18,7 +18,7 @@ const pageMessages = {
     },
     noOrderInformation: {
       id: 'page.OrderPaymentPage.noOrderInformation',
-      defaultMessage: 'No order information available.',
+      defaultMessage: 'No order information available',
     },
     goToCheckout: {
       id: 'page.OrderPaymentPage.goToCheckout',

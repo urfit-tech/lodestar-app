@@ -161,7 +161,7 @@ const OrderPaymentPage = () => {
   )
 }
 
-const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
+const OrderPaymentBlock: React.VFC<{ order: Order }> = ({ order }) => {
   const { formatMessage } = useIntl()
   const [selectedPayment, setSelectedPayment] = useState<Payment>()
   const unpaidPayments = order.paymentLogs
