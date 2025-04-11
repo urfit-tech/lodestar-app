@@ -148,23 +148,18 @@ const OrderPaymentPage = () => {
         setLoading(false)
       })
   }, [appId, orderId, token])
-  return (
-    <DefaultLayout>
-      {loading ? (
-        <Skeleton active />
-      ) : !order ? (
-        <>{formatMessage(pageMessages.OrderPaymentPage.noOrderInformation)}</>
-      ) : (
-        <OrderPaymentBlock order={order} />
-      )}
-    </DefaultLayout>
-  )
+  return <DefaultLayout>{loading ? <Skeleton active /> : <OrderPaymentBlock order={order} />}</DefaultLayout>
 }
 
-const OrderPaymentBlock: React.VFC<{ order: Order }> = ({ order }) => {
+const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
   const { formatMessage } = useIntl()
   const [selectedPayment, setSelectedPayment] = useState<Payment>()
-  const unpaidPayments = order.paymentLogs
+
+  if (!order) {
+    return <>{formatMessage(pageMessages.OrderPaymentPage.noOrderInformation)}</>
+  }
+
+  const unpaidPayments = (order.paymentLogs || [])
     .filter(p => p.status === 'UNPAID')
     .sort((a, b) => Number(a.no[a.no.length - 1]) - Number(b.no[b.no.length - 1]))
 
