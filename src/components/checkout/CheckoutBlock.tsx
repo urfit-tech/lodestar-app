@@ -43,7 +43,7 @@ import { MemberProps } from '../../types/member'
 import { AuthModalContext } from '../auth/AuthModal'
 import GroupBuyingRuleModal from './CheckoutGroupBuyingForm/GroupBuyingRuleModal'
 import Cookies from 'js-cookie'
-import { TrackingEvent, RegistrationMethod } from '../../types/tracking'
+import { TrackingEvent, Method } from '../../types/tracking'
 
 const StyledTitle = styled.div`
   ${CommonTitleMixin}
@@ -257,8 +257,8 @@ const CheckoutBlock: React.VFC<{
 
   const handleCheckoutAsync = async () => {
     if (!isAuthenticated || !member) {
-      Cookies.set(TrackingEvent.REGISTER_METHOD, RegistrationMethod.PURCHASE, { expires: 1 })
-      Cookies.set(TrackingEvent.REGISTER_PAGE, window.location.href, { expires: 1 })
+      Cookies.set(TrackingEvent.METHOD, Method.PURCHASE, { expires: 1 })
+      Cookies.set(TrackingEvent.PAGE, window.location.href, { expires: 1 })
       setAuthModalVisible?.(true)
       return
     }
