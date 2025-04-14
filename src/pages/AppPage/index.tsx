@@ -186,13 +186,13 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
     }
     try {
       const trackingEvent = Cookies.get(TrackingEvent.EVENT)
-      const trackingPage = Cookies.get(TrackingEvent.REGISTER_PAGE)
-      const trackingRegisterMethod = Cookies.get(TrackingEvent.REGISTER_METHOD)
+      const trackingPage = Cookies.get(TrackingEvent.PAGE)
+      const trackingRegisterMethod = Cookies.get(TrackingEvent.METHOD)
       if (trackingEvent === 'register') {
         tracking.register(trackingRegisterMethod, trackingPage)
         Cookies.remove(TrackingEvent.EVENT)
-        Cookies.remove(TrackingEvent.REGISTER_PAGE)
-        Cookies.remove(TrackingEvent.REGISTER_METHOD)  
+        Cookies.remove(TrackingEvent.PAGE)
+        Cookies.remove(TrackingEvent.METHOD)  
       }
     } catch (error) {
       console.error(`tracking failed: ${error}`)

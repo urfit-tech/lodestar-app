@@ -10,7 +10,7 @@ import { commonMessages } from '../../helpers/translation'
 import { useAuthModal } from '../../hooks/auth'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import Cookies from 'js-cookie'
-import { TrackingEvent, RegistrationMethod } from '../../types/tracking'
+import { TrackingEvent, Method } from '../../types/tracking'
 
 const AuthButton: React.VFC = () => {
   const { enabledModules } = useApp()
@@ -20,8 +20,8 @@ const AuthButton: React.VFC = () => {
   const authModal = useAuthModal()
 
   const handleClick = () => {
-    Cookies.set(TrackingEvent.REGISTER_METHOD, RegistrationMethod.STANDARD, { expires: 1 })
-    Cookies.set(TrackingEvent.REGISTER_PAGE, window.location.href, { expires: 1 })
+    Cookies.set(TrackingEvent.METHOD, Method.STANDARD, { expires: 1 })
+    Cookies.set(TrackingEvent.PAGE, window.location.href, { expires: 1 })
 
     authModal.open(setVisible)
     window.history.pushState(null, '', '#')
