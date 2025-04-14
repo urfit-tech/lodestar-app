@@ -80,6 +80,7 @@
     "babel-plugin-import": "^1.13.3",
     "babel-plugin-react-intl": "^7.5.28",
     "braft-editor": "^2.3.9",
+    "chart.js": "^4.4.8",
     "crypto-js": "^4.2.0",
     "customize-cra": "^1.0.0",
     "dashjs": "^4.3.0",
