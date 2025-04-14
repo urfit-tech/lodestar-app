@@ -1,12 +1,10 @@
 export enum TrackingEvent {
   EVENT = 'tracking.event',
-  REGISTER_PAGE = 'tracking.register.page',
-  REGISTER_METHOD = 'tracking.register.method',
+  PAGE = 'tracking.page',
+  METHOD = 'tracking.method',
 }
 
-export type RegistrationMethodType = 'standard' | 'purchase' | 'trial'
-
-export enum RegistrationMethod {
+export enum Method {
   STANDARD = 'standard',
   PURCHASE = 'purchase',
   TRIAL = 'trial',

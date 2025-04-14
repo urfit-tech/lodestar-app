@@ -202,7 +202,7 @@ const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
                           </Box>
                           <Box mb="1.25rem">
                             <Flex flexWrap="wrap">
-                              {roles?.[1].map((role, index) => (
+                              {roles?.[1]?.map((role, index) => (
                                 <Box
                                   key={index}
                                   display="inline-flex"

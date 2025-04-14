@@ -10,7 +10,7 @@ import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import { commonMessages } from '../../helpers/translation'
 import { useAuthModal } from '../../hooks/auth'
 import Cookies from 'js-cookie'
-import { TrackingEvent, RegistrationMethod } from '../../types/tracking'
+import { TrackingEvent, Method } from '../../types/tracking'
 
 let isBtnSysCwlLoginSetted = false
 
@@ -22,8 +22,8 @@ const AuthButton: React.VFC = () => {
   const authModal = useAuthModal()
 
   const handleClick = () => {
-    Cookies.set(TrackingEvent.REGISTER_METHOD, RegistrationMethod.STANDARD, { expires: 1 })
-    Cookies.set(TrackingEvent.REGISTER_PAGE, window.location.href, { expires: 1 })
+    Cookies.set(TrackingEvent.METHOD, Method.STANDARD, { expires: 1 })
+    Cookies.set(TrackingEvent.PAGE, window.location.href, { expires: 1 })
 
     authModal.open(setVisible)
     window.history.pushState(null, '', '#')

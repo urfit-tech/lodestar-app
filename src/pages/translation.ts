@@ -14,6 +14,25 @@ const pageMessages = {
   MemberPage: defineMessages({
     ebook: { id: 'page.MemberPage.ebook', defaultMessage: '我的書籍' },
   }),
+  OrderPaymentPage: defineMessages({
+    paymentInformation: { id: 'page.OrderPaymentPage.paymentInformation', defaultMessage: 'Payment Information' },
+    noPaymentInformation: {
+      id: 'page.OrderPaymentPage.noPaymentInformation',
+      defaultMessage: 'No Payment Information',
+    },
+    goToCheckout: {
+      id: 'page.OrderPaymentPage.goToCheckout',
+      defaultMessage: 'Go to checkout',
+    },
+    paymentMethod: {
+      id: 'page.OrderPaymentPage.paymentMethod',
+      defaultMessage: 'Payment Method',
+    },
+    contractBlock: {
+      id: 'page.OrderPaymentPage.contractBlock',
+      defaultMessage: 'Please expand this section, read carefully, and sign the contract.',
+    },
+  }),
   // ProgramContentPage
   ProgramContentPage: defineMessages({
     foo: { id: 'page.ProgramContentPage.foo', defaultMessage: 'Foo Message' },
@@ -153,68 +172,6 @@ const pageMessages = {
   ResetPasswordPage: defineMessages({
     TitleFirstText: { id: 'page.ResetPasswordPage.TitleFirstText', defaultMessage: '你的帳號為 {account}' },
     TitleSecondText: { id: 'page.ResetPasswordPage.TitleSecondText', defaultMessage: '請輸入密碼來完成帳號設定' },
-  }),
-  ContractPage: defineMessages({
-    onlineCourseServiceTerms: {
-      id: 'page.ContractPage.onlineCourseServiceTerms',
-      defaultMessage: 'Online Course Service Terms',
-    },
-    contract: {
-      id: 'page.ContractPage.contract',
-      defaultMessage: 'Contract',
-    },
-    noContractContent: {
-      id: 'page.ContractPage.noContractContent',
-      defaultMessage: 'No Contract Content',
-    },
-    name: {
-      id: 'page.ContractPage.name',
-      defaultMessage: 'Name',
-    },
-    email: {
-      id: 'page.ContractPage.email',
-      defaultMessage: 'Email',
-    },
-    agreedOn: {
-      id: 'page.ContractPage.agreedOn',
-      defaultMessage: 'Agreed to this contract on {date}',
-    },
-    revokedOn: {
-      id: 'page.ContractPage.revokedOn',
-      defaultMessage: 'Revoked to this contract on {date}',
-    },
-    terminatedOn: {
-      id: 'page.ContractPage.terminatedOn',
-      defaultMessage: 'This contract was terminated on {date}',
-    },
-    contractExpired: {
-      id: 'page.ContractPage.contractExpired',
-      defaultMessage: 'This contract has expired',
-    },
-    alreadyReadAndAgree: {
-      id: 'page.ContractPage.alreadyReadAndAgree',
-      defaultMessage: 'I have carefully read and agree to the above contract and am willing to abide by the terms.',
-    },
-    requireContractingParty: {
-      id: 'page.ContractPage.requireContractingParty',
-      defaultMessage: 'Signature Required by the Contracting Party',
-    },
-    disagree: {
-      id: 'page.ContractPage.disagree',
-      defaultMessage: 'Disagree',
-    },
-    agree: {
-      id: 'page.ContractPage.agree',
-      defaultMessage: 'Agree',
-    },
-    confirmContractTerms: {
-      id: 'page.ContractPage.confirmContractTerms',
-      defaultMessage: '請確認您已了解並同意此合約條款，在合約期間內，雙方將遵守此條款，不可任意修改。',
-    },
-    cannotModifyAfterAgree: {
-      id: 'page.ContractPage.cannotModifyAfterAgree',
-      defaultMessage: '同意後無法修改',
-    },
   }),
   LineBindingPage: defineMessages({
     bindAccount: {

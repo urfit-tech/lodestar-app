@@ -39,9 +39,13 @@ const PodcastProgramTimeline: React.VFC<{
   const { data: podcastEnrollment } = useProductEnrollment('podcast')
   const { data: podcastPlanEnrollment } = useProductEnrollment('podcast-plan')
 
-  const podcastProgramsGroupByDate: { [date: string]: PodcastProgramProps[] } = groupBy(
-    podcast => moment(podcast.publishedAt).format('YYYY-MM-DD(dd)'),
-    podcastPrograms,
+  const podcastProgramsGroupByDate: { [date: string]: PodcastProgramProps[] } = Object.fromEntries(
+    Object.entries(
+      groupBy(
+        podcast => moment(podcast.publishedAt).format('YYYY-MM-DD(dd)'),
+        podcastPrograms || {},
+      )
+    ).map(([key, value]) => [key, value || []])
   )
 
   return (
