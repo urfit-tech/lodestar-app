@@ -14,11 +14,12 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
+import { Rendition } from '../../types/epub'
 import { Bookmark } from '../program/ProgramContentEbookReader'
 import { EbookBookmarkModal } from './EbookBookmarkModal'
 import EbookStyledModal from './EbookStyledModal'
 import ebookMessages from './translation'
-import type { Rendition } from 'epubjs'
+
 
 const Spacer = styled(Flex)`
   width: 0%;

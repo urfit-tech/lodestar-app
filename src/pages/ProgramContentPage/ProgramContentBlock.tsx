@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Icon, LockIcon } from '@chakra-ui/icons'
-import { Button, SkeletonText, Switch } from '@chakra-ui/react'
+import { Button, SkeletonText, Spinner, Switch } from '@chakra-ui/react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import dayjs from 'dayjs'
@@ -9,12 +9,11 @@ import { BraftContent } from 'lodestar-app-element/src/components/common/StyledB
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten, includes } from 'ramda'
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, lazy, Suspense } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
-import ProgramContentEbookReader from '../../components/program/ProgramContentEbookReader'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import AudioPlayerContext from '../../contexts/AudioPlayerContext'
 import { ProgressContext } from '../../contexts/ProgressContext'
@@ -29,7 +28,9 @@ import ProgramContentCreatorBlock from './ProgramContentCreatorBlock'
 import ProgramContentExerciseBlock from './ProgramContentExerciseBlock'
 import ProgramContentTabs from './ProgramContentTabs'
 import ProgramContentPageMessages from './translation'
-import type { Book } from 'epubjs'
+import { Book } from '../../types/epub'
+
+const ProgramContentEbookReader = lazy(() => import('../../components/program/ProgramContentEbookReader'))
 
 const StyledTitleBlock = styled.div`
   padding-bottom: 1.25rem;
@@ -291,15 +292,17 @@ const ProgramContentBlock: React.VFC<{
           }}
         />
       ) : isEquityEbookProgramContent ? (
-        <ProgramContentEbookReader
-          setEbook={setEbook}
-          programContentId={programContent.id}
-          isTrial={programContent.displayMode === 'trial' || programContent.displayMode === 'loginToTrial'}
-          ebookCurrentToc={ebookCurrentToc}
-          onEbookCurrentTocChange={onEbookCurrentTocChange}
-          location={ebookLocation}
-          onLocationChange={onEbookLocationChange}
-        />
+        <Suspense fallback={<Spinner />}>
+          <ProgramContentEbookReader
+            setEbook={setEbook}
+            programContentId={programContent.id}
+            isTrial={programContent.displayMode === 'trial' || programContent.displayMode === 'loginToTrial'}
+            ebookCurrentToc={ebookCurrentToc}
+            onEbookCurrentTocChange={onEbookCurrentTocChange}
+            location={ebookLocation}
+            onLocationChange={onEbookLocationChange}
+          />
+        </Suspense>
       ) : isEquityPracticeProgramContent ? (
         <div className="mb-4">
           <PracticeDescriptionBlock
