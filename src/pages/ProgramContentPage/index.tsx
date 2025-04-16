@@ -26,7 +26,7 @@ import { StyledPageHeader, StyledSideBar } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
 import ProgramContentPageHelmet from './ProgramContentPageHelmet'
 import ProgramCustomContentBlock from './ProgramCustomContentBlock'
-import type { Book } from 'epubjs'
+import { Book } from '../../types/epub'
 
 const StyledLink = styled(Link)`
   && {

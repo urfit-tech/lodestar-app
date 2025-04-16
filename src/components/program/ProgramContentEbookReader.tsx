@@ -23,7 +23,7 @@ import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
 import EbookTextSelectionToolbar from '../ebook/EbookTextSelectionToolbar'
 import { decryptData } from './decryptUtils'
 import programMessages from './translation'
-import type { NavItem, Rendition, Book, Location, Contents } from 'epubjs'
+import { NavItem, Rendition, Book, Location, Contents } from '../../types/epub'
 
 const ReaderBookmark = styled.div`
   position: relative;

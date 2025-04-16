@@ -33,7 +33,7 @@ import {
 } from '../../types/program'
 import { getChapter } from './ProgramContentEbookReader'
 import programMessages from './translation'
-import type { Book } from 'epubjs'
+import { Book } from '../../types/epub'
 
 const StyledIcon = styled(Icon)`
   font-size: 16px;
