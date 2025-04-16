@@ -13,7 +13,7 @@ import { BREAK_POINT } from 'lodestar-app-element/src/components/common/Responsi
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
+import { Highlight } from '../../hooks/model/api/ebookHighlightGraphql'
 import { Rendition } from '../../types/epub'
 import { Bookmark } from '../program/ProgramContentEbookReader'
 import { EbookBookmarkModal } from './EbookBookmarkModal'

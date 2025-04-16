@@ -60,7 +60,7 @@ const PaymentPage: React.VFC = () => {
   const [payToken] = useQueryParam('token', StringParam)
   const [cacheToken] = useQueryParam('cacheToken', StringParam)
   const [method] = useQueryParam('method', StringParam)
-  const { data: payment, loading } = useQuery<hasura.GetPaymentInfo, hasura.GetPaymentInfoVariables>(
+  const { data: payment } = useQuery<hasura.GetPaymentInfo, hasura.GetPaymentInfoVariables>(
     gql`
       query GetPaymentInfo($paymentNo: String!) {
         payment_log(where: { no: { _eq: $paymentNo } }) {

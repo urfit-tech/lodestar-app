@@ -18,18 +18,22 @@ module.exports = override(
     },
   }),
   (config, env) => {
-    config = rewireReactHotLoader(config, env)
+    if (env === 'development' || process.env.NODE_ENV === 'development') {
+      config = rewireReactHotLoader(config, process.env.NODE_ENV)
+    }
     config.optimization.minimize = true
+    config.optimization.runtimeChunk = 'single'
     config.optimization.splitChunks = {
       chunks: 'all',
       minSize: 20000,
-      maxSize: 70000,
+      maxSize: 250000,
       maxInitialRequests: 5,
       automaticNameDelimiter: '-',
       cacheGroups: {
         vendors: {
           test: /[\\/]node_modules[\\/]/,
           priority: -10,
+          reuseExistingChunk: true,
         },
         default: {
           minChunks: 2,

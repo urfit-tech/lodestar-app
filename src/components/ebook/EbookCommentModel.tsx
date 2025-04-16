@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { FaQuoteLeft } from 'react-icons/fa'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
+import { Highlight } from '../../hooks/model/api/ebookHighlightGraphql'
 import { BREAK_POINT } from '../common/Responsive'
 import ebookMessages from './translation'
 

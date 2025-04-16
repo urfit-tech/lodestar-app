@@ -4,7 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'
 import FullCalendar from '@fullcalendar/react'
 import dayjs from 'dayjs'
-import * as utc from 'dayjs/plugin/utc'
+import utc from 'dayjs/plugin/utc'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import {
   converge,

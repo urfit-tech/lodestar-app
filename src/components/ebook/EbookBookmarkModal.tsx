@@ -29,7 +29,7 @@ import { FaQuoteLeft } from 'react-icons/fa'
 import { HiDotsVertical } from 'react-icons/hi'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { Highlight } from '../../hooks/model/api/ebookHighlightQraphql'
+import { Highlight } from '../../hooks/model/api/ebookHighlightGraphql'
 import { ReactComponent as DeleteIcon } from '../../images/delete-o.svg'
 import { ReactComponent as BookmarkIcon } from '../../images/icon-grid-view.svg'
 import { ReactComponent as MarkIcon } from '../../images/mark.svg'
@@ -261,8 +261,15 @@ const HighlightRow: React.VFC<{
   const formattedCreatedAt = moment(highlight.createdAt).tz('Asia/Taipei').format('YYYY-MM-DD HH:mm')
 
   const handleDeleteHighlight = async (id: string) => {
-    modelOnClose()
-    showDeleteHighlightModal(null, highlight.id)
+    try {
+      setDeleting(true)
+      modelOnClose()
+      showDeleteHighlightModal(null, highlight.id)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setDeleting(false)
+    }
   }
 
   const handleCommentHighlight = async (id: string) => {

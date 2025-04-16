@@ -39,7 +39,7 @@ export type UpdateEbookHighlightRequestDto = {
   color?: string
 }
 
-const UPDATE_PRPGRAM_CONTENT_EBOOK_HIGHLIGHT = gql`
+const UPDATE_PROGRAM_CONTENT_EBOOK_HIGHLIGHT = gql`
   mutation UpdateProgramContentEbookHighlight($id: uuid!, $annotation: String, $color: String) {
     update_program_content_ebook_highlight_by_pk(
       pk_columns: { id: $id }
@@ -248,7 +248,7 @@ export const updateHighlight = async (
 ): Promise<{ error: Error | null; result: boolean; data: Highlight | null }> => {
   try {
     const response = await dataSource.mutate({
-      mutation: UPDATE_PRPGRAM_CONTENT_EBOOK_HIGHLIGHT,
+      mutation: UPDATE_PROGRAM_CONTENT_EBOOK_HIGHLIGHT,
       variables: {
         id: dto.id,
         annotation: dto.annotation,

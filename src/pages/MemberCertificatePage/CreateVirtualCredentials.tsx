@@ -39,7 +39,7 @@ export const VirtualCredentials: React.FC<PropsTypes> = ({ html, templateVars, c
     let pre = 0
     let next = 0
 
-    let { startLabel, endLabel } = getLabelStatus(label)
+    let { startLabel } = getLabelStatus(label)
     // ignore initial label
     pre = getIndex(html, 'position: relative;', 0)
 
