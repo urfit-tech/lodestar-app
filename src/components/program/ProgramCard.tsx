@@ -56,12 +56,6 @@ const StyledTitle = styled.div<{ variant?: ProgramCardVariant }>`
       height: 3em;
     `}
 `
-const StyledReviewRating = styled.div`
-  color: var(--gray-dark);
-  font-size: 14px;
-  letter-spacing: 0.4px;
-  text-align: justify;
-`
 const StyledDescription = styled.div`
   ${MultiLineTruncationMixin}
   margin-bottom: 12px;

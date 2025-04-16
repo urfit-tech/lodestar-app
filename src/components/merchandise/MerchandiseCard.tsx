@@ -3,7 +3,7 @@ import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import EmptyCover from '../../images/empty-cover.png'
-import { MerchandiseBasicProps, MerchandiseBriefProps, MerchandiseSpecBasicProps } from '../../types/merchandise'
+import { MerchandiseBasicProps, MerchandiseSpecBasicProps } from '../../types/merchandise'
 import { CustomRatioImage } from '../common/Image'
 
 const StyledTitle = styled.h3`

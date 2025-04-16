@@ -100,11 +100,10 @@ import {
   optimizedResultToProductDetail,
   productAdaptorForMultiPeriod,
 } from './discountUtilities'
-import { useMuiltiPeriodProduct } from './muiltiPeriodDataFetcher'
+import { useMultiPeriodProduct } from './MultiPeriodDataFetcher'
 import { CheckoutPeriodsModalProps, MultiPeriodProductDetail } from './MultiPeriod.type'
 import DiscountSelectionCard from './MultiPeriodDiscountSelectionCard'
 import appointmentMessages from './translation'
-import Cookies from 'js-cookie'
 
 export const StyledTitle = styled.h1`
   ${CommonTitleMixin}
@@ -207,8 +206,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
 }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const [isOpen, onOpen, onClose] = [isCheckOutModalOpen, onCheckOutModalOpen, onCheckOutModalClose]
-  // const [checkoutProductId] = useQueryParam('checkoutProductId', StringParam)
+  const [isOpen, onClose] = [isCheckOutModalOpen, onCheckOutModalOpen, onCheckOutModalClose]
   const { enabledModules, settings, id: appId, currencyId: appCurrencyId } = useApp()
   const { currentMemberId, isAuthenticating, authToken } = useAuth()
   const { member: currentMember } = useMember(currentMemberId || '')
@@ -265,7 +263,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
 
   // checkout
   const [productId, setProductId] = useState(defaultProductId)
-  const { target: productTarget } = useMuiltiPeriodProduct({
+  const { target: productTarget } = useMultiPeriodProduct({
     id: productId,
     startedAts: pluck('startedAt')(productDetails),
   })
@@ -1083,10 +1081,7 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
 }
 
 const useMemberCoinsRemaining = (memberId: string) => {
-  const { loading, error, data } = useQuery<
-    hasura.GET_MEMBER_COIN_REMAINING,
-    hasura.GET_MEMBER_COIN_REMAININGVariables
-  >(
+  const { data } = useQuery<hasura.GET_MEMBER_COIN_REMAINING, hasura.GET_MEMBER_COIN_REMAININGVariables>(
     gql`
       query GET_MEMBER_COIN_REMAINING($memberId: String!) {
         coin_status(where: { member_id: { _eq: $memberId } }) {

@@ -6,7 +6,7 @@ import {
   Highlight,
   SaveEbookHighlightRequestDto,
   UpdateEbookHighlightRequestDto,
-} from './model/api/ebookHighlightQraphql'
+} from './model/api/ebookHighlightGraphql'
 import { useEbookHighlightModel } from './model/ebookHighlightModel'
 
 type GetEbookHighlightRequestDto = {

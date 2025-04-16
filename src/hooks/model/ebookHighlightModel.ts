@@ -9,7 +9,7 @@ import {
   SaveEbookHighlightRequestDto,
   UpdateEbookHighlightRequestDto,
   updateHighlight,
-} from './api/ebookHighlightQraphql'
+} from './api/ebookHighlightGraphql'
 
 export const useEbookHighlightModel = () => {
   const apolloClient = useApolloClient()

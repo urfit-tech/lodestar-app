@@ -36,9 +36,6 @@ const StyledTitle = styled(Typography.Title)`
     letter-spacing: 0.77px;
   }
 `
-const StyledPeriod = styled.div`
-  ${CommonTextMixin}
-`
 const StyledMeta = styled.span`
   margin-top: 0.5rem;
   min-width: 4.5rem;
@@ -48,12 +45,6 @@ const StyledMeta = styled.span`
     margin-top: 0;
     text-align: right;
   `)}
-`
-const StyledHighlight = styled.div`
-  color: ${props => props.theme['@primary-color']};
-  font-size: 14px;
-  letter-spacing: 0.18px;
-  margin-top: 8px;
 `
 const StyledListLabelBLock = styled.div`
   width: 5rem;

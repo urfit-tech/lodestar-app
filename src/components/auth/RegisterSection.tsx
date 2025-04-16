@@ -25,7 +25,6 @@ import SignupForm from '../common/SignupForm'
 import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './AuthModal'
 import { FacebookLoginButton, GoogleLoginButton, LineLoginButton } from './SocialLoginButton'
 import authMessages from './translation'
-import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import Cookies from 'js-cookie'
 import { TrackingEvent, Method } from '../../types/tracking'
 

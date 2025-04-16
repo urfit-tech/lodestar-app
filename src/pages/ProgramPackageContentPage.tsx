@@ -15,7 +15,7 @@ const ProgramPackageContentPage: React.VFC = () => {
   const [specificMemberId] = useQueryParam('memberId', StringParam)
   const { currentMemberId, currentUserRole } = useAuth()
   const memberId = specificMemberId || currentMemberId
-  const { loading, error, data: programPackage } = useProgramPackage(programPackageId, memberId)
+  const { loading, data: programPackage } = useProgramPackage(programPackageId, memberId)
 
   if (loading || !currentUserRole) {
     return <SkeletonText mt="1" noOfLines={4} spacing="4" />

@@ -5,12 +5,167 @@ import { PeriodType } from 'lodestar-app-element/src/types/data'
 import { ProductType } from 'lodestar-app-element/src/types/product'
 import { useIntl } from 'react-intl'
 
-export const useMuiltiPeriodProduct = ({ id, startedAts }: { id: string; startedAts: Array<Date> }) => {
+export const useMultiPeriodProduct = ({ id, startedAts }: { id: string; startedAts: Array<Date> }) => {
   const { formatMessage } = useIntl()
   const [type, targetId] = id.split('_')
 
-  const { loading, error, data } = useQuery<GET_MUILTI_PERIOD_PRODUCT, GET_MUILTI_PERIOD_PRODUCTVariables>(
-    GET_MUILTI_PERIOD_PRODUCT,
+  const { loading, error, data } = useQuery<GET_MULTI_PERIOD_PRODUCT, GET_MULTI_PERIOD_PRODUCTVariables>(
+    gql`
+      query GET_MULTI_PERIOD_PRODUCT($targetId: uuid!, $startedAts: [timestamptz!]) {
+        program_by_pk(id: $targetId) {
+          id
+          title
+          cover_url
+          is_subscription
+          list_price
+          sale_price
+          sold_at
+          program_categories(order_by: { position: asc }) {
+            id
+            category {
+              id
+              name
+            }
+          }
+          program_roles {
+            id
+            name
+            member_id
+            member {
+              id
+              name
+            }
+          }
+        }
+        program_plan_by_pk(id: $targetId) {
+          id
+          title
+          list_price
+          sale_price
+          sold_at
+          discount_down_price
+          currency_id
+          period_amount
+          period_type
+          group_buying_people
+          program {
+            id
+            title
+            cover_url
+          }
+          auto_renewed
+        }
+        program_package_plan_by_pk(id: $targetId) {
+          id
+          title
+          list_price
+          sale_price
+          sold_at
+          discount_down_price
+          period_amount
+          period_type
+          is_subscription
+          program_package {
+            id
+            title
+            cover_url
+          }
+        }
+        card_by_pk(id: $targetId) {
+          id
+          title
+        }
+        activity_ticket_by_pk(id: $targetId) {
+          id
+          title
+          price
+          ended_at
+          activity {
+            id
+            title
+            cover_url
+          }
+        }
+        project_plan_by_pk(id: $targetId) {
+          id
+          title
+          cover_url
+          list_price
+          sale_price
+          sold_at
+          discount_down_price
+          period_amount
+          period_type
+          project {
+            id
+            title
+            expired_at
+          }
+          is_limited
+          is_physical
+          is_subscription
+        }
+        podcast_program_by_pk(id: $targetId) {
+          id
+          title
+          cover_url
+          list_price
+          sale_price
+          sold_at
+        }
+        podcast_plan_by_pk(id: $targetId) {
+          id
+          title
+          list_price
+          sale_price
+          sold_at
+          creator {
+            name
+            username
+          }
+          is_subscription
+        }
+        appointment_plan_by_pk(id: $targetId) {
+          id
+          title
+          price
+          creator {
+            name
+            username
+            picture_url
+          }
+          appointment_periods(where: { started_at: { _in: $startedAts } }) {
+            started_at
+            ended_at
+            booked
+          }
+        }
+        merchandise_spec_by_pk(id: $targetId) {
+          id
+          title
+          list_price
+          sale_price
+          merchandise {
+            id
+            title
+            sold_at
+            is_physical
+            is_customized
+            currency_id
+            merchandise_imgs(where: { type: { _eq: "cover" } }) {
+              id
+              url
+            }
+          }
+        }
+        voucher_plan_by_pk(id: $targetId) {
+          id
+          title
+          sale_price
+          sale_amount
+        }
+      }
+    `,
     {
       variables: {
         targetId,
@@ -180,7 +335,7 @@ export const useMuiltiPeriodProduct = ({ id, startedAts }: { id: string; started
   }
 }
 
-type GET_MUILTI_PERIOD_PRODUCT = {
+type GET_MULTI_PERIOD_PRODUCT = {
   __typename?: 'query_root'
   program_by_pk?: {
     __typename?: 'program'
@@ -320,7 +475,7 @@ type GET_MUILTI_PERIOD_PRODUCT = {
   } | null
 }
 
-type GET_MUILTI_PERIOD_PRODUCTVariables = Exact<{
+type GET_MULTI_PERIOD_PRODUCTVariables = Exact<{
   targetId: Scalars['uuid']
   startedAts: Array<Scalars['timestamptz']>
 }>
@@ -355,160 +510,3 @@ export type Target = {
     booked?: boolean | null
   }>
 }
-
-const GET_MUILTI_PERIOD_PRODUCT = gql`
-  query GET_MUILTI_PERIOD_PRODUCT($targetId: uuid!, $startedAts: [timestamptz!]) {
-    program_by_pk(id: $targetId) {
-      id
-      title
-      cover_url
-      is_subscription
-      list_price
-      sale_price
-      sold_at
-      program_categories(order_by: { position: asc }) {
-        id
-        category {
-          id
-          name
-        }
-      }
-      program_roles {
-        id
-        name
-        member_id
-        member {
-          id
-          name
-        }
-      }
-    }
-    program_plan_by_pk(id: $targetId) {
-      id
-      title
-      list_price
-      sale_price
-      sold_at
-      discount_down_price
-      currency_id
-      period_amount
-      period_type
-      group_buying_people
-      program {
-        id
-        title
-        cover_url
-      }
-      auto_renewed
-    }
-    program_package_plan_by_pk(id: $targetId) {
-      id
-      title
-      list_price
-      sale_price
-      sold_at
-      discount_down_price
-      period_amount
-      period_type
-      is_subscription
-      program_package {
-        id
-        title
-        cover_url
-      }
-    }
-    card_by_pk(id: $targetId) {
-      id
-      title
-    }
-    activity_ticket_by_pk(id: $targetId) {
-      id
-      title
-      price
-      ended_at
-      activity {
-        id
-        title
-        cover_url
-      }
-    }
-    project_plan_by_pk(id: $targetId) {
-      id
-      title
-      cover_url
-      list_price
-      sale_price
-      sold_at
-      discount_down_price
-      period_amount
-      period_type
-      project {
-        id
-        title
-        expired_at
-      }
-      is_limited
-      is_physical
-      is_subscription
-    }
-    podcast_program_by_pk(id: $targetId) {
-      id
-      title
-      cover_url
-      list_price
-      sale_price
-      sold_at
-    }
-    podcast_plan_by_pk(id: $targetId) {
-      id
-      title
-      list_price
-      sale_price
-      sold_at
-      creator {
-        name
-        username
-      }
-      is_subscription
-    }
-    appointment_plan_by_pk(id: $targetId) {
-      id
-      title
-      price
-      creator {
-        name
-        username
-        picture_url
-      }
-      appointment_periods(where: { started_at: { _in: $startedAts } }) {
-        started_at
-        ended_at
-        booked
-      }
-    }
-    merchandise_spec_by_pk(id: $targetId) {
-      id
-      title
-      list_price
-      sale_price
-      merchandise {
-        id
-        title
-        sold_at
-        is_physical
-        is_customized
-        currency_id
-        merchandise_imgs(where: { type: { _eq: "cover" } }) {
-          id
-          url
-        }
-      }
-    }
-    voucher_plan_by_pk(id: $targetId) {
-      id
-      title
-      sale_price
-      sale_amount
-    }
-  }
-`
