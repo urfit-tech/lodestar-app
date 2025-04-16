@@ -4,8 +4,7 @@ import { camelCase } from 'lodash'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
-import * as R from 'ramda'
-import { addIndex, assoc, map, pipe } from 'ramda'
+import { addIndex, assoc, curry, map, pipe, prop, sum } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { checkoutMessages } from '../../helpers/translation'
@@ -40,9 +39,9 @@ const CheckoutCard: React.VFC<
   const { formatMessage } = useIntl()
   const theme = useAppTheme()
   const { currencyId: appCurrencyId } = useApp()
-  const calculateOriginalTotal = R.pipe(R.map(R.prop('price')), R.sum) as (products: OrderProductProps[]) => number
+  const calculateOriginalTotal = pipe(map(prop('price')), sum) as (products: OrderProductProps[]) => number
 
-  const applyDiscountToProduct = R.curry(
+  const applyDiscountToProduct = curry(
     (orderDiscounts: OrderDiscountProps[], orderProducts: OrderProductProps[], checkoutAmount: number): number => {
       return orderProducts.reduce((acc: number, orderProduct: OrderProductProps) => {
         const discount = orderDiscounts.find(orderDiscount => orderDiscount.productId === orderProduct.productId)
@@ -54,7 +53,7 @@ const CheckoutCard: React.VFC<
     },
   )
 
-  const applyNonProductSpecificDiscounts = R.curry(
+  const applyNonProductSpecificDiscounts = curry(
     (orderDiscounts: OrderDiscountProps[], checkoutAmount: number): number => {
       const nonProductSpecificDiscounts = orderDiscounts.filter(orderDiscount => !orderDiscount.productId)
       return nonProductSpecificDiscounts.reduce((acc: number, orderDiscount: OrderDiscountProps) => {
@@ -126,7 +125,7 @@ const CheckoutCard: React.VFC<
               listPrice={((): number => {
                 type PipeFunction = (x: number) => number
 
-                const total = R.pipe(
+                const total = pipe(
                   calculateOriginalTotal,
                   applyDiscountToProduct(check.orderDiscounts, check.orderProducts) as PipeFunction,
                   applyNonProductSpecificDiscounts(check.orderDiscounts) as PipeFunction,
