@@ -19,6 +19,31 @@ module.exports = override(
   }),
   (config, env) => {
     config = rewireReactHotLoader(config, env)
+    config.optimization.minimize = true
+    config.optimization.splitChunks = {
+      chunks: 'all',
+      minSize: 20000,
+      maxSize: 70000,
+      maxInitialRequests: 5,
+      automaticNameDelimiter: '-',
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+        },
+        default: {
+          minChunks: 2,
+        },
+      },
+    }
+    const oneOfRule = config.module.rules.find(rule => Array.isArray(rule.oneOf))
+    if (oneOfRule) {
+      oneOfRule.oneOf.forEach(rule => {
+        if (rule.loader && rule.loader.includes('babel-loader') && Array.isArray(rule.include)) {
+          rule.include.push(path.resolve(__dirname, 'node_modules/lodestar-app-element/src'))
+        }
+      })
+    }
     return config
   },
 )
