@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { AvatarImage } from '../../components/common/Image'
 import DefaultLayout from '../../components/layout/DefaultLayout'
-import * as hasura from '../../hasura'
+import hasura from '../../hasura'
 import pageMessages from '../translation'
 
 const StyledAboutSection = styled.section`
