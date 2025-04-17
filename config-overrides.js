@@ -18,8 +18,27 @@ module.exports = override(
     },
   }),
   (config, env) => {
-    if (env === 'development' || process.env.NODE_ENV === 'development') {
-      config = rewireReactHotLoader(config, process.env.NODE_ENV)
+    const isDev = env === 'development' || process.env.NODE_ENV === 'development'
+    if (isDev) {
+      config = rewireReactHotLoader(config, 'development')
+    }
+    if (!isDev) {
+      config.devtool = false
+    }
+    const oneOfRule = config.module.rules.find(rule => Array.isArray(rule.oneOf))
+    if (oneOfRule) {
+      oneOfRule.oneOf.forEach(rule => {
+        if (rule.loader && rule.loader.includes('babel-loader')) {
+          rule.options = {
+            ...rule.options,
+            cacheDirectory: true,
+            compact: true,
+          }
+          if (Array.isArray(rule.include)) {
+            rule.include.push(path.resolve(__dirname, 'node_modules/lodestar-app-element/src'))
+          }
+        }
+      })
     }
     config.optimization.minimize = true
     config.optimization.runtimeChunk = 'single'
@@ -30,6 +49,12 @@ module.exports = override(
       maxInitialRequests: 5,
       automaticNameDelimiter: '-',
       cacheGroups: {
+        antd: {
+          test: /[\\/]node_modules[\\/]antd[\\/]/,
+          name: 'antd',
+          chunks: 'all',
+          priority: 20,
+        },
         vendors: {
           test: /[\\/]node_modules[\\/]/,
           priority: -10,
@@ -37,17 +62,12 @@ module.exports = override(
         },
         default: {
           minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true,
         },
       },
     }
-    const oneOfRule = config.module.rules.find(rule => Array.isArray(rule.oneOf))
-    if (oneOfRule) {
-      oneOfRule.oneOf.forEach(rule => {
-        if (rule.loader && rule.loader.includes('babel-loader') && Array.isArray(rule.include)) {
-          rule.include.push(path.resolve(__dirname, 'node_modules/lodestar-app-element/src'))
-        }
-      })
-    }
+
     return config
   },
 )
