@@ -1,10 +1,10 @@
 import { gql, useQuery } from '@apollo/client'
-import { ChakraProvider, extendTheme } from '@chakra-ui/react'
+import { ChakraProvider, extendTheme, Spinner } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import { isEmpty } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -16,7 +16,6 @@ import InfoCard from '../../components/learningAchievement/InfoCard'
 import ProgramProgressDetailCard from '../../components/learningAchievement/ProgramProgressDetailCard'
 import ProgramSummaryCard from '../../components/learningAchievement/ProgramSummaryCard'
 import ProgressBarCard from '../../components/learningAchievement/ProgressBarCard'
-import RadarCard from '../../components/learningAchievement/RadarCard'
 import learningAchievementMessages from '../../components/learningAchievement/translation'
 import hasura from '../../hasura'
 import { checkLearningSystem } from '../../helpers/learning'
@@ -103,6 +102,8 @@ export type MemberAchievement = {
   isPublic: boolean
 }
 
+const RadarCard = lazy(() => import('../../components/learningAchievement/RadarCard'))
+
 const LearningAchievementPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
@@ -166,14 +167,16 @@ const LearningAchievementPage: React.FC = () => {
                 programCount={learnedStatistic.programCount}
                 programTagOptions={learnedStatistic.programTagOptions}
               />
-              <RadarCard
-                programCount={learnedStatistic.programCount}
-                totalProgramContentCount={learnedStatistic.totalProgramContentCount}
-                totalProgramTime={learnedStatistic.totalProgramTime}
-                progressProgramContentCount={learnedStatistic.progressProgramContentCount}
-                progressProgramTime={Math.floor(learnedStatistic.progressProgramTime)}
-                progressProgramCount={learnedStatistic.progressProgramCount}
-              />
+              <Suspense fallback={<Spinner />}>
+                <RadarCard
+                  programCount={learnedStatistic.programCount}
+                  totalProgramContentCount={learnedStatistic.totalProgramContentCount}
+                  totalProgramTime={learnedStatistic.totalProgramTime}
+                  progressProgramContentCount={learnedStatistic.progressProgramContentCount}
+                  progressProgramTime={Math.floor(learnedStatistic.progressProgramTime)}
+                  progressProgramCount={learnedStatistic.progressProgramCount}
+                />
+              </Suspense>
             </StyledRowGrid>
             <ProgressBarCard consecutiveDayOptions={learnedStatistic.consecutiveDayOptions} />
             <ProgramProgressDetailCard productOptions={learnedStatistic.productOptions} />
