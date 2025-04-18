@@ -14,7 +14,7 @@ const StyledTitle = styled.h2`
   font-weight: bold;
 `
 
-const PodcastAlbumInstructorCollectionBlock: React.VFC<{
+const PodcastAlbumInstructorCollectionBlock: React.FC<{
   podcastAlbum: PodcastAlbum
   customTitle?: string
 }> = ({ podcastAlbum, customTitle }) => {
@@ -29,7 +29,7 @@ const PodcastAlbumInstructorCollectionBlock: React.VFC<{
   )
 }
 
-const CreatorCollection: React.VFC<{ creatorId: string }> = ({ creatorId }) => {
+const CreatorCollection: React.FC<{ creatorId: string }> = ({ creatorId }) => {
   const { loadingMember, member } = usePublicMember(creatorId)
 
   if (loadingMember || !member) {

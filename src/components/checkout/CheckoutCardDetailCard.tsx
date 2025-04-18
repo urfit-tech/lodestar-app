@@ -1,7 +1,7 @@
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 
-const CheckoutCardDetailCard: React.VFC<{
+const CheckoutCardDetailCard: React.FC<{
   key?: React.Key
   name: string
   price: number

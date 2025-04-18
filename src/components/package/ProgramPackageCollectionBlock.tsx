@@ -14,7 +14,7 @@ import PackageCard from '../package/PackageCard'
 import RadioCard from '../RadioCard'
 import packageMessages from './translation'
 
-const ProgramPackageCollectionBlock: React.VFC<{
+const ProgramPackageCollectionBlock: React.FC<{
   memberId: string
   onProgramTabClick: (tab: string) => void
   programTab: string

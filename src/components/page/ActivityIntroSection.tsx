@@ -104,7 +104,7 @@ const StyledLink = styled(Link)<{ color: string }>`
   background-color: ${props => props.color};
 `
 
-const ActivityIntroSection: React.VFC<{
+const ActivityIntroSection: React.FC<{
   options: {
     backgroundImage: string
     subtitle: string

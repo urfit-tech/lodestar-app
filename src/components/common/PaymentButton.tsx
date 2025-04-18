@@ -35,7 +35,7 @@ const StyleButton = styled(Button)<{ line?: 'multiline' }>`
     `}
 `
 
-const PaymentButton: React.VFC<{
+const PaymentButton: React.FC<{
   type: ProductType
   target: string
   price: number

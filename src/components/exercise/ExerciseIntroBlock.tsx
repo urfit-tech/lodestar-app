@@ -28,7 +28,7 @@ const StyledButton = styled(Button)`
   }
 `
 
-const ExerciseIntroBlock: React.VFC<
+const ExerciseIntroBlock: React.FC<
   ExerciseProps & {
     showDetail?: boolean
     onStart?: () => void
@@ -129,7 +129,7 @@ const ExerciseIntroBlock: React.VFC<
   )
 }
 
-const TimeLimitContent: React.VFC<{
+const TimeLimitContent: React.FC<{
   unit?: 's' | 'm' | 'h' | 'd' | 'w' | 'M' | 'y' | string
   amount?: number
 }> = ({ unit, amount = 0 }) => {

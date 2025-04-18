@@ -76,7 +76,7 @@ const StyledProgressBar = styled.div`
   }
 `
 
-export const ProgramDisplayedListItem: React.VFC<{
+export const ProgramDisplayedListItem: React.FC<{
   program: ProgramPackageProgram & {
     expiredAt?: Date | null
   }

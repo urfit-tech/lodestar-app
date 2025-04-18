@@ -14,7 +14,7 @@ const StyledTitle = styled.h3`
   letter-spacing: 0.2px;
 `
 
-const MerchandiseCard: React.VFC<
+const MerchandiseCard: React.FC<
   Omit<MerchandiseBasicProps, 'tags' | 'categories' | 'isPhysical'> & {
     specs: MerchandiseSpecBasicProps[]
     onClick?: () => void

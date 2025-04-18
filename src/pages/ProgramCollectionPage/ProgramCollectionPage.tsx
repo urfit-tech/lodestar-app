@@ -28,7 +28,7 @@ export const StyledButton = styled(ChakraButton)`
   }
 `
 
-const ProgramCollectionPage: React.VFC = () => {
+const ProgramCollectionPage: React.FC = () => {
   const { formatMessage } = useIntl()
 
   const [defaultActive] = useQueryParam('active', StringParam)

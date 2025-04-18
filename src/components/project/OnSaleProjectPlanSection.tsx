@@ -54,7 +54,7 @@ const StyledContainer = styled.div`
   }
 `
 
-const OnSaleProjectPlanSection: React.VFC<{
+const OnSaleProjectPlanSection: React.FC<{
   projectPlans: ProjectPlanProps[]
   publishedAt: Date | null
 }> = ({ projectPlans, publishedAt }) => {

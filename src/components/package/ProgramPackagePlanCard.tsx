@@ -41,7 +41,7 @@ const StyledCountDownBlock = styled.div`
   }
 `
 
-const ProgramPackagePlanCard: React.VFC<
+const ProgramPackagePlanCard: React.FC<
   ProgramPackagePlanProps & {
     programPackageId: string
     loading?: boolean

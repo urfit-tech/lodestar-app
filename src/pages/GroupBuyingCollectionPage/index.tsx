@@ -51,7 +51,7 @@ const messages = defineMessages({
   noSendableItem: { id: 'groupBuying.text.noSendableItem', defaultMessage: '尚無任何可發送的項目' },
 })
 
-const GroupBuyingCollectionPage: React.VFC = () => {
+const GroupBuyingCollectionPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { loading, error, groupBuyingOrderCollection, refetch } = useGroupBuyingLogs(currentMemberId)

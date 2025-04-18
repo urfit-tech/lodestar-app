@@ -1,13 +1,15 @@
-import React from 'react'
+import { Spinner } from '@chakra-ui/spinner'
+import React, { lazy, Suspense } from 'react'
 import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import MemberAvatar from '../../../../components/common/MemberAvatar'
 import { BREAK_POINT } from '../../../../components/common/Responsive'
-import VideoPlayer from '../../../../components/common/VideoPlayer'
 import { productMessages } from '../../../../helpers/translation'
 import { Program, ProgramRole } from '../../../../types/program'
+
+const VideoPlayer = lazy(() => import('../../../../components/common/VideoPlayer'))
 
 const StyledTags = styled.div`
   margin-bottom: 1rem;
@@ -83,7 +85,7 @@ const StyledLink = styled(Link)`
   color: #9b9b9b;
 `
 
-const SubscriptionProgramBanner: React.VFC<{
+const SubscriptionProgramBanner: React.FC<{
   program: Program & {
     tags: string[]
     roles: ProgramRole[]
@@ -108,12 +110,14 @@ const SubscriptionProgramBanner: React.VFC<{
                   style={{ width: '100%', height: '100%' }}
                 />
               ) : program.coverVideoUrl.includes('streaming.media.azure.net') ? (
-                <VideoPlayer
-                  sources={[
-                    { type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' },
-                    { type: 'application/x-mpegURL', src: program.coverVideoUrl + '(format=m3u8-cmaf)' },
-                  ]}
-                />
+                <Suspense fallback={<Spinner />}>
+                  <VideoPlayer
+                    sources={[
+                      { type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' },
+                      { type: 'application/x-mpegURL', src: program.coverVideoUrl + '(format=m3u8-cmaf)' },
+                    ]}
+                  />
+                </Suspense>
               ) : (
                 <ReactPlayer url={program.coverVideoUrl} width="100%" height="100%" controls />
               )}

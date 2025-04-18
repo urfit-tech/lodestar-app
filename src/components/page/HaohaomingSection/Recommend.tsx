@@ -101,7 +101,7 @@ const CustomArrow: React.FC<{
   onClick?: () => void
 }> = ({ type, onClick }) => <Icon type={type} onClick={onClick} />
 
-const Recommend: React.VFC<RecommendProp> = ({ title, subtitle, recommenders }) => (
+const Recommend: React.FC<RecommendProp> = ({ title, subtitle, recommenders }) => (
   <StyledSection>
     <div className="container">
       <div className="row">

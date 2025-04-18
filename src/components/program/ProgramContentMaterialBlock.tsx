@@ -49,7 +49,7 @@ const StyledFileExtension = styled.span`
 const StyledDataSize = styled.span`
   color: var(--gray-dark);
 `
-const ProgramContentMaterialBlock: React.VFC<{
+const ProgramContentMaterialBlock: React.FC<{
   programContentId: string
   programId: string
 }> = ({ programContentId, programId }) => {

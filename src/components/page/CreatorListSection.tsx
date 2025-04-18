@@ -79,7 +79,7 @@ const StyledCreatorAbstract = styled.div`
   font-weight: 500;
 `
 
-const CreatorListSection: React.VFC<{ options: CreatorList & { excludeIds?: string[] } }> = ({
+const CreatorListSection: React.FC<{ options: CreatorList & { excludeIds?: string[] } }> = ({
   options: { id, titleInfo, excludeIds },
 }) => {
   const history = useHistory()

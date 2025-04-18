@@ -63,7 +63,7 @@ const StyledInactivatedLabel = styled(StyledLabel)`
   background-color: var(--gray);
 `
 
-const PointHistoryAdminPage: React.VFC = () => {
+const PointHistoryAdminPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const app = useApp()
@@ -80,7 +80,7 @@ const PointHistoryAdminPage: React.VFC = () => {
   )
 }
 
-const PointSummaryCard: React.VFC<{ memberId: string }> = ({ memberId }) => {
+const PointSummaryCard: React.FC<{ memberId: string }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
   const { ownedPoints } = usePointStatus(memberId)
@@ -100,7 +100,7 @@ const PointSummaryCard: React.VFC<{ memberId: string }> = ({ memberId }) => {
   )
 }
 
-const PointHistoryCollectionTabs: React.VFC<{ memberId: string }> = ({ memberId }) => {
+const PointHistoryCollectionTabs: React.FC<{ memberId: string }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
   const { loadingPointLogs, errorPointLogs, pointLogs, refetchPointLogs, fetchMorePointLogs } =

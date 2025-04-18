@@ -8,7 +8,7 @@ import { StyledPostMeta } from '.'
 import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 
-const PostPreviewMeta: React.VFC<{
+const PostPreviewMeta: React.FC<{
   authorId: string
   publishedAt: Date | null
 }> = ({ authorId, publishedAt }) => {

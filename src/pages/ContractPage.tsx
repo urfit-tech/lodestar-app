@@ -8,7 +8,7 @@ import DefaultLayout from '../components/layout/DefaultLayout'
 import { useAuthModal } from '../hooks/auth'
 import { useMemberContract } from '../hooks/data'
 
-const ContractPage: React.VFC = () => {
+const ContractPage: React.FC = () => {
   const { isAuthenticating, isAuthenticated } = useAuth()
   const authModal = useAuthModal()
   const { memberContractId } = useParams<{ memberId: string; memberContractId: string }>()

@@ -52,7 +52,7 @@ type RefundOrderList = {
   }[]
 }
 
-const OrderRequestRefundModal: React.VFC<{
+const OrderRequestRefundModal: React.FC<{
   orderId: string
   orderProducts: {
     id: string

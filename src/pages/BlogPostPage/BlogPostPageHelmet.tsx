@@ -5,7 +5,7 @@ import LocaleContext from '../../contexts/LocaleContext'
 import { getBraftContent, getInfinityDate, getOgLocale, notEmpty } from '../../helpers'
 import { Post } from '../../types/blog'
 
-const BlogPostPageHelmet: React.VFC<{ post: Post }> = ({ post }) => {
+const BlogPostPageHelmet: React.FC<{ post: Post }> = ({ post }) => {
   const app = useApp()
   const { defaultLocale } = useContext(LocaleContext)
   const ogLocale = getOgLocale(defaultLocale)

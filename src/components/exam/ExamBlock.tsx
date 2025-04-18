@@ -47,7 +47,7 @@ const StyledDescription = styled.div`
   color: var(--gray-darker);
 `
 
-const ExamBlock: React.VFC<{
+const ExamBlock: React.FC<{
   errorExam?: ApolloError
   errorExamId?: ApolloError
   exam: Pick<

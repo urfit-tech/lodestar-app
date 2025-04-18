@@ -12,7 +12,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import Cookies from 'js-cookie'
 import { TrackingEvent, Method } from '../../types/tracking'
 
-const AuthButton: React.VFC = () => {
+const AuthButton: React.FC = () => {
   const { enabledModules } = useApp()
   const { formatMessage } = useIntl()
   const { renderAuthButton } = useCustomRenderer()

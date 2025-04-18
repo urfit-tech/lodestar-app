@@ -82,7 +82,7 @@ type ProgramContentSectionType = {
   })[]
 }
 
-const PrimaryProgramPageContent: React.VFC<{
+const PrimaryProgramPageContent: React.FC<{
   program: Program & ProgramContentSectionType
 }> = ({ program }) => {
   const { formatMessage } = useIntl()

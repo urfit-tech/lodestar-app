@@ -9,7 +9,7 @@ import { commonMessages } from '../../helpers/translation'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
 import ForbiddenPage from '../ForbiddenPage'
 
-const VoucherCollectionAdminPage: React.VFC = () => {
+const VoucherCollectionAdminPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const app = useApp()
 

@@ -174,7 +174,7 @@ const AppointmentCardCreatorBlock: React.FC<AppointmentCardCreatorBlockProps> = 
   )
 }
 
-const AppointmentCard: React.VFC<AppointmentCardProps> = ({
+const AppointmentCard: React.FC<AppointmentCardProps> = ({
   orderProductId,
   appointmentPlanId,
   memberId,

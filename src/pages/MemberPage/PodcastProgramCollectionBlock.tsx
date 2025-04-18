@@ -37,7 +37,7 @@ const StyledPlaylistItem = styled.div`
 `
 const StyledInput = styled.input``
 
-const PodcastProgramCollectionBlock: React.VFC<{
+const PodcastProgramCollectionBlock: React.FC<{
   memberId: string
   podcastEnrollment: PodcastProgramProps[]
   loading: boolean
@@ -155,7 +155,7 @@ const PodcastProgramCollectionBlock: React.VFC<{
   )
 }
 
-const PlaylistItem: React.VFC<{
+const PlaylistItem: React.FC<{
   id: string
   title: string
   count: number

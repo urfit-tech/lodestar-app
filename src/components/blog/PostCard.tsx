@@ -5,7 +5,7 @@ import { StyledPostTitle } from './'
 import PostPreviewCover from './PostPreviewCover'
 import PostPreviewMeta from './PostPreviewMeta'
 
-const PostCard: React.VFC<
+const PostCard: React.FC<
   Pick<PostPreviewProps, 'id' | 'codeName' | 'coverUrl' | 'videoUrl' | 'title' | 'authorId' | 'publishedAt'> & {
     onClick?: () => void
   }

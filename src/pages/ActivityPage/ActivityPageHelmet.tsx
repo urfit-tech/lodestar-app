@@ -31,7 +31,7 @@ type ActivityPageHelmetProps = DeepPick<
   | 'sessions.[].startedAt'
   | 'sessions.[].endedAt'
 >
-const ActivityPageHelmet: React.VFC<{ activity: ActivityPageHelmetProps }> = ({ activity }) => {
+const ActivityPageHelmet: React.FC<{ activity: ActivityPageHelmetProps }> = ({ activity }) => {
   const app = useApp()
 
   const { member } = usePublicMember(activity.organizerId)

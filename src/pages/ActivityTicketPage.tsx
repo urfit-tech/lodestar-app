@@ -69,7 +69,7 @@ const messages = defineMessages({
   enterLinkPage: { id: 'activity.ui.enterLinkPage', defaultMessage: '進入直播頁面' },
 })
 
-const ActivityTicketPage: React.VFC<{
+const ActivityTicketPage: React.FC<{
   activityTicketId: string
   memberId: string
   orderProductId: string

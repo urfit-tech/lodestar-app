@@ -18,7 +18,7 @@ const StyledPriceDescription = styled(Box)`
   font-size: 14px;
 `
 
-const SecondaryPriceLabel: React.VFC<{
+const SecondaryPriceLabel: React.FC<{
   listPrice: number
   salePrice: number | null | undefined
   currencyId: string

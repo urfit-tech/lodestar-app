@@ -1,16 +1,15 @@
-import { Box, Button, Flex, Link, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Link, Spinner, Text } from '@chakra-ui/react'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { desktopViewMixin } from 'lodestar-app-element/src/helpers'
 import queryString from 'query-string'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useContext, useEffect, useRef, useState } from 'react'
 import { FaShareAlt } from 'react-icons/fa'
 import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { useLocation } from 'react-router'
 import styled, { css, ThemeContext } from 'styled-components'
 import { BREAK_POINT } from '../../../../components/common/Responsive'
-import VideoPlayer from '../../../../components/common/VideoPlayer'
 import ReviewCollectionBlock from '../../../../components/review/ReviewCollectionBlock'
 import { useProgramPlansEnrollmentsAggregateList } from '../../../../hooks/program'
 import EmptyCover from '../../../../images/empty-cover.png'
@@ -20,6 +19,8 @@ import SecondaryProgramPlanCard from '../../Secondary/SecondaryProgramPlanCard'
 import SocialSharePopover from '../../Secondary/SocialSharePopover'
 import { colors } from '../../Secondary/style'
 import EbookMessages from '../translation'
+
+const VideoPlayer = lazy(() => import('../../../../components/common/VideoPlayer'))
 
 const StyledCoverImage = styled(Box)<{ coverUrl: string; coverMobileUrl: string }>`
   background-image: url(${props => props.coverMobileUrl || EmptyCover});
@@ -117,7 +118,7 @@ const EbookTrialAndShareButtonGroup = ({
   )
 }
 
-const EbookProgramPageContent: React.VFC<{
+const EbookProgramPageContent: React.FC<{
   program: Program & ProgramContentSectionType
 }> = ({ program }) => {
   const { enabledModules } = useApp()
@@ -209,12 +210,14 @@ const EbookProgramPageContent: React.VFC<{
                       style={{ width: '100%', height: '100%' }}
                     />
                   ) : program.coverVideoUrl.includes('streaming.media.azure.net') ? (
-                    <VideoPlayer
-                      sources={[
-                        { type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' },
-                        { type: 'application/x-mpegURL', src: program.coverVideoUrl + '(format=m3u8-cmaf)' },
-                      ]}
-                    />
+                    <Suspense fallback={<Spinner />}>
+                      <VideoPlayer
+                        sources={[
+                          { type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' },
+                          { type: 'application/x-mpegURL', src: program.coverVideoUrl + '(format=m3u8-cmaf)' },
+                        ]}
+                      />
+                    </Suspense>
                   ) : (
                     <ReactPlayer url={program.coverVideoUrl} width="100%" height="100%" controls />
                   )}

@@ -22,7 +22,7 @@ const StyledProgramTitle = styled(Typography.Title)`
   }
 `
 
-export const ProgramDisplayedCard: React.VFC<{
+export const ProgramDisplayedCard: React.FC<{
   program: ProgramPackageProgram
   memberId?: string | null
 }> = ({ program, memberId }) => {

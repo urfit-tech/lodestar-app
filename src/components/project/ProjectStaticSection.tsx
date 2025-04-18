@@ -145,7 +145,7 @@ const StyleSection = styled.section`
   }
 `
 
-const ProjectStaticSection: React.VFC<ProjectStaticSectionProp> = ({ html }) => (
+const ProjectStaticSection: React.FC<ProjectStaticSectionProp> = ({ html }) => (
   <StyleSection>
     <div dangerouslySetInnerHTML={{ __html: html }} />
   </StyleSection>

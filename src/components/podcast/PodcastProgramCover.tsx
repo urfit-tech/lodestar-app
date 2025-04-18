@@ -89,7 +89,7 @@ const StyledRotateIcon = styled(Icon)`
   }
 `
 
-const PodcastProgramCover: React.VFC<{
+const PodcastProgramCover: React.FC<{
   memberId: string
   podcastProgramId: string
   podcastAlbum: PodcastAlbumPreview

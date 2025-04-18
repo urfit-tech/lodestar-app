@@ -70,7 +70,7 @@ const StyledTabBarWrapper = styled.div`
   }
 `
 
-const SearchPage: React.VFC = () => {
+const SearchPage: React.FC = () => {
   const [title] = useQueryParam('q', StringParam)
   const [tag] = useQueryParam('tag', StringParam)
   const { currentMemberId } = useAuth()
@@ -106,7 +106,7 @@ const SearchPage: React.VFC = () => {
   )
 }
 
-const SearchResultBlock: React.VFC<{
+const SearchResultBlock: React.FC<{
   memberId: string | null
   title?: string | null
   tag?: string | null

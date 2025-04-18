@@ -113,7 +113,7 @@ interface contentTitleCollapsedType {
   }
 }
 
-const ProgramContentListSection: React.VFC<{
+const ProgramContentListSection: React.FC<{
   program: Program & ProgramContentSectionType
 }> = ({ program }) => {
   const { formatMessage } = useIntl()
@@ -221,7 +221,7 @@ const ProgramContentListSection: React.VFC<{
     setAllCollapsed(checkAllCollapsed())
   }, [contentTitleCollapsed])
 
-  const ContentItem: React.VFC<{
+  const ContentItem: React.FC<{
     item: ProgramContent
     isPinned: boolean
   }> = ({ item, isPinned }) => {

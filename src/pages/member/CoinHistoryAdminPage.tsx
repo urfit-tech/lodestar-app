@@ -66,7 +66,7 @@ const StyledInactivatedLabel = styled(StyledLabel)`
   background-color: var(--gray);
 `
 
-const CoinHistoryAdminPage: React.VFC = () => {
+const CoinHistoryAdminPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
 
@@ -78,7 +78,7 @@ const CoinHistoryAdminPage: React.VFC = () => {
   )
 }
 
-const CoinSummaryCard: React.VFC<{
+const CoinSummaryCard: React.FC<{
   memberId: string
 }> = ({ memberId }) => {
   const { formatMessage } = useIntl()
@@ -98,7 +98,7 @@ const CoinSummaryCard: React.VFC<{
   )
 }
 
-const CoinHistoryCollectionTabs: React.VFC<{
+const CoinHistoryCollectionTabs: React.FC<{
   memberId: string
 }> = ({ memberId }) => {
   const { formatMessage } = useIntl()

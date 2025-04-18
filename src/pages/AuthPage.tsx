@@ -16,7 +16,7 @@ const StyledContainer = styled(Container)`
   user-select: none;
 `
 
-const AuthPage: React.VFC = () => {
+const AuthPage: React.FC = () => {
   const { currentMember } = useAuth()
   const [authState, setAuthState] = useState<AuthState>('login')
   const [accountLinkToken] = useQueryParam('accountLinkToken', StringParam)

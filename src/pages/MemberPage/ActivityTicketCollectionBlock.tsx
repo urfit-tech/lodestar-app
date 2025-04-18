@@ -19,7 +19,7 @@ const messages = defineMessages({
 
 type DisplayType = 'ticket' | 'session'
 
-const ActivityTicketCollectionBlock: React.VFC<{
+const ActivityTicketCollectionBlock: React.FC<{
   activityEnrollment: ActivitySessionTicketEnrollment[]
   isError: boolean
 }> = ({ activityEnrollment, isError }) => {

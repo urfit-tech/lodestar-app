@@ -3,7 +3,7 @@ import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import React, { useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
 
-const CollapseContent: React.VFC<{ children: React.ReactNode; title: string }> = ({ title, children }) => {
+const CollapseContent: React.FC<{ children: React.ReactNode; title: string }> = ({ title, children }) => {
   const theme = useAppTheme()
   const [show, setShow] = useState<boolean>(false)
   const handleToggle = () => setShow(!show)

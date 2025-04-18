@@ -80,7 +80,7 @@ const StyledUnit = styled.span`
   color: var(--gray-dark);
 `
 
-const PodcastAlbumCard: React.VFC<Pick<PodcastAlbum, 'title' | 'coverUrl'> & { unitCount: number }> = ({
+const PodcastAlbumCard: React.FC<Pick<PodcastAlbum, 'title' | 'coverUrl'> & { unitCount: number }> = ({
   title,
   coverUrl,
   unitCount,
@@ -100,7 +100,7 @@ const PodcastAlbumCard: React.VFC<Pick<PodcastAlbum, 'title' | 'coverUrl'> & { u
   )
 }
 
-const PodcastAlbumCollectionPage: React.VFC = () => {
+const PodcastAlbumCollectionPage: React.FC = () => {
   const [defaultActive] = useQueryParam('active', StringParam)
   const [title] = useQueryParam('title', StringParam)
   const [noSelector] = useQueryParam('noSelector', BooleanParam)

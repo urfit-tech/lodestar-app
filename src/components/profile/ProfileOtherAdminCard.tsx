@@ -16,7 +16,7 @@ import profileMessages from './translation'
 
 type ProfileOtherAdminCardProps = CardProps & FormComponentProps & { memberId: string }
 
-const ProfileOtherAdminCard: React.VFC<ProfileOtherAdminCardProps> = ({ form, memberId, ...cardProps }) => {
+const ProfileOtherAdminCard: React.FC<ProfileOtherAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { formatMessage } = useIntl()
   const [loading, setLoading] = useState<boolean>(false)
   const { defaultPhoneNumber, refetchPhoneMember } = useMemberPhoneEnableSetting(memberId)

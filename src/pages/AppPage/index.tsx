@@ -121,7 +121,7 @@ const sectionConverter = {
   homeHaohaoming: HaohaomingSection,
 }
 
-const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
+const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
   const { settings, id: appId, enabledModules } = useApp()
   const { updateAuthToken } = useAuth()

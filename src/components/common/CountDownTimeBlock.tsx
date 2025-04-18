@@ -35,7 +35,7 @@ const StyledNumberBlock = styled.span<{ secondary?: boolean; yellow?: boolean }>
   }
 `
 
-const CountDownTimeBlock: React.VFC<{
+const CountDownTimeBlock: React.FC<{
   expiredAt: Date
   text?: string
   secondary?: boolean

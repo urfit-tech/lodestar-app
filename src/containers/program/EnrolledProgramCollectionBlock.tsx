@@ -18,7 +18,7 @@ import ProgramCard from './ProgramCard'
 const getCreatorName = (program: ProgramEnrollment) =>
   program.roles.filter(role => role.name === 'instructor')[0]?.memberName.toLowerCase() || ''
 
-const EnrolledProgramCollectionBlock: React.VFC<{
+const EnrolledProgramCollectionBlock: React.FC<{
   memberId: string
   onProgramTabClick: (tab: string) => void
   programTab: string

@@ -59,7 +59,7 @@ const StyledTitle = styled.div`
   color: var(--gray-darker);
 `
 
-const CouponDescriptionModal: React.VFC<
+const CouponDescriptionModal: React.FC<
   ModalProps & {
     coupon: CouponProps
   }

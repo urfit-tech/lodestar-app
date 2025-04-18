@@ -43,7 +43,7 @@ export const StyledModalTitle = styled.div`
   ${CommonTitleMixin}
 `
 
-const LoginSection: React.VFC<{
+const LoginSection: React.FC<{
   noGeneralLogin?: boolean
   isBusinessMember?: boolean
   onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>

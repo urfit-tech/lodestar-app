@@ -30,7 +30,7 @@ const StyledForm = styled(Form)`
 
 type ProfileIntroBusinessCardProps = CardProps & FormComponentProps & { memberId: string }
 
-const ProfileIntroBusinessCard: React.VFC<ProfileIntroBusinessCardProps> = ({ form, memberId, ...cardProps }) => {
+const ProfileIntroBusinessCard: React.FC<ProfileIntroBusinessCardProps> = ({ form, memberId, ...cardProps }) => {
   const { formatMessage } = useIntl()
   const { member, refetchMember } = useMember(memberId)
   const updateMember = useUpdateMember()

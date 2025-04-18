@@ -40,7 +40,7 @@ const StyledGroup = styled(Box)`
   font-size: 12px;
   color: var(--gray-dark);
 `
-const PracticeAdminCard: React.VFC<PracticePreviewProps> = ({
+const PracticeAdminCard: React.FC<PracticePreviewProps> = ({
   id,
   isCoverRequired,
   coverUrl,

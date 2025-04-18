@@ -23,7 +23,7 @@ const StyledInputWrapper = styled.div`
   }
 `
 
-const MultiPeriodCouponSelectionModal: React.VFC<{
+const MultiPeriodCouponSelectionModal: React.FC<{
   memberId: string
   orderProducts: OrderProductProps[]
   orderDiscounts: OrderDiscountProps[]

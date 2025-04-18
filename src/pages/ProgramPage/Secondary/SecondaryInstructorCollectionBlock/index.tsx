@@ -9,7 +9,7 @@ import InstructorPanel from './InstructorPanel'
 import InstructorTab from './InstructorTab'
 import NormalContent from './NormalContent'
 
-const SecondaryInstructorCollectionBlock: React.VFC<{
+const SecondaryInstructorCollectionBlock: React.FC<{
   program: Program & {
     roles: ProgramRole[]
   }

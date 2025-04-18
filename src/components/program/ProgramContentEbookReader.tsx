@@ -130,7 +130,7 @@ export type Bookmark = {
 const isSafari = /Safari/i.test(navigator.userAgent) && !/CriOS/i.test(navigator.userAgent)
 // When using the chrome browser on an ios phone, the word "CriOS" will appear in the userAgent
 
-const ProgramContentEbookReader: React.VFC<{
+const ProgramContentEbookReader: React.FC<{
   programContentId: string
   isTrial: boolean
   setEbook: React.Dispatch<React.SetStateAction<Book | null>>
@@ -905,7 +905,7 @@ const ProgramContentEbookReader: React.VFC<{
   )
 }
 
-const EbookReaderBookmarkIcon: React.VFC<{
+const EbookReaderBookmarkIcon: React.FC<{
   bookmarkData: BookmarkData | undefined
   currentPageBookmarkIds: string[]
   setCurrentPageBookmarkIds: React.Dispatch<React.SetStateAction<string[]>>

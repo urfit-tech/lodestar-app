@@ -329,7 +329,7 @@ const VoucherExchangeModalBlock: React.FC<{
   )
 }
 
-const VoucherExchangeModal: React.VFC<{
+const VoucherExchangeModal: React.FC<{
   voucherId: string
   voucherPlanId: string
   productQuantityLimit: number

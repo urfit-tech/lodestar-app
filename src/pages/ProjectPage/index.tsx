@@ -36,7 +36,7 @@ const renderProjectPage = (project: ProjectProps) => {
   }
 }
 
-const ProjectPage: React.VFC = () => {
+const ProjectPage: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>()
   const { loadingProject, errorProject, project } = useProject(projectId)
   const { id: appId } = useApp()

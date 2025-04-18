@@ -112,7 +112,7 @@ const StyledContent = styled.div<Pick<Intro, 'contentWrapper'>>`
   }
 `
 
-const IntroSection: React.VFC<{ options: Intro }> = ({
+const IntroSection: React.FC<{ options: Intro }> = ({
   options: { id, padding, imageInfo, titleInfo, contentWrapper, contents },
 }) => {
   const { ref, activated } = useOnceAnimation()

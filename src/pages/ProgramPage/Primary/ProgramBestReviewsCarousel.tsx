@@ -156,7 +156,7 @@ const StyledRatingTitle = styled.div`
   color: var(--gray-darker);
 `
 
-const ReviewCarouselItem: React.VFC<
+const ReviewCarouselItem: React.FC<
   Pick<ReviewProps, 'memberId' | 'score' | 'title' | 'content' | 'createdAt' | 'updatedAt'>
 > = ({ memberId, score, title, content, createdAt, updatedAt }) => {
   return (

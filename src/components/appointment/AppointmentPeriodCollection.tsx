@@ -21,7 +21,7 @@ const StyledScheduleTitle = styled.h3`
   letter-spacing: 0.2px;
   color: var(--gray-darker);
 `
-const AppointmentPeriodBlock: React.VFC<{
+const AppointmentPeriodBlock: React.FC<{
   periods: AppointmentPeriod[]
   creatorId: string
   appointmentPlan: {
@@ -81,7 +81,7 @@ const AppointmentPeriodBlock: React.VFC<{
   )
 }
 
-const AppointmentPeriodCollection: React.VFC<{
+const AppointmentPeriodCollection: React.FC<{
   creatorId: string
   appointmentPlan: {
     id: string

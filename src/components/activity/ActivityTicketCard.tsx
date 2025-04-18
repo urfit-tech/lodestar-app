@@ -90,7 +90,7 @@ type ActivityTicketProps = {
   variant?: 'admin'
   extra?: React.ReactNode
 }
-const ActivityTicketCard: React.VFC<ActivityTicketProps> = ({
+const ActivityTicketCard: React.FC<ActivityTicketProps> = ({
   title,
   description,
   price,

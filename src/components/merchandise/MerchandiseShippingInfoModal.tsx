@@ -29,7 +29,7 @@ const StyledShippingInfoContent = styled.div`
   color: var(--gray-darker);
 `
 
-const MerchandiseShippingInfoModal: React.VFC<{
+const MerchandiseShippingInfoModal: React.FC<{
   shipping: ShippingProps
   invoice: InvoiceProps
 }> = ({ shipping, invoice }) => {

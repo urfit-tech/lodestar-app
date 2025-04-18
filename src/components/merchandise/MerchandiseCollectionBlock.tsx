@@ -24,7 +24,7 @@ const StyledCategoryList = styled.ul`
   }
 `
 
-const MerchandiseCollectionBlock: React.VFC<{ merchandises: MerchandiseBriefProps[] }> = ({ merchandises }) => {
+const MerchandiseCollectionBlock: React.FC<{ merchandises: MerchandiseBriefProps[] }> = ({ merchandises }) => {
   const { formatMessage } = useIntl()
   const [isPhysical] = useQueryParam('isPhysical', BooleanParam)
   const [selectCategory, setSelectCategory] = useState<string | null>(null)

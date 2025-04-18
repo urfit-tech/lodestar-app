@@ -151,7 +151,7 @@ const StyledModalTitle = styled.div`
   ${CommonTitleMixin}
 `
 
-const DeviceDisplaySection: React.VFC<{ type: string; os: string }> = ({ type, os }) => {
+const DeviceDisplaySection: React.FC<{ type: string; os: string }> = ({ type, os }) => {
   const { formatMessage } = useIntl()
   if (type === 'desktop') {
     return (
@@ -186,7 +186,7 @@ const DeviceDisplaySection: React.VFC<{ type: string; os: string }> = ({ type, o
   )
 }
 
-const DeviceManagementAdminPage: React.VFC = () => {
+const DeviceManagementAdminPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { settings, loading, enabledModules } = useApp()
 

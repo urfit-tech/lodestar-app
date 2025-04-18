@@ -46,7 +46,7 @@ const StyledCollapse = styled(Collapse)`
   }
 `
 
-const FundingContentsPane: React.VFC<{
+const FundingContentsPane: React.FC<{
   contents: {
     title: string
     subtitle: string

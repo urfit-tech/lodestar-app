@@ -78,7 +78,7 @@ const StyledBadge = styled.span`
   font-size: 14px;
 `
 
-const ActivitySessionCard: React.VFC<{
+const ActivitySessionCard: React.FC<{
   session: {
     id: string
     location: string

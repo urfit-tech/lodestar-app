@@ -1,15 +1,14 @@
-import { Button, Icon } from '@chakra-ui/react'
+import { Button, Icon, Spinner } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import queryString from 'query-string'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { lazy, Suspense, useContext, useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
 import { defineMessage, useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import Responsive, { BREAK_POINT } from '../../../../components/common/Responsive'
-import VideoPlayer from '../../../../components/common/VideoPlayer'
 import ReviewCollectionBlock from '../../../../components/review/ReviewCollectionBlock'
 import MediaPlayerContext from '../../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../../contexts/PodcastPlayerContext'
@@ -29,6 +28,8 @@ import SecondaryProgramBanner from '../SecondaryProgramBanner'
 import SecondaryProgramInfoCard from '../SecondaryProgramInfoCard'
 import SecondaryProgramPlanCard from '../SecondaryProgramPlanCard'
 import { colors } from '../style'
+
+const VideoPlayer = lazy(() => import('../../../../components/common/VideoPlayer'))
 
 const StyledIntroWrapper = styled.div`
   ${desktopViewMixin(css`
@@ -82,7 +83,7 @@ const StyledButtonWrapper = styled.div`
   background: ${colors.white};
 `
 
-const SecondaryProgramPageContent: React.VFC = () => {
+const SecondaryProgramPageContent: React.FC = () => {
   const { formatMessage } = useIntl()
   const { programId } = useParams<{ programId: string }>()
   const { pathname, search } = useLocation()
@@ -193,12 +194,14 @@ const SecondaryProgramPageContent: React.VFC = () => {
                         style={{ width: '100%', height: '100%' }}
                       />
                     ) : program.coverVideoUrl.includes('streaming.media.azure.net') ? (
-                      <VideoPlayer
-                        sources={[
-                          { type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' },
-                          { type: 'application/x-mpegURL', src: program.coverVideoUrl + '(format=m3u8-cmaf)' },
-                        ]}
-                      />
+                      <Suspense fallback={<Spinner />}>
+                        <VideoPlayer
+                          sources={[
+                            { type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' },
+                            { type: 'application/x-mpegURL', src: program.coverVideoUrl + '(format=m3u8-cmaf)' },
+                          ]}
+                        />
+                      </Suspense>
                     ) : (
                       <ReactPlayer url={program.coverVideoUrl} width="100%" height="100%" controls />
                     )}

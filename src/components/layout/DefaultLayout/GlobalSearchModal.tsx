@@ -81,7 +81,7 @@ export type FilterType = {
   score: number | null
 }
 
-const GlobalSearchModal: React.VFC = () => {
+const GlobalSearchModal: React.FC = () => {
   const history = useHistory()
   const toast = useToast()
   const { enabledModules } = useApp()
@@ -215,7 +215,7 @@ const StyledRoundedButton = styled(Button)<{ active: boolean }>`
   }
 `
 
-const GlobalSearchFilter: React.VFC<{
+const GlobalSearchFilter: React.FC<{
   filter: FilterType
   onFilterSet: React.Dispatch<React.SetStateAction<FilterType>>
   type?: 'program' | 'activity' | 'member' | 'merchandise' | 'podcastProgram' | 'post'

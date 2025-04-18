@@ -49,7 +49,7 @@ const StyledDuration = styled.span`
   font-family: Roboto;
 `
 
-const PodcastAlbumContentListBlock: React.VFC<{
+const PodcastAlbumContentListBlock: React.FC<{
   podcastAlbum: PodcastAlbum
   podcastPrograms: PodcastAlbum['podcastPrograms']
 }> = ({ podcastAlbum, podcastPrograms }) => {

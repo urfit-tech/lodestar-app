@@ -52,7 +52,7 @@ const messages = defineMessages({
   },
 })
 
-const PaymentPage: React.VFC = () => {
+const PaymentPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { authToken } = useAuth()
   const tracking = useTracking()

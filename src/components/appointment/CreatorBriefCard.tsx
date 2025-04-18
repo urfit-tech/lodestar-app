@@ -48,7 +48,7 @@ type CreatorBriefCardProps = {
   description?: string | null
   variant?: 'featuring' | 'default'
 }
-const CreatorBriefCard: React.VFC<CreatorBriefCardProps> = ({ imageUrl, title, meta, description, variant }) => {
+const CreatorBriefCard: React.FC<CreatorBriefCardProps> = ({ imageUrl, title, meta, description, variant }) => {
   return (
     <div>
       <CustomRatioImage width="100%" ratio={1} src={imageUrl || DefaultAvatar} shape="circle" />

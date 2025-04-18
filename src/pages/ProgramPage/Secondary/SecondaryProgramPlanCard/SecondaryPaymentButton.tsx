@@ -36,7 +36,7 @@ const StyledSecondaryCartButton = styled(SecondaryCartButton)<{ line?: 'multilin
     `}
 `
 
-const SecondaryPaymentButton: React.VFC<{
+const SecondaryPaymentButton: React.FC<{
   type: ProductType
   target: string
   price: number

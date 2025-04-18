@@ -150,7 +150,7 @@ const OrderPaymentPage = () => {
   return <DefaultLayout>{loading ? <Skeleton active /> : <OrderPaymentBlock order={order} />}</DefaultLayout>
 }
 
-const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
+const OrderPaymentBlock: React.FC<{ order?: Order }> = ({ order }) => {
   const { formatMessage } = useIntl()
   const [selectedPayment, setSelectedPayment] = useState<Payment>()
   const unpaidPayments = order?.paymentLogs

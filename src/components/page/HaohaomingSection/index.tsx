@@ -29,7 +29,7 @@ const StyleOverrideBlock = styled.div`
   }
 `
 
-const HomePage: React.VFC<{
+const HomePage: React.FC<{
   options: {
     cover?: CoverProp
     philosophy?: PhilosophyProp

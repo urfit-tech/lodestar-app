@@ -11,7 +11,7 @@ const StyledDiv = styled.div`
   height: calc(100vh - 64px);
 `
 
-const LoadingPage: React.VFC = () => {
+const LoadingPage: React.FC = () => {
   const [{ noHeader }] = useQueryParams({
     noHeader: BooleanParam,
   })
