@@ -19,7 +19,7 @@ const StyledRadio = styled(Radio)`
   }
 `
 
-const DiscountSelectionCard: React.VFC<{
+const DiscountSelectionCard: React.FC<{
   productId: string
   value?: string | null
   check?: CheckProps

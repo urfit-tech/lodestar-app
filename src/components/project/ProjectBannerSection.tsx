@@ -117,7 +117,7 @@ type ProjectBannerSectionProps = {
   backgroundImage: string
   callout?: Callout
 }
-const ProjectBannerSection: React.VFC<ProjectBannerSectionProps> = ({
+const ProjectBannerSection: React.FC<ProjectBannerSectionProps> = ({
   title,
   abstract,
   description,

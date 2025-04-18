@@ -172,7 +172,7 @@ const StyledIntroItem = styled.header`
   }
 `
 
-const OnSaleComparisonSection: React.VFC<OnSaleComparisonSectionProps> = ({ comparisons }) => {
+const OnSaleComparisonSection: React.FC<OnSaleComparisonSectionProps> = ({ comparisons }) => {
   return (
     <StyledSection className="d-flex justify-content-center align-items-center">
       <div className="background red" />

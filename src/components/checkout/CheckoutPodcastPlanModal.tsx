@@ -5,7 +5,7 @@ import React from 'react'
 import { usePublishedPodcastPlans } from '../../hooks/podcast'
 import PodcastPlanSelector from '../podcast/PodcastPlanSelector'
 
-const CheckoutPodcastPlanModal: React.VFC<
+const CheckoutPodcastPlanModal: React.FC<
   {
     creatorId: string
   } & Pick<CheckoutProductModalProps, 'renderTrigger'>

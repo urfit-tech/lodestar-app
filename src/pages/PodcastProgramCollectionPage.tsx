@@ -21,7 +21,7 @@ import { useNav } from '../hooks/data'
 import { usePodcastProgramCollection } from '../hooks/podcast'
 import { StyledButton } from './ProgramCollectionPage/ProgramCollectionPage'
 
-const PodcastProgramCollectionPage: React.VFC = () => {
+const PodcastProgramCollectionPage: React.FC = () => {
   const location = useLocation()
   const { formatMessage } = useIntl()
   const { isAuthenticated } = useAuth()

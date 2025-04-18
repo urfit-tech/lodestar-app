@@ -70,7 +70,7 @@ const StyledDescription = styled.div`
   white-space: pre-line;
 `
 
-const CreatorIntroBlock: React.VFC<{
+const CreatorIntroBlock: React.FC<{
   title: string
   subTitle: string
   description: string

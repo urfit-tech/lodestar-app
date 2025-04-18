@@ -4,7 +4,7 @@ import DefaultLayout from '../../components/layout/DefaultLayout'
 import { ProjectProps } from '../../types/project'
 import ProjectPageMessages from './translation'
 
-const PreOrderPage: React.VFC<ProjectProps> = () => {
+const PreOrderPage: React.FC<ProjectProps> = () => {
   const { formatMessage } = useIntl()
   return (
     <DefaultLayout white noFooter>

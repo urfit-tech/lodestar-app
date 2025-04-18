@@ -31,7 +31,7 @@ const StyledContentWrapper = styled.div`
   }
 `
 
-const PodcastProgramContentPage: React.VFC = () => {
+const PodcastProgramContentPage: React.FC = () => {
   const { podcastProgramId } = useParams<{ podcastProgramId: string }>()
   const [podcastAlbumId] = useQueryParam('podcastAlbumId', StringParam)
   const { currentMemberId } = useAuth()

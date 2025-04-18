@@ -40,7 +40,7 @@ const StyledSubTitle = styled.div`
   }
 `
 
-const MembershipCardBlock: React.VFC<{
+const MembershipCardBlock: React.FC<{
   template: string
   templateVars?: any
   title: string

@@ -35,7 +35,7 @@ type PodcastPlanProps = {
   soldAt: Date | null
 }
 
-const PodcastPlanSelector: React.VFC<{
+const PodcastPlanSelector: React.FC<{
   value?: string
   defaultValue?: string
   onChange?: (podcastPlanId: string) => void

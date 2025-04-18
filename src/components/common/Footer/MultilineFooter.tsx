@@ -20,7 +20,7 @@ const StyledCopyright = styled.div`
   font-size: 0.75rem;
 `
 
-const MultilineFooter: React.VFC = () => {
+const MultilineFooter: React.FC = () => {
   const { name, enabledModules } = useApp()
   const { currentLocale, setCurrentLocale, languagesList } = useContext(LocaleContext)
   const { renderCopyright } = useCustomRenderer()

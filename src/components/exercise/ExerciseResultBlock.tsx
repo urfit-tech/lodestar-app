@@ -102,7 +102,7 @@ const StyledErrorText = styled.span`
   color: var(--error);
 `
 
-const ExerciseResultBlock: React.VFC<
+const ExerciseResultBlock: React.FC<
   ExerciseProps & {
     timeSpent?: number
     nextProgramContentId?: string

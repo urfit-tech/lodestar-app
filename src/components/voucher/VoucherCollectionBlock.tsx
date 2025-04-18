@@ -15,7 +15,7 @@ import { useEnrolledVoucherCollection } from '../../hooks/voucher'
 import { EnrolledVoucher, VoucherFromAPI } from '../../types/vouchers'
 import voucherMessages from './translation'
 
-const VoucherCollectionBlock: React.VFC = () => {
+const VoucherCollectionBlock: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
 
@@ -36,7 +36,7 @@ const VoucherCollectionBlock: React.VFC = () => {
   return <VoucherCollectionInnerBlock enrolledVoucherCollection={enrolledVoucherCollection} />
 }
 
-const VoucherCollectionInnerBlock: React.VFC<{
+const VoucherCollectionInnerBlock: React.FC<{
   enrolledVoucherCollection: EnrolledVoucher[]
 }> = ({ enrolledVoucherCollection }) => {
   const { enabledModules } = useApp()

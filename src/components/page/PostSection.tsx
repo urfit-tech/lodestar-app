@@ -96,7 +96,7 @@ const StyledAngleRightIcon = styled(AngleRightIcon)`
   display: inline-block;
 `
 
-const PostSection: React.VFC<{ options: { title?: string } }> = ({ options }) => {
+const PostSection: React.FC<{ options: { title?: string } }> = ({ options }) => {
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
   const { loadingPosts, posts, errorPosts } = useLatestPost({ limit: 3 })

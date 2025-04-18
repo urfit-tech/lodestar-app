@@ -39,7 +39,7 @@ const StyledButton = styled(Button)`
     width: 100%;
   }
 `
-const LineBindingPage: React.VFC = () => {
+const LineBindingPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const [binding, setBinding] = useState(false)
   const { authToken, currentMember, currentMemberId } = useAuth()

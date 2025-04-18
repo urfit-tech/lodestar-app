@@ -11,7 +11,7 @@ import { useCouponCollection } from '../../hooks/data'
 import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
 import { StyledTabList, StyledTabPanel } from '../GroupBuyingCollectionPage'
 
-const CouponCollectionAdminPage: React.VFC = () => {
+const CouponCollectionAdminPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { loading: loadingCoupons, data: coupons } = useCouponCollection(currentMemberId || '')

@@ -24,7 +24,7 @@ type MessengerChatProps = {
     onCustomerChatDialogHide?: () => void
   }
 }
-const MessengerChat: React.VFC<MessengerChatProps> = ({ options: { appId, pageId, themeColor, ...options } }) => {
+const MessengerChat: React.FC<MessengerChatProps> = ({ options: { appId, pageId, themeColor, ...options } }) => {
   const { settings } = useApp()
   const theme = useAppTheme()
 

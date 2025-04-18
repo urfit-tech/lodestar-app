@@ -15,7 +15,7 @@ import NotFoundPage from '../NotFoundPage'
 import ProgramPageHelmet from './Primary/ProgramPageHelmet'
 import ProgramPageContent from './ProgramPageContent'
 
-const ProgramPage: React.VFC = () => {
+const ProgramPage: React.FC = () => {
   const [visitIntro] = useQueryParam('visitIntro', BooleanParam)
   const [previousPage] = useQueryParam('back', StringParam)
   const [pageFrom] = useQueryParam('pageFrom', StringParam)

@@ -17,7 +17,7 @@ import { commonMessages } from '../../helpers/translation'
 import { UserIcon, CompanyIcon } from '../../images'
 import memberPageMessages from './translation'
 
-const ProfileAdminPage: React.VFC = () => {
+const ProfileAdminPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId, authToken } = useAuth()
   const { enabledModules } = useApp()

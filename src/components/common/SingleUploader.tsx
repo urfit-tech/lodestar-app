@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl'
 import { uploadFile } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 
-const SingleUploader: React.VFC<
+const SingleUploader: React.FC<
   UploadProps & {
     path: string
     value?: UploadFile

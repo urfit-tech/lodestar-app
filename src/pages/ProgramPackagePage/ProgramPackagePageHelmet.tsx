@@ -8,7 +8,7 @@ import { getBraftContent, getOgLocale } from '../../helpers'
 import { useProductReviews, useReviewAggregate } from '../../hooks/review'
 import { ProgramPackage } from '../../types/programPackage'
 
-const ProgramPackagePageHelmet: React.VFC<{ programPackage: ProgramPackage }> = ({ programPackage }) => {
+const ProgramPackagePageHelmet: React.FC<{ programPackage: ProgramPackage }> = ({ programPackage }) => {
   const app = useApp()
   const { defaultLocale } = useContext(LocaleContext)
   const ogLocale = getOgLocale(defaultLocale)

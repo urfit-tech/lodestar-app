@@ -66,7 +66,7 @@ const PackageDatetime: React.FC<{
   )
 }
 
-const PackageCard: React.VFC<
+const PackageCard: React.FC<
   Pick<ProgramPackageProps, 'coverUrl' | 'title'> & {
     memberId?: string
     view?: string

@@ -27,7 +27,7 @@ const LinkWrapper: React.FC<{
   return <Link to={link}>{children}</Link>
 }
 
-const ProgramCollectionBanner: React.VFC<{
+const ProgramCollectionBanner: React.FC<{
   link?: string
   imgUrls: {
     [key: number]: string // min-width

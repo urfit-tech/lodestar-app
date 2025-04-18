@@ -20,7 +20,7 @@ import { useProject } from '../../hooks/project'
 import EmptyCover from '../../images/empty-cover.png'
 import NotFoundPage from '../NotFoundPage'
 
-const ModularPage: React.VFC<{
+const ModularPage: React.FC<{
   projectId: string
 }> = ({ projectId }) => {
   const { settings } = useApp()

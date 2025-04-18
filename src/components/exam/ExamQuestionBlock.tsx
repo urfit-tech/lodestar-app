@@ -76,7 +76,7 @@ const StyledBraftContentContainer = styled.div<{ font?: string }>`
   }
 `
 
-const ExamQuestionBlock: React.VFC<
+const ExamQuestionBlock: React.FC<
   Pick<Exam, 'isAvailableToGoBack'> & {
     questions: Question[]
     showDetail: boolean

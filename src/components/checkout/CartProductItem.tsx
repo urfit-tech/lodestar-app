@@ -43,7 +43,7 @@ const StyledInventoryBlock = styled.span`
   font-size: 14px;
 `
 
-const CartProductItem: React.VFC<{
+const CartProductItem: React.FC<{
   product: Product
   quantity: number
   buyableQuantity: number | null

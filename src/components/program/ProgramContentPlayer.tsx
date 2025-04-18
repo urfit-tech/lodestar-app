@@ -1,7 +1,7 @@
-import { CircularProgress, Icon } from '@chakra-ui/react'
+import { CircularProgress, Icon, Spinner } from '@chakra-ui/react'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { lazy, Suspense, useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import ReactPlayer, { ReactPlayerProps } from 'react-player'
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
@@ -10,8 +10,9 @@ import { ProgressContext } from '../../contexts/ProgressContext'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { useProgramContentById } from '../../hooks/program'
 import { ReactComponent as IconNext } from '../../images/icon-next.svg'
-import VideoPlayer from '../common/VideoPlayer'
 import programMessages from './translation'
+
+const VideoPlayer = lazy(() => import('../common/VideoPlayer'))
 
 const StyledReactPlayerWrapper = styled.div`
   && > div {
@@ -87,7 +88,7 @@ type VideoEvent = {
   videoState: { playbackRate: number; startedAt: number; endedAt: number }
 }
 
-const ProgramContentPlayer: React.VFC<
+const ProgramContentPlayer: React.FC<
   ReactPlayerProps & {
     programContentId: string
     autoPlay?: boolean
@@ -124,6 +125,7 @@ const ProgramContentPlayer: React.VFC<
 
   const initialPlaybackRate = Number(localStorage.getItem('kolable.player.playbackRate')) || 1
   const initialVolume: number = Number(localStorage.getItem('kolable.player.volume')) || 1
+
   return (
     <StyledContainer>
       {nextProgramContent && isCoverShowing && (
@@ -242,90 +244,92 @@ const ProgramContentPlayer: React.VFC<
                   />
                 </StyledReactPlayerWrapper>
               ) : (
-                <VideoPlayer
-                  autoPlay={autoPlay}
-                  loading={programContentVideo.loading}
-                  error={programContentVideo.error}
-                  sources={programContentVideo.sources}
-                  captions={programContentVideo.captions}
-                  poster={programContentVideo.poster}
-                  onLoadStart={player => {
-                    player.volume(initialVolume)
-                    player.playbackRate(initialPlaybackRate)
-                  }}
-                  onLoadedMetadata={player => {
-                    const duration = player.duration()
-                    const progress = lastProgress > 0 && lastProgress < 1 ? lastProgress : 0
-                    player.currentTime(duration * progress)
-                    lastEndedTime.current = duration * progress
-                  }}
-                  onRateChange={player => {
-                    localStorage.setItem('kolable.player.playbackRate', player.playbackRate().toString())
-                  }}
-                  onVolumeChange={player => {
-                    localStorage.setItem('kolable.player.volume', player.volume().toString())
-                  }}
-                  onTimeUpdate={player => {
-                    const duration = player.duration() || 0
-                    const playbackRate = player.playbackRate() || 1
-                    const currentTime = player.currentTime() || 0
-                    onVideoEvent?.({
-                      type: 'progress',
-                      progress: currentTime / duration,
-                      videoState: {
-                        playbackRate: playbackRate || 1,
-                        startedAt: lastEndedTime.current || 0,
-                        endedAt: currentTime,
-                      },
-                    })
-                  }}
-                  onPause={player => {
-                    const duration = player.duration() || 0
-                    const playbackRate = player.playbackRate() || 1
-                    const currentTime = player.currentTime() || 0
-                    onVideoEvent?.({
-                      type: 'pause',
-                      progress: currentTime / duration,
-                      videoState: {
-                        playbackRate: playbackRate || 1,
-                        startedAt: lastEndedTime.current || 0,
-                        endedAt: currentTime || 0,
-                      },
-                    })
-                    lastEndedTime.current = currentTime
-                  }}
-                  onSeeked={player => {
-                    const duration = player.duration() || 0
-                    const currentTime = player.currentTime() || 0
-                    onVideoEvent?.({
-                      type: 'seeked',
-                      progress: currentTime / duration,
-                      videoState: {
-                        playbackRate: 0,
-                        startedAt: lastEndedTime.current || 0,
-                        endedAt: currentTime,
-                      },
-                    })
-                    lastEndedTime.current = currentTime
-                  }}
-                  onEnded={player => {
-                    const duration = player.duration() || 0
-                    const playbackRate = player.playbackRate() || 1
-                    const currentTime = player.currentTime() || 0
-                    const endedAt = currentTime || duration || 0
-                    onVideoEvent?.({
-                      type: 'ended',
-                      progress: currentTime / duration,
-                      videoState: {
-                        playbackRate: playbackRate || 1,
-                        startedAt: lastEndedTime.current || 0,
-                        endedAt,
-                      },
-                    })
-                    lastEndedTime.current = endedAt
-                    setIsCoverShowing(true)
-                  }}
-                />
+                <Suspense fallback={<Spinner />}>
+                  <VideoPlayer
+                    autoPlay={autoPlay}
+                    loading={programContentVideo.loading}
+                    error={programContentVideo.error}
+                    sources={programContentVideo.sources}
+                    captions={programContentVideo.captions}
+                    poster={programContentVideo.poster}
+                    onLoadStart={player => {
+                      player.volume(initialVolume)
+                      player.playbackRate(initialPlaybackRate)
+                    }}
+                    onLoadedMetadata={player => {
+                      const duration = player.duration()
+                      const progress = lastProgress > 0 && lastProgress < 1 ? lastProgress : 0
+                      player.currentTime(duration * progress)
+                      lastEndedTime.current = duration * progress
+                    }}
+                    onRateChange={player => {
+                      localStorage.setItem('kolable.player.playbackRate', player.playbackRate().toString())
+                    }}
+                    onVolumeChange={player => {
+                      localStorage.setItem('kolable.player.volume', player.volume().toString())
+                    }}
+                    onTimeUpdate={player => {
+                      const duration = player.duration() || 0
+                      const playbackRate = player.playbackRate() || 1
+                      const currentTime = player.currentTime() || 0
+                      onVideoEvent?.({
+                        type: 'progress',
+                        progress: currentTime / duration,
+                        videoState: {
+                          playbackRate: playbackRate || 1,
+                          startedAt: lastEndedTime.current || 0,
+                          endedAt: currentTime,
+                        },
+                      })
+                    }}
+                    onPause={player => {
+                      const duration = player.duration() || 0
+                      const playbackRate = player.playbackRate() || 1
+                      const currentTime = player.currentTime() || 0
+                      onVideoEvent?.({
+                        type: 'pause',
+                        progress: currentTime / duration,
+                        videoState: {
+                          playbackRate: playbackRate || 1,
+                          startedAt: lastEndedTime.current || 0,
+                          endedAt: currentTime || 0,
+                        },
+                      })
+                      lastEndedTime.current = currentTime
+                    }}
+                    onSeeked={player => {
+                      const duration = player.duration() || 0
+                      const currentTime = player.currentTime() || 0
+                      onVideoEvent?.({
+                        type: 'seeked',
+                        progress: currentTime / duration,
+                        videoState: {
+                          playbackRate: 0,
+                          startedAt: lastEndedTime.current || 0,
+                          endedAt: currentTime,
+                        },
+                      })
+                      lastEndedTime.current = currentTime
+                    }}
+                    onEnded={player => {
+                      const duration = player.duration() || 0
+                      const playbackRate = player.playbackRate() || 1
+                      const currentTime = player.currentTime() || 0
+                      const endedAt = currentTime || duration || 0
+                      onVideoEvent?.({
+                        type: 'ended',
+                        progress: currentTime / duration,
+                        videoState: {
+                          playbackRate: playbackRate || 1,
+                          startedAt: lastEndedTime.current || 0,
+                          endedAt,
+                        },
+                      })
+                      lastEndedTime.current = endedAt
+                      setIsCoverShowing(true)
+                    }}
+                  />
+                </Suspense>
               )}
               {currentMember && (
                 <div
@@ -350,7 +354,7 @@ const ProgramContentPlayer: React.VFC<
   )
 }
 
-const ProgramContentPlayerCover: React.VFC<{
+const ProgramContentPlayerCover: React.FC<{
   nextProgramContent: {
     id: string
     title: string
@@ -386,7 +390,7 @@ const ProgramContentPlayerCover: React.VFC<{
   )
 }
 
-const CountDownPlayButton: React.VFC<{
+const CountDownPlayButton: React.FC<{
   duration?: number
   onPlayNext?: () => void
 }> = ({ duration = 5, onPlayNext }) => {

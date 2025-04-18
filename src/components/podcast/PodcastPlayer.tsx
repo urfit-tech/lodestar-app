@@ -201,7 +201,7 @@ const durationFormat: (time: number) => string = time => {
     .padStart(2, '0')}`
 }
 
-const PodcastPlayer: React.VFC<{
+const PodcastPlayer: React.FC<{
   loading?: boolean
   playing?: boolean
   title: string
@@ -362,7 +362,7 @@ const PodcastPlayer: React.VFC<{
   )
 }
 
-const PlayRateButton: React.VFC<
+const PlayRateButton: React.FC<
   Omit<ButtonProps, 'variant' | 'mode' | 'onChange'> & {
     variant: 'overlay' | 'bar'
     playRate: number
@@ -395,7 +395,7 @@ const PlayRateButton: React.VFC<
   )
 }
 
-const PlayModeButton: React.VFC<
+const PlayModeButton: React.FC<
   Omit<ButtonProps, 'variant' | 'mode' | 'onChange'> & {
     variant: 'overlay' | 'bar'
     mode: PodcastPlayerMode

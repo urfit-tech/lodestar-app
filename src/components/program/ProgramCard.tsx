@@ -107,7 +107,7 @@ type SharedProps = {
   programLink: string
 }
 
-const ProgramCard: React.VFC<ProgramCardProps> = programCardProps => {
+const ProgramCard: React.FC<ProgramCardProps> = programCardProps => {
   const { program, variant, programType, previousPage } = programCardProps
   const { settings } = useApp()
   const mergedVariant = variant || settings['feature.program_card.variant']
@@ -131,7 +131,7 @@ const ProgramCard: React.VFC<ProgramCardProps> = programCardProps => {
   }
 }
 
-const PrimaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
+const PrimaryCard: React.FC<ProgramCardProps & SharedProps> = ({
   program,
   variant = 'primary',
   noInstructor,
@@ -287,7 +287,7 @@ const PrimaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
     </>
   )
 }
-const SecondaryCard: React.VFC<ProgramCardProps & SharedProps> = ({
+const SecondaryCard: React.FC<ProgramCardProps & SharedProps> = ({
   program,
   variant = 'secondary',
   onClick,

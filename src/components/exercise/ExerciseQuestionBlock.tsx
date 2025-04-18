@@ -74,7 +74,7 @@ const StyledBraftContentContainer = styled.div<{ font?: string }>`
   }
 `
 
-const ExerciseQuestionBlock: React.VFC<
+const ExerciseQuestionBlock: React.FC<
   Pick<ExerciseProps, 'isAvailableToGoBack' | 'passingScore' | 'questions'> & {
     showDetail: boolean
     timeSpent?: number

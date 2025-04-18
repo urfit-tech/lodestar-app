@@ -2,7 +2,7 @@ import queryString from 'query-string'
 import React, { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
-const CvsPopupCallbackPage: React.VFC = () => {
+const CvsPopupCallbackPage: React.FC = () => {
   const location = useLocation()
 
   useEffect(() => {

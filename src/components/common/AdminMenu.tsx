@@ -68,7 +68,7 @@ export const AdminMenu: React.FC<MenuProps> = ({ children, ...menuProps }) => {
   )
 }
 
-export const MemberAdminMenu: React.VFC<
+export const MemberAdminMenu: React.FC<
   MenuProps & { renderAdminMenu?: (props: RenderMemberAdminMenuProps) => React.ReactElement }
 > = ({ renderAdminMenu, ...props }) => {
   const { formatMessage } = useIntl()

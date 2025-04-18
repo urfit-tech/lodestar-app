@@ -36,7 +36,7 @@ type ActivityTicketPaymentButtonProps = {
   ticketCurrencyId: string
   isPublished: boolean
 }
-const ActivityTicketPaymentButton: React.VFC<ActivityTicketPaymentButtonProps> = ({
+const ActivityTicketPaymentButton: React.FC<ActivityTicketPaymentButtonProps> = ({
   ticketId,
   ticketPrice,
   ticketCurrencyId,

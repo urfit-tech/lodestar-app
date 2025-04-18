@@ -11,7 +11,7 @@ import { useEnrolledMembershipCards } from '../../hooks/card'
 import { ReactComponent as MemberCardIcon } from '../../images/membercard.svg'
 import ForbiddenPage from '../ForbiddenPage'
 
-const CardCollectionAdminPage: React.VFC = () => {
+const CardCollectionAdminPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const app = useApp()

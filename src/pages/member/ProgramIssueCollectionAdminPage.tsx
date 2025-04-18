@@ -64,7 +64,7 @@ const ProgramIssueCollectionAdminPage = () => {
   )
 }
 
-const AllProgramIssueCollectionBlock: React.VFC<{
+const AllProgramIssueCollectionBlock: React.FC<{
   memberId: string
   selectedProgramId: string
   selectedStatus: string

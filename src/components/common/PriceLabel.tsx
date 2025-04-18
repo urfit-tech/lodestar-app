@@ -61,10 +61,10 @@ type PriceLabelOptions = {
   coinUnit?: string
   saleAmount?: number | null
 }
-const PriceLabel: React.VFC<
+const PriceLabel: React.FC<
   PriceLabelOptions & {
     variant?: 'default' | 'inline' | 'full-detail'
-    render?: React.VFC<PriceLabelOptions & { formatCurrency: (price: number) => string }>
+    render?: React.FC<PriceLabelOptions & { formatCurrency: (price: number) => string }>
     noFreeText?: boolean
   }
 > = ({ variant, render, noFreeText, ...options }) => {

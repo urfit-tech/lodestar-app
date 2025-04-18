@@ -106,7 +106,7 @@ const CreatorInfo: React.FC<{
   )
 }
 
-const ProgramCard: React.VFC<{
+const ProgramCard: React.FC<{
   programId: string
   roles: ProgramRole[]
   coverThumbnailUrl: string | null

@@ -18,7 +18,7 @@ import CartContext from '../contexts/CartContext'
 import { checkoutMessages } from '../helpers/translation'
 import { useMember } from '../hooks/member'
 
-const CartPage: React.VFC = () => {
+const CartPage: React.FC = () => {
   const location = useLocation<{ productUrn?: string }>()
   const { formatMessage } = useIntl()
   const [checkoutAlready, setCheckoutAlready] = useState(false)

@@ -19,13 +19,13 @@ const StyledContainer = styled.div`
   cursor: pointer;
 `
 
-const MultiPeriodMembershipCardSelectionModal: React.VFC<{
+const MultiPeriodMembershipCardSelectionModal: React.FC<{
   memberId: string
   membershipCards: MembershipCardProps[]
   loadingMembershipCards: boolean
   onSelect?: (membershipCardId: string) => void
   selectedMembershipCardId: string | null
-  render?: React.VFC<{
+  render?: React.FC<{
     setVisible: React.Dispatch<React.SetStateAction<boolean>>
     selectedMembershipCard?: MembershipCardProps
   }>
@@ -78,7 +78,7 @@ const MultiPeriodMembershipCardSelectionModal: React.VFC<{
   )
 }
 
-const MembershipCardItem: React.VFC<{
+const MembershipCardItem: React.FC<{
   member: MemberProps
   membershipCardId: string
   startedAt?: Date | null

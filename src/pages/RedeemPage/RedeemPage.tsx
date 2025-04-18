@@ -59,7 +59,7 @@ const StyledIcon = styled.div`
   }
 `
 
-const RedeemPage: React.VFC = () => {
+const RedeemPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [token] = useQueryParam('token', StringParam)

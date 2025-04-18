@@ -1,16 +1,17 @@
 import { Icon } from '@chakra-ui/icons'
-import { Button } from '@chakra-ui/react'
+import { Button, Spinner } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
 import { defineMessage, useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import Responsive, { BREAK_POINT } from '../../../../components/common/Responsive'
-import VideoPlayer from '../../../../components/common/VideoPlayer'
 import { ReactComponent as PlayIcon } from '../../../../images/play-fill-icon.svg'
 import { ReactComponent as StarIcon } from '../../../../images/star-current-color.svg'
 import { Program } from '../../../../types/program'
+
+const VideoPlayer = lazy(() => import('../../../../components/common/VideoPlayer'))
 
 const StyledTitle = styled.h1`
   margin: 0;
@@ -108,7 +109,7 @@ const StyledButton = styled(Button)`
   }
 `
 
-const CustomizeProgramBanner: React.VFC<{
+const CustomizeProgramBanner: React.FC<{
   program: Program & {
     duration: number | null
     score: number | null
@@ -138,12 +139,14 @@ const CustomizeProgramBanner: React.VFC<{
                   style={{ width: '100%', height: '100%' }}
                 />
               ) : program.coverVideoUrl.includes('streaming.media.azure.net') ? (
-                <VideoPlayer
-                  sources={[
-                    { type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' },
-                    { type: 'application/x-mpegURL', src: program.coverVideoUrl + '(format=m3u8-cmaf)' },
-                  ]}
-                />
+                <Suspense fallback={<Spinner />}>
+                  <VideoPlayer
+                    sources={[
+                      { type: 'application/dash+xml', src: program.coverVideoUrl + '(format=mpd-time-cmaf)' },
+                      { type: 'application/x-mpegURL', src: program.coverVideoUrl + '(format=m3u8-cmaf)' },
+                    ]}
+                  />
+                </Suspense>
               ) : (
                 <ReactPlayer url={program.coverVideoUrl} width="100%" height="100%" controls />
               )}

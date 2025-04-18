@@ -91,7 +91,7 @@ const InstructorPlaceHolder = styled.div`
   height: 2rem;
 `
 
-const ProjectIntroCard: React.VFC<ProjectIntroProps> = ({
+const ProjectIntroCard: React.FC<ProjectIntroProps> = ({
   type,
   title,
   coverUrl,

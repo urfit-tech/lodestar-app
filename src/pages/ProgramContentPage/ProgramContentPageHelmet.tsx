@@ -8,7 +8,7 @@ import { getBraftContent, getOgLocale } from '../../helpers'
 import { useProductReviews, useReviewAggregate } from '../../hooks/review'
 import { Program } from '../../types/program'
 
-const ProgramContentPageHelmet: React.VFC<
+const ProgramContentPageHelmet: React.FC<
   { program: Program; contentId: string } & Pick<React.ComponentProps<typeof PageHelmet>, 'onLoaded'>
 > = ({ program, contentId, onLoaded }) => {
   const app = useApp()

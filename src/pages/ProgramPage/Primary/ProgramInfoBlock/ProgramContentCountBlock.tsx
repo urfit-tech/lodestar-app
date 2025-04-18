@@ -34,7 +34,7 @@ const StyledCountBlock = styled.div`
   }
 `
 
-const ProgramContentCountBlock: React.VFC<{
+const ProgramContentCountBlock: React.FC<{
   program: Program & {
     contentSections: (ProgramContentSection & {
       contents: ProgramContent[]

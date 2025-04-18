@@ -21,7 +21,7 @@ const StyledDescription = styled.div`
   letter-spacing: 0.18px;
 `
 
-const FundingCommentsPane: React.VFC<{
+const FundingCommentsPane: React.FC<{
   comments: FundingCommentProps[]
   projectPlans: ProjectPlanProps[]
   publishedAt: Date | null

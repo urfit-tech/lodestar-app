@@ -50,7 +50,7 @@ const StyledAbstract = styled.div`
   `)}
 `
 
-const BlogPostCollectionPage: React.VFC = () => {
+const BlogPostCollectionPage: React.FC = () => {
   const history = useHistory()
   const [categories] = useQueryParam('categories', StringParam)
   const [tags] = useQueryParam('tags', StringParam)

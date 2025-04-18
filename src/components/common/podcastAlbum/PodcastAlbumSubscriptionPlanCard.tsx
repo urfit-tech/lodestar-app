@@ -24,7 +24,7 @@ const StyledAdminCard = styled(AdminCard)`
     }
   }
 `
-const PodcastAlbumSubscriptionPlanCard: React.VFC<{
+const PodcastAlbumSubscriptionPlanCard: React.FC<{
   podcastAlbum: Pick<PodcastAlbum, 'isPublic' | 'id' | 'podcastPrograms' | 'title'>
 }> = ({ podcastAlbum }) => {
   const { formatMessage } = useIntl()

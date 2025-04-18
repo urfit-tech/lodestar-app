@@ -16,7 +16,7 @@ const SectionTitle = styled.h3`
   margin-bottom: 20px;
 `
 
-const NormalContent: React.VFC<{ children: React.ReactNode; title: string }> = ({ title, children }) => {
+const NormalContent: React.FC<{ children: React.ReactNode; title: string }> = ({ title, children }) => {
   return (
     <SectionBlock>
       <SectionTitle>{title}</SectionTitle>

@@ -2,7 +2,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import PageHelmet from '../../components/common/PageHelmet'
 import { Activity } from '../../types/activity'
 
-const ActivityCollectionPageHelmet: React.VFC<{ title: string; activities: Pick<Activity, 'id' | 'title'>[] }> = ({
+const ActivityCollectionPageHelmet: React.FC<{ title: string; activities: Pick<Activity, 'id' | 'title'>[] }> = ({
   title,
   activities,
 }) => {

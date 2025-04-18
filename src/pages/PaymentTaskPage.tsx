@@ -43,7 +43,7 @@ const StyledWarning = styled.div`
   color: var(--error);
 `
 
-const PaymentTaskPage: React.VFC = () => {
+const PaymentTaskPage: React.FC = () => {
   const tracking = useTracking()
   const { formatMessage } = useIntl()
   const history = useHistory()

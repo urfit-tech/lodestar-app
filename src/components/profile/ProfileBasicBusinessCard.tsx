@@ -48,7 +48,7 @@ const StyledUploadWarning = styled.div`
 
 type ProfileBasicBusinessCardProps = CardProps & FormComponentProps & { memberId: string }
 
-const ProfileBasicBusinessCard: React.VFC<ProfileBasicBusinessCardProps> = ({ form, memberId, ...cardProps }) => {
+const ProfileBasicBusinessCard: React.FC<ProfileBasicBusinessCardProps> = ({ form, memberId, ...cardProps }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { authToken } = useAuth()

@@ -173,7 +173,7 @@ const PodcastAlbumCollectionSection: React.FC<{
   )
 }
 
-export const MoreLink: React.VFC<{ to: string }> = ({ to }) => {
+export const MoreLink: React.FC<{ to: string }> = ({ to }) => {
   const { formatMessage } = useIntl()
 
   return (

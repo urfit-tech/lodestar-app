@@ -61,7 +61,7 @@ type ProjectPromotionSectionProps = {
     href: string
   }
 }
-const ProjectPromotionSection: React.VFC<ProjectPromotionSectionProps> = ({ promotions, expiredAt, button }) => {
+const ProjectPromotionSection: React.FC<ProjectPromotionSectionProps> = ({ promotions, expiredAt, button }) => {
   const { formatMessage } = useIntl()
   return (
     <StyledView className="d-flex align-items-center">

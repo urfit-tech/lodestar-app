@@ -74,7 +74,7 @@ const StyledInstructorName = styled.div`
   font-size: 14px;
 `
 
-const PlaylistOverlay: React.VFC<{}> = () => {
+const PlaylistOverlay: React.FC<{}> = () => {
   const history = useHistory()
   const { formatMessage } = useIntl()
   const { title, setup, podcastProgramIds, currentIndex } = useContext(PodcastPlayerContext)
@@ -132,7 +132,7 @@ const PlaylistOverlay: React.VFC<{}> = () => {
     </StyledWrapper>
   )
 }
-const PlayListItem: React.VFC<{
+const PlayListItem: React.FC<{
   podcastProgramId: string
   withHandler?: boolean
   isPlaying?: boolean

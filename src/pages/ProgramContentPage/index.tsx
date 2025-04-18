@@ -36,7 +36,7 @@ const StyledLink = styled(Link)`
   }
 `
 
-const ProgramContentPage: React.VFC = () => {
+const ProgramContentPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { programId, programContentId } = useParams<{

@@ -29,9 +29,9 @@ const StyledSwitchButton = styled.div`
   }
 `
 
-const ProgramCollection: React.VFC<{
+const ProgramCollection: React.FC<{
   programs: ProgramPackageProgram[]
-  renderItem: React.VFC<{
+  renderItem: React.FC<{
     program: ProgramPackageProgram
     displayType: 'grid' | 'list'
   }>

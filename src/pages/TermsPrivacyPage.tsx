@@ -57,7 +57,7 @@ const StyledSection = styled.section`
   }
 `
 
-const TermsPage: React.VFC = () => {
+const TermsPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { name, settings } = useApp()
   const appName = settings['name'] || name

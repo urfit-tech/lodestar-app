@@ -71,7 +71,7 @@ const StyledDuration = styled.span`
 
 const layoutContent = document.getElementById('layout-content')
 
-const SecondaryProgramContentListItem: React.VFC<{
+const SecondaryProgramContentListItem: React.FC<{
   program: Program & ProgramContentSectionType
   item: ProgramContent
   isPinned: boolean

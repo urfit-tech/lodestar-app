@@ -16,13 +16,13 @@ import { useIntl } from 'react-intl'
 import { MinusIcon, PlusIcon } from '../../images'
 import ebookMessages from './translation'
 
-const EbookStyledModal: React.VFC<{
+const EbookStyledModal: React.FC<{
   fontSize: number
   lineHeight: number
   onFontSizeChange: React.Dispatch<React.SetStateAction<number>>
   onLineHeightChange: React.Dispatch<React.SetStateAction<number>>
   onThemeChange: (theme: 'light' | 'dark') => void
-  renderTrigger: React.VFC<{
+  renderTrigger: React.FC<{
     onOpen: () => void
   }>
 }> = ({ renderTrigger, fontSize, lineHeight, onFontSizeChange, onLineHeightChange, onThemeChange }) => {

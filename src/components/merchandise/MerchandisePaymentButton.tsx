@@ -16,7 +16,7 @@ import { ReactComponent as CartIcon } from '../../images/cart.svg'
 import { MerchandiseProps, MerchandiseSpecProps } from '../../types/merchandise'
 import { AuthModalContext } from '../auth/AuthModal'
 
-const MerchandisePaymentButton: React.VFC<{
+const MerchandisePaymentButton: React.FC<{
   merchandise: MerchandiseProps
   merchandiseSpec: MerchandiseSpecProps
   quantity: number
@@ -57,7 +57,7 @@ const MerchandisePaymentButton: React.VFC<{
   )
 }
 
-const GeneralMerchandisePaymentBlock: React.VFC<{
+const GeneralMerchandisePaymentBlock: React.FC<{
   merchandise: MerchandiseProps
   merchandiseSpec: MerchandiseSpecProps
   quantity: number
@@ -159,7 +159,7 @@ const GeneralMerchandisePaymentBlock: React.VFC<{
   )
 }
 
-const CustomizedMerchandisePaymentBlock: React.VFC<{
+const CustomizedMerchandisePaymentBlock: React.FC<{
   merchandise: MerchandiseProps
   merchandiseSpec: MerchandiseSpecProps
   quantity: number

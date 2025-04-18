@@ -44,7 +44,7 @@ const StyledFeature = styled.section`
   }
 `
 
-const MisaFeatureSection: React.VFC<{
+const MisaFeatureSection: React.FC<{
   options: {
     title: string
     features: {
@@ -68,7 +68,7 @@ const MisaFeatureSection: React.VFC<{
   )
 }
 
-const FeatureBlock: React.VFC<{
+const FeatureBlock: React.FC<{
   imgSrc: string
   title: string
   paragraph: string

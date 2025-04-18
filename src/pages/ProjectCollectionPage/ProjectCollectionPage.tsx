@@ -61,7 +61,7 @@ const StyledTitle = styled.h2`
   }
 `
 
-const ProjectCollectionPage: React.VFC = () => {
+const ProjectCollectionPage: React.FC = () => {
   const history = useHistory()
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()

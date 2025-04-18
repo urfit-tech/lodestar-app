@@ -40,7 +40,7 @@ const StyledPanel = styled(Collapse.Panel)`
   border-radius: 4px;
 `
 
-const FAQs: React.VFC<FAQsProp> = ({ title, subtitle, questions }) => (
+const FAQs: React.FC<FAQsProp> = ({ title, subtitle, questions }) => (
   <StyledSection>
     <div className="container">
       <SectionTitle title={title || ''} subtitle={subtitle || ''} />

@@ -27,7 +27,7 @@ const StyledButton = styled(Button)`
   }
 `
 
-const ExamIntroBlock: React.VFC<
+const ExamIntroBlock: React.FC<
   Pick<
     Exam,
     | 'point'
@@ -152,7 +152,7 @@ const ExamIntroBlock: React.VFC<
   )
 }
 
-const TimeLimitContent: React.VFC<{
+const TimeLimitContent: React.FC<{
   unit?: ExamTimeUnit
   amount?: number
 }> = ({ unit, amount = 0 }) => {

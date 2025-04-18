@@ -5,7 +5,7 @@ import { Program, ProgramContent, ProgramContentSection, ProgramPlan, ProgramRol
 import ProgramContentCountBlock from './ProgramContentCountBlock'
 import ProgramInfoCard, { StyledProgramInfoCard } from './ProgramInfoCard'
 
-const ProgramInfoBlock: React.VFC<{
+const ProgramInfoBlock: React.FC<{
   program: Program & {
     roles: ProgramRole[]
     categories: Category[]

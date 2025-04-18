@@ -46,12 +46,12 @@ const StyledUseCoinText = styled.div`
   color: ${props => props.theme['@primary-color']};
 `
 
-const CoinCheckoutModal: React.VFC<{
+const CoinCheckoutModal: React.FC<{
   productId: string
   amount: number
   currencyId: string
   phoneInputEnabled?: boolean
-  renderTrigger?: React.VFC<{
+  renderTrigger?: React.FC<{
     setVisible: () => void
   }>
   startedAt?: Date

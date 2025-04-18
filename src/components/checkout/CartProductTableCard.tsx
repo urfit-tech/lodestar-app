@@ -29,7 +29,7 @@ type CartProductTableCardProps = CardProps & {
   withCartLink?: boolean
 }
 
-const CartProductTableCard: React.VFC<CartProductTableCardProps> = ({
+const CartProductTableCard: React.FC<CartProductTableCardProps> = ({
   shopId,
   cartProducts: cartProductWithoutInventory,
   withCartLink,

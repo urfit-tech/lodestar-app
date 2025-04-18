@@ -58,7 +58,7 @@ type Portfolio = DeepPick<
   }[]
 }
 
-const PortfolioPage: React.VFC<Pick<Project, 'id'>> = ({ id }) => {
+const PortfolioPage: React.FC<Pick<Project, 'id'>> = ({ id }) => {
   const { formatMessage } = useIntl()
   const [isLiked, setIsLiked] = useState(false)
   const { loading, portfolio, error, refetch } = useProjectPortfolio(id)

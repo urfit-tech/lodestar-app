@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import authMessages from '../translation'
 import { StyledModal, StyledModalTitle } from './LoginSection'
 
-const OverLoginDeviceModal: React.VFC<{
+const OverLoginDeviceModal: React.FC<{
   visible: boolean
   onClose: () => void
   onOk?: () => void

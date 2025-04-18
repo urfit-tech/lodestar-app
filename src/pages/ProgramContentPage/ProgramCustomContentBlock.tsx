@@ -45,7 +45,7 @@ const StyledProgramContentBlock = styled.div`
   }
 `
 
-const ProgramCustomContentBlock: React.VFC<{
+const ProgramCustomContentBlock: React.FC<{
   programId: string
   programContentSections: (ProgramContentSection & { contents: ProgramContent[] })[]
   programContentId: string

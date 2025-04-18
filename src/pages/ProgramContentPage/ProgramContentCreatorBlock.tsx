@@ -4,7 +4,7 @@ import CreatorCard from '../../components/common/CreatorCard'
 import { usePublicMember } from '../../hooks/member'
 import { StyledContentBlock } from './index.styled'
 
-const ProgramContentCreatorBlock: React.VFC<{
+const ProgramContentCreatorBlock: React.FC<{
   memberId: string
 }> = ({ memberId }) => {
   const { loadingMember, member } = usePublicMember(memberId)
