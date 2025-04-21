@@ -1036,6 +1036,7 @@
   "page.CollapseContentBlock.podcastChannel": "ポッドキャストチャンネル({count})",
   "page.OrderPaymentPage.paymentInformation": "支払い情報",
   "page.OrderPaymentPage.noPaymentInformation": "支払い情報がありません",
+  "page.OrderPaymentPage.noOrderInformation": "注文情報がありません",
   "page.OrderPaymentPage.goToCheckout": "支払いに進む",
   "page.OrderPaymentPage.paymentMethod": "支払い方法",
   "page.OrderPaymentPage.contractBlock": "このセクションを展開し、よく読んで契約書に署名してください。",

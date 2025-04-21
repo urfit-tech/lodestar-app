@@ -1040,6 +1040,7 @@
   "page.CollapseContentBlock.podcastChannel": "Saluran podcast({count})",
   "page.OrderPaymentPage.paymentInformation": "Informasi Pembayaran",
   "page.OrderPaymentPage.noPaymentInformation": "Tidak ada informasi pembayaran",
+  "page.OrderPaymentPage.noOrderInformation": "Tidak ada informasi pesanan yang tersedia",
   "page.OrderPaymentPage.goToCheckout": "Buka pembayaran",
   "page.OrderPaymentPage.paymentMethod": "Metode Pembayaran",
   "page.OrderPaymentPage.contractBlock": "Harap perluas bagian ini, baca dengan saksama, dan tanda tangani kontrak.",

@@ -1036,6 +1036,7 @@
   "page.CollapseContentBlock.podcastChannel": "팟캐스트 채널({count})",
   "page.OrderPaymentPage.paymentInformation": "결제 정보",
   "page.OrderPaymentPage.noPaymentInformation": "결제 정보 없음",
+  "page.OrderPaymentPage.noOrderInformation": "주문 정보가 없습니다",
   "page.OrderPaymentPage.goToCheckout": "결제로 이동",
   "page.OrderPaymentPage.paymentMethod": "결제 방법",
   "page.OrderPaymentPage.contractBlock": "이 섹션을 확장하고 주의 깊게 읽고 계약서에 서명하세요.",

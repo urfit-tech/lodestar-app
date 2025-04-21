@@ -1040,6 +1040,7 @@
   "page.CollapseContentBlock.podcastChannel": "Podcast Channels ({count})",
   "page.OrderPaymentPage.paymentInformation": "Payment Information",
   "page.OrderPaymentPage.noPaymentInformation": "No payment information",
+  "page.OrderPaymentPage.noOrderInformation": "No order information available",
   "page.OrderPaymentPage.goToCheckout": "Go to payment",
   "page.OrderPaymentPage.paymentMethod": "Payment Method",
   "page.OrderPaymentPage.contractBlock": "Please expand this section, read carefully, and sign the contract.",
