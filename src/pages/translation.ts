@@ -17,10 +17,22 @@ const pageMessages = {
       id: 'page.OrderPaymentPage.noPaymentInformation',
       defaultMessage: 'No Payment Information',
     },
-    goToCheckout: { id: 'page.OrderPaymentPage.goToCheckout', defaultMessage: 'Go to checkout' },
-    paymentMethod: { id: 'page.OrderPaymentPage.paymentMethod', defaultMessage: 'Payment Method' },
-    signContract: { id: 'page.OrderPaymentPage.signContract', defaultMessage: 'Sign the contract' },
-    contractContent: { id: 'page.OrderPaymentPage.contractContent', defaultMessage: 'Contract content' },
+    noOrderInformation: {
+      id: 'page.OrderPaymentPage.noOrderInformation',
+      defaultMessage: 'No order information available',
+    },
+    goToCheckout: {
+      id: 'page.OrderPaymentPage.goToCheckout',
+      defaultMessage: 'Go to checkout',
+    },
+    paymentMethod: {
+      id: 'page.OrderPaymentPage.paymentMethod',
+      defaultMessage: 'Payment Method',
+    },
+    contractBlock: {
+      id: 'page.OrderPaymentPage.contractBlock',
+      defaultMessage: 'Please expand this section, read carefully, and sign the contract.',
+    },
   }),
   // ProgramContentPage
   ProgramContentPage: defineMessages({
