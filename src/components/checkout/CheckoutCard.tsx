@@ -28,7 +28,7 @@ const CheckoutCard: React.VFC<
     check: {
       orderProducts: OrderProductProps[]
       orderDiscounts: OrderDiscountProps[]
-      payments: Array<{ itemName: string; itemAmt: number; itemCount: number }> | undefined
+      payments?: Array<{ itemName: string; itemAmt: number; itemCount: number }>
       shippingOption: ShippingOptionProps | null
     }
     cartProducts: CartProductProps[]
