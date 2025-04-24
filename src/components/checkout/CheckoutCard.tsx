@@ -144,6 +144,7 @@ const CheckoutCard: React.VFC<
           <Button
             colorScheme="primary"
             isFullWidth
+            whiteSpace="normal"
             isDisabled={check.orderProducts.length === 0 || isDisabled}
             isLoading={loading}
             onClick={() => onCheckout?.()}

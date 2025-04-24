@@ -10,6 +10,18 @@ const pageMessages = {
   AppPage: defineMessages({
     logoutAlert: { id: 'page.AppPage.logoutAlert', defaultMessage: '您已被登出，目前有其他裝置登入這組帳號' },
   }),
+  // OrderPaymentPage
+  OrderPaymentPage: defineMessages({
+    paymentInformation: { id: 'page.OrderPaymentPage.paymentInformation', defaultMessage: 'Payment Information' },
+    noPaymentInformation: {
+      id: 'page.OrderPaymentPage.noPaymentInformation',
+      defaultMessage: 'No Payment Information',
+    },
+    goToCheckout: { id: 'page.OrderPaymentPage.goToCheckout', defaultMessage: 'Go to checkout' },
+    paymentMethod: { id: 'page.OrderPaymentPage.paymentMethod', defaultMessage: 'Payment Method' },
+    signContract: { id: 'page.OrderPaymentPage.signContract', defaultMessage: 'Sign the contract' },
+    contractContent: { id: 'page.OrderPaymentPage.contractContent', defaultMessage: 'Contract content' },
+  }),
   // ProgramContentPage
   ProgramContentPage: defineMessages({
     foo: { id: 'page.ProgramContentPage.foo', defaultMessage: 'Foo Message' },

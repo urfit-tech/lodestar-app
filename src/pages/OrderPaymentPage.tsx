@@ -7,7 +7,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
 import { PaymentGatewayType, PaymentMethodType } from 'lodestar-app-element/src/types/checkout'
 import { evolve, map, pick, pipe, props, split, transpose, zipObj } from 'ramda'
-import { Fragment, useContext, useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { AiOutlineArrowLeft } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
@@ -17,6 +17,7 @@ import CheckoutCard from '../components/checkout/CheckoutCard'
 import AdminCard from '../components/common/AdminCard'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { desktopViewMixin, handleError } from '../helpers'
+import pageMessages from './translation'
 
 const StyledContentBlock = styled.div`
   ${desktopViewMixin(css`
@@ -167,6 +168,7 @@ const OrderPaymentPage = () => {
 }
 
 const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
+  const { formatMessage } = useIntl()
   const [selectedPayment, setSelectedPayment] = useState<Payment>()
   const unpaidPayments = order?.paymentLogs
     .filter(p => p.status === 'UNPAID')
@@ -190,10 +192,10 @@ const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
           </div>
         )}
         <AntdIcon type="shopping-cart" className="mr-2" />
-        付款資訊
+        {formatMessage(pageMessages.OrderPaymentPage.paymentInformation)}
       </Typography.Title>
       {!order || !unpaidPayments || unpaidPayments.length === 0 ? (
-        <AdminCard>無付款資訊</AdminCard>
+        <AdminCard>{formatMessage(pageMessages.OrderPaymentPage.noPaymentInformation)}</AdminCard>
       ) : unpaidPayments.length === 1 || selectedPayment ? (
         <PaymentBlock
           order={order}
@@ -229,11 +231,12 @@ const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
                           <Button
                             colorScheme="primary"
                             isFullWidth
+                            whiteSpace="normal"
                             onClick={() => {
                               setSelectedPayment(p)
                             }}
                           >
-                            前往付款
+                            {formatMessage(pageMessages.OrderPaymentPage.goToCheckout)}
                           </Button>
                         </div>
                       </div>
@@ -313,7 +316,7 @@ const PaymentBlock: React.VFC<{
 
       <div className="mb-3">
         <AdminCard>
-          <StyledTitle>付款方式</StyledTitle>
+          <StyledTitle>{formatMessage(pageMessages.OrderPaymentPage.paymentMethod)}</StyledTitle>
           {payment.method
             ? formatMessage(checkoutMessages.label[payment.method as PaymentMethodType])
             : formatMessage(
@@ -371,13 +374,13 @@ const PaymentBlock: React.VFC<{
               setIscChecked(!isChecked)
             }}
           />
-          <StyledLabel>簽署合約</StyledLabel>
+          <StyledLabel>{formatMessage(pageMessages.OrderPaymentPage.signContract)}</StyledLabel>
           <StyledContractButton
             onClick={() => {
               window.open(`${window.location.origin}/members/${memberId}/contracts/${memberContractId}`)
             }}
           >
-            合約內容
+            {formatMessage(pageMessages.OrderPaymentPage.contractContent)}
           </StyledContractButton>
         </AdminCard>
       )}
