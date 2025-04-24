@@ -1040,6 +1040,7 @@
   "page.CollapseContentBlock.podcastChannel": "广播频道({count})",
   "page.OrderPaymentPage.paymentInformation": "付款信息",
   "page.OrderPaymentPage.noPaymentInformation": "无付款信息",
+  "page.OrderPaymentPage.noOrderInformation": "没有订单信息",
   "page.OrderPaymentPage.goToCheckout": "前往付款",
   "page.OrderPaymentPage.paymentMethod": "付款方式",
   "page.OrderPaymentPage.contractBlock": "请展开此部分，仔细阅读，并签署合同。",

@@ -1040,6 +1040,7 @@
   "page.CollapseContentBlock.podcastChannel": "廣播頻道({count})",
   "page.OrderPaymentPage.paymentInformation": "付款資訊",
   "page.OrderPaymentPage.noPaymentInformation": "無付款資訊",
+  "page.OrderPaymentPage.noOrderInformation": "沒有訂單資訊",
   "page.OrderPaymentPage.goToCheckout": "前往付款",
   "page.OrderPaymentPage.paymentMethod": "付款方式",
   "page.OrderPaymentPage.contractBlock": "請展開此區塊，詳閱並簽署合約",

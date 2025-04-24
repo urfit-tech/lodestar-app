@@ -1040,6 +1040,7 @@
   "page.CollapseContentBlock.podcastChannel": "Kênh podcast({count})",
   "page.OrderPaymentPage.paymentInformation": "Thông tin thanh toán",
   "page.OrderPaymentPage.noPaymentInformation": "Không có thông tin thanh toán",
+  "page.OrderPaymentPage.noOrderInformation": "Không có thông tin đơn hàng",
   "page.OrderPaymentPage.goToCheckout": "Đi đến mục thanh toán",
   "page.OrderPaymentPage.paymentMethod": "Phương thức thanh toán",
   "page.OrderPaymentPage.contractBlock": "Vui lòng mở rộng phần này, đọc kỹ và ký hợp đồng.",
