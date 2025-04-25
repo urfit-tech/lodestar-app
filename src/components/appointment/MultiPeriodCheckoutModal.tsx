@@ -426,7 +426,8 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
 
   console.log('checkResults', checkResults)
 
-  const { coupons, loadingCoupons } = useCouponCollection(currentMemberId ?? '')
+  const { loading: loadingCoupons, data: coupons } = useCouponCollection(currentMemberId || '')
+
   const couponsForProducts = filter(
     (pipe as any)(
       path(['couponCode', 'couponPlan', 'productIds']),

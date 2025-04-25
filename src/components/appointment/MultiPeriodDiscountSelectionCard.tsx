@@ -30,8 +30,7 @@ const DiscountSelectionCard: React.FC<{
   const { currentMemberId } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
-
-  const { coupons, loadingCoupons, refetchCoupons } = useCouponCollection(currentMemberId ?? '')
+  const { loading: loadingCoupons, data: coupons, fetch: refetchCoupons } = useCouponCollection(currentMemberId || '')
 
   const { enrolledMembershipCardsWithDiscountOfProduct: membershipCards, loadingMembershipCards } =
     useEnrolledMembershipCardsWithDiscountInfo(currentMemberId || '', productId)
