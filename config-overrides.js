@@ -5,7 +5,11 @@ const defaultThemeVars = require('./src/theme.json')
 
 module.exports = override(
   removeModuleScopePlugin(),
-  babelInclude([path.resolve('src'), path.resolve('node_modules/lodestar-app-element/src')]),
+  babelInclude([
+    path.resolve('src'),
+    path.resolve('node_modules/lodestar-app-element/src'),
+    path.resolve('node_modules/chart.js'),
+  ]),
   fixBabelImports('import', {
     libraryName: 'antd',
     libraryDirectory: 'es',
