@@ -102,7 +102,7 @@ const StyledLink = styled(Link)<{ color: string }>`
   background-color: ${props => props.color};
 `
 
-const ProgramIntroSection: React.VFC<{
+const ProgramIntroSection: React.FC<{
   options: {
     backgroundImage: string
     subtitle: string

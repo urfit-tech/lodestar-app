@@ -27,9 +27,9 @@ const StyledContentText = styled.div`
   color: var(--gray-darker);
 `
 
-const ApplyTagModal: React.VFC<{
+const ApplyTagModal: React.FC<{
   projectId: string
-  renderTrigger?: React.VFC<{
+  renderTrigger?: React.FC<{
     setVisible: () => void
   }>
 }> = ({ projectId, renderTrigger }) => {

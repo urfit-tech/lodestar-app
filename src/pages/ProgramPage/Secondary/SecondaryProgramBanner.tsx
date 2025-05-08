@@ -159,7 +159,7 @@ const layoutTemplateConfigMap: Record<string, string> = {
   coverLabel: 'ef021415-0a5f-44a1-9530-de419f9431e0',
 }
 
-const SecondaryProgramBanner: React.VFC<{
+const SecondaryProgramBanner: React.FC<{
   program: Program & {
     tags: string[]
   }

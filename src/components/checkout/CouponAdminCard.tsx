@@ -81,7 +81,7 @@ const StyledCode = styled.div<{ currentTab: string }>`
   color: ${props => (props.currentTab !== 'available' ? 'var(--gray)' : props.theme['@primary-color'])};
 `
 
-const CouponAdminCard: React.VFC<{
+const CouponAdminCard: React.FC<{
   coupon: CouponProps
   currentTab: string
 }> = ({ coupon, currentTab }) => {

@@ -16,7 +16,7 @@ const StyledAngleRightIcon = styled(AngleRightIcon)`
   display: inline-block;
 `
 
-const ProgramSection: React.VFC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({
+const ProgramSection: React.FC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({
   options,
 }) => {
   const { formatMessage } = useIntl()

@@ -54,7 +54,7 @@ type ProfileBasicAdminCardProps = CardProps &
     memberId: string
   }
 
-const ProfileBasicAdminCard: React.VFC<ProfileBasicAdminCardProps> = ({ form, memberId, ...cardProps }) => {
+const ProfileBasicAdminCard: React.FC<ProfileBasicAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { id: appId } = useApp()
   const { authToken } = useAuth()
   const { member, refetchMember } = useMember(memberId)

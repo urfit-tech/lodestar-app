@@ -157,7 +157,7 @@ const StyledCheckbox = styled(Checkbox)`
   }
 `
 
-const CheckoutProductItem: React.VFC<{
+const CheckoutProductItem: React.FC<{
   name: string
   price: number
   currencyId?: string
@@ -190,7 +190,7 @@ const StyledApprovementBox = styled.div`
   padding-left: 46px;
 `
 
-const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
+const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
   defaultProductId,
   defaultProductDetails,
   warningText,

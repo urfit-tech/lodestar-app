@@ -7,7 +7,7 @@ import { ProgramRole } from '../../types/program'
 import IssueReplyCreationBlock from './IssueReplyCreationBlock'
 import IssueReplyItem from './IssueReplyItem'
 
-const IssueReplyCollectionBlock: React.VFC<{
+const IssueReplyCollectionBlock: React.FC<{
   programRoles: ProgramRole[]
   issueId: string
 }> = ({ programRoles, issueId }) => {

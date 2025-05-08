@@ -275,7 +275,7 @@ const subtotalListItem =
       </>
     )
 
-const AppointmentCollectionTabs: React.VFC<{
+const AppointmentCollectionTabs: React.FC<{
   creatorId: string
   appointmentPlans: (AppointmentPlan & { periods: AppointmentPeriod[] & { appointmentScheduleCreatedAt: Date }[] })[]
   selectedAppointmentPlanId: string

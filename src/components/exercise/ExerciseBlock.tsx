@@ -39,7 +39,7 @@ const StyledDescription = styled.div`
   color: var(--gray-darker);
 `
 
-const ExerciseBlock: React.VFC<{
+const ExerciseBlock: React.FC<{
   id: string
   programContentId: string
   programId: string

@@ -62,7 +62,7 @@ export const StyledDate = styled.div`
   white-space: nowrap;
 `
 
-const CertificateCard: React.VFC<{
+const CertificateCard: React.FC<{
   certificate: Certificate
   memberCertificate?: MemberCertificate
 }> = ({ certificate, memberCertificate }) => {

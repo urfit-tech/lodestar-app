@@ -23,7 +23,7 @@ const StyledTagButton = styled(Button)<{ selected?: boolean }>`
   }
 `
 
-const PostItemCollection: React.VFC<{
+const PostItemCollection: React.FC<{
   posts: PostPreviewProps[]
   withTagSelector?: boolean
   pageName?: String

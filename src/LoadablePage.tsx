@@ -6,7 +6,7 @@ import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import NotificationContext from './contexts/NotificationContext'
 
-const LoadablePage: React.VFC<{ pageName: string }> = ({ pageName }) => {
+const LoadablePage: React.FC<{ pageName: string }> = ({ pageName }) => {
   const tracking = useTracking()
   const { settings } = useApp()
   const { currentMemberId } = useAuth()

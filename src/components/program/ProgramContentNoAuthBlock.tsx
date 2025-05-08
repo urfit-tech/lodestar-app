@@ -14,7 +14,7 @@ const StyledText = styled.span`
   vertical-align: bottom;
 `
 
-const ProgramContentNoAuthBlock: React.VFC = () => {
+const ProgramContentNoAuthBlock: React.FC = () => {
   const { formatMessage } = useIntl()
   return (
     <StyledNoAuthBlock className="p-2 text-center">

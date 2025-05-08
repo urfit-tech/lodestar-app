@@ -2,7 +2,7 @@ import React from 'react'
 import { ProjectPlanProps } from '../../types/project'
 import ProjectPlanCard from './ProjectPlanCard'
 
-const ProjectPlanCollection: React.VFC<{
+const ProjectPlanCollection: React.FC<{
   projectPlans: ProjectPlanProps[]
   publishedAt: Date | null
 }> = ({ projectPlans, publishedAt }) => {

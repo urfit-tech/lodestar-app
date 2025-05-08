@@ -10,7 +10,7 @@ import { commonMessages } from '../../helpers/translation'
 import { useAuthModal } from '../../hooks/auth'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 
-const AuthButton: React.VFC = () => {
+const AuthButton: React.FC = () => {
   const { enabledModules } = useApp()
   const { formatMessage } = useIntl()
   const { renderAuthButton } = useCustomRenderer()

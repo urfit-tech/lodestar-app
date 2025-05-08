@@ -46,7 +46,7 @@ const StyledWarning = styled.div`
   color: var(--error);
 `
 
-const OrderTaskPage: React.VFC = () => {
+const OrderTaskPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { taskId } = useParams<{ taskId: string }>()

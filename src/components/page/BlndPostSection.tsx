@@ -163,7 +163,7 @@ const StyledLink = styled(Link)`
   }
 `
 
-const BlndPostSection: React.VFC = () => {
+const BlndPostSection: React.FC = () => {
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()
   const { loadingPosts, posts, errorPosts } = useLatestPost({ limit: 3 })
@@ -227,7 +227,7 @@ const BlndPostSection: React.VFC = () => {
   )
 }
 
-const ReadMoreLink: React.VFC = () => {
+const ReadMoreLink: React.FC = () => {
   const { formatMessage } = useIntl()
   return (
     <StyledLink to="/blog">

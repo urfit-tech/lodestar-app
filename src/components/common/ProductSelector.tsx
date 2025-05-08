@@ -16,7 +16,7 @@ type ProductSelectorProps = {
   value?: string[]
   onChange?: (value: string[]) => void
 }
-const ProductSelector: React.VFC<ProductSelectorProps> = ({ loading, error, products, value, onChange }) => {
+const ProductSelector: React.FC<ProductSelectorProps> = ({ loading, error, products, value, onChange }) => {
   const { formatMessage } = useIntl()
   const ProductTypeLabel: Record<
     'Program' | 'ProgramPlan' | 'ProgramContent' | 'Card' | 'ActivityTicket' | 'Merchandise',

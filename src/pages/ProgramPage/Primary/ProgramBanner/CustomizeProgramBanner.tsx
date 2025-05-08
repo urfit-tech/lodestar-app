@@ -108,7 +108,7 @@ const StyledButton = styled(Button)`
   }
 `
 
-const CustomizeProgramBanner: React.VFC<{
+const CustomizeProgramBanner: React.FC<{
   program: Program & {
     duration: number | null
     score: number | null

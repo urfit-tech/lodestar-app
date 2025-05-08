@@ -47,7 +47,7 @@ const AvatarContainer = styled.div`
   flex-shrink: 0;
 `
 
-const InstructorPanel: React.VFC<
+const InstructorPanel: React.FC<
   { instructorInfo: { instructorName: string; avatarUrl: string; instructorSubtitle: string } } & TabPanelProps
 > = ({ instructorInfo, ...props }) => {
   if (!instructorInfo) {

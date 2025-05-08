@@ -98,7 +98,7 @@ type OrderRow = {
   options: { installmentPlans?: { index: number; price: number }[] }
 }
 
-const OrderCollectionAdminCard: React.VFC<
+const OrderCollectionAdminCard: React.FC<
   CardProps & {
     memberId: string
   }

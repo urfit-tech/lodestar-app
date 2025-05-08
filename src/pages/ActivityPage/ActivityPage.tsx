@@ -47,7 +47,7 @@ const StyledTitle = styled.h2`
   font-size: 24px;
 `
 
-const ActivityPage: React.VFC = () => {
+const ActivityPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const { activityId } = useParams<{ activityId: string }>()
@@ -292,7 +292,7 @@ const ActivityPage: React.VFC = () => {
   )
 }
 
-const ActivityOrganizerIntro: React.VFC<{
+const ActivityOrganizerIntro: React.FC<{
   memberId: string
 }> = ({ memberId }) => {
   const { member } = usePublicMember(memberId)

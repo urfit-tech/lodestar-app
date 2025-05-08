@@ -32,7 +32,7 @@ const CustomNextArrow: React.FC<{
   onClick?: () => void
 }> = ({ onClick }) => <Icon type="right" onClick={onClick} />
 
-const TeacherIntroduction: React.VFC<TeacherIntroductionProp> = ({ title, subtitle, content }) => (
+const TeacherIntroduction: React.FC<TeacherIntroductionProp> = ({ title, subtitle, content }) => (
   <StyledSection>
     <div className="container">
       <Carousel

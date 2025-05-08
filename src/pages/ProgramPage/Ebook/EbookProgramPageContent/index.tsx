@@ -117,7 +117,7 @@ const EbookTrialAndShareButtonGroup = ({
   )
 }
 
-const EbookProgramPageContent: React.VFC<{
+const EbookProgramPageContent: React.FC<{
   program: Program & ProgramContentSectionType
 }> = ({ program }) => {
   const { enabledModules } = useApp()

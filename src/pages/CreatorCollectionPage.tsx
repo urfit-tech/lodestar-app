@@ -44,7 +44,7 @@ const StyledCreatorBlock = styled.div`
   `)}
 `
 
-const CreatorCollectionPage: React.VFC = () => {
+const CreatorCollectionPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { pageTitle } = useNav()
   const { loadingCreators, errorCreators, creators } = useCreatorCollection()

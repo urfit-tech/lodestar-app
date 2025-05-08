@@ -34,7 +34,7 @@ const SliderContainer = styled(Flex)`
   }
 `
 
-export const EbookReaderControlBar: React.VFC<{
+export const EbookReaderControlBar: React.FC<{
   isLocationGenerated: boolean
   chapter: string
   programContentBookmarks: Array<Bookmark>

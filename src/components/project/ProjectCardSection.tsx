@@ -175,7 +175,7 @@ const StyledModalBody = styled(ModalBody)`
   }
 `
 
-const ProjectCardSection: React.VFC<{
+const ProjectCardSection: React.FC<{
   items: {
     icon?: string
     title: string

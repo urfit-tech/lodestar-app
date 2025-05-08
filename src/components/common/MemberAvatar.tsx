@@ -29,7 +29,7 @@ type MemberAvatarProps = AvatarProps & {
   view?: string
   noAvatar?: boolean
 }
-const MemberAvatar: React.VFC<MemberAvatarProps> = ({
+const MemberAvatar: React.FC<MemberAvatarProps> = ({
   memberId,
   shape,
   size,

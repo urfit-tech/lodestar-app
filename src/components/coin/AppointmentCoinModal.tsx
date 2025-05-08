@@ -54,9 +54,9 @@ const StyledPeriod = styled.div`
   color: ${props => props.theme['@primary-color']};
 `
 
-const AppointmentCoinModal: React.VFC<
+const AppointmentCoinModal: React.FC<
   ModalProps & {
-    renderTrigger?: React.VFC<{
+    renderTrigger?: React.FC<{
       setVisible: React.Dispatch<React.SetStateAction<boolean>>
     }>
     appointmentPlanId: string

@@ -82,7 +82,7 @@ const StyledButtonWrapper = styled.div`
   background: ${colors.white};
 `
 
-const SecondaryProgramPageContent: React.VFC = () => {
+const SecondaryProgramPageContent: React.FC = () => {
   const { formatMessage } = useIntl()
   const { programId } = useParams<{ programId: string }>()
   const { pathname, search } = useLocation()

@@ -96,7 +96,7 @@ const StyledLink = styled(Link)`
   }
 `
 
-const CreatorCard: React.VFC<{
+const CreatorCard: React.FC<{
   id: string
   avatarUrl?: string | null
   title: string

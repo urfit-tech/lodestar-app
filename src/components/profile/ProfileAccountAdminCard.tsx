@@ -60,7 +60,7 @@ const StyledFormItem = styled(Form.Item)`
   }
 `
 
-const UnVerifiedSuffix: React.VFC<{}> = () => {
+const UnVerifiedSuffix: React.FC<{}> = () => {
   const { formatMessage } = useIntl()
 
   return (
@@ -73,7 +73,7 @@ const UnVerifiedSuffix: React.VFC<{}> = () => {
   )
 }
 
-const CountDownText: React.VFC<{ email: string; memberId: string }> = ({ email, memberId }) => {
+const CountDownText: React.FC<{ email: string; memberId: string }> = ({ email, memberId }) => {
   const { formatMessage } = useIntl()
   const [count, setCount] = useState<number>(30)
   const [showButton, setShowButton] = useState<boolean>(true)
@@ -167,7 +167,7 @@ type ProfileAccountAdminCardProps = CardProps &
   FormComponentProps & {
     memberId: string
   }
-const ProfileAccountAdminCard: React.VFC<ProfileAccountAdminCardProps> = ({ form, memberId, ...cardProps }) => {
+const ProfileAccountAdminCard: React.FC<ProfileAccountAdminCardProps> = ({ form, memberId, ...cardProps }) => {
   const { formatMessage } = useIntl()
   const { id: appId, enabledModules, settings } = useApp()
   const apolloClient = useApolloClient()

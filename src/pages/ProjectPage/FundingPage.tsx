@@ -75,7 +75,7 @@ const StyledBadge = styled.div<{ count: number }>`
   }
 `
 
-const FundingPage: React.VFC<ProjectProps> = ({
+const FundingPage: React.FC<ProjectProps> = ({
   id,
   type,
   expiredAt,

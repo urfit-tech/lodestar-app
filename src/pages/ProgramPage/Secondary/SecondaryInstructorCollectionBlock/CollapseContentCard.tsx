@@ -26,7 +26,7 @@ const ImageWrapper = styled(Box)`
   flex-shrink: 0;
 `
 
-const CollapseContentCard: React.VFC<{ href: string; imgSrc?: string; children: React.ReactNode | string }> = ({
+const CollapseContentCard: React.FC<{ href: string; imgSrc?: string; children: React.ReactNode | string }> = ({
   imgSrc,
   children,
   href,

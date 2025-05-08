@@ -91,7 +91,7 @@ const StyledComment = styled.div`
   }
 `
 
-const ProjectCommentSection: React.VFC<{
+const ProjectCommentSection: React.FC<{
   items: {
     name: string
     title: string

@@ -92,7 +92,7 @@ const StyledCode = styled.div<{ available?: boolean }>`
   color: ${props => (props.available ? props.theme['@primary-color'] : 'var(--gray)')};
 `
 
-const Voucher: React.VFC<VoucherProps> = ({
+const Voucher: React.FC<VoucherProps> = ({
   title,
   startedAt,
   endedAt,

@@ -15,7 +15,7 @@ const StyledTag = styled(Tag)<{ variant?: string }>`
   }
 `
 
-const MessageItemHeader: React.VFC<{
+const MessageItemHeader: React.FC<{
   programRoles: { id: string; name: PostRoleName | ProgramRoleName; memberId: string }[]
   memberId: string
   createdAt: Date

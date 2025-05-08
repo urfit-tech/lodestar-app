@@ -34,7 +34,7 @@ const StyledViewAllButton = styled(Button)`
   }
 `
 
-const ProgramTagCard: React.VFC<{ tags: { id: string; name: string }[] }> = ({ tags }) => {
+const ProgramTagCard: React.FC<{ tags: { id: string; name: string }[] }> = ({ tags }) => {
   const { formatMessage } = useIntl()
   const [isOpen, setIsOpen] = useState(false)
   const history = useHistory()

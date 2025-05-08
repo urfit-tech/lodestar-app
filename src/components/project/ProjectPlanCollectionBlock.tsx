@@ -36,7 +36,7 @@ const StyledDescription = styled.div`
   font-size: 14px;
 `
 
-const ProjectPlanCollectionBlock: React.VFC<{
+const ProjectPlanCollectionBlock: React.FC<{
   projectPlans: ProjectPlanBlockProps[]
 }> = ({ projectPlans }) => {
   return (
@@ -64,7 +64,7 @@ export type ProjectPlanBlockProps = {
     expiredAt: Date | null
   }
 }
-const ProjectPlanBlock: React.VFC<ProjectPlanBlockProps> = ({ title, description, project }) => {
+const ProjectPlanBlock: React.FC<ProjectPlanBlockProps> = ({ title, description, project }) => {
   const { formatMessage } = useIntl()
   const isExpired = project.expiredAt && project.expiredAt.getTime() < Date.now()
 

@@ -205,7 +205,7 @@ type OnSaleCoverSectionProps = {
   statistics: Statistic[]
   expiredAt: Date | null
 }
-const OnSaleCoverSection: React.VFC<OnSaleCoverSectionProps> = ({ cover, header, statistics, expiredAt }) => {
+const OnSaleCoverSection: React.FC<OnSaleCoverSectionProps> = ({ cover, header, statistics, expiredAt }) => {
   const { formatMessage } = useIntl()
   return (
     <StyledSection>

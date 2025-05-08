@@ -46,7 +46,7 @@ const StyledModalBody = styled(ModalBody)`
   }
 `
 
-const ActivitySessionItem: React.VFC<{
+const ActivitySessionItem: React.FC<{
   session: {
     id: string
     location: string | null

@@ -68,7 +68,7 @@ const StyledSection = styled.section`
   }
 `
 
-const ContractPage: React.VFC = () => {
+const ContractPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
   const { settings } = useApp()

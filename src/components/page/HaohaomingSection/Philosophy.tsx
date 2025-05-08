@@ -42,7 +42,7 @@ const StyledSection = styled.section`
   }
 `
 
-const Philosophy: React.VFC<PhilosophyProp> = ({ title, subtitle, content }) => (
+const Philosophy: React.FC<PhilosophyProp> = ({ title, subtitle, content }) => (
   <StyledSection>
     <div className="container">
       <div className="row">

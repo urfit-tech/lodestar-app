@@ -3,7 +3,7 @@ import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { Slide } from './CustomCoverSection'
 
-const CoverSection: React.VFC<{
+const CoverSection: React.FC<{
   options: {
     coverInfos: {
       id: number

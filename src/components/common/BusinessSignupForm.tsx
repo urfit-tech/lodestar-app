@@ -22,7 +22,7 @@ type BusinessSignupFromSubmitValue = {
   companyDistrict: string
 }
 
-const BusinessSignupForm: React.VFC<
+const BusinessSignupForm: React.FC<
   FormComponentProps & {
     companyPictureFile: File | null
     setCompanyPictureFile: React.Dispatch<React.SetStateAction<File | null>>

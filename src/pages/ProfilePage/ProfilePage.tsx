@@ -69,7 +69,7 @@ const StyledProductItem = styled.div<{ coverUrl: string }>`
     }
   }
 `
-const ProfilePage: React.VFC = () => {
+const ProfilePage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { username } = useParams<{ username: string }>()
   const { currentMember } = useAuth()

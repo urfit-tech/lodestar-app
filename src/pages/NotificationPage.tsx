@@ -7,7 +7,7 @@ import NotificationItem from '../components/notification/NotificationItem'
 import { commonMessages, productMessages } from '../helpers/translation'
 import { useNotifications } from '../hooks/data'
 
-const NotificationPage: React.VFC = () => {
+const NotificationPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { loadingNotifications, errorNotifications, notifications, refetchNotifications } = useNotifications(100)
 

@@ -8,7 +8,7 @@ import { usePopularPostCollection, useRelativePostCollection } from '../../hooks
 import { PostLinkProps } from '../../types/blog'
 import PostPreviewCover from './PostPreviewCover'
 
-export const PopularPostCollection: React.VFC = () => {
+export const PopularPostCollection: React.FC = () => {
   const { formatMessage } = useIntl()
   const { posts, postCount, fetchMorePost } = usePopularPostCollection()
   const [page, setPage] = useState(0)
@@ -22,7 +22,7 @@ export const PopularPostCollection: React.VFC = () => {
   )
 }
 
-export const RelativePostCollection: React.VFC<{ postId: string; tags?: string[] }> = ({ postId, tags }) => {
+export const RelativePostCollection: React.FC<{ postId: string; tags?: string[] }> = ({ postId, tags }) => {
   const { formatMessage } = useIntl()
   const { posts } = useRelativePostCollection(postId, tags)
 
@@ -47,7 +47,7 @@ export const RelativePostCollection: React.VFC<{ postId: string; tags?: string[]
   )
 }
 
-const PostLinkCollection: React.VFC<{
+const PostLinkCollection: React.FC<{
   title?: string
   posts: PostLinkProps[]
   onFetchMore?: () => Promise<any>

@@ -3,7 +3,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useEffect } from 'react'
 import hasura from '../../hasura'
 
-const ProjectSwitchDisplaySection: React.VFC<{
+const ProjectSwitchDisplaySection: React.FC<{
   projectId: string
   onDisplayProjectSectionTypesSet: React.Dispatch<React.SetStateAction<string[]>>
 }> = ({ onDisplayProjectSectionTypesSet, projectId }) => {

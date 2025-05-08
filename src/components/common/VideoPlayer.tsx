@@ -35,7 +35,7 @@ type VideoJsPlayerProps = {
   onCanPlaythrough?: (player: VideoJsPlayer, event: Event) => void
   onError?: (player: VideoJsPlayer, event: Event) => void
 }
-const VideoPlayer: React.VFC<VideoJsPlayerProps> = props => {
+const VideoPlayer: React.FC<VideoJsPlayerProps> = props => {
   const playerRef = useRef<VideoJsPlayer | null>(null)
   const { currentLocale } = useContext(LocaleContext)
   const { enabledModules } = useApp()

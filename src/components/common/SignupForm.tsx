@@ -12,7 +12,7 @@ const StyledCheckboxGroup = styled(Checkbox.Group)`
   }
 `
 
-const SignupForm: React.VFC<
+const SignupForm: React.FC<
   FormComponentProps & {
     signUpProperties: SignupProperty[]
     memberSignUpProperties?: {

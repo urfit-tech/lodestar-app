@@ -74,7 +74,7 @@ const StyledIcon = styled(Icon)`
   font-size: 64px;
 `
 
-const ProgramContentBlock: React.VFC<{
+const ProgramContentBlock: React.FC<{
   programId: string
   programRoles: ProgramRole[]
   programContentSections: (ProgramContentSection & { contents: ProgramContent[] })[]

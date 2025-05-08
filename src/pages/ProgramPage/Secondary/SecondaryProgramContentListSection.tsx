@@ -70,7 +70,7 @@ const transformProgramContentSections = (
   }, {})
 }
 
-const SecondaryProgramContentListSection: React.VFC<{
+const SecondaryProgramContentListSection: React.FC<{
   program: Program & ProgramContentSectionType
   programContentSections: (ProgramContentSection & {
     contents: ProgramContent[] & {

@@ -87,7 +87,7 @@ type VideoEvent = {
   videoState: { playbackRate: number; startedAt: number; endedAt: number }
 }
 
-const ProgramContentPlayer: React.VFC<
+const ProgramContentPlayer: React.FC<
   ReactPlayerProps & {
     programContentId: string
     autoPlay?: boolean
@@ -350,7 +350,7 @@ const ProgramContentPlayer: React.VFC<
   )
 }
 
-const ProgramContentPlayerCover: React.VFC<{
+const ProgramContentPlayerCover: React.FC<{
   nextProgramContent: {
     id: string
     title: string
@@ -386,7 +386,7 @@ const ProgramContentPlayerCover: React.VFC<{
   )
 }
 
-const CountDownPlayButton: React.VFC<{
+const CountDownPlayButton: React.FC<{
   duration?: number
   onPlayNext?: () => void
 }> = ({ duration = 5, onPlayNext }) => {

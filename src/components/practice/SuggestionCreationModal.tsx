@@ -23,7 +23,7 @@ type SuggestionCreationModalProps = {
   onRefetch?: () => void
 }
 
-const SuggestionCreationModal: React.VFC<SuggestionCreationModalProps> = ({ threadId, onRefetch }) => {
+const SuggestionCreationModal: React.FC<SuggestionCreationModalProps> = ({ threadId, onRefetch }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { currentMemberId, authToken } = useAuth()

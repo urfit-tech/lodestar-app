@@ -39,7 +39,7 @@ const StyledTitle = styled.h3`
   color: var(--gray-darker);
 `
 
-const GroupBuyingDeliverModal: React.VFC<{
+const GroupBuyingDeliverModal: React.FC<{
   partnerMemberIds: string[]
   orderId: string
   title: string
@@ -185,7 +185,7 @@ const StyledCardMeta = styled.div`
   color: var(--gray-dark);
 `
 
-const GroupBuyingDisplayCard: React.VFC<{
+const GroupBuyingDisplayCard: React.FC<{
   partnerMemberIds: string[]
   orderId: string
   imgUrl: string

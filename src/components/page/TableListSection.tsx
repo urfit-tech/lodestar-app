@@ -55,7 +55,7 @@ const StyledTable = styled(Table)`
   width: 930px;
 `
 
-const TableListSection: React.VFC<{ options: TableList }> = ({
+const TableListSection: React.FC<{ options: TableList }> = ({
   options: { id, padding, titleInfo, columnInfo, dataList },
 }) => {
   const columns = columnInfo?.columns.map(column => column.name) || []

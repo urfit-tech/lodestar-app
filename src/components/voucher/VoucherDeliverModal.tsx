@@ -44,7 +44,7 @@ const StyledDivider = styled(Divider)`
   }
 `
 
-const VoucherDeliverModal: React.VFC<{
+const VoucherDeliverModal: React.FC<{
   title: string
   voucherId: string
   onRefetch?: (() => void) | null

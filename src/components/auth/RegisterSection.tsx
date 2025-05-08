@@ -36,7 +36,7 @@ type RegisterSectionProps = FormComponentProps & {
   onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>
 }
 
-const RegisterSection: React.VFC<RegisterSectionProps> = ({ form, isBusinessMember, onAuthStateChange }) => {
+const RegisterSection: React.FC<RegisterSectionProps> = ({ form, isBusinessMember, onAuthStateChange }) => {
   const { settings, enabledModules, id: appId } = useApp()
   const { formatMessage } = useIntl()
   const apolloClient = useApolloClient()

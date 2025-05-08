@@ -8,7 +8,7 @@ import ExerciseBlock from '../../components/exercise/ExerciseBlock'
 import { useExam, useExercisePublic, useSpecificExercise } from '../../hooks/exam'
 import { ProgramContent, ProgramContentAttachmentProps, ProgramContentBodyProps } from '../../types/program'
 
-const ProgramContentExerciseBlock: React.VFC<{
+const ProgramContentExerciseBlock: React.FC<{
   programContent: Omit<ProgramContent, 'ebook'> & {
     programContentBody: ProgramContentBodyProps | null
     attachments: ProgramContentAttachmentProps[]

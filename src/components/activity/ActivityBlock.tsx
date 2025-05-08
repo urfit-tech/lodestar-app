@@ -44,7 +44,7 @@ type ActivityBlockProps = {
   options?: { organizerId?: string }
   onClick?: () => void
 }
-const ActivityBlock: React.VFC<ActivityBlockProps> = ({
+const ActivityBlock: React.FC<ActivityBlockProps> = ({
   id,
   title,
   coverUrl,

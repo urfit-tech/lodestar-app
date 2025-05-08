@@ -40,7 +40,7 @@ const ControlButton = styled(Box)<{ disable: boolean }>`
   align-items: center;
 `
 
-const PreviewPlayer: React.VFC<{
+const PreviewPlayer: React.FC<{
   trialProgramContentMedias?: (ProgramContent & {
     programId?: string
     contentSectionTitle?: string

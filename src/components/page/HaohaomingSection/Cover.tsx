@@ -85,7 +85,7 @@ const DefaultButton = styled(Button)`
   padding: 0px 40px;
 `
 
-const Cover: React.VFC<CoverProp> = ({ title, subtitle }) => {
+const Cover: React.FC<CoverProp> = ({ title, subtitle }) => {
   const history = useHistory()
   const { formatMessage } = useIntl()
   return (

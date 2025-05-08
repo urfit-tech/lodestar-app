@@ -47,7 +47,7 @@ const StyledUseCoinText = styled.div`
   color: ${props => props.theme['@primary-color']};
 `
 
-const MultiPeriodCoinCheckoutModal: React.VFC<{
+const MultiPeriodCoinCheckoutModal: React.FC<{
   selectedAppointmentPlan: AppointmentPlan
   defaultProductDetails: MultiPeriodProductDetail[]
   phoneInputEnabled?: boolean

@@ -32,7 +32,7 @@ const StyledLikedCount = styled.span<{ isActive?: boolean }>`
     `}
 `
 
-const LikedCountButton: React.VFC<{ onClick: () => void; isLiked: boolean; count: number }> = ({
+const LikedCountButton: React.FC<{ onClick: () => void; isLiked: boolean; count: number }> = ({
   onClick,
   isLiked,
   count,

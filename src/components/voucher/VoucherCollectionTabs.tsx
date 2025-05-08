@@ -6,7 +6,7 @@ import { StyledTabList, StyledTabPanel } from '../../pages/GroupBuyingCollection
 import { VoucherProps } from '../../types/vouchers'
 import Voucher from './Voucher'
 
-const VoucherCollectionTabs: React.VFC<{ vouchers: VoucherProps[] }> = ({ vouchers }) => {
+const VoucherCollectionTabs: React.FC<{ vouchers: VoucherProps[] }> = ({ vouchers }) => {
   const { formatMessage } = useIntl()
 
   const tabContents: {

@@ -2,7 +2,7 @@ import { Frame, useEditor } from '@craftjs/core'
 import React, { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 
-const CraftBlock: React.VFC<{
+const CraftBlock: React.FC<{
   craftData: {
     [key: string]: string
   }

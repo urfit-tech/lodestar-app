@@ -63,7 +63,7 @@ const StyledIcon = styled.div`
   }
 `
 
-const GroupBuyingReceivedContainer: React.VFC = () => {
+const GroupBuyingReceivedContainer: React.FC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [token] = useQueryParam('token', StringParam)
@@ -263,7 +263,7 @@ const GroupBuyingReceivedContainer: React.VFC = () => {
   )
 }
 
-const GroupBuyingReceivedPage: React.VFC = () => {
+const GroupBuyingReceivedPage: React.FC = () => {
   return (
     <DefaultLayout noFooter centeredBox>
       <GroupBuyingReceivedContainer />

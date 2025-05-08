@@ -21,7 +21,7 @@ import {
 import AdminCard from '../common/AdminCard'
 import CheckoutCardDetailCard from './CheckoutCardDetailCard'
 
-const CheckoutCard: React.VFC<
+const CheckoutCard: React.FC<
   CardProps & {
     isDisabled: boolean
     discountId: string | null

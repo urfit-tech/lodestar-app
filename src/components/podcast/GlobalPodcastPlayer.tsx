@@ -3,7 +3,7 @@ import { useLocation } from 'react-router'
 import PodcastPlayerContext from '../../contexts/PodcastPlayerContext'
 import PodcastPlayer from './PodcastPlayer'
 
-const GlobalPodcastPlayer: React.VFC = () => {
+const GlobalPodcastPlayer: React.FC = () => {
   const {
     visible,
     close,

@@ -78,7 +78,7 @@ const StyledButton = styled(Button)`
     border-radius: 4px;
   }
 `
-const ReviewReplyItem: React.VFC<ReviewReplyItemProps & { onRefetch?: () => void; targetId: string }> = ({
+const ReviewReplyItem: React.FC<ReviewReplyItemProps & { onRefetch?: () => void; targetId: string }> = ({
   id,
   reviewReplyMemberId,
   memberRole,

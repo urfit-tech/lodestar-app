@@ -44,7 +44,7 @@ const StyledVideoTitle = styled.span`
   letter-spacing: 0.2px;
 `
 
-const ProgramContentTrialPlayer: React.VFC<{
+const ProgramContentTrialPlayer: React.FC<{
   programContentId: string
   onPrev?: () => void
   onNext?: () => void

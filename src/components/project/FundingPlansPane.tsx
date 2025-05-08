@@ -24,7 +24,7 @@ const StyledWrapper = styled.div`
   }
 `
 
-const FundingPlansPane: React.VFC<{
+const FundingPlansPane: React.FC<{
   projectPlans: ProjectPlanProps[]
   publishedAt: Date | null
 }> = ({ projectPlans, publishedAt }) => {

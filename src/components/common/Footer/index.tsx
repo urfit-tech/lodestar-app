@@ -77,7 +77,7 @@ const StyledSocialAnchor = styled.a`
   }
 `
 
-export const NavLinks: React.VFC = () => {
+export const NavLinks: React.FC = () => {
   const { navs } = useApp()
   const { currentLocale } = useContext(LocaleContext)
   return (
@@ -99,7 +99,7 @@ export const NavLinks: React.VFC = () => {
   )
 }
 
-export const SocialLinks: React.VFC = () => {
+export const SocialLinks: React.FC = () => {
   const { navs } = useApp()
   return (
     <>
@@ -118,7 +118,7 @@ export const SocialLinks: React.VFC = () => {
   )
 }
 
-const Footer: React.VFC = () => {
+const Footer: React.FC = () => {
   const { settings } = useApp()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)

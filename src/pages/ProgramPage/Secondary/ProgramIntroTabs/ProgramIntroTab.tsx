@@ -1,7 +1,7 @@
 import { Tab } from '@chakra-ui/react'
 import { colors } from '../style'
 
-const ProgramIntroTab: React.VFC<{ children: React.ReactElement | string }> = props => {
+const ProgramIntroTab: React.FC<{ children: React.ReactElement | string }> = props => {
   return (
     <Tab
       fontWeight={500}

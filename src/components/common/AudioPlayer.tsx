@@ -176,7 +176,7 @@ const durationFormat: (time: number) => string = time => {
     .padStart(2, '0')}`
 }
 
-const AudioPlayer: React.VFC<{
+const AudioPlayer: React.FC<{
   title: string
   mode?: 'default' | 'preview'
   mimeType?: string
@@ -433,7 +433,7 @@ const AudioPlayer: React.VFC<{
   )
 }
 
-const PlayRateButton: React.VFC<
+const PlayRateButton: React.FC<
   Omit<ButtonProps, 'mode' | 'onChange'> & {
     playRate: number
     onChange?: (playRate: number) => void
@@ -484,7 +484,7 @@ const PlayRateButton: React.VFC<
   )
 }
 
-const PlayModeButton: React.VFC<
+const PlayModeButton: React.FC<
   Omit<ButtonProps, 'variant' | 'mode' | 'onChange'> & {
     variant: 'overlay' | 'bar'
     mode: AudioPlayerMode

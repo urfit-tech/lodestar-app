@@ -6,7 +6,7 @@ import { useHistory } from 'react-router'
 import { StringParam, useQueryParam } from 'use-query-params'
 import LoadingPage from '../LoadingPage'
 
-const JoinPage: React.VFC = () => {
+const JoinPage: React.FC = () => {
   const history = useHistory()
   const [permissionGroupId] = useQueryParam('permission_group_id', StringParam)
   const { isAuthenticating, authToken, currentMember } = useAuth()

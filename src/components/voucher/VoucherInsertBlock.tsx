@@ -52,7 +52,7 @@ type VoucherInsertBlockProps = CardProps &
     onChangeLoading: (status: boolean) => void
     loading: boolean
   }
-const VoucherInsertBlock: React.VFC<VoucherInsertBlockProps> = ({
+const VoucherInsertBlock: React.FC<VoucherInsertBlockProps> = ({
   form,
   onRefetch,
   afterInsert,

@@ -13,7 +13,7 @@ const StyledContainer = styled.div`
   box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.15);
 `
 
-const MembershipCardAdminBlock: React.VFC<{
+const MembershipCardAdminBlock: React.FC<{
   cardId: string
   startedAt?: Date | null
   endedAt?: Date | null
