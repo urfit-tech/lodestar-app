@@ -74,7 +74,7 @@ const StyledCheckbox = styled(Checkbox)`
   }
 `
 
-const CheckoutBlock: React.VFC<{
+const CheckoutBlock: React.FC<{
   member: MemberProps | null
   shopId: string
   cartProducts: CartProductProps[]

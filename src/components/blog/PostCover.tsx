@@ -112,7 +112,7 @@ const StyledOverlay = styled.div`
   box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.3);
 `
 
-const PostCover: React.VFC<{
+const PostCover: React.FC<{
   title: string
   coverUrl: string | null
   type: 'picture' | 'video'

@@ -38,7 +38,7 @@ const GiftName = styled.p`
   color: var(--gray-darker);
 `
 
-const CartProductGiftPlan: React.VFC<{ productId: string }> = ({ productId }) => {
+const CartProductGiftPlan: React.FC<{ productId: string }> = ({ productId }) => {
   const { formatMessage } = useIntl()
   const { productGiftPlan } = useProductGiftPlan(productId)
   let isAvailable =

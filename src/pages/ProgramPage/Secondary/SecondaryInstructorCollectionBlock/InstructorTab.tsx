@@ -1,7 +1,7 @@
 import { Tab } from '@chakra-ui/react'
 import { colors } from '../style'
 
-const InstructorTab: React.VFC<{ children: React.ReactElement | string }> = props => {
+const InstructorTab: React.FC<{ children: React.ReactElement | string }> = props => {
   return (
     <Tab
       mr={2}

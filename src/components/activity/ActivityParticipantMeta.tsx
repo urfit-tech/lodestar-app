@@ -12,7 +12,7 @@ const StyledMeta = styled.div`
   letter-spacing: 0.18px;
 `
 
-const ActivityParticipantMeta: React.VFC<{ activityId: string; options?: { organizerId?: string } }> = ({
+const ActivityParticipantMeta: React.FC<{ activityId: string; options?: { organizerId?: string } }> = ({
   activityId,
   options,
 }) => {

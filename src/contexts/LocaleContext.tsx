@@ -22,8 +22,8 @@ type SupportedLocales = {
 }[]
 
 type LocaleContextProps = {
-  defaultLocale: string | null
-  currentLocale: string | null
+  defaultLocale: string
+  currentLocale: string
   languagesList: SupportedLocales
   setCurrentLocale?: (language: string) => void
 }

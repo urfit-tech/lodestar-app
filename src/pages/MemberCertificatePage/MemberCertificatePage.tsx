@@ -8,7 +8,7 @@ import ForbiddenPage from '../ForbiddenPage'
 import { StyledPageHeader } from '../ProgramContentPage/index.styled'
 import CertificateContentBlock from './CertificateContentBlock'
 
-const MemberCertificatePage: React.VFC = () => {
+const MemberCertificatePage: React.FC = () => {
   const history = useHistory()
   const { memberCertificateId } = useParams<{ memberCertificateId: string }>()
   const { data: memberCertificate, loading: loadingMemberCertificate } = useMemberCertificate(memberCertificateId)

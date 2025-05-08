@@ -7,11 +7,11 @@ import CouponAdminCard from '../../components/checkout/CouponAdminCard'
 import CouponInsertionCard from '../../components/checkout/CouponInsertionCard'
 import MemberAdminLayout from '../../components/layout/MemberAdminLayout'
 import { usersMessages } from '../../helpers/translation'
-import { useCouponCollection } from '../../hooks/data'
+import { useCouponCollection } from 'lodestar-app-element/src/hooks/data'
 import { ReactComponent as TicketIcon } from '../../images/ticket.svg'
 import { StyledTabList, StyledTabPanel } from '../GroupBuyingCollectionPage'
 
-const CouponCollectionAdminPage: React.VFC = () => {
+const CouponCollectionAdminPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { loading: loadingCoupons, data: coupons } = useCouponCollection(currentMemberId || '')

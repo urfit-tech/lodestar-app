@@ -54,7 +54,7 @@ const StyledItemMeta = styled.div`
   letter-spacing: 0.34px;
 `
 
-const AppointmentItem: React.VFC<{
+const AppointmentItem: React.FC<{
   creatorId: string
   appointmentPlan: {
     id: string

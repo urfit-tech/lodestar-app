@@ -14,13 +14,13 @@ const StyledFileItem = styled.div`
   }
 `
 
-const FileUploader: React.VFC<{
+const FileUploader: React.FC<{
   fileList: File[]
   multiple?: boolean
   showUploadList?: boolean
   accept?: string
   onChange?: (files: File[]) => void
-  renderTrigger?: React.VFC<{
+  renderTrigger?: React.FC<{
     onClick: () => void
   }>
 }> = ({ renderTrigger, multiple, accept, onChange, fileList, showUploadList }) => {

@@ -47,7 +47,7 @@ type CouponInsertionCardProps = CardProps &
   FormComponentProps & {
     onInsert?: () => void
   }
-const CouponInsertionCard: React.VFC<CouponInsertionCardProps> = ({ form, onInsert, ...cardProps }) => {
+const CouponInsertionCard: React.FC<CouponInsertionCardProps> = ({ form, onInsert, ...cardProps }) => {
   const { formatMessage } = useIntl()
   const { authToken } = useAuth()
   const [loading, setLoading] = useState(false)

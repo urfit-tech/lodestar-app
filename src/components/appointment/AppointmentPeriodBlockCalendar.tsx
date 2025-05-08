@@ -80,7 +80,7 @@ const restyleByCond =
   (element: ChildNode) =>
     changeObjectByCond(cond, styleMapForTrue, styleMapForFalse)((element as any).style)
 
-const AppointmentPeriodBlockCalendar: React.VFC<{
+const AppointmentPeriodBlockCalendar: React.FC<{
   periods: Record<string, AppointmentPeriod[]>
   creatorId: string
   appointmentPlan: {

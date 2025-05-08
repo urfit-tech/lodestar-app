@@ -79,7 +79,7 @@ const StyledDescription = styled.div`
   -webkit-line-clamp: 8;
 `
 
-const CreatorSection: React.VFC<{ options: { title?: string; topInstructorIds?: string[] } }> = ({ options }) => {
+const CreatorSection: React.FC<{ options: { title?: string; topInstructorIds?: string[] } }> = ({ options }) => {
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { loadingLatestCreators, latestCreators, errorLatestCreators } = useLatestCreator(

@@ -54,7 +54,7 @@ enum MerchandiseType {
   Virtual = 'virtual',
 }
 
-const MerchandiseCollectionPage: React.VFC = () => {
+const MerchandiseCollectionPage: React.FC = () => {
   const { loading: loadingApp, navs } = useApp()
   const { formatMessage } = useIntl()
   const [tag] = useQueryParam('tag', StringParam)

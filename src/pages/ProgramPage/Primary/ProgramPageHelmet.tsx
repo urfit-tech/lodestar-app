@@ -8,7 +8,7 @@ import { getBraftContent, getOgLocale } from '../../../helpers'
 import { useProductReviews, useReviewAggregate } from '../../../hooks/review'
 import { Program } from '../../../types/program'
 
-const ProgramPageHelmet: React.VFC<{ program: Program } & Pick<React.ComponentProps<typeof PageHelmet>, 'onLoaded'>> =
+const ProgramPageHelmet: React.FC<{ program: Program } & Pick<React.ComponentProps<typeof PageHelmet>, 'onLoaded'>> =
   ({ program, onLoaded }) => {
     const app = useApp()
     const { defaultLocale } = useContext(LocaleContext)

@@ -95,7 +95,7 @@ export const Slide: React.FC<{
   )
 }
 
-const CoverSection: React.VFC<{
+const CoverSection: React.FC<{
   options: {
     coverInfos: {
       id: number

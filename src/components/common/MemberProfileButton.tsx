@@ -61,7 +61,7 @@ const StyledListItem = styled(Flex)`
   padding: 16px 16px 16px 0px;
 `
 
-export const CollapseNavLinks: React.VFC<{ nav: AppNavProps }> = ({ nav }) => {
+export const CollapseNavLinks: React.FC<{ nav: AppNavProps }> = ({ nav }) => {
   const { isOpen, onToggle } = useDisclosure()
 
   const ListItem = (
@@ -122,7 +122,7 @@ export const CollapseNavLinks: React.VFC<{ nav: AppNavProps }> = ({ nav }) => {
   )
 }
 
-export const CustomNavLinks: React.VFC = () => {
+export const CustomNavLinks: React.FC = () => {
   const { navs } = useNav()
 
   return (
@@ -136,7 +136,7 @@ export const CustomNavLinks: React.VFC = () => {
   )
 }
 
-const DefaultLogout: React.VFC<{ onClick?: React.MouseEventHandler<HTMLDivElement> }> = ({ onClick }) => {
+const DefaultLogout: React.FC<{ onClick?: React.MouseEventHandler<HTMLDivElement> }> = ({ onClick }) => {
   const { formatMessage } = useIntl()
   const { settings } = useApp()
   const { close } = useContext(PodcastPlayerContext)
@@ -164,7 +164,7 @@ const DefaultLogout: React.VFC<{ onClick?: React.MouseEventHandler<HTMLDivElemen
   )
 }
 
-const MemberProfileButton: React.VFC<{
+const MemberProfileButton: React.FC<{
   id: string
   name: string
   username: string

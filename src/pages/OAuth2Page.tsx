@@ -15,7 +15,7 @@ import LoadingPage from '../pages/LoadingPage'
 
 export type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth' | 'cw'
 
-const OAuth2Page: React.VFC = () => {
+const OAuth2Page: React.FC = () => {
   const { provider } = useParams<{ provider: ProviderType }>()
   console.log({ provider })
 
@@ -195,7 +195,7 @@ const DefaultOauth2Section: React.FC = () => {
   )
 }
 
-const Oauth2Section: React.VFC = () => {
+const Oauth2Section: React.FC = () => {
   const history = useHistory()
   const { provider } = useParams<{ provider: ProviderType }>()
   const [state] = useQueryParam('state', StringParam)

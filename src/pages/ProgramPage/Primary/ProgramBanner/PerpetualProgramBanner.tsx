@@ -70,7 +70,7 @@ const StyledButton = styled(Button)`
   }
 `
 
-const PerpetualProgramBanner: React.VFC<{
+const PerpetualProgramBanner: React.FC<{
   program: Program & {
     tags: string[]
   }

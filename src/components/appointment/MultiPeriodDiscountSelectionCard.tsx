@@ -19,7 +19,7 @@ const StyledRadio = styled(Radio)`
   }
 `
 
-const DiscountSelectionCard: React.VFC<{
+const DiscountSelectionCard: React.FC<{
   productId: string
   value?: string | null
   check?: CheckProps
@@ -30,8 +30,7 @@ const DiscountSelectionCard: React.VFC<{
   const { currentMemberId } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
-
-  const { coupons, loadingCoupons, refetchCoupons } = useCouponCollection(currentMemberId ?? '')
+  const { loading: loadingCoupons, data: coupons, fetch: refetchCoupons } = useCouponCollection(currentMemberId || '')
 
   const { enrolledMembershipCardsWithDiscountOfProduct: membershipCards, loadingMembershipCards } =
     useEnrolledMembershipCardsWithDiscountInfo(currentMemberId || '', productId)

@@ -41,7 +41,7 @@ const StyledExpandButton = styled(Button)`
   transform: translateY(-100%);
 `
 
-const FundingIntroductionPane: React.VFC<{
+const FundingIntroductionPane: React.FC<{
   introduction: string
   projectPlans: ProjectPlanProps[]
   publishedAt: Date | null

@@ -28,7 +28,7 @@ const StyledTabList = styled(TabList)`
   background: ${colors.white};
 `
 
-const ProgramIntroTabs: React.VFC<{
+const ProgramIntroTabs: React.FC<{
   program: Program & {
     roles: ProgramRole[]
   }

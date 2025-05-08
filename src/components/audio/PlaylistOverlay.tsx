@@ -91,7 +91,7 @@ const StyledListItem = styled(List.Item)<{ variant?: 'playing' }>`
   }
 `
 
-const PlaylistOverlay: React.VFC<{
+const PlaylistOverlay: React.FC<{
   title?: string
   playList: (ProgramContent & {
     programId?: string
@@ -151,7 +151,7 @@ const PlaylistOverlay: React.VFC<{
     </StyledWrapper>
   )
 }
-const PlayListItem: React.VFC<{
+const PlayListItem: React.FC<{
   isPlaying: boolean
   duration: number
   progress: number

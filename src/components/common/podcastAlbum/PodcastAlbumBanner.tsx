@@ -57,7 +57,7 @@ const StyledLink = styled(Link)`
   border-radius: 11px;
   border: solid 1px #fff;
 `
-const PodcastAlbumBanner: React.VFC<{
+const PodcastAlbumBanner: React.FC<{
   podcastAlbum: Pick<PodcastAlbum, 'coverUrl' | 'title' | 'podcastPrograms' | 'categories'>
 }> = ({ podcastAlbum }) => {
   const { formatMessage } = useIntl()

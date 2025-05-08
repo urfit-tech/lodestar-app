@@ -8,7 +8,7 @@ import { getBraftContent, getOgLocale } from '../../helpers'
 import { useProductReviews, useReviewAggregate } from '../../hooks/review'
 import { ProjectProps } from '../../types/project'
 
-const ProjectPageHelmet: React.VFC<{ project: ProjectProps }> = ({ project }) => {
+const ProjectPageHelmet: React.FC<{ project: ProjectProps }> = ({ project }) => {
   const app = useApp()
   const projectPlans =
     project?.projectPlans?.map(plan =>

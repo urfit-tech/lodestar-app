@@ -61,7 +61,7 @@ const StyledPostTitle = styled.h3`
   ${CommonTitleMixin}
 `
 
-const BlogPostPage: React.VFC = () => {
+const BlogPostPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { searchId } = useParams<{ searchId: string }>()

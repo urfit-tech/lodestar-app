@@ -95,7 +95,7 @@ const StyledButtonModal = styled(Button)`
   }
 `
 
-const ReviewModal: React.VFC<{
+const ReviewModal: React.FC<{
   path: string
   memberReviews: MemberReviewProps[]
   onRefetchReviewMemberItem?: () => void

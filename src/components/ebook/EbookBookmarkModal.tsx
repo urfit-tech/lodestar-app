@@ -101,7 +101,7 @@ const StyledHighlight = styled.div`
   }
 `
 
-export const EbookBookmarkModal: React.VFC<{
+export const EbookBookmarkModal: React.FC<{
   refetchBookmark: () => void
   onLocationChange: (loc: string) => void
   currentThemeData: { color: string; backgroundColor: string }
@@ -195,7 +195,7 @@ export const EbookBookmarkModal: React.VFC<{
   )
 }
 
-const BookmarkRow: React.VFC<{
+const BookmarkRow: React.FC<{
   onLocationChange: (loc: string) => void
   color?: string
   bookmark: Bookmark
@@ -245,7 +245,7 @@ const BookmarkRow: React.VFC<{
   )
 }
 
-const HighlightRow: React.VFC<{
+const HighlightRow: React.FC<{
   onLocationChange: (loc: string) => void
   highlight: Highlight
   refetchBookmark: () => void

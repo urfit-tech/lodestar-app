@@ -20,7 +20,7 @@ const messages = defineMessages({
   revoked: { id: 'contract.label.revoked', defaultMessage: '已解約' },
 })
 
-const ContractCollectionAdminPage: React.VFC = () => {
+const ContractCollectionAdminPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const app = useApp()

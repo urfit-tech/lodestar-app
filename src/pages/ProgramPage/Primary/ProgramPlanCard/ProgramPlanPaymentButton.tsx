@@ -32,7 +32,7 @@ const StyleButton = styled(Button)<{ isMultiline?: boolean }>`
     `}
 `
 
-const ProgramPlanPaymentButton: React.VFC<{
+const ProgramPlanPaymentButton: React.FC<{
   programPlan: ProgramPlan & {
     isSubscription: boolean
     groupBuyingPeople: number

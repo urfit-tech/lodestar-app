@@ -15,7 +15,7 @@ import MessageItemHeader from '../common/MessageItemHeader'
 import MessageReplyCreationForm from '../common/MessageReplyCreationForm'
 import MessageIssueReplyItem from './MessageIssueReplyItem'
 
-const MessageIssueItem: React.VFC<{
+const MessageIssueItem: React.FC<{
   issueId: string
   memberId: string
   description: string

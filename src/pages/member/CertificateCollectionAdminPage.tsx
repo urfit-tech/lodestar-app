@@ -11,7 +11,7 @@ import { useMemberCertificateCollection } from '../../hooks/certificate'
 import { ReactComponent as MemberCertificateIcon } from '../../images/certificate.svg'
 import ForbiddenPage from '../ForbiddenPage'
 
-const CertificateCollectionAdminPage: React.VFC = () => {
+const CertificateCollectionAdminPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const app = useApp()
   const { currentMemberId } = useAuth()

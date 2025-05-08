@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { commonMessages } from '../helpers/translation'
 
-const ForbiddenPage: React.VFC = () => {
+const ForbiddenPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const history = useHistory()
 

@@ -10,7 +10,7 @@ import { useProgram, useProgramContentById, useProgramContentEnrollment, useProg
 import { DisplayModeEnum } from '../../types/program'
 import AudioPlayer from './AudioPlayer'
 
-const GlobalAudioPlayer: React.VFC = () => {
+const GlobalAudioPlayer: React.FC = () => {
   const {
     visible,
     isPlaying,

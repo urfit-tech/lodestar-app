@@ -12,7 +12,7 @@ export const StyledIcon = styled.img`
   vertical-align: text-top;
 `
 
-const LatestProgramSection: React.VFC<{ programs: SunkProgramProps[] }> = ({ programs }) => {
+const LatestProgramSection: React.FC<{ programs: SunkProgramProps[] }> = ({ programs }) => {
   const { formatMessage } = useIntl()
   return (
     <section>

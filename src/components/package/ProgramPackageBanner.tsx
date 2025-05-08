@@ -101,7 +101,7 @@ type ProgramPackageBannerProps = {
   programPackageId: string
   isEnrolled?: boolean
 }
-const ProgramPackageBanner: React.VFC<ProgramPackageBannerProps> = ({
+const ProgramPackageBanner: React.FC<ProgramPackageBannerProps> = ({
   title,
   coverUrl,
   programPackageId,

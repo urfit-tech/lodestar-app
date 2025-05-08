@@ -13,7 +13,7 @@ const messages = defineMessages({
   hasGiftPlan: { id: 'common.label.hasGiftPlan', defaultMessage: '附贈品' },
 })
 
-const GiftPlanTag: React.VFC<{ color?: string }> = ({ color }) => {
+const GiftPlanTag: React.FC<{ color?: string }> = ({ color }) => {
   const { formatMessage } = useIntl()
   return <StyledTag color={color}>{formatMessage(messages.hasGiftPlan)}</StyledTag>
 }

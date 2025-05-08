@@ -56,7 +56,7 @@ const StyledButton = styled(props => <Button {...props} />)`
   }
 `
 
-const NotFoundPage: React.VFC<{
+const NotFoundPage: React.FC<{
   variant?: 'error' | 'repairing'
 }> = ({ variant }) => {
   const { formatMessage } = useIntl()

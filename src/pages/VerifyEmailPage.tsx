@@ -36,7 +36,7 @@ const StyledWarning = styled.div`
   color: var(--error);
 `
 
-const VerifyEmailPage: React.VFC = () => {
+const VerifyEmailPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const [token] = useQueryParam('token', StringParam)
 

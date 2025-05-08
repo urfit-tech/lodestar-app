@@ -2,7 +2,7 @@ import React from 'react'
 import CreatorCardComponents from '../../components/common/CreatorCard'
 import { usePublicMember } from '../../hooks/member'
 
-const CreatorCard: React.VFC<{
+const CreatorCard: React.FC<{
   id: string
   noPadding?: boolean
 }> = ({ id, noPadding }) => {

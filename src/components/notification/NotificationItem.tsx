@@ -22,7 +22,7 @@ const StyledListItem = styled(List.Item)<{ variant?: 'read' }>`
   }
 `
 
-const NotificationItem: React.VFC<{
+const NotificationItem: React.FC<{
   id: string
   description: string
   avatar: string | null

@@ -21,7 +21,7 @@ import {
 import AdminCard from '../common/AdminCard'
 import CheckoutCardDetailCard from './CheckoutCardDetailCard'
 
-const CheckoutCard: React.VFC<
+const CheckoutCard: React.FC<
   CardProps & {
     isDisabled: boolean
     discountId: string | null
@@ -144,6 +144,7 @@ const CheckoutCard: React.VFC<
           <Button
             colorScheme="primary"
             isFullWidth
+            whiteSpace="normal"
             isDisabled={check.orderProducts.length === 0 || isDisabled}
             isLoading={loading}
             onClick={() => onCheckout?.()}

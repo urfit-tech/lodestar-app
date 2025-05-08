@@ -59,7 +59,7 @@ const StyledItem = styled.div<{
   }
 `
 
-const NavSection: React.VFC<{
+const NavSection: React.FC<{
   options: {
     backgroundColor?: string
     height?: string

@@ -53,7 +53,7 @@ const StyledTabPanel = styled(TabPanel)`
   }
 `
 
-const MemberPage: React.VFC = () => {
+const MemberPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { memberId } = useParams<{ memberId: string }>()
   const { isAuthenticated, currentMemberId, permissions } = useAuth()

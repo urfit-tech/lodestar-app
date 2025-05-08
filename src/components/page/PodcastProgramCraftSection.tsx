@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { commonMessages } from '../../helpers/translation'
 import { SectionTitle, StyledAngleRightIcon, StyledLink } from '../../pages/AppPage'
 
-const PodcastProgramSection: React.VFC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({
+const PodcastProgramSection: React.FC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({
   options,
 }) => {
   const { formatMessage } = useIntl()

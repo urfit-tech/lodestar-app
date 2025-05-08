@@ -188,7 +188,7 @@ const StyledRotateIcon = styled(Icon)`
   }
 `
 
-const PlayRateButton: React.VFC<
+const PlayRateButton: React.FC<
   Omit<ButtonProps, 'variant' | 'mode' | 'onChange'> & {
     variant: 'overlay' | 'bar'
     playRate: number
@@ -262,7 +262,7 @@ const PlayRateButton: React.VFC<
     </StyledButton>
   )
 }
-const PlayModeButton: React.VFC<
+const PlayModeButton: React.FC<
   Omit<ButtonProps, 'variant' | 'mode' | 'onChange'> & {
     variant: 'overlay' | 'bar'
     mode: AudioPlayerMode
@@ -369,7 +369,7 @@ type audioEvent = {
   audioState: { playbackRate: number; startedAt: number; endedAt: number }
 }
 
-const AudioPlayer: React.VFC<{
+const AudioPlayer: React.FC<{
   isPlaying: boolean
   title: string
   contentSectionTitle: string

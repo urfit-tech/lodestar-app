@@ -19,7 +19,7 @@ export const StyledEditor = styled(BraftEditor)`
 type MessageReplyCreationFormProps = FormComponentProps & {
   onSubmit?: (content: any) => Promise<any>
 }
-const MessageReplyCreationForm: React.VFC<MessageReplyCreationFormProps> = ({ onSubmit, form }) => {
+const MessageReplyCreationForm: React.FC<MessageReplyCreationFormProps> = ({ onSubmit, form }) => {
   const { formatMessage } = useIntl()
   const [replying, setReplying] = useState(false)
   const { currentMemberId, authToken } = useAuth()

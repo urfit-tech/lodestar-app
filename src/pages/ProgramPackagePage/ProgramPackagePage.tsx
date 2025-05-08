@@ -48,7 +48,7 @@ const messages = defineMessages({
   checkPlans: { id: 'programPackage.ui.checkPlans', defaultMessage: '查看購買方案' },
 })
 
-const ProgramPackagePage: React.VFC = () => {
+const ProgramPackagePage: React.FC = () => {
   const { id: appId } = useApp()
   const tracking = useTracking()
   const { isAuthenticating } = useAuth()
@@ -70,10 +70,7 @@ const ProgramPackagePage: React.VFC = () => {
   return <ProgramPackagePageContent programPackageId={programPackageId} resourceCollection={resourceCollection} />
 }
 
-const ProgramPackagePageContent: React.VFC<{ programPackageId: string; resourceCollection: (Resource | null)[] }> = ({
-  programPackageId,
-  resourceCollection,
-}) => {
+const ProgramPackagePageContent: React.FC<{ programPackageId: string }> = ({ programPackageId }) => {
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
   const { loadingProgramPackage, errorProgramPackage, programPackageIntroduction } =

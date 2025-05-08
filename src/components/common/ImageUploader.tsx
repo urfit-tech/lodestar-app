@@ -44,7 +44,7 @@ const StyledMask = styled.div<{ width?: string; shape?: 'rounded' | 'circle' }>`
   }
 `
 
-const ImageUploader: React.VFC<{
+const ImageUploader: React.FC<{
   file: File | null
   imgUrl?: string | null
   customStyle?: { shape?: 'rounded' | 'circle'; width?: string; ratio?: number }

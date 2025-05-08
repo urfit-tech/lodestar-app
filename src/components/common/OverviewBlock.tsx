@@ -45,7 +45,7 @@ const StyledLink = styled.div`
   }
 `
 
-const OverviewBlock: React.VFC<{
+const OverviewBlock: React.FC<{
   programs: ProgramBriefProps[]
   previousPage: string
   podcastPrograms: PodcastProgramProps[]

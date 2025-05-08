@@ -158,7 +158,7 @@ const StyledCheckbox = styled(Checkbox)`
   }
 `
 
-const CheckoutProductItem: React.VFC<{
+const CheckoutProductItem: React.FC<{
   name: string
   price: number
   currencyId?: string
@@ -191,7 +191,7 @@ const StyledApprovementBox = styled.div`
   padding-left: 46px;
 `
 
-const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
+const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
   defaultProductId,
   defaultProductDetails,
   warningText,
@@ -427,7 +427,8 @@ const MultiPeriodCheckoutModal: React.VFC<CheckoutPeriodsModalProps> = ({
 
   console.log('checkResults', checkResults)
 
-  const { coupons, loadingCoupons } = useCouponCollection(currentMemberId ?? '')
+  const { loading: loadingCoupons, data: coupons } = useCouponCollection(currentMemberId || '')
+
   const couponsForProducts = filter(
     (pipe as any)(
       path(['couponCode', 'couponPlan', 'productIds']),

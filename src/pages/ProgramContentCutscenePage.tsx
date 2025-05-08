@@ -53,7 +53,7 @@ const StyledButton = styled(Button)`
   }
 `
 
-const ProgramContentCutscenePage: React.VFC = () => {
+const ProgramContentCutscenePage: React.FC = () => {
   const history = useHistory()
   const { formatMessage } = useIntl()
   const { enabledModules } = useApp()

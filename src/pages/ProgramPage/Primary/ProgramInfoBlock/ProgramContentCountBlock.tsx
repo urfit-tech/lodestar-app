@@ -32,7 +32,7 @@ const StyledCountBlock = styled.div`
 //   margin-bottom: 2rem;
 // }
 
-const ProgramContentCountBlock: React.VFC<{
+const ProgramContentCountBlock: React.FC<{
   program: Program & {
     contentSections: (ProgramContentSection & {
       contents: ProgramContent[]

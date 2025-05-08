@@ -56,8 +56,10 @@ const StyledSection = styled.section`
   }
 `
 
-const ContractPage: React.VFC = () => {
-  const { isAuthenticating, isAuthenticated } = useAuth()
+const ContractPage: React.FC = () => {
+  const { formatMessage } = useIntl()
+  const { isAuthenticating, isAuthenticated, currentMemberId } = useAuth()
+  const { settings } = useApp()
   const authModal = useAuthModal()
   const { memberContractId } = useParams<{ memberId: string; memberContractId: string }>()
   const { memberContract, setMemberContractData, loading: memberContractLoading } = useMemberContract(memberContractId)

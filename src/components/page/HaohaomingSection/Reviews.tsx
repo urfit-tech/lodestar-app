@@ -44,7 +44,7 @@ const Wrapper = styled.div`
   }
 `
 
-const Reviews: React.VFC<ReviewsProp> = ({ title, subtitle, students }) => (
+const Reviews: React.FC<ReviewsProp> = ({ title, subtitle, students }) => (
   <StyledSection>
     <div className="container">
       <SectionTitle title={title || ''} subtitle={subtitle || ''} />

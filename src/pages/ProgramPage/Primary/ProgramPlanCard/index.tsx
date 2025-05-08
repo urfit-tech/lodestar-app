@@ -59,7 +59,7 @@ const StyledEnrollment = styled.div`
   letter-spacing: 0.18px;
 `
 
-const ProgramPlanCard: React.VFC<{
+const ProgramPlanCard: React.FC<{
   programId: string
   programPlan: ProgramPlan & {
     isSubscription: boolean

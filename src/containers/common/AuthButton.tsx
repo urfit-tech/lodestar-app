@@ -14,7 +14,7 @@ import { TrackingEvent, Method } from '../../types/tracking'
 
 let isBtnSysCwlLoginSetted = false
 
-const AuthButton: React.VFC = () => {
+const AuthButton: React.FC = () => {
   const { enabledModules } = useApp()
   const { formatMessage } = useIntl()
   const { renderAuthButton } = useCustomRenderer()

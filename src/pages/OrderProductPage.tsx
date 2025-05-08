@@ -8,7 +8,7 @@ import { useOrderProduct } from '../hooks/checkout'
 import ActivityTicketPage from './ActivityTicketPage'
 import pageMessages from './translation'
 
-const OrderProductPage: React.VFC = () => {
+const OrderProductPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { orderProductId } = useParams<{ orderProductId: string }>()
   const { loadingOrderProduct, errorOrderProduct, orderProduct } = useOrderProduct(orderProductId)

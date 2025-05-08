@@ -141,7 +141,7 @@ const doEbookSearch = async (q: string, book: Book | null) => {
 
 const isSafari = /Safari/.test(navigator.userAgent)
 
-const ProgramContentMenu: React.VFC<{
+const ProgramContentMenu: React.FC<{
   isScrollToTop?: boolean
   program: Program & {
     contentSections: (ProgramContentSection & {
@@ -183,7 +183,7 @@ const ProgramContentMenu: React.VFC<{
     setEbookSearchResults(resWithToc)
   }
 
-  const HightLightText: React.VFC<{ text: string; highlight: string }> = ({ text, highlight }) => {
+  const HightLightText: React.FC<{ text: string; highlight: string }> = ({ text, highlight }) => {
     const theme = useAppTheme()
     const parts = text.split(new RegExp(`(${highlight})`, 'gi'))
     return (
@@ -307,7 +307,7 @@ const ProgramContentMenu: React.VFC<{
   )
 }
 
-const ProgramContentSectionMenu: React.VFC<{
+const ProgramContentSectionMenu: React.FC<{
   program: Program & {
     contentSections: (ProgramContentSection & {
       contents: ProgramContent[]
@@ -360,7 +360,7 @@ const ProgramContentSectionMenu: React.VFC<{
   )
 }
 
-const ContentSection: React.VFC<{
+const ContentSection: React.FC<{
   programContentSection: ProgramContentSection & {
     contents: ProgramContent[]
   }
@@ -459,7 +459,7 @@ const ContentSection: React.VFC<{
   )
 }
 
-const SortBySectionItem: React.VFC<{
+const SortBySectionItem: React.FC<{
   programContent: ProgramContent
   loadingProgramContentMaterials: boolean
   programContentMaterials: ProgramContentMaterial[]
@@ -590,7 +590,7 @@ const SortBySectionItem: React.VFC<{
   )
 }
 
-const ProgramContentDateMenu: React.VFC<{
+const ProgramContentDateMenu: React.FC<{
   program: Program & {
     contentSections: (ProgramContentSection & {
       contents: ProgramContent[]
@@ -646,7 +646,7 @@ const ProgramContentDateMenu: React.VFC<{
   )
 }
 
-const SortByDateItem: React.VFC<{
+const SortByDateItem: React.FC<{
   programContent: ProgramContent
   loadingProgramContentMaterials: boolean
   programContentMaterials: ProgramContentMaterial[]
@@ -706,7 +706,7 @@ const SortByDateItem: React.VFC<{
   )
 }
 
-const EmptyMenu: React.VFC = () => {
+const EmptyMenu: React.FC = () => {
   const { formatMessage } = useIntl()
   return (
     <Card style={{ textAlign: 'center', color: '#9b9b9b' }}>
@@ -715,7 +715,7 @@ const EmptyMenu: React.VFC = () => {
   )
 }
 
-const ExerciseQuestionCount: React.VFC<{ contentBodyId: string; programContent: ProgramContent }> = ({
+const ExerciseQuestionCount: React.FC<{ contentBodyId: string; programContent: ProgramContent }> = ({
   contentBodyId,
   programContent,
 }) => {
@@ -744,7 +744,7 @@ const ExerciseQuestionCount: React.VFC<{ contentBodyId: string; programContent: 
   )
 }
 
-const CheckIconButton: React.VFC<{ status: 'unread' | 'done' }> = ({ status }) => {
+const CheckIconButton: React.FC<{ status: 'unread' | 'done' }> = ({ status }) => {
   const theme = useAppTheme()
 
   return (
@@ -773,7 +773,7 @@ const CheckIconButton: React.VFC<{ status: 'unread' | 'done' }> = ({ status }) =
   )
 }
 
-const EbookSecondaryMenu: React.VFC<{
+const EbookSecondaryMenu: React.FC<{
   programContentId: string
   tocs: {
     id: string

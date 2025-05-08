@@ -4,7 +4,7 @@ const StyledWrapper = styled.div<{ styles: string }>`
   ${props => props.styles}
 `
 
-const StaticBlock: React.VFC<{ options: { html: string; styles: string } }> = ({ options: { html, styles } }) => (
+const StaticBlock: React.FC<{ options: { html: string; styles: string } }> = ({ options: { html, styles } }) => (
   <StyledWrapper dangerouslySetInnerHTML={{ __html: html }} styles={styles} />
 )
 

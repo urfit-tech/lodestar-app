@@ -74,7 +74,7 @@ const StyledButton = styled(Button)`
   }
 `
 
-const CertificateContentBlock: React.VFC<{ memberCertificate: MemberCertificate }> = ({ memberCertificate }) => {
+const CertificateContentBlock: React.FC<{ memberCertificate: MemberCertificate }> = ({ memberCertificate }) => {
   const { certificate } = memberCertificate
   const { currentMember } = useAuth()
   const { formatMessage } = useIntl()
@@ -194,7 +194,7 @@ const StyledCertificateCard = styled.div<{ scale: number }>`
   transform-origin: top left;
 `
 
-const CertificateImpl: React.VFC<{
+const CertificateImpl: React.FC<{
   template: string
   templateVars?: any
   certificateRef?: React.Ref<HTMLDivElement>

@@ -42,13 +42,13 @@ const StyledModal = styled(Modal)`
 `
 
 type ProgramContentTrialModalProps = {
-  render?: React.VFC<{
+  render?: React.FC<{
     setVisible: React.Dispatch<React.SetStateAction<boolean>>
   }>
   programId: string
   programContentId: string
 }
-const ProgramContentTrialModal: React.VFC<ProgramContentTrialModalProps> = ({
+const ProgramContentTrialModal: React.FC<ProgramContentTrialModalProps> = ({
   render,
   programId,
   programContentId,

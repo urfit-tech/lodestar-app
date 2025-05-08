@@ -42,7 +42,7 @@ const StyledTag = styled(Tag)`
   border: 0;
 `
 
-const MessageReplyItem: React.VFC<{
+const MessageReplyItem: React.FC<{
   content: string
   createdAt: Date
   memberId: string

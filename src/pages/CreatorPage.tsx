@@ -85,7 +85,7 @@ const ProjectTabStyle = styled.div`
     background-color: transparent;
   }
 `
-const CreatorPage: React.VFC = () => {
+const CreatorPage: React.FC = () => {
   const { settings } = useApp()
   const { creatorId } = useParams<{ creatorId: string }>()
   const { member: creator, loadingMember: loadingCreator } = usePublicMember(creatorId)
@@ -139,7 +139,7 @@ const CreatorPage: React.VFC = () => {
   )
 }
 
-const CreatorTabs: React.VFC<{
+const CreatorTabs: React.FC<{
   creatorId: string
   member: MemberPublicProps | null
   onCheckoutModalOpen?: () => void

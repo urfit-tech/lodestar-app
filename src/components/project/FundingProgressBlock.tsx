@@ -75,7 +75,7 @@ const StyleProgress = styled(Progress)`
   }
 `
 
-const FundingProgressBlock: React.VFC<{
+const FundingProgressBlock: React.FC<{
   targetAmount: number
   targetUnit: ProjectIntroProps['targetUnit']
   totalSales: number

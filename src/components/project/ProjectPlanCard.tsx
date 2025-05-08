@@ -64,7 +64,7 @@ const StyledProjectPlanInfoBlock = styled.div<{ active?: boolean }>`
   }
 `
 
-const ProjectPlanCard: React.VFC<
+const ProjectPlanCard: React.FC<
   ProjectPlanProps & {
     publishedAt: Date | null
   }

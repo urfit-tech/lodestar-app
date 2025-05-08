@@ -29,7 +29,7 @@ const GoogleLogo = styled.span`
   background-position: center;
 `
 
-const FacebookLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
+const FacebookLoginButton: React.FC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
   const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
   const [returnTo] = useQueryParam('returnTo', StringParam)
@@ -81,7 +81,7 @@ const FacebookLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ account
   )
 }
 
-const GoogleLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
+const GoogleLoginButton: React.FC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
   const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
   const [returnTo] = useQueryParam('returnTo', StringParam)
@@ -133,7 +133,7 @@ const GoogleLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLi
   )
 }
 
-const LineLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
+const LineLoginButton: React.FC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
   const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
   const [returnTo] = useQueryParam('returnTo', StringParam)
@@ -186,7 +186,7 @@ const LineLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLink
   )
 }
 
-const ParentingLoginButton: React.VFC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
+const ParentingLoginButton: React.FC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
   const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
   const query = new URLSearchParams(window.location.search)

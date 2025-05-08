@@ -56,7 +56,7 @@ const StyledButton = styled(Button)`
   }
 `
 
-const PracticeUploadModal: React.VFC<{
+const PracticeUploadModal: React.FC<{
   programContentId: string
   isCoverRequired: boolean
   practice?: PracticeProps | null

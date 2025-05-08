@@ -43,7 +43,7 @@ const StyledPlaceHolder = styled.div`
   transform: translateY(-44%);
 `
 
-const ProjectProgramSearchSection: React.VFC<{
+const ProjectProgramSearchSection: React.FC<{
   projectId: string
   coverUrl: string
   category: string

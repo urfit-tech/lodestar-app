@@ -22,7 +22,7 @@ const StyledCoverWrapper = styled.div<Pick<StaticCover, 'coverInfo'>>`
   }
 `
 
-const StaticCoverSection: React.VFC<{ options: StaticCover }> = ({ options: { animation, coverInfo } }) => {
+const StaticCoverSection: React.FC<{ options: StaticCover }> = ({ options: { animation, coverInfo } }) => {
   const { ref, activated } = useOnceAnimation()
 
   return (

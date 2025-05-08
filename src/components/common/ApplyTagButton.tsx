@@ -1,7 +1,7 @@
 import { Icon, IconButton } from '@chakra-ui/react'
 import { TicketOIcon } from '../../images'
 
-const ApplyTagButton: React.VFC<{ onClick: () => void }> = ({ onClick }) => {
+const ApplyTagButton: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   return (
     <IconButton
       aria-label="applyTag"

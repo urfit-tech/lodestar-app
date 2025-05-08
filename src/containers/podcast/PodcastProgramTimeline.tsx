@@ -28,7 +28,7 @@ export type PodcastProgramProps = PodcastProgramPopoverProps &
     publishedAt: Date
     supportLocales?: string[] | null
   }
-const PodcastProgramTimeline: React.VFC<{
+const PodcastProgramTimeline: React.FC<{
   podcastPrograms: PodcastProgramProps[]
   renderItem?: (item: {
     podcastProgram: PodcastProgramProps

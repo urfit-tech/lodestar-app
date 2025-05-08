@@ -36,7 +36,7 @@ const StyledInputRightElement = styled(InputRightElement)<{ variants: Status }>`
   }
 `
 
-const Input: React.VFC<
+const Input: React.FC<
   {
     status?: Status
   } & InputProps

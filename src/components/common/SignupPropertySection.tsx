@@ -14,7 +14,7 @@ type SignPropertySectionProps = FormComponentProps & {
   onModalVisible?: React.Dispatch<SetStateAction<boolean>>
 }
 
-const SignupPropertySection: React.VFC<SignPropertySectionProps> = ({ form, onModalVisible }) => {
+const SignupPropertySection: React.FC<SignPropertySectionProps> = ({ form, onModalVisible }) => {
   const { currentMemberId, authToken } = useAuth()
   const { formatMessage } = useIntl()
   const [loading, setLoading] = useState(false)

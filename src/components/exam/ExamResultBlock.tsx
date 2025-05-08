@@ -88,7 +88,7 @@ const StyledErrorText = styled.span`
   color: var(--error);
 `
 
-const ExamResultBlock: React.VFC<
+const ExamResultBlock: React.FC<
   Pick<
     Exam,
     'isAvailableToRetry' | 'isAvailableAnnounceScore' | 'passingScore' | 'timeLimitAmount' | 'timeLimitUnit'

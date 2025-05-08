@@ -3,7 +3,7 @@ import PageHelmet from '../../components/common/PageHelmet'
 import { useNav } from '../../hooks/data'
 import { ProjectIntroProps } from '../../types/project'
 
-const ProjectCollectionPageHelmet: React.VFC<{ projects: ProjectIntroProps[] }> = ({ projects }) => {
+const ProjectCollectionPageHelmet: React.FC<{ projects: ProjectIntroProps[] }> = ({ projects }) => {
   const { settings } = useApp()
   const { pageTitle } = useNav()
 

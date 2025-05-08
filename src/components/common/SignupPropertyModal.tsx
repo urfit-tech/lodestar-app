@@ -14,7 +14,7 @@ export const StyledTitle = styled.h1`
   text-align: center;
 `
 
-const SignupPropertyModal: React.VFC = () => {
+const SignupPropertyModal: React.FC = () => {
   const { settings } = useApp()
   const { isAuthenticating, currentMemberId, isFinishedSignUpProperty } = useAuth()
   const { formatMessage } = useIntl()

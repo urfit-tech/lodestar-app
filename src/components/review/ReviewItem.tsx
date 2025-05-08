@@ -62,7 +62,7 @@ const StyledButton = styled(Button)`
   }
 `
 
-const ReviewItem: React.VFC<
+const ReviewItem: React.FC<
   ReviewProps & {
     isLiked?: boolean
     likedCount: number
@@ -254,7 +254,7 @@ const StyledIcon = styled(Icon)`
   margin-top: 2px;
 `
 
-const LikeButton: React.VFC<{
+const LikeButton: React.FC<{
   reviewId: string
   isLiked: boolean
   likedCount: number

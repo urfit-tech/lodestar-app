@@ -13,7 +13,7 @@ import OnSaleSkillSection from '../../components/project/OnSaleSkillSection'
 import OnSaleTrialSection from '../../components/project/OnSaleTrialSection'
 import { ProjectProps } from '../../types/project'
 
-const OnSalePage: React.VFC<ProjectProps> = ({
+const OnSalePage: React.FC<ProjectProps> = ({
   id,
   expiredAt,
   coverType,

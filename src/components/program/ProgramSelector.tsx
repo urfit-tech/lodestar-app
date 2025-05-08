@@ -10,7 +10,7 @@ type ProgramSelectorProps = {
   onChange?: (value: string) => void
 }
 
-export const EnrolledProgramSelector: React.VFC<ProgramSelectorProps> = ({ value, memberId, onChange }) => {
+export const EnrolledProgramSelector: React.FC<ProgramSelectorProps> = ({ value, memberId, onChange }) => {
   const { formatMessage } = useIntl()
   const { equityProgramIds, loadingEquityPrograms } = useEquityPrograms()
 
@@ -34,7 +34,7 @@ export const EnrolledProgramSelector: React.VFC<ProgramSelectorProps> = ({ value
   )
 }
 
-const ProgramSelectOption: React.VFC<{ programId: string }> = ({ programId }) => {
+const ProgramSelectOption: React.FC<{ programId: string }> = ({ programId }) => {
   const { program } = useProgram(programId)
 
   return <option value={programId}>{program && program.title}</option>

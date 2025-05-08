@@ -150,7 +150,7 @@ const OrderPaymentPage = () => {
   return <DefaultLayout>{loading ? <Skeleton active /> : <OrderPaymentBlock order={order} />}</DefaultLayout>
 }
 
-const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
+const OrderPaymentBlock: React.FC<{ order?: Order }> = ({ order }) => {
   const { formatMessage } = useIntl()
   const [selectedPayment, setSelectedPayment] = useState<Payment>()
   const unpaidPayments = order?.paymentLogs
@@ -213,6 +213,7 @@ const OrderPaymentBlock: React.VFC<{ order?: Order }> = ({ order }) => {
                           <Button
                             colorScheme="primary"
                             isFullWidth
+                            whiteSpace="normal"
                             onClick={() => {
                               setSelectedPayment(p)
                             }}
@@ -296,7 +297,7 @@ const PaymentBlock: React.FC<{
       </div>
       <div className="mb-3">
         <AdminCard>
-          <StyledTitle>{formatMessage(pageMessages.OrderPaymentPage.paymentInformation)}</StyledTitle>
+          <StyledTitle>{formatMessage(pageMessages.OrderPaymentPage.paymentMethod)}</StyledTitle>
           {payment.method
             ? formatMessage(checkoutMessages.label[payment.method as PaymentMethodType])
             : formatMessage(

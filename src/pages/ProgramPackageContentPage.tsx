@@ -10,7 +10,7 @@ import { ProgramDisplayedCard } from '../components/program/ProgramDisplayedCard
 import { ProgramDisplayedListItem } from '../components/program/ProgramDisplayedListItem'
 import { useProgramPackage } from '../hooks/programPackage'
 
-const ProgramPackageContentPage: React.VFC = () => {
+const ProgramPackageContentPage: React.FC = () => {
   const { programPackageId } = useParams<{ programPackageId: string }>()
   const [specificMemberId] = useQueryParam('memberId', StringParam)
   const { currentMemberId, currentUserRole } = useAuth()

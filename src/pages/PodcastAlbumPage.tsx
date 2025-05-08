@@ -45,7 +45,7 @@ const FixedBottomBlock = styled.div<{ bottomSpace?: string }>`
   right: 0;
   z-index: 999;
 `
-const PodcastAlbumPage: React.VFC = () => {
+const PodcastAlbumPage: React.FC = () => {
   const { podcastAlbumId: id } = useParams<{ podcastAlbumId: string }>()
   const { id: appId, settings } = useApp()
   const { visible } = useContext(PodcastPlayerContext)
