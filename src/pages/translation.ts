@@ -33,6 +33,14 @@ const pageMessages = {
       id: 'page.OrderPaymentPage.contractBlock',
       defaultMessage: 'Please expand this section, read carefully, and sign the contract.',
     },
+    contractContent: {
+      id: 'page.OrderPaymentPage.contractContent',
+      defaultMessage: 'Contract content',
+    },
+    signContract: {
+      id: 'page.OrderPaymentPage.signContract',
+      defaultMessage: 'Sign the contract',
+    },
   }),
   // ProgramContentPage
   ProgramContentPage: defineMessages({
