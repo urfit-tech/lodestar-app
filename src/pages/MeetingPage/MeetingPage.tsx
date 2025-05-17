@@ -130,10 +130,10 @@ const MeetingPage = () => {
           categoryNames: uniqueFields,
           properties: [
             { name: formatMessage(MeetingPageMessages.MeetingPage.introducer), value: referal },
-            { name: formatMessage(MeetingPageMessages.MeetingPage.allianceSource), value: utm.utm_source || '' },
-            { name: formatMessage(MeetingPageMessages.MeetingPage.allianceMemberId), value: utm.utm_id || '' },
-            { name: formatMessage(MeetingPageMessages.MeetingPage.allianceTransactionId), value: utm.utm_term || '' },
-            { name: formatMessage(MeetingPageMessages.MeetingPage.marketingContent), value: utm.utm_content || '' },
+            // { name: formatMessage(MeetingPageMessages.MeetingPage.allianceSource), value: utm.utm_source || '' },
+            // { name: formatMessage(MeetingPageMessages.MeetingPage.allianceMemberId), value: utm.utm_id || '' },
+            // { name: formatMessage(MeetingPageMessages.MeetingPage.allianceTransactionId), value: utm.utm_term || '' },
+            // { name: formatMessage(MeetingPageMessages.MeetingPage.marketingContent), value: utm.utm_content || '' },
             { name: formatMessage(MeetingPageMessages.MeetingPage.sourceUrl), value: landingPage || '' },
             { name: formatMessage(MeetingPageMessages.MeetingPage.adMaterial), value: adPropertyValues || '' },
             {
@@ -144,6 +144,13 @@ const MeetingPage = () => {
               name: formatMessage(MeetingPageMessages.MeetingPage.leadRating),
               value: propertyDefaultValue[formatMessage(MeetingPageMessages.MeetingPage.leadRating)] || '',
             },
+            { name: 'landing', value: landingPage || ''  },
+            { name: 'utm_source', value: utm.utm_source || '' },
+            { name: 'utm_medium', value: utm.utm_medium || '' },
+            { name: 'utm_id', value: utm.utm_id || '' },
+            { name: 'utm_campaign', value: utm.utm_campaign || '' },
+            { name: 'utm_content', value: utm.utm_content || '' },
+            { name: 'utm_term', value: utm.utm_term || '' },
           ],
         },
         {
