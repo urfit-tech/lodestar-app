@@ -12,7 +12,7 @@ import { flatten, includes } from 'ramda'
 import React, { useContext, useEffect, useRef, lazy, Suspense } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
 import AudioPlayerContext from '../../contexts/AudioPlayerContext'
@@ -75,20 +75,25 @@ const StyledIcon = styled(Icon)`
   font-size: 64px;
 `
 
-const ContentWrapper = styled(Box)`
-  user-select: none;
-  -webkit-user-select: none;
+const ContentWrapper = styled(Box)<{ disableDraggingRightClick: boolean }>`
+  ${props =>
+    props.disableDraggingRightClick
+      ? css`
+          user-select: none;
+          -webkit-user-select: none;
 
-  img {
-    pointer-events: none;
-    -webkit-user-drag: none;
-    user-drag: none;
-  }
+          img {
+            pointer-events: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+          }
 
-  * {
-    -webkit-touch-callout: none;
-    user-select: none;
-  }
+          * {
+            -webkit-touch-callout: none;
+            user-select: none;
+          }
+        `
+      : ``}
 `
 
 const ProgramContentBlock: React.FC<{
@@ -117,7 +122,7 @@ const ProgramContentBlock: React.FC<{
 }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { loading: loadingApp, enabledModules } = useApp()
+  const { loading: loadingApp, enabledModules, settings } = useApp()
   const { authToken, currentMemberId, currentUserRole, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { programContent, loadingProgramContent, isEquityProgramContent } = useProgramContentById(
@@ -269,7 +274,12 @@ const ProgramContentBlock: React.FC<{
         )}
       </div>
 
-      <ContentWrapper onContextMenu={(e: React.MouseEvent<HTMLDivElement>) => e.preventDefault()}>
+      <ContentWrapper
+        disableDraggingRightClick={Boolean(Number(settings['program_content.dragging_right_click.disabled']))}
+        onContextMenu={(e: React.MouseEvent<HTMLDivElement>) =>
+          Boolean(Number(settings['program_content.dragging_right_click.disabled'])) ? e.preventDefault() : e
+        }
+      >
         {isProgramContentUnPublish && (
           <StyledUnpublishedBlock>
             <StyledIcon as={LockIcon} className="mb-3" />
