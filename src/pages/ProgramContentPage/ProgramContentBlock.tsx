@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Icon, LockIcon } from '@chakra-ui/icons'
-import { Button, SkeletonText, Switch } from '@chakra-ui/react'
+import { Box, Button, SkeletonText, Spinner, Switch } from '@chakra-ui/react'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import dayjs from 'dayjs'
@@ -9,10 +9,10 @@ import { BraftContent } from 'lodestar-app-element/src/components/common/StyledB
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { flatten, includes } from 'ramda'
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, Suspense } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import PracticeDescriptionBlock from '../../components/practice/PracticeDescriptionBlock'
 import ProgramContentEbookReader from '../../components/program/ProgramContentEbookReader'
 import ProgramContentPlayer from '../../components/program/ProgramContentPlayer'
@@ -74,6 +74,27 @@ const StyledIcon = styled(Icon)`
   font-size: 64px;
 `
 
+const ContentWrapper = styled(Box)<{ disableDraggingRightClick: boolean }>`
+  ${props =>
+    props.disableDraggingRightClick
+      ? css`
+          user-select: none;
+          -webkit-user-select: none;
+
+          img {
+            pointer-events: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+          }
+
+          * {
+            -webkit-touch-callout: none;
+            user-select: none;
+          }
+        `
+      : ``}
+`
+
 const ProgramContentBlock: React.FC<{
   programId: string
   programRoles: ProgramRole[]
@@ -100,7 +121,7 @@ const ProgramContentBlock: React.FC<{
 }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const { loading: loadingApp, enabledModules } = useApp()
+  const { loading: loadingApp, enabledModules, settings } = useApp()
   const { authToken, currentMemberId, currentUserRole, isAuthenticated } = useAuth()
   const { programContentProgress, refetchProgress, insertProgress } = useContext(ProgressContext)
   const { programContent, loadingProgramContent, isEquityProgramContent } = useProgramContentById(
@@ -252,140 +273,150 @@ const ProgramContentBlock: React.FC<{
         )}
       </div>
 
-      {isProgramContentUnPublish && (
-        <StyledUnpublishedBlock>
-          <StyledIcon as={LockIcon} className="mb-3" />
-          <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.theContentWillAt)}</p>
-          <p>
-            {`${dayjs(programContent.publishedAt).format('YYYY/MM/DD HH:mm')} ${formatMessage(
-              commonMessages.text.publish,
-            )}`}
-          </p>
-        </StyledUnpublishedBlock>
-      )}
+      <ContentWrapper
+        disableDraggingRightClick={Boolean(Number(settings['program_content.dragging_right_click.disabled']))}
+        onContextMenu={(e: React.MouseEvent<HTMLDivElement>) =>
+          Boolean(Number(settings['program_content.dragging_right_click.disabled'])) ? e.preventDefault() : e
+        }
+      >
+        {isProgramContentUnPublish && (
+          <StyledUnpublishedBlock>
+            <StyledIcon as={LockIcon} className="mb-3" />
+            <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.theContentWillAt)}</p>
+            <p>
+              {`${dayjs(programContent.publishedAt).format('YYYY/MM/DD HH:mm')} ${formatMessage(
+                commonMessages.text.publish,
+              )}`}
+            </p>
+          </StyledUnpublishedBlock>
+        )}
 
-      {isEquityVideoProgramContent ? (
-        <ProgramContentPlayer
-          programContentId={programContentId}
-          nextProgramContent={nextProgramContent}
-          onVideoEvent={e => {
-            if (Math.abs(e.videoState.endedAt - endedAtRef.current) >= 5) {
-              insertPlayerEventLog({
-                ...e.videoState,
-                startedAt: endedAtRef.current || e.videoState.startedAt,
-                progress: e.progress,
-              })
-              if (e.type === 'progress') {
-                insertProgramProgress(e.progress)
-              }
-              endedAtRef.current = e.videoState.endedAt
-            }
-            if (e.type === 'ended') {
-              insertPlayerEventLog({
-                ...e.videoState,
-                startedAt: endedAtRef.current || e.videoState.startedAt,
-                progress: e.progress,
-              })
-              insertProgramProgress(1)?.then(() => refetchProgress())
-            }
-          }}
-        />
-      ) : isEquityEbookProgramContent ? (
-        <ProgramContentEbookReader
-          setEbook={setEbook}
-          programContentId={programContent.id}
-          isTrial={programContent.displayMode === 'trial' || programContent.displayMode === 'loginToTrial'}
-          ebookCurrentToc={ebookCurrentToc}
-          onEbookCurrentTocChange={onEbookCurrentTocChange}
-          location={ebookLocation}
-          onLocationChange={onEbookLocationChange}
-        />
-      ) : isEquityPracticeProgramContent ? (
-        <div className="mb-4">
-          <PracticeDescriptionBlock
+        {isEquityVideoProgramContent ? (
+          <ProgramContentPlayer
             programContentId={programContentId}
-            isCoverRequired={!!programContent.metadata?.isCoverRequired}
-            title={programContent.title}
-            description={programContent.programContentBody?.description || ''}
-            duration={programContent.duration || 0}
-            score={programContent.metadata?.difficulty || 0}
-            attachments={programContent.attachments || []}
+            nextProgramContent={nextProgramContent}
+            onVideoEvent={e => {
+              if (Math.abs(e.videoState.endedAt - endedAtRef.current) >= 5) {
+                insertPlayerEventLog({
+                  ...e.videoState,
+                  startedAt: endedAtRef.current || e.videoState.startedAt,
+                  progress: e.progress,
+                })
+                if (e.type === 'progress') {
+                  insertProgramProgress(e.progress)
+                }
+                endedAtRef.current = e.videoState.endedAt
+              }
+              if (e.type === 'ended') {
+                insertPlayerEventLog({
+                  ...e.videoState,
+                  startedAt: endedAtRef.current || e.videoState.startedAt,
+                  progress: e.progress,
+                })
+                insertProgramProgress(1)?.then(() => refetchProgress())
+              }
+            }}
           />
-        </div>
-      ) : isEquityExerciseOrExam ? (
-        <ProgramContentExerciseBlock
-          programContent={programContent}
-          nextProgramContentId={nextProgramContent?.id}
-          programId={programId}
-        />
-      ) : null}
+        ) : isEquityEbookProgramContent ? (
+          <Suspense fallback={<Spinner />}>
+            <ProgramContentEbookReader
+              setEbook={setEbook}
+              programContentId={programContent.id}
+              isTrial={programContent.displayMode === 'trial' || programContent.displayMode === 'loginToTrial'}
+              ebookCurrentToc={ebookCurrentToc}
+              onEbookCurrentTocChange={onEbookCurrentTocChange}
+              location={ebookLocation}
+              onLocationChange={onEbookLocationChange}
+            />
+          </Suspense>
+        ) : isEquityPracticeProgramContent ? (
+          <div className="mb-4">
+            <PracticeDescriptionBlock
+              programContentId={programContentId}
+              isCoverRequired={!!programContent.metadata?.isCoverRequired}
+              title={programContent.title}
+              description={programContent.programContentBody?.description || ''}
+              duration={programContent.duration || 0}
+              score={programContent.metadata?.difficulty || 0}
+              attachments={programContent.attachments || []}
+            />
+          </div>
+        ) : isEquityExerciseOrExam ? (
+          <ProgramContentExerciseBlock
+            programContent={programContent}
+            nextProgramContentId={nextProgramContent?.id}
+            programId={programId}
+          />
+        ) : null}
 
-      {/* Background mode play video mark */}
-      {!!isEquityProgramContent &&
-        isBackgroundMode &&
-        programContent.videos[0]?.data?.source !== 'youtube' &&
-        programContent.contentType === 'video' && (
-          <StyledBackgroundModeDescriptionBlock>
-            <CarIcon className="mb-2" style={{ display: 'block' }} />
-            <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.currentlyInBackgroundMode)}</p>
-            <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundModeDescription)}</p>
-          </StyledBackgroundModeDescriptionBlock>
-        )}
+        {/* Background mode play video mark */}
+        {!!isEquityProgramContent &&
+          isBackgroundMode &&
+          programContent.videos[0]?.data?.source !== 'youtube' &&
+          programContent.contentType === 'video' && (
+            <StyledBackgroundModeDescriptionBlock>
+              <CarIcon className="mb-2" style={{ display: 'block' }} />
+              <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.currentlyInBackgroundMode)}</p>
+              <p>{formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundModeDescription)}</p>
+            </StyledBackgroundModeDescriptionBlock>
+          )}
 
-      {!!isEquityProgramContent &&
-        !includes(programContent.programContentBody?.type, ['ebook', 'practice', 'exercise', 'exam']) &&
-        programContent.videos[0]?.data?.source !== 'youtube' && (
-          <StyledContentBlock className="mb-3">
-            {isMobile &&
-            !isAndroid &&
-            enabledModules.background_mode &&
-            programContent.programContentBody?.type !== 'audio' ? (
-              <StyledTitleBlock>
-                <StyledMobileTitle className="mb-2">{programContent.title}</StyledMobileTitle>
-                <div className="d-flex justify-content-end">
-                  <span className="mr-2">
-                    {formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundMode)}
-                  </span>
-                  <Switch
-                    colorScheme="whatsapp"
-                    onChange={() => {
-                      if (isBackgroundMode) {
-                        changeBackgroundMode?.(false)
-                        changeGlobalPlayingState?.(false)
-                        close?.()
-                      }
-                      if (!isBackgroundMode && isProgramContentDisplay) {
-                        setup?.({
-                          backgroundMode: true,
-                          title: programContent?.title || '',
-                          contentSectionTitle: programContent.contentSectionTitle || '',
-                          programId: programId,
-                          contentId: programContentId,
-                          contentType: programContent.contentType || '',
-                          videoId: programContent.videos[0]?.id,
-                          source: programContent.videos[0]?.options?.cloudflare
-                            ? 'cloudflare'
-                            : programContent.videos[0]?.data?.source,
-                          cloudfront: programContent.videos[0]?.options?.cloudfront,
-                        })
-                        changeBackgroundMode?.(true)
-                        changeGlobalPlayingState?.(true)
-                      }
-                    }}
-                    isChecked={isBackgroundMode}
-                  />
-                </div>
-              </StyledTitleBlock>
-            ) : (
-              <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
-            )}
-            {isProgramContentDisplay &&
-              programContent.programContentBody &&
-              !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() && (
-                <BraftContent>{programContent.programContentBody.description}</BraftContent>
+        {!!isEquityProgramContent &&
+          !includes(programContent.programContentBody?.type, ['ebook', 'practice', 'exercise', 'exam']) &&
+          programContent.videos[0]?.data?.source !== 'youtube' && (
+            <StyledContentBlock className="mb-3">
+              {isMobile &&
+              !isAndroid &&
+              enabledModules.background_mode &&
+              programContent.programContentBody?.type !== 'audio' ? (
+                <StyledTitleBlock>
+                  <StyledMobileTitle className="mb-2">{programContent.title}</StyledMobileTitle>
+                  <div className="d-flex justify-content-end">
+                    <span className="mr-2">
+                      {formatMessage(ProgramContentPageMessages.ProgramContentBlock.backgroundMode)}
+                    </span>
+                    <Switch
+                      colorScheme="whatsapp"
+                      onChange={() => {
+                        if (isBackgroundMode) {
+                          changeBackgroundMode?.(false)
+                          changeGlobalPlayingState?.(false)
+                          close?.()
+                        }
+                        if (!isBackgroundMode && isProgramContentDisplay) {
+                          setup?.({
+                            backgroundMode: true,
+                            title: programContent?.title || '',
+                            contentSectionTitle: programContent.contentSectionTitle || '',
+                            programId: programId,
+                            contentId: programContentId,
+                            contentType: programContent.contentType || '',
+                            videoId: programContent.videos[0]?.id,
+                            source: programContent.videos[0]?.options?.cloudflare
+                              ? 'cloudflare'
+                              : programContent.videos[0]?.data?.source,
+                            cloudfront: programContent.videos[0]?.options?.cloudfront,
+                          })
+                          changeBackgroundMode?.(true)
+                          changeGlobalPlayingState?.(true)
+                        }
+                      }}
+                      isChecked={isBackgroundMode}
+                    />
+                  </div>
+                </StyledTitleBlock>
+              ) : (
+                <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
               )}
-          </StyledContentBlock>
-        )}
+              {'disableMouseInteractions'}
+              {isProgramContentDisplay &&
+              programContent.programContentBody &&
+              !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() ? (
+                <BraftContent>{programContent.programContentBody.description}</BraftContent>
+              ) : null}
+            </StyledContentBlock>
+          )}
+      </ContentWrapper>
 
       {isProgramContentDisplay && !includes(programContent.programContentBody?.type, ['ebook']) && (
         <ProgramContentTabs
