@@ -20,6 +20,10 @@ const pageMessages = {
       id: 'page.OrderPaymentPage.noPaymentInformation',
       defaultMessage: 'No Payment Information',
     },
+    noOrderInformation: {
+      id: 'page.OrderPaymentPage.noOrderInformation',
+      defaultMessage: 'No order information available',
+    },
     goToCheckout: {
       id: 'page.OrderPaymentPage.goToCheckout',
       defaultMessage: 'Go to checkout',
@@ -31,6 +35,14 @@ const pageMessages = {
     contractBlock: {
       id: 'page.OrderPaymentPage.contractBlock',
       defaultMessage: 'Please expand this section, read carefully, and sign the contract.',
+    },
+    contractContent: {
+      id: 'page.OrderPaymentPage.contractContent',
+      defaultMessage: 'Contract content',
+    },
+    signContract: {
+      id: 'page.OrderPaymentPage.signContract',
+      defaultMessage: 'Sign the contract',
     },
   }),
   // ProgramContentPage
