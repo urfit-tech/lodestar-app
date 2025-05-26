@@ -408,7 +408,6 @@ const ProgramContentBlock: React.FC<{
               ) : (
                 <StyledTitle className="mb-4 text-center">{programContent.title}</StyledTitle>
               )}
-              {'disableMouseInteractions'}
               {isProgramContentDisplay &&
               programContent.programContentBody &&
               !BraftEditor.createEditorState(programContent.programContentBody.description).isEmpty() ? (
