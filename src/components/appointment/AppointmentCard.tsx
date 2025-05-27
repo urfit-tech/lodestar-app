@@ -181,7 +181,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   onRefetch,
   form,
 }) => {
-  const { enabledModules, id: appId } = useApp()
+  const { enabledModules, id: appId, settings } = useApp()
   const { formatMessage } = useIntl()
   const { authToken, currentMemberId, currentMember } = useAuth()
   const [issueModalVisible, setIssueModalVisible] = useState(false)
@@ -208,6 +208,8 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
 
   const updateAppointmentIssue = useUpdateAppointmentIssue(orderProductId, orderProduct.options)
   const cancelAppointment = useCancelAppointment(orderProductId, orderProduct.options)
+
+  const disableAppointmentIssueButton = Boolean(Number(settings['appointment_card.appointment_Issue_button.disabled']))
 
   const handleSubmit = () => {
     form.validateFields((errors, values) => {
@@ -414,15 +416,17 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           </Button>
         ) : null}
 
-        <Button
-          variant="link"
-          color="black"
-          fontSize="14px"
-          marginRight="16px"
-          onClick={() => setIssueModalVisible(true)}
-        >
-          {formatMessage(appointmentMessages.AppointmentCard.appointmentIssue)}
-        </Button>
+        {disableAppointmentIssueButton ? null : (
+          <Button
+            variant="link"
+            color="black"
+            fontSize="14px"
+            marginRight="16px"
+            onClick={() => setIssueModalVisible(true)}
+          >
+            {formatMessage(appointmentMessages.AppointmentCard.appointmentIssue)}
+          </Button>
+        )}
         {isCanceled ? (
           <StyledCanceledText>
             {formatMessage(appointmentMessages.AppointmentCard.appointmentCanceledNotation, {
