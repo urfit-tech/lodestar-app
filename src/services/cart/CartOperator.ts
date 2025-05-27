@@ -153,7 +153,7 @@ export abstract class CartOperator {
   private async _fetchRemoteCartProducts(operation: CartOperatorEnum, cachedCartProducts: CartProductProps[]) {
     const query = this._createGetCartProductOperationQuery(operation)
 
-    try {
+    if (this.appId && this.currentMemberId) {
       const { data } = await this.apolloClient.query({
         query,
         variables: {
@@ -168,10 +168,7 @@ export abstract class CartOperator {
         fetchPolicy: 'no-cache',
       })
       return data
-    } catch (error) {
-      console.log(error)
     }
-    return []
   }
 
   private _mergeLocalAndRemoteCartProducts({

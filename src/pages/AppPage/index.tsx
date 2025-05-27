@@ -313,6 +313,7 @@ export const usePage = (path: string) => {
         appId,
         path,
       },
+      skip: !appId || !path,
     },
   )
 

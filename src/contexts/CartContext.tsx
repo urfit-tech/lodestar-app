@@ -14,6 +14,7 @@ import { ProductType } from '../types/product'
 
 const CartContext = React.createContext<{
   cartProducts: CartProductProps[]
+  setIsInitRequired?: React.Dispatch<React.SetStateAction<boolean>>
   isProductInCart?: (productType: ProductType, productTarget: string) => boolean
   getCartProduct?: (productId: string) => CartProductProps | null
   addCartProduct?: (
@@ -45,14 +46,19 @@ export const CartProvider: React.FC = ({ children }) => {
     [apolloClient, appId, currentMemberId, updateCartProducts],
   )
 
+  const [isInitRequired, setIsInitRequired] = useState(false)
+  const operator = cartOperationFactory.createOperator(CartOperatorEnum.INIT)
+
+  setTimeout(() => setIsInitRequired(true), 2000)
+
   useEffect(() => {
-    const operator = cartOperationFactory.createOperator(CartOperatorEnum.INIT)
-    operator.operation()
-  }, [cartOperationFactory])
+    isInitRequired && operator.operation()
+  }, [isInitRequired])
 
   return (
     <CartContext.Provider
       value={{
+        setIsInitRequired,
         cartProducts,
         isProductInCart: (productType: ProductType, productTarget: string) =>
           cartProducts.some(cartProduct => cartProduct.productId === `${productType}_${productTarget}`),

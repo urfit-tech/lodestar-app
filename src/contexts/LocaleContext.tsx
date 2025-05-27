@@ -70,7 +70,7 @@ export const LocaleProvider: React.FC = ({ children }) => {
         }
       }
     `,
-    { variables: { appId } },
+    { variables: { appId }, skip: !appId },
   )
   const appLocaleMessages = data?.app_language.find(v => v.language === currentLocale)?.data || {}
 

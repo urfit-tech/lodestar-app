@@ -1,5 +1,5 @@
 import { Icon, List, Typography } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import AdminCard from '../components/common/AdminCard'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -9,7 +9,12 @@ import { useNotifications } from '../hooks/data'
 
 const NotificationPage: React.FC = () => {
   const { formatMessage } = useIntl()
+  const [isInit, setIsInit] = useState(true)
   const { loadingNotifications, errorNotifications, notifications, refetchNotifications } = useNotifications(100)
+  if (isInit) {
+    refetchNotifications()
+    setIsInit(false)
+  }
 
   return (
     <DefaultLayout>
