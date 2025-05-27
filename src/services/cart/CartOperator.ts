@@ -153,21 +153,22 @@ export abstract class CartOperator {
   private async _fetchRemoteCartProducts(operation: CartOperatorEnum, cachedCartProducts: CartProductProps[]) {
     const query = this._createGetCartProductOperationQuery(operation)
 
-    const { data } = await this.apolloClient.query({
-      query,
-      variables: {
-        appId: this.appId,
-        memberId: this.currentMemberId || '',
-        productIds: cachedCartProducts.map(cartProduct => cartProduct.productId),
-        localProductIds: cachedCartProducts.map(cartProduct => cartProduct.productId),
-        merchandiseSpecIds: cachedCartProducts
-          .filter(cartProduct => cartProduct.productId.startsWith('MerchandiseSpec_'))
-          .map(cartProduct => cartProduct.productId.replace('MerchandiseSpec_', '')),
-      },
-      fetchPolicy: 'no-cache',
-    })
-
-    return data
+    if (this.appId && this.currentMemberId) {
+      const { data } = await this.apolloClient.query({
+        query,
+        variables: {
+          appId: this.appId,
+          memberId: this.currentMemberId || '',
+          productIds: cachedCartProducts.map(cartProduct => cartProduct.productId),
+          localProductIds: cachedCartProducts.map(cartProduct => cartProduct.productId),
+          merchandiseSpecIds: cachedCartProducts
+            .filter(cartProduct => cartProduct.productId.startsWith('MerchandiseSpec_'))
+            .map(cartProduct => cartProduct.productId.replace('MerchandiseSpec_', '')),
+        },
+        fetchPolicy: 'no-cache',
+      })
+      return data
+    }
   }
 
   private _mergeLocalAndRemoteCartProducts({
