@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client'
 import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -7,15 +7,36 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { v4 as uuid } from 'uuid'
 import LocaleContext from '../contexts/LocaleContext'
-import { GET_NOTIFICATIONS, NotificationProps } from '../contexts/NotificationContext'
+import { NotificationProps } from '../contexts/NotificationContext'
 import hasura from '../hasura'
 import { handleError, uploadFile } from '../helpers/index'
 import { CouponProps } from '../types/checkout'
 import { MemberContract } from '../types/contract'
 import { CouponFromLodestarAPI } from '../types/coupon'
 
+export const GET_NOTIFICATIONS = gql`
+  query GET_NOTIFICATIONS($limit: Int) {
+    notification(order_by: { updated_at: desc }, limit: $limit) {
+      id
+      avatar
+      description
+      reference_url
+      extra
+      type
+      read_at
+      updated_at
+    }
+    notification_aggregate(where: { read_at: { _is_null: true } }, limit: 16) {
+      aggregate {
+        count
+      }
+    }
+  }
+`
+
 export const useNotifications = (limit: number) => {
-  const { loading, error, data, refetch } = useQuery<hasura.GET_NOTIFICATIONS, hasura.GET_NOTIFICATIONSVariables>(
+  const { id: appId } = useApp()
+  const [fetch, { loading, error, data }] = useLazyQuery<hasura.GET_NOTIFICATIONS, hasura.GET_NOTIFICATIONSVariables>(
     GET_NOTIFICATIONS,
     { variables: { limit } },
   )
@@ -39,7 +60,7 @@ export const useNotifications = (limit: number) => {
     errorNotifications: error,
     notifications,
     unreadCount: data?.notification_aggregate.aggregate?.count,
-    refetchNotifications: refetch,
+    refetchNotifications: fetch,
   }
 }
 

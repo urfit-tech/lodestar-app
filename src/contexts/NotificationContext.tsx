@@ -1,4 +1,4 @@
-import { ApolloError, gql } from '@apollo/client'
+import { ApolloError } from '@apollo/client'
 import React, { createContext } from 'react'
 import { useNotifications } from '../hooks/data'
 
@@ -12,26 +12,6 @@ export type NotificationProps = {
   readAt: Date | null
   updatedAt: Date
 }
-
-export const GET_NOTIFICATIONS = gql`
-  query GET_NOTIFICATIONS($limit: Int) {
-    notification(order_by: { updated_at: desc }, limit: $limit) {
-      id
-      avatar
-      description
-      reference_url
-      extra
-      type
-      read_at
-      updated_at
-    }
-    notification_aggregate(where: { read_at: { _is_null: true } }, limit: 16) {
-      aggregate {
-        count
-      }
-    }
-  }
-`
 
 const NotificationContext = createContext<{
   loadingNotifications: boolean
@@ -47,6 +27,8 @@ const NotificationContext = createContext<{
 export const NotificationProvider: React.FC = ({ children }) => {
   const { loadingNotifications, errorNotifications, notifications, unreadCount, refetchNotifications } =
     useNotifications(15)
+
+  setTimeout(() => refetchNotifications(), 5000)
 
   return (
     <NotificationContext.Provider
