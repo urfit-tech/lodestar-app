@@ -122,7 +122,7 @@ const sectionConverter = {
 const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
   const { settings, id: appId, enabledModules } = useApp()
-  const { updateAuthToken } = useAuth()
+  const { updateAuthToken, currentMemberId } = useAuth()
   const { defaultLocale, currentLocale } = useContext(LocaleContext)
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
   const { loadingAppPages, appPages } = usePage(location.pathname)
@@ -158,7 +158,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
     }
   }
   useEffect(() => {
-    if (enabledModules.login_restriction || enabledModules.device_management) {
+    if ((enabledModules.login_restriction || enabledModules.device_management) && currentMemberId) {
       const refreshTokenAsync = async () => {
         const fingerPrintId = await getFingerPrintId()
         const { ip, country, countryCode } = await fetchCurrentGeolocation()
@@ -184,7 +184,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
       refreshTokenAsync()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname])
+  }, [location.pathname, currentMemberId])
 
   if (loadingAppPages) {
     return <LoadingPage />
