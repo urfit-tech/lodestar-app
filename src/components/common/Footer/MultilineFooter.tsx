@@ -64,6 +64,8 @@ const MultilineFooter: React.FC = () => {
                     ? '日本語'
                     : currentLocale === 'ko'
                     ? '한국어'
+                    : currentLocale === 'de-de'
+                    ? 'Deutsch'
                     : '繁中'}
                   <Icon type="down" />
                 </StyledButton>
