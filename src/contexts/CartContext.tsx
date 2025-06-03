@@ -52,8 +52,9 @@ export const CartProvider: React.FC = ({ children }) => {
   setTimeout(() => setIsCartInitRequired(true), 2000)
 
   useEffect(() => {
-    isCartInitRequired && operator.operation()
-  }, [setIsCartInitRequired])
+    console.log(55, isCartInitRequired, appId, currentMemberId)
+    if (isCartInitRequired && appId && currentMemberId) operator.operation()
+  }, [isCartInitRequired, appId, currentMemberId])
 
   return (
     <CartContext.Provider
