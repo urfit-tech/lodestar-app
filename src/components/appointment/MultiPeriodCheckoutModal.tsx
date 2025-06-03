@@ -100,8 +100,8 @@ import {
   optimizedResultToProductDetail,
   productAdaptorForMultiPeriod,
 } from './discountUtilities'
-import { useMultiPeriodProduct } from './MultiPeriodDataFetcher'
 import { CheckoutPeriodsModalProps, MultiPeriodProductDetail } from './MultiPeriod.type'
+import { useMultiPeriodProduct } from './MultiPeriodDataFetcher'
 import DiscountSelectionCard from './MultiPeriodDiscountSelectionCard'
 import appointmentMessages from './translation'
 
@@ -432,7 +432,7 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
       path(['couponCode', 'couponPlan', 'productIds']),
       anyPass([includes(defaultProductId), equals('AppointmentPlan'), isEmpty]),
     ),
-  )(coupons) as Array<CouponProps>
+  )(coupons ?? []) as Array<CouponProps>
 
   const { enrolledMembershipCardsWithDiscountOfProduct } = useEnrolledMembershipCardsWithDiscountInfo(
     currentMemberId ?? '',
