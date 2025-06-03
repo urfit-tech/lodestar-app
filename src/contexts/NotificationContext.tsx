@@ -29,7 +29,7 @@ export const NotificationProvider: React.FC = ({ children }) => {
     useNotifications(15)
 
   const [isNotificationInitRequired, setIsNotificationInitRequired] = useState(false)
-  setTimeout(() => setIsNotificationInitRequired(true), 5000)
+  setTimeout(() => setIsNotificationInitRequired(true), 2000)
 
   useEffect(() => {
     isNotificationInitRequired && refetchNotifications()
