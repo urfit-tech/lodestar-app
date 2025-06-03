@@ -1,5 +1,5 @@
 import { ApolloError } from '@apollo/client'
-import React, { createContext } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 import { useNotifications } from '../hooks/data'
 
 export type NotificationProps = {
@@ -28,7 +28,12 @@ export const NotificationProvider: React.FC = ({ children }) => {
   const { loadingNotifications, errorNotifications, notifications, unreadCount, refetchNotifications } =
     useNotifications(15)
 
-  setTimeout(() => refetchNotifications(), 5000)
+  const [isNotificationInitRequired, setIsNotificationInitRequired] = useState(false)
+  setTimeout(() => setIsNotificationInitRequired(true), 5000)
+
+  useEffect(() => {
+    isNotificationInitRequired && refetchNotifications()
+  }, [isNotificationInitRequired])
 
   return (
     <NotificationContext.Provider
