@@ -293,7 +293,7 @@
   "checkout.message.error.discount": "Unable to update discount plan",
   "checkout.message.notEnoughCoins": "Not enough Coins",
   "checkout.modal.title": "Choose a coupon",
-  "checkout.modal.title.memberCard.choose": "Choose a membership card",
+  "checkout.modal.title.memberCard.choose": "Choose a member card",
   "checkout.modal.title.purchaseItem": "Purchase Item",
   "checkout.paragraph.firstTime": "First Period",
   "checkout.paragraph.secondStart": "The second period starts",
