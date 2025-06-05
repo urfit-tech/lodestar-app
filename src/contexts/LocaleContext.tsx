@@ -15,6 +15,7 @@ export const SUPPORTED_LOCALES = [
   { locale: 'id', label: 'Indonesia' },
   { locale: 'ja', label: '日本語' },
   { locale: 'ko', label: '한국어' },
+  { locale: 'de-de', label: 'Deutsch' },
 ]
 type SupportedLocales = {
   locale: string
