@@ -544,11 +544,11 @@ const AudioPlayer: React.FC<{
                 <Flex
                   alignItems="center"
                   justifyContent="center"
-                  width="100%"
+                  width="calc(100% - 120px)"
                   position="absolute"
                   bottom="10px"
                   right="0px"
-                  left="0px"
+                  left="60px"
                 >
                   <AudioControls
                     isLoading={isLoading}
