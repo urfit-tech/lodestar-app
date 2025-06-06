@@ -153,22 +153,27 @@ export abstract class CartOperator {
   private async _fetchRemoteCartProducts(operation: CartOperatorEnum, cachedCartProducts: CartProductProps[]) {
     const query = this._createGetCartProductOperationQuery(operation)
 
-    if (this.appId && this.currentMemberId) {
-      const { data } = await this.apolloClient.query({
-        query,
-        variables: {
-          appId: this.appId,
-          memberId: this.currentMemberId || '',
-          productIds: cachedCartProducts.map(cartProduct => cartProduct.productId),
-          localProductIds: cachedCartProducts.map(cartProduct => cartProduct.productId),
-          merchandiseSpecIds: cachedCartProducts
-            .filter(cartProduct => cartProduct.productId.startsWith('MerchandiseSpec_'))
-            .map(cartProduct => cartProduct.productId.replace('MerchandiseSpec_', '')),
-        },
-        fetchPolicy: 'no-cache',
-      })
-      return data
+    try {
+      if (this.appId && this.currentMemberId) {
+        const { data } = await this.apolloClient.query({
+          query,
+          variables: {
+            appId: this.appId,
+            memberId: this.currentMemberId || '',
+            productIds: cachedCartProducts.map(cartProduct => cartProduct.productId),
+            localProductIds: cachedCartProducts.map(cartProduct => cartProduct.productId),
+            merchandiseSpecIds: cachedCartProducts
+              .filter(cartProduct => cartProduct.productId.startsWith('MerchandiseSpec_'))
+              .map(cartProduct => cartProduct.productId.replace('MerchandiseSpec_', '')),
+          },
+          fetchPolicy: 'no-cache',
+        })
+        return data
+      }
+    } catch (error) {
+      console.log(error)
     }
+    return []
   }
 
   private _mergeLocalAndRemoteCartProducts({
@@ -186,29 +191,31 @@ export abstract class CartOperator {
         ...(remoteCartProducts?.cart_product?.map(cartProduct => ({
           productId: cartProduct.product.id,
           shopId: cartProduct.product.id.startsWith('MerchandiseSpec_')
-            ? remoteCartProducts.merchandise_spec.find(
+            ? remoteCartProducts.merchandise_spec?.find(
                 v => v.id === cartProduct.product.id.replace('MerchandiseSpec_', ''),
               )?.merchandise.member_shop_id || ''
             : '',
-          enrollments: cartProduct.product.product_enrollments.map(enrollment => ({
-            memberId: enrollment.member_id || null,
-            isPhysical: enrollment.is_physical || false,
-          })),
+          enrollments:
+            cartProduct.product.product_enrollments?.map(enrollment => ({
+              memberId: enrollment.member_id || null,
+              isPhysical: enrollment.is_physical || false,
+            })) || [],
           options: cartProductOptions[cartProduct.product.id],
         })) || []),
         ...(cachedCartProducts?.map(cartProduct => ({
           ...cartProduct,
           shopId: cartProduct.productId.startsWith('MerchandiseSpec_')
-            ? remoteCartProducts.merchandise_spec.find(
+            ? remoteCartProducts.merchandise_spec?.find(
                 v => v.id === cartProduct.productId.replace('MerchandiseSpec_', ''),
               )?.merchandise.member_shop_id || ''
             : '',
-          enrollments: remoteCartProducts.product
-            .find(product => product.id === cartProduct.productId)
-            ?.product_enrollments.map(enrollment => ({
-              memberId: enrollment.member_id || null,
-              isPhysical: enrollment.is_physical || false,
-            })),
+          enrollments:
+            remoteCartProducts.product
+              ?.find(product => product.id === cartProduct.productId)
+              ?.product_enrollments?.map(enrollment => ({
+                memberId: enrollment.member_id || null,
+                isPhysical: enrollment.is_physical || false,
+              })) || [],
         })) || []),
       ],
     )
