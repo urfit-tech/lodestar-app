@@ -1008,21 +1008,27 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
         ) : (
           <>
             <StyledCheckoutBlock className="mb-5">
-              {check.orderProducts.map(orderProduct => (
-                <CheckoutProductItem
-                  key={orderProduct.name}
-                  name={orderProduct.name}
-                  price={
-                    (orderProduct.productId.includes('MerchandiseSpec_') && orderProduct.options?.currencyId === 'LSC'
-                      ? orderProduct.options.currencyPrice || orderProduct.price
-                      : orderProduct.price) * getSafeTotalQuantity(productDetails)
-                  }
-                  quantity={getSafeTotalQuantity(productDetails)}
-                  saleAmount={Number(orderProduct.options?.amount || 1) / getSafeTotalQuantity(productDetails)}
-                  defaultProductId={defaultProductId}
-                  currencyId={orderProduct.options?.currencyId || appCurrencyId}
-                />
-              ))}
+              {check.orderProducts.map(orderProduct => {
+                const productName =
+                  orderProduct.name ||
+                  `${formatMessage(appointmentMessages.MultiPeriodCheckoutModal.bookingPlan)} - ${orderProduct.title}`
+
+                return (
+                  <CheckoutProductItem
+                    key={productName}
+                    name={productName}
+                    price={
+                      (orderProduct.productId.includes('MerchandiseSpec_') && orderProduct.options?.currencyId === 'LSC'
+                        ? orderProduct.options.currencyPrice || orderProduct.price
+                        : orderProduct.price) * getSafeTotalQuantity(productDetails)
+                    }
+                    quantity={getSafeTotalQuantity(productDetails)}
+                    saleAmount={Number(orderProduct.options?.amount || 1) / getSafeTotalQuantity(productDetails)}
+                    defaultProductId={defaultProductId}
+                    currencyId={orderProduct.options?.currencyId || appCurrencyId}
+                  />
+                )
+              })}
 
               {checkResults.map(result => {
                 return result.check.orderDiscounts.map((orderDiscount, idx) => {
