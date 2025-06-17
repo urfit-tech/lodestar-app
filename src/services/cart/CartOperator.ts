@@ -189,29 +189,31 @@ export abstract class CartOperator {
         ...(remoteCartProducts?.cart_product?.map(cartProduct => ({
           productId: cartProduct.product.id,
           shopId: cartProduct.product.id.startsWith('MerchandiseSpec_')
-            ? remoteCartProducts.merchandise_spec.find(
+            ? remoteCartProducts?.merchandise_spec?.find(
                 v => v.id === cartProduct.product.id.replace('MerchandiseSpec_', ''),
               )?.merchandise.member_shop_id || ''
             : '',
-          enrollments: cartProduct.product.product_enrollments.map(enrollment => ({
-            memberId: enrollment.member_id || null,
-            isPhysical: enrollment.is_physical || false,
-          })),
-          options: cartProductOptions[cartProduct.product.id],
+          enrollments:
+            cartProduct.product.product_enrollments?.map(enrollment => ({
+              memberId: enrollment.member_id || null,
+              isPhysical: enrollment.is_physical || false,
+            })) || [],
+          options: cartProductOptions?.[cartProduct.product.id],
         })) || []),
         ...(cachedCartProducts?.map(cartProduct => ({
           ...cartProduct,
           shopId: cartProduct.productId.startsWith('MerchandiseSpec_')
-            ? remoteCartProducts.merchandise_spec.find(
+            ? remoteCartProducts?.merchandise_spec?.find(
                 v => v.id === cartProduct.productId.replace('MerchandiseSpec_', ''),
               )?.merchandise.member_shop_id || ''
             : '',
-          enrollments: remoteCartProducts.product
-            .find(product => product.id === cartProduct.productId)
-            ?.product_enrollments.map(enrollment => ({
-              memberId: enrollment.member_id || null,
-              isPhysical: enrollment.is_physical || false,
-            })),
+          enrollments:
+            remoteCartProducts?.product
+              ?.find(product => product.id === cartProduct.productId)
+              ?.product_enrollments?.map(enrollment => ({
+                memberId: enrollment.member_id || null,
+                isPhysical: enrollment.is_physical || false,
+              })) || [],
         })) || []),
       ],
     )
