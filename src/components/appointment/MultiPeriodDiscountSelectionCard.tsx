@@ -1,6 +1,7 @@
 import { Button, Radio, RadioGroup, Stack } from '@chakra-ui/react'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useCouponCollection } from 'lodestar-app-element/src/hooks/data'
+import { head } from 'ramda'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -39,6 +40,7 @@ const DiscountSelectionCard: React.FC<{
   const availableMembershipCards = getAvailableMembershipCards(membershipCards)
 
   const [discountType, discountTarget] = discountId?.split('_') || [null, null]
+
   return (
     <RadioGroup
       value={discountType || 'None'}
@@ -68,20 +70,23 @@ const DiscountSelectionCard: React.FC<{
                     onChange?.(`Coupon_${coupon.id}`)
                   }}
                   selectedCoupontId={discountTarget}
-                  renderTrigger={({ onOpen, selectedCoupon }) => (
-                    <>
-                      <Button variant="outline" onClick={onOpen}>
-                        {discountTarget
-                          ? formatMessage(commonMessages.button.reselectCoupon)
-                          : formatMessage(commonMessages.button.chooseCoupon)}
-                      </Button>
-                      {selectedCoupon && (
-                        <span className="ml-3">
-                          {selectedCoupon.couponCode.couponPlan.title} {selectedCoupon.couponCode.code}
-                        </span>
-                      )}
-                    </>
-                  )}
+                  renderTrigger={({ onOpen, selectedCoupon }) => {
+                    selectedCoupon = head(availableCoupons?.filter?.(coupon => coupon.id === discountTarget))
+                    return (
+                      <>
+                        <Button variant="outline" onClick={onOpen}>
+                          {discountTarget
+                            ? formatMessage(commonMessages.button.reselectCoupon)
+                            : formatMessage(commonMessages.button.chooseCoupon)}
+                        </Button>
+                        {selectedCoupon && (
+                          <span className="ml-3">
+                            {selectedCoupon.couponCode.couponPlan.title} {selectedCoupon.couponCode.code}
+                          </span>
+                        )}
+                      </>
+                    )
+                  }}
                 />
               ) : (
                 <Button onClick={() => setAuthModalVisible && setAuthModalVisible(true)}>

@@ -97,6 +97,8 @@ import { DiscountForOptimizer, DiscountUsageOptimizer, optimizerMap } from './di
 import {
   availableDiscountGetterMap,
   discountAdaptorMapForMultiPeriod,
+  getAvailableCoupons,
+  getAvailableMembershipCards,
   optimizedResultToProductDetail,
   productAdaptorForMultiPeriod,
 } from './discountUtilities'
@@ -206,8 +208,7 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
 }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
-  const [isOpen, onOpen, onClose] = [isCheckOutModalOpen, onCheckOutModalOpen, onCheckOutModalClose]
-  // const [checkoutProductId] = useQueryParam('checkoutProductId', StringParam)
+  const [isOpen, onClose] = [isCheckOutModalOpen, onCheckOutModalClose]
   const { enabledModules, settings, id: appId, currencyId: appCurrencyId } = useApp()
   const { currentMemberId, isAuthenticating, authToken } = useAuth()
   const { member: currentMember } = useMember(currentMemberId || '')
@@ -428,11 +429,14 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
 
   const { loading: loadingCoupons, data: coupons } = useCouponCollection(currentMemberId || '')
 
-  const couponsForProducts = filter(
-    (pipe as any)(
-      path(['couponCode', 'couponPlan', 'productIds']),
-      anyPass([includes(defaultProductId), equals('AppointmentPlan'), isEmpty]),
+  const couponsForProducts = (pipe as any)(
+    filter(
+      (pipe as any)(
+        path(['couponCode', 'couponPlan', 'productIds']),
+        anyPass([includes(defaultProductId), equals('AppointmentPlan'), isEmpty]),
+      ),
     ),
+    getAvailableCoupons,
   )(coupons) as Array<CouponProps>
 
   const { enrolledMembershipCardsWithDiscountOfProduct } = useEnrolledMembershipCardsWithDiscountInfo(
@@ -834,7 +838,10 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
               defaultValue="customized"
               onChange={handleOptimizerChange(productDetails)([
                 { type: 'coupon', data: couponsForProducts ?? [] },
-                { type: 'membershipCard', data: enrolledMembershipCardsWithDiscountOfProduct ?? [] },
+                {
+                  type: 'membershipCard',
+                  data: getAvailableMembershipCards(enrolledMembershipCardsWithDiscountOfProduct) ?? [],
+                },
               ])}
               value={selectedDiscountOptimizerName}
             >
