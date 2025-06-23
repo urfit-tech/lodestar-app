@@ -35,7 +35,7 @@ const DiscountSelectionCard: React.FC<{
   const { enrolledMembershipCardsWithDiscountOfProduct: membershipCards, loadingMembershipCards } =
     useEnrolledMembershipCardsWithDiscountInfo(currentMemberId || '', productId)
 
-  const availableCoupons = getAvailableCoupons(coupons)
+  const availableCoupons = getAvailableCoupons(coupons ?? [])
   const availableMembershipCards = getAvailableMembershipCards(membershipCards)
 
   const [discountType, discountTarget] = discountId?.split('_') || [null, null]
