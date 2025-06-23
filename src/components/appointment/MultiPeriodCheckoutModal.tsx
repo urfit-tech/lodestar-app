@@ -437,7 +437,7 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
       ),
     ),
     getAvailableCoupons,
-  )(coupons) as Array<CouponProps>
+  )(coupons ?? []) as Array<CouponProps>
 
   const { enrolledMembershipCardsWithDiscountOfProduct } = useEnrolledMembershipCardsWithDiscountInfo(
     currentMemberId ?? '',
@@ -1009,9 +1009,9 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
           <>
             <StyledCheckoutBlock className="mb-5">
               {check.orderProducts.map(orderProduct => {
-                const productName =
-                  orderProduct.name ||
-                  `${formatMessage(appointmentMessages.MultiPeriodCheckoutModal.bookingPlan)} - ${orderProduct.title}`
+                const productName = `${formatMessage(appointmentMessages.MultiPeriodCheckoutModal.bookingPlan)} ${
+                  orderProduct.name
+                }`
 
                 return (
                   <CheckoutProductItem
