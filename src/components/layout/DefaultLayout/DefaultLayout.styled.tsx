@@ -5,15 +5,20 @@ import styled, { css } from 'styled-components'
 import { desktopViewMixin } from '../../../helpers'
 import { BREAK_POINT } from '../../common/Responsive'
 
+interface StyledUsePrimaryColorProps {
+  usePrimaryColor?: boolean
+}
+
 export const StyledLayout = styled(Layout)<{ variant?: 'white'; header?: string }>`
   ${props => (props.variant === 'white' ? 'background: white;' : '')}
   ${props => (props.header === 'noHeader' ? ' .ant-layout-content { padding-top: 0px;}' : '')}
 `
-export const StyledLayoutHeader = styled(Layout.Header)`
+export const StyledLayoutHeader = styled(Layout.Header)<StyledUsePrimaryColorProps>`
   position: sticky;
   position: -webkit-sticky;
   height: 4rem;
   top: 0;
+  background: ${props => (props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff')};
   z-index: 1000;
 
   &.hidden {
@@ -49,17 +54,17 @@ export const StyledNavTag = styled(Tag)`
     font-size: 12px;
   }
 `
-export const StyledNavButton = styled(Button)`
+export const StyledNavButton = styled(Button)<StyledUsePrimaryColorProps>`
   &&& {
-    background: #ffffff;
+    background: ${props => (props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff')};
     height: 4rem;
     color: #585858;
     line-height: 1.5;
   }
 `
-export const StyledNavAnimationButton = styled(Button)`
+export const StyledNavAnimationButton = styled(Button)<StyledUsePrimaryColorProps>`
   &&& {
-    background: #ffffff;
+    background: ${props => (props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff')};
     height: 4rem;
     color: #585858;
     line-height: 1.5;

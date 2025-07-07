@@ -98,6 +98,8 @@ const DefaultLayout: React.FC<{
 
   const isUnVerifiedEmails = member ? !member.verifiedEmails?.includes(member.email) : false
 
+  const isPrimaryColorEnabled = Boolean(Number(settings['theme.@primary_color.enabled']))
+
   return (
     <AuthModalContext.Provider value={{ visible, setVisible, isBusinessMember, setIsBusinessMember }}>
       {visible && (
@@ -116,6 +118,7 @@ const DefaultLayout: React.FC<{
         {!noHeader ? (
           <StyledLayoutHeader
             className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}
+            usePrimaryColor={isPrimaryColorEnabled}
           >
             <div className="d-flex align-items-center">
               <LogoBlock className="mr-4">
@@ -139,6 +142,7 @@ const DefaultLayout: React.FC<{
                               ? StyledNavAnimationButton
                               : StyledNavButton
                           }
+                          usePrimaryColor={isPrimaryColorEnabled}
                           onClick={() => {
                             nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')
                           }}
@@ -159,6 +163,7 @@ const DefaultLayout: React.FC<{
                               ? StyledNavAnimationButton
                               : StyledNavButton
                           }
+                          usePrimaryColor={isPrimaryColorEnabled}
                           onClick={e => {
                             if (nav.href) {
                               if (nav.href[0] === '/') {
@@ -225,6 +230,7 @@ const DefaultLayout: React.FC<{
                               ? StyledNavAnimationButton
                               : StyledNavButton
                           }
+                          usePrimaryColor={isPrimaryColorEnabled}
                           onClick={() => history.push(`/creators/${currentMemberId}`)}
                         >
                           <Link to={`/creators/${currentMemberId}`}>
@@ -246,6 +252,7 @@ const DefaultLayout: React.FC<{
                               ? StyledNavAnimationButton
                               : StyledNavButton
                           }
+                          usePrimaryColor={isPrimaryColorEnabled}
                           onClick={() => history.push(`/members/${currentMemberId}`)}
                         >
                           <Link to={`/members/${currentMemberId}`}>
