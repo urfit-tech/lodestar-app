@@ -1,3 +1,4 @@
+import { Icon, Text } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -11,7 +12,6 @@ import { ReactComponent as ListIcon } from '../../../images/list-o-program.svg'
 import { Category } from '../../../types/general'
 import { Program, ProgramContent, ProgramContentSection, ProgramPlan, ProgramRole } from '../../../types/program'
 import ProgramPageMessages from '../translation'
-import { colors } from './style'
 
 const StyledCountBlock = styled.div`
   text-align: center;
@@ -26,17 +26,9 @@ const StyledCountBlock = styled.div`
     justify-content: space-around;
   }
 `
-const Title = styled.div`
-  font-size: 16px;
-  font-weight: bold;
-  color: ${colors.teal};
-`
+const Title = props => <Text color="primary.500" fontSize="16px" fontWeight="bold" {...props} />
 
-const Content = styled.div`
-  font-size: 16px;
-  font-weight: bold;
-  color: ${colors.gray3};
-`
+const Content = props => <Text color="primary.500" fontSize="16px" fontWeight="bold" {...props} />
 
 const layoutTemplateConfigMap: Record<string, string> = {
   expectedSections: '2d668b9d-9fd5-47a4-9fef-b24184287233',
@@ -64,13 +56,13 @@ const SecondaryProgramInfoCard: React.FC<{
   return (
     <StyledCountBlock>
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
-        <CalendarIcon />
+        <Icon as={CalendarIcon} color="primary.500" boxSize={12} />
         <Title>{formatMessage(ProgramPageMessages.Secondary.expectedStart)}</Title>
         <Content>{expectedStartDate ? dayjs(expectedStartDate).format('YYYY/MM/DD') : '-'}</Content>
       </div>
 
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
-        <TimeoverIcon />
+        <Icon as={TimeoverIcon} color="primary.500" boxSize={12} />
         <Title>{formatMessage(ProgramPageMessages.Secondary.expectedDuration)}</Title>
         <Content>
           {expectedDuration ? (
@@ -85,7 +77,7 @@ const SecondaryProgramInfoCard: React.FC<{
       </div>
 
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
-        <ListIcon />
+        <Icon as={ListIcon} color="primary.500" boxSize={12} />
         <Title>{formatMessage(ProgramPageMessages.Secondary.expectedChapters)}</Title>
         <Content>
           {expectedSections ? (
@@ -100,7 +92,7 @@ const SecondaryProgramInfoCard: React.FC<{
       </div>
 
       <div className="d-flex text-center flex-column align-items-center justify-content-center">
-        <ListCheckIcon />
+        <Icon as={ListCheckIcon} color="primary.500" boxSize={12} />
         <Title>{formatMessage(ProgramPageMessages.Secondary.fullyListed)}</Title>
         <Content>{completeRelease ? dayjs(completeRelease).format('YYYY/MM/DD') : '-'}</Content>
       </div>

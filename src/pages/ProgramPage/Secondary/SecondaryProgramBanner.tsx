@@ -1,4 +1,4 @@
-import { Text } from '@chakra-ui/react'
+import { Badge, Text } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { handleError, notEmpty } from 'lodestar-app-element/src/helpers'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
@@ -95,16 +95,14 @@ const EnrollButton = styled(SecondaryEnrollButton)`
   }
 `
 
-const StyledCoverLabel = styled.div`
+const StyledCoverLabel = styled(Badge)`
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 0.8rem;
   padding: 0.4rem;
   height: 1.8rem;
-  background-color: ${colors.orange};
   font-weight: 600;
-  color: ${colors.white};
 `
 
 const PreviewButton = styled(SecondaryOutlineButton)`
@@ -211,7 +209,7 @@ const SecondaryProgramBanner: React.FC<{
           <ContentWrapper>
             <StyledCoverLabelWrapper>
               {program.moduleData?.[layoutTemplateConfigMap.coverLabel] ? (
-                <StyledCoverLabel style={{ margin: 0 }}>
+                <StyledCoverLabel colorScheme="secondary" variant="solid" style={{ margin: 0 }}>
                   <p>{program.moduleData?.[layoutTemplateConfigMap.coverLabel]}</p>
                 </StyledCoverLabel>
               ) : (

@@ -53,7 +53,7 @@ const ProgramIntroTabs: React.FC<{
           ),
     }))
   return (
-    <Tabs position="relative" width="100%">
+    <Tabs colorScheme="primary" position="relative" width="100%">
       <StyledTabList justifyContent="center">
         <ProgramIntroTab>{formatMessage(ProgramPageMessages.ProgramIntroTabs.introduction)}</ProgramIntroTab>
         <ProgramIntroTab>

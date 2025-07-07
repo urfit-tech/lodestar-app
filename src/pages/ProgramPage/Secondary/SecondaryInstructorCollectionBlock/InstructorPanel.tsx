@@ -26,7 +26,6 @@ const InstructorName = styled(Text)`
 
 const InstructorSubtitle = styled(Text)`
   font-size: 16px;
-  color: ${colors.teal2};
   font-weight: 500;
 `
 
@@ -68,7 +67,7 @@ const InstructorPanel: React.FC<
         </AvatarContainer>
         <TextWrapper>
           <InstructorName>{instructorName}</InstructorName>
-          <InstructorSubtitle>{instructorSubtitle}</InstructorSubtitle>
+          <InstructorSubtitle color="primary.500">{instructorSubtitle}</InstructorSubtitle>
         </TextWrapper>
       </AvatarBlock>
       {props.children}

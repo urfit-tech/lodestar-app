@@ -7,13 +7,13 @@ const InstructorTab: React.FC<{ children: React.ReactElement | string }> = props
       mr={2}
       borderRadius={30}
       borderStyle="solid"
-      borderColor="#ececec"
+      borderColor="primary.500"
       borderWidth="1px"
       fontWeight={500}
       _selected={{
-        bg: colors.teal,
+        bg: 'primary.500',
         color: colors.white,
-        borderColor: colors.teal,
+        borderColor: 'primary.500',
       }}
     >
       {props.children}

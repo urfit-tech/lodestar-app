@@ -2,17 +2,14 @@ import { Button } from '@chakra-ui/react'
 import styled from 'styled-components'
 import { colors } from './style'
 
-export const SecondaryEnrollButton = styled(Button)`
+export const SecondaryEnrollButton = styled(Button).attrs({
+  colorScheme: 'secondary',
+})`
   && {
     width: 100%;
     height: 45px;
     border-radius: 21.5px;
-    background-color: ${colors.orange};
     font-weight: 600;
-    color: ${colors.white};
-    &&:hover {
-      color: ${colors.gray1};
-    }
   }
 `
 
