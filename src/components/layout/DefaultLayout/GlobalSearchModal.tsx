@@ -438,7 +438,12 @@ const GlobalSearchFilter: React.FC<{
           <StyledFilterSubTitle className="mb-2">
             {formatMessage(defineMessage({ id: 'common.ui.duration', defaultMessage: '時長（分鐘）' }))}
           </StyledFilterSubTitle>
-          {[0, ...settings['global_search.minute_interval'].split(',').map(Number)].map((minute, i, minutes) => (
+          {[
+            0,
+            ...(settings['global_search.minute_interval']
+              ? settings['global_search.minute_interval'].split(',').map(Number)
+              : [5, 10]),
+          ].map((minute, i, minutes) => (
             <StyledRoundedButton
               onClick={() => {
                 onFilterSet(prevFilter => ({
