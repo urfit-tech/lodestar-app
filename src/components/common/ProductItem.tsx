@@ -1,5 +1,4 @@
 import { Typography } from 'antd'
-import { CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
 import React from 'react'
@@ -111,7 +110,8 @@ const ProductItem: React.FC<{
         case 'ProjectPlan':
         case 'PodcastProgram':
         case 'MerchandiseSpec':
-          listPrice = product.salePrice || product.listPrice || 0
+          listPrice =
+            typeof product.salePrice === 'number' && !isNaN(product.salePrice) ? product.salePrice : product.listPrice
           break
         case 'ActivityTicket':
         case 'Card':

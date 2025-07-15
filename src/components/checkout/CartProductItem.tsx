@@ -189,7 +189,9 @@ const CartProductItem: React.FC<{
                   variant="inline"
                   currencyId={product.productType === 'MerchandiseSpec' ? product.currencyId : undefined}
                   listPrice={(listPrice || 0) * pluralProductQuantity}
-                  salePrice={salePrice ? salePrice * pluralProductQuantity : undefined}
+                  salePrice={
+                    typeof salePrice === 'number' && !isNaN(salePrice) ? salePrice * pluralProductQuantity : undefined
+                  }
                 />
               }
             </StyledMeta>
