@@ -37,7 +37,6 @@ const ContentWrapper = styled.div`
   flex-direction: column;
   item-justify: center;
   padding: 10vmin;
-  white-space: nowrap;
   justify-content: space-between;
 
   @media (min-width: ${BREAK_POINT}px) {
@@ -71,11 +70,13 @@ const StyledTitle = styled.h1`
   line-height: 1.23;
   letter-spacing: 1px;
   font-weight: bold;
-  max-width: 240px;
+  max-width: 100%;
+  white-space: normal;
 
   @media (min-width: ${BREAK_POINT}px) {
     font-size: 40px;
     max-width: 520px;
+    white-space: nowrap;
   }
 `
 
