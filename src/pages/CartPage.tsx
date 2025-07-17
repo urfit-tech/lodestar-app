@@ -58,7 +58,7 @@ const CartPage: React.FC = () => {
   }
 
   return (
-    <DefaultLayout>
+    <DefaultLayout key={shopId || 'default'}>
       {!checkoutAlready &&
         (location.state?.productUrn ? filteredResourceUrns.includes(location.state.productUrn) : true) &&
         filteredResourceCollection.length > 0 && (
@@ -83,23 +83,21 @@ const CartPage: React.FC = () => {
             />
           ))}
         </div>
-      ) : shopIds.length === 1 || (typeof shopId === 'string' && shopId === '') ? (
-        <CheckoutBlock member={member} shopId={shopIds[0] || ''} cartProducts={cartProducts} />
       ) : typeof shopId === 'string' && shopId !== '' ? (
+        // 指定店家結帳
         <CheckoutBlock
           member={member}
           shopId={shopId}
-          cartProducts={cartProducts.filter(cartProduct => cartProduct.shopId === (shopId || ''))}
+          cartProducts={cartProducts.filter(cartProduct => cartProduct.shopId === shopId)}
         />
       ) : (
-        <div className="container py-5">
-          <Typography.Title level={3} className="mb-4">
-            <Icon type="shopping-cart" className="mr-2" />
-            <span>{formatMessage(checkoutMessages.title.cart)}</span>
-          </Typography.Title>
-
-          <CartProductTableCard className="mb-3" shopId="" cartProducts={cartProducts} />
-        </div>
+        // 沒有 shopId，表示是「無店家」區塊，進入 checkout
+        <CheckoutBlock
+          member={member}
+          shopId=""
+          cartProducts={cartProducts.filter(cartProduct => !cartProduct.shopId)}
+          // .filter(cartProduct => cartProduct.productId.split('_')[0] !== '' && cartProduct.appId === appId)}
+        />
       )}
     </DefaultLayout>
   )
