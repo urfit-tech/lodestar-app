@@ -58,7 +58,7 @@ const CartPage: React.FC = () => {
   }
 
   return (
-    <DefaultLayout>
+    <DefaultLayout key={shopId || 'default'}>
       {!checkoutAlready &&
         (location.state?.productUrn ? filteredResourceUrns.includes(location.state.productUrn) : true) &&
         filteredResourceCollection.length > 0 && (
@@ -83,13 +83,11 @@ const CartPage: React.FC = () => {
             />
           ))}
         </div>
-      ) : shopIds.length === 1 || (typeof shopId === 'string' && shopId === '') ? (
-        <CheckoutBlock member={member} shopId={shopIds[0] || ''} cartProducts={cartProducts} />
       ) : typeof shopId === 'string' && shopId !== '' ? (
         <CheckoutBlock
           member={member}
           shopId={shopId}
-          cartProducts={cartProducts.filter(cartProduct => cartProduct.shopId === (shopId || ''))}
+          cartProducts={cartProducts.filter(cartProduct => cartProduct.shopId === shopId)}
         />
       ) : shopIds.length === 1 ? (
         <CheckoutBlock
