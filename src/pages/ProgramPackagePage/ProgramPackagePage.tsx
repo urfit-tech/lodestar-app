@@ -21,6 +21,7 @@ import { desktopViewMixin } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProgramPackagePlanIds, useProgramPackageIntroduction } from '../../hooks/programPackage'
 import NotFoundPage from '../NotFoundPage'
+import ProgramPackagePageHelmet from './ProgramPackagePageHelmet'
 
 const StyledTitle = styled.h2`
   ${CommonLargeTitleMixin}
@@ -114,6 +115,7 @@ const ProgramPackagePageContent: React.FC<{ programPackageId: string }> = ({ pro
 
   return (
     <DefaultLayout white footerBottomSpace="4rem">
+      <ProgramPackagePageHelmet programPackage={programPackageIntroduction} />
       <ProgramPackageBanner
         title={programPackageIntroduction.title}
         coverUrl={programPackageIntroduction.coverUrl}
