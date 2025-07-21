@@ -89,6 +89,27 @@ const StyledButton = styled(Button)`
   }
 `
 
+// 獲取類型顯示名稱的輔助函數
+const getTypeDisplayName = (type: string, originalCategories: string[]) => {
+  // 如果原本就有分類名稱，優先使用
+  if (originalCategories.length > 0) {
+    return originalCategories
+  }
+
+  // 如果沒有分類，則根據類型提供預設名稱
+  const typeMap: Record<string, string[]> = {
+    program: ['課程'],
+    project: ['專案'],
+    activity: ['線上講座'], // 通常 activity 會有自己的分類，這是備用
+    post: ['文章'],
+    podcast_program: ['Podcast'],
+    merchandise: ['商品'],
+    program_package: ['課程包'],
+  }
+
+  return typeMap[type] || []
+}
+
 const AdvancedSearchPage: React.FC = () => {
   const history = useHistory()
   const { formatMessage } = useIntl()
@@ -160,64 +181,89 @@ const AdvancedSearchPage: React.FC = () => {
 
   // 整合搜尋結果
   const data = hasAdvancedParams
-    ? advancedData?.map(item => ({ ...item, type: 'program' })) || []
+    ? advancedData?.map(item => ({
+        ...item,
+        type: 'program',
+        // 進階搜尋的 programs 已經有 categoryNames 了
+      })) || []
     : [
-        ...searchResults.programs.map(program => ({
-          id: program.id,
-          coverUrl: program.coverUrl,
-          title: program.title,
-          score: null,
-          categoryNames: [], // 可以從 program 資料中提取分類
-          type: 'program',
-        })),
-        ...searchResults.projects.map(project => ({
-          id: project.id,
-          coverUrl: project.coverUrl,
-          title: project.title,
-          score: null,
-          categoryNames: project.categories?.map(cat => cat.name) || [],
-          type: 'project',
-        })),
-        ...searchResults.activities.map(activity => ({
-          id: activity.id,
-          coverUrl: activity.coverUrl,
-          title: activity.title,
-          score: null,
-          categoryNames: activity.categories?.map(cat => cat.name) || [],
-          type: 'activity',
-        })),
-        ...searchResults.posts.map(post => ({
-          id: post.id,
-          coverUrl: post.coverUrl,
-          title: post.title,
-          score: null,
-          categoryNames: [],
-          type: 'post',
-        })),
-        ...searchResults.podcastPrograms.map(podcast => ({
-          id: podcast.id,
-          coverUrl: podcast.coverUrl,
-          title: podcast.title,
-          score: null,
-          categoryNames: podcast.categories?.map(cat => cat.name) || [],
-          type: 'podcast_program',
-        })),
-        ...searchResults.merchandises.map(merchandise => ({
-          id: merchandise.id,
-          coverUrl: merchandise.images?.[0]?.url || null,
-          title: merchandise.title,
-          score: null,
-          categoryNames: merchandise.categories?.map(cat => cat.name) || [],
-          type: 'merchandise',
-        })),
-        ...searchResults.programPackages.map(packageItem => ({
-          id: packageItem.id,
-          coverUrl: packageItem.coverUrl,
-          title: packageItem.title,
-          score: null,
-          categoryNames: [],
-          type: 'program_package',
-        })),
+        ...searchResults.programs.map(program => {
+          const originalCategories: string[] = [] // programs 通常沒有分類資料
+          return {
+            id: program.id,
+            coverUrl: program.coverUrl,
+            title: program.title,
+            score: null,
+            categoryNames: getTypeDisplayName('program', originalCategories),
+            type: 'program',
+          }
+        }),
+        ...searchResults.projects.map(project => {
+          const originalCategories = project.categories?.map(cat => cat.name) || []
+          return {
+            id: project.id,
+            coverUrl: project.coverUrl,
+            title: project.title,
+            score: null,
+            categoryNames: getTypeDisplayName('project', originalCategories),
+            type: 'project',
+          }
+        }),
+        ...searchResults.activities.map(activity => {
+          const originalCategories = activity.categories?.map(cat => cat.name) || []
+          return {
+            id: activity.id,
+            coverUrl: activity.coverUrl,
+            title: activity.title,
+            score: null,
+            categoryNames: getTypeDisplayName('activity', originalCategories),
+            type: 'activity',
+          }
+        }),
+        ...searchResults.posts.map(post => {
+          const originalCategories: string[] = [] // posts 通常沒有分類資料
+          return {
+            id: post.id,
+            coverUrl: post.coverUrl,
+            title: post.title,
+            score: null,
+            categoryNames: getTypeDisplayName('post', originalCategories),
+            type: 'post',
+          }
+        }),
+        ...searchResults.podcastPrograms.map(podcast => {
+          const originalCategories = podcast.categories?.map(cat => cat.name) || []
+          return {
+            id: podcast.id,
+            coverUrl: podcast.coverUrl,
+            title: podcast.title,
+            score: null,
+            categoryNames: getTypeDisplayName('podcast_program', originalCategories),
+            type: 'podcast_program',
+          }
+        }),
+        ...searchResults.merchandises.map(merchandise => {
+          const originalCategories = merchandise.categories?.map(cat => cat.name) || []
+          return {
+            id: merchandise.id,
+            coverUrl: merchandise.images?.[0]?.url || null,
+            title: merchandise.title,
+            score: null,
+            categoryNames: getTypeDisplayName('merchandise', originalCategories),
+            type: 'merchandise',
+          }
+        }),
+        ...searchResults.programPackages.map(packageItem => {
+          const originalCategories: string[] = [] // 課程包通常沒有分類資料
+          return {
+            id: packageItem.id,
+            coverUrl: packageItem.coverUrl,
+            title: packageItem.title,
+            score: null,
+            categoryNames: getTypeDisplayName('program_package', originalCategories),
+            type: 'program_package',
+          }
+        }),
       ]
 
   return (
