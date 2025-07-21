@@ -149,8 +149,12 @@ const AdvancedSearchPage: React.FC = () => {
           program_duration: state?.durationRange
             ? {
                 _and: [
-                  { duration: { _lte: state.durationRange[0] * 60 } },
-                  { duration: { _gt: state.durationRange[1] * 60 } },
+                  ...(state.durationRange[0] !== null && state.durationRange[0] !== undefined
+                    ? [{ duration: { _gte: state.durationRange[0] * 60 } }]
+                    : []),
+                  ...(state.durationRange[1] !== null && state.durationRange[1] !== undefined
+                    ? [{ duration: { _lte: state.durationRange[1] * 60 } }]
+                    : []),
                 ],
               }
             : undefined,
