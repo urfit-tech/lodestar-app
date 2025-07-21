@@ -84,19 +84,16 @@ const CartPage: React.FC = () => {
           ))}
         </div>
       ) : typeof shopId === 'string' && shopId !== '' ? (
-        // 指定店家結帳
         <CheckoutBlock
           member={member}
           shopId={shopId}
           cartProducts={cartProducts.filter(cartProduct => cartProduct.shopId === shopId)}
         />
       ) : (
-        // 沒有 shopId，表示是「無店家」區塊，進入 checkout
         <CheckoutBlock
           member={member}
           shopId=""
           cartProducts={cartProducts.filter(cartProduct => !cartProduct.shopId)}
-          // .filter(cartProduct => cartProduct.productId.split('_')[0] !== '' && cartProduct.appId === appId)}
         />
       )}
     </DefaultLayout>
