@@ -58,7 +58,7 @@ const CartPage: React.FC = () => {
   }
 
   return (
-    <DefaultLayout>
+    <DefaultLayout key={shopId || 'default'}>
       {!checkoutAlready &&
         (location.state?.productUrn ? filteredResourceUrns.includes(location.state.productUrn) : true) &&
         filteredResourceCollection.length > 0 && (
@@ -83,23 +83,18 @@ const CartPage: React.FC = () => {
             />
           ))}
         </div>
-      ) : shopIds.length === 1 || (typeof shopId === 'string' && shopId === '') ? (
-        <CheckoutBlock member={member} shopId={shopIds[0] || ''} cartProducts={cartProducts} />
       ) : typeof shopId === 'string' && shopId !== '' ? (
         <CheckoutBlock
           member={member}
           shopId={shopId}
-          cartProducts={cartProducts.filter(cartProduct => cartProduct.shopId === (shopId || ''))}
+          cartProducts={cartProducts.filter(cartProduct => cartProduct.shopId === shopId)}
         />
       ) : (
-        <div className="container py-5">
-          <Typography.Title level={3} className="mb-4">
-            <Icon type="shopping-cart" className="mr-2" />
-            <span>{formatMessage(checkoutMessages.title.cart)}</span>
-          </Typography.Title>
-
-          <CartProductTableCard className="mb-3" shopId="" cartProducts={cartProducts} />
-        </div>
+        <CheckoutBlock
+          member={member}
+          shopId=""
+          cartProducts={cartProducts.filter(cartProduct => !cartProduct.shopId)}
+        />
       )}
     </DefaultLayout>
   )
