@@ -447,7 +447,7 @@ export const useSearchProductCollection = (
       tagNames?: string[][]
       durationRange?: [number, number]
       score?: number
-      onlyPrograms?: boolean // 是否只搜尋課程
+      onlyPrograms?: boolean
     }
   },
 ) => {
@@ -537,7 +537,6 @@ export const useSearchProductCollection = (
       plans: ProgramPlan[]
       isEnrolled: boolean
       instructorsSearchString: string
-      // 新增這些屬性
       categories: { id: string; name: string }[]
       categoryIds: string[]
       tags: string[]
@@ -664,7 +663,6 @@ export const useSearchProductCollection = (
 
         const { categoryIds, tagNames, durationRange, score } = filter.advancedFilters
 
-        // 分類篩選
         if (categoryIds?.length) {
           const hasMatchingCategory = categoryIds.some(categoryIdList =>
             categoryIdList.some(categoryId => program.categoryIds.includes(categoryId)),
@@ -672,7 +670,6 @@ export const useSearchProductCollection = (
           if (!hasMatchingCategory) return false
         }
 
-        // 標籤篩選
         if (tagNames?.length) {
           const hasMatchingTag = tagNames.some(tagNameList =>
             tagNameList.some(tagName => program.tags.includes(tagName)),
@@ -680,7 +677,6 @@ export const useSearchProductCollection = (
           if (!hasMatchingTag) return false
         }
 
-        // 時間篩選
         if (durationRange) {
           const [min, max] = durationRange
           const durationMinutes = program.totalDuration / 60
@@ -693,7 +689,6 @@ export const useSearchProductCollection = (
           }
         }
 
-        // 評分篩選
         if (score !== null && score !== undefined) {
           if (!program.score || program.score <= score) {
             return false
@@ -917,7 +912,6 @@ export const useSearchProductCollection = (
       .sort((a, b) => sorting(a, b, ['shopkeeper', 'abstract', 'title'], filter?.title || '')),
   }
 
-  // 如果設定只搜尋課程，則其他類型返回空陣列
   if (filter?.advancedFilters?.onlyPrograms) {
     return {
       loadingSearchResults: loading,

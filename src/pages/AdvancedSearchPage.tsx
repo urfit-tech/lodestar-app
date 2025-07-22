@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { FilterType } from '../components/layout/DefaultLayout/GlobalSearchModal'
-import { useSearchProductCollection } from '../hooks/search' // 引入 search.ts 的 hook
+import { useSearchProductCollection } from '../hooks/search'
 import EmptyCover from '../images/empty-cover.png'
 import { ReactComponent as EmptyBoxIcon } from '../images/icons-empty-box.svg'
 import { ReactComponent as StarIcon } from '../images/star-current-color.svg'
@@ -87,18 +87,15 @@ const StyledButton = styled(Button)`
   }
 `
 
-// 獲取類型顯示名稱的輔助函數
 const getTypeDisplayName = (type: string, originalCategories: string[]) => {
-  // 如果原本就有分類名稱，優先使用
   if (originalCategories.length > 0) {
     return originalCategories
   }
 
-  // 如果沒有分類，則根據類型提供預設名稱
   const typeMap: Record<string, string[]> = {
     program: ['課程'],
     project: ['專案'],
-    activity: ['線上講座'], // 通常 activity 會有自己的分類，這是備用
+    activity: ['線上講座'],
     post: ['文章'],
     podcast_program: ['Podcast'],
     merchandise: ['商品'],
@@ -113,7 +110,6 @@ const AdvancedSearchPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const { state } = useLocation<{ title: string; memberId?: string; memberRoles?: string[] } & FilterType>()
 
-  // 檢查是否有進階搜尋參數（除了 title 以外的其他篩選條件）
   const hasAdvancedParams = !!(
     state?.categoryIdSList?.length ||
     state?.tagNameSList?.length ||
@@ -121,26 +117,24 @@ const AdvancedSearchPage: React.FC = () => {
     state?.score
   )
 
-  // 當沒有進階搜尋參數時，使用 SEARCH_PRODUCT_COLLECTION
-  const {
-    loadingSearchResults: isLoading,
-    searchResults,
-    errorSearchResults: error,
-  } = useSearchProductCollection(state?.memberId || null, state?.memberRoles || ['instructor', 'content-creator'], {
-    title: state?.title || null,
-    tag: null,
-    ...(hasAdvancedParams && {
-      advancedFilters: {
-        categoryIds: state.categoryIdSList,
-        tagNames: state.tagNameSList,
-        durationRange: state.durationRange || undefined, // 將 null 轉換為 undefined
-        score: state.score || undefined, // 將 null 轉換為 undefined
-        onlyPrograms: true,
-      },
-    }),
-  })
+  const { loadingSearchResults: isLoading, searchResults } = useSearchProductCollection(
+    state?.memberId || null,
+    state?.memberRoles || ['instructor', 'content-creator'],
+    {
+      title: state?.title || null,
+      tag: null,
+      ...(hasAdvancedParams && {
+        advancedFilters: {
+          categoryIds: state.categoryIdSList,
+          tagNames: state.tagNameSList,
+          durationRange: state.durationRange || undefined,
+          score: state.score || undefined,
+          onlyPrograms: true,
+        },
+      }),
+    },
+  )
 
-  // 整合搜尋結果
   const data = hasAdvancedParams
     ? searchResults.programs.map(program => ({
         id: program.id,
@@ -187,7 +181,7 @@ const AdvancedSearchPage: React.FC = () => {
           }
         }),
         ...searchResults.posts.map(post => {
-          const originalCategories: string[] = [] // posts 通常沒有分類資料
+          const originalCategories: string[] = []
           return {
             id: post.id,
             coverUrl: post.coverUrl,
@@ -220,7 +214,7 @@ const AdvancedSearchPage: React.FC = () => {
           }
         }),
         ...searchResults.programPackages.map(packageItem => {
-          const originalCategories: string[] = [] // 課程包通常沒有分類資料
+          const originalCategories: string[] = []
           return {
             id: packageItem.id,
             coverUrl: packageItem.coverUrl,
@@ -280,7 +274,6 @@ const AdvancedSearchPage: React.FC = () => {
   )
 }
 
-// 根據項目類型生成正確的連結
 const getItemLink = (item: any) => {
   const pathMap: Record<string, string> = {
     program: 'programs',
