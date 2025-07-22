@@ -1,4 +1,3 @@
-import { gql, useQuery } from '@apollo/client'
 import { Button, Icon, SkeletonText } from '@chakra-ui/react'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { isEmpty, uniq } from 'ramda'
@@ -8,7 +7,6 @@ import styled from 'styled-components'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { FilterType } from '../components/layout/DefaultLayout/GlobalSearchModal'
-import hasura from '../hasura'
 import { useSearchProductCollection } from '../hooks/search' // 引入 search.ts 的 hook
 import EmptyCover from '../images/empty-cover.png'
 import { ReactComponent as EmptyBoxIcon } from '../images/icons-empty-box.svg'
@@ -123,76 +121,40 @@ const AdvancedSearchPage: React.FC = () => {
     state?.score
   )
 
-  // 當有進階搜尋參數時，使用原本的 useSearchPrograms
-  const {
-    isLoading: advancedLoading,
-    data: advancedData,
-    error: advancedError,
-  } = useSearchPrograms(
-    hasAdvancedParams
-      ? {
-          is_private: { _eq: false },
-          published_at: { _is_null: false },
-          title: state?.title ? { _like: `%${state.title}%` } : undefined,
-          _and: [
-            ...(state?.categoryIdSList?.map(categoryIdS => ({
-              program_categories: {
-                category_id: { _in: categoryIdS },
-              },
-            })) || []),
-            ...(state?.tagNameSList?.map(tagNameS => ({
-              program_tags: {
-                tag_name: { _in: tagNameS },
-              },
-            })) || []),
-          ],
-          program_duration: state?.durationRange
-            ? {
-                _and: [
-                  ...(state.durationRange[0] !== null && state.durationRange[0] !== undefined
-                    ? [{ duration: { _gte: state.durationRange[0] * 60 } }]
-                    : []),
-                  ...(state.durationRange[1] !== null && state.durationRange[1] !== undefined
-                    ? [{ duration: { _lte: state.durationRange[1] * 60 } }]
-                    : []),
-                ],
-              }
-            : undefined,
-          program_review_score: state?.score ? { score: { _gt: state.score } } : undefined,
-        }
-      : undefined, // 沒有進階參數時不執行查詢
-  )
-
   // 當沒有進階搜尋參數時，使用 SEARCH_PRODUCT_COLLECTION
   const {
-    loadingSearchResults: generalLoading,
+    loadingSearchResults: isLoading,
     searchResults,
-    errorSearchResults: generalError,
-  } = useSearchProductCollection(
-    state?.memberId || null,
-    state?.memberRoles || ['instructor', 'content-creator'],
-    !hasAdvancedParams
-      ? {
-          title: state?.title || null,
-          tag: null,
-        }
-      : undefined, // 有進階參數時不執行查詢
-  )
-
-  // 根據搜尋模式決定使用哪個結果
-  const isLoading = hasAdvancedParams ? advancedLoading : generalLoading
-  const error = hasAdvancedParams ? advancedError : generalError
+    errorSearchResults: error,
+  } = useSearchProductCollection(state?.memberId || null, state?.memberRoles || ['instructor', 'content-creator'], {
+    title: state?.title || null,
+    tag: null,
+    ...(hasAdvancedParams && {
+      advancedFilters: {
+        categoryIds: state.categoryIdSList,
+        tagNames: state.tagNameSList,
+        durationRange: state.durationRange || undefined, // 將 null 轉換為 undefined
+        score: state.score || undefined, // 將 null 轉換為 undefined
+        onlyPrograms: true,
+      },
+    }),
+  })
 
   // 整合搜尋結果
   const data = hasAdvancedParams
-    ? advancedData?.map(item => ({
-        ...item,
+    ? searchResults.programs.map(program => ({
+        id: program.id,
+        coverUrl: program.coverUrl,
+        title: program.title,
+        score: program.score || null,
+        categoryNames: uniq(
+          (program.categories || []).map(cat => (cat.name.includes('/') ? cat.name.split('/')[1] : cat.name)),
+        ),
         type: 'program',
-        // 進階搜尋的 programs 已經有 categoryNames 了
-      })) || []
+      }))
     : [
         ...searchResults.programs.map(program => {
-          const originalCategories: string[] = [] // programs 通常沒有分類資料
+          const originalCategories = program.categories?.map(cat => cat.name) || []
           return {
             id: program.id,
             coverUrl: program.coverUrl,
@@ -275,9 +237,6 @@ const AdvancedSearchPage: React.FC = () => {
       <div className="container">
         <StyledTitle className="my-5">
           {formatMessage(defineMessage({ id: 'common.text.searchResult', defaultMessage: '搜尋結果' }))}
-          {!hasAdvancedParams && (
-            <span style={{ fontSize: '14px', fontWeight: 'normal', marginLeft: '10px' }}>(包含所有產品類型)</span>
-          )}
         </StyledTitle>
         {isLoading ? (
           <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -335,56 +294,6 @@ const getItemLink = (item: any) => {
 
   const route = pathMap[item.type] || 'programs'
   return `/${route}/${item.id}`
-}
-
-const useSearchPrograms = (condition?: hasura.GET_ADVANCE_SEARCH_PROGRAMSVariables['condition']) => {
-  const { loading, data, error } = useQuery<
-    hasura.GET_ADVANCE_SEARCH_PROGRAMS,
-    hasura.GET_ADVANCE_SEARCH_PROGRAMSVariables
-  >(
-    gql`
-      query GET_ADVANCE_SEARCH_PROGRAMS($condition: program_bool_exp!) {
-        program(where: $condition) {
-          id
-          title
-          cover_url
-          program_categories(order_by: { position: asc }) {
-            id
-            category {
-              id
-              name
-            }
-          }
-          program_review_score {
-            score
-          }
-        }
-      }
-    `,
-    {
-      variables: {
-        condition: condition || {},
-      },
-      skip: !condition, // 沒有條件時跳過查詢
-    },
-  )
-
-  return {
-    isLoading: loading,
-    data:
-      data?.program.map(v => ({
-        id: v.id,
-        coverUrl: v.cover_url || null,
-        title: v.title,
-        score: v.program_review_score?.score || null,
-        categoryNames: uniq(
-          v.program_categories.map(w =>
-            w.category.name.includes('/') ? w.category.name.split('/')[1] : w.category.name,
-          ),
-        ),
-      })) || [],
-    error,
-  }
 }
 
 export default AdvancedSearchPage

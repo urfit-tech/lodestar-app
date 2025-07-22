@@ -56,6 +56,19 @@ export const SEARCH_PRODUCT_COLLECTION = gql`
       is_enrolled_count_visible
       label
       label_color_type
+      program_categories(order_by: { position: asc }) {
+        id
+        category {
+          id
+          name
+        }
+      }
+      program_tags {
+        tag_name
+      }
+      program_review_score {
+        score
+      }
       program_content_sections {
         id
         program_contents {
@@ -429,6 +442,13 @@ export const useSearchProductCollection = (
   filter?: {
     title?: string | null
     tag?: string | null
+    advancedFilters?: {
+      categoryIds?: string[][]
+      tagNames?: string[][]
+      durationRange?: [number, number]
+      score?: number
+      onlyPrograms?: boolean // 是否只搜尋課程
+    }
   },
 ) => {
   const calcSortWeights = (data: any, columns: string[], searchText: string) => {
@@ -517,6 +537,11 @@ export const useSearchProductCollection = (
       plans: ProgramPlan[]
       isEnrolled: boolean
       instructorsSearchString: string
+      // 新增這些屬性
+      categories: { id: string; name: string }[]
+      categoryIds: string[]
+      tags: string[]
+      score: number | null
     })[]
     programPackages: Pick<ProgramPackageProps, 'id' | 'coverUrl' | 'title' | 'description'>[]
     activities: (DeepPick<
@@ -590,6 +615,14 @@ export const useSearchProductCollection = (
             sum(section.program_contents.map(content => content.duration)),
           ),
         ),
+        categories:
+          program.program_categories?.map(programCategory => ({
+            id: programCategory.category.id,
+            name: programCategory.category.name,
+          })) || [],
+        categoryIds: program.program_categories?.map(pc => pc.category.id) || [],
+        tags: program.program_tags?.map(tag => tag.tag_name) || [],
+        score: program.program_review_score?.score || null,
         roles: program.program_roles.map(programRole => ({
           id: programRole.id,
           name: 'instructor' as ProgramRoleName,
@@ -626,6 +659,49 @@ export const useSearchProductCollection = (
         })),
         isEnrolled: program.program_enrollments.length > 0,
       }))
+      .filter(program => {
+        if (!filter?.advancedFilters) return true
+
+        const { categoryIds, tagNames, durationRange, score } = filter.advancedFilters
+
+        // 分類篩選
+        if (categoryIds?.length) {
+          const hasMatchingCategory = categoryIds.some(categoryIdList =>
+            categoryIdList.some(categoryId => program.categoryIds.includes(categoryId)),
+          )
+          if (!hasMatchingCategory) return false
+        }
+
+        // 標籤篩選
+        if (tagNames?.length) {
+          const hasMatchingTag = tagNames.some(tagNameList =>
+            tagNameList.some(tagName => program.tags.includes(tagName)),
+          )
+          if (!hasMatchingTag) return false
+        }
+
+        // 時間篩選
+        if (durationRange) {
+          const [min, max] = durationRange
+          const durationMinutes = program.totalDuration / 60
+
+          if (min !== null && min !== undefined && durationMinutes < min) {
+            return false
+          }
+          if (max !== null && max !== undefined && durationMinutes > max) {
+            return false
+          }
+        }
+
+        // 評分篩選
+        if (score !== null && score !== undefined) {
+          if (!program.score || program.score <= score) {
+            return false
+          }
+        }
+
+        return true
+      })
       .sort((a, b) => sorting(a, b, ['description', 'title', 'instructorsSearchString'], filter?.title || '')),
     programPackages: [...(data?.program_package || [])]
       .map(programPackage => ({
@@ -839,6 +915,28 @@ export const useSearchProductCollection = (
         })),
       }))
       .sort((a, b) => sorting(a, b, ['shopkeeper', 'abstract', 'title'], filter?.title || '')),
+  }
+
+  // 如果設定只搜尋課程，則其他類型返回空陣列
+  if (filter?.advancedFilters?.onlyPrograms) {
+    return {
+      loadingSearchResults: loading,
+      errorSearchResults: error,
+      searchResults: {
+        ...searchResults,
+        programPackages: [],
+        activities: [],
+        projects: [],
+        fundingProjects: [],
+        preOrderProjects: [],
+        portfolioProjects: [],
+        posts: [],
+        podcastPrograms: [],
+        creators: [],
+        merchandises: [],
+      },
+      refetchSearchResults: refetch,
+    }
   }
 
   return {
