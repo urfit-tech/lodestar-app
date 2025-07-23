@@ -71,7 +71,7 @@ const ProgramContentPage: React.FC = () => {
 
   return (
     <Layout>
-      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
+      {resourceCollection?.[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       {settings['hubspot.portal_id'] ? (
         <Helmet>
           <script

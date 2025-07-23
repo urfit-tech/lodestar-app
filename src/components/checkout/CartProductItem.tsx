@@ -78,12 +78,12 @@ const CartProductItem: React.FC<{
 
   const trackCartItem = (currentQuantity: number, nextQuantity: number) => {
     if (currentQuantity < nextQuantity) {
-      resourceCollection[0] &&
+      resourceCollection?.[0] &&
         tracking.addToCart(resourceCollection[0], { direct: true, quantity: nextQuantity - currentQuantity })
     }
 
     if (currentQuantity > nextQuantity) {
-      resourceCollection[0] &&
+      resourceCollection?.[0] &&
         tracking.removeFromCart(resourceCollection[0], { quantity: currentQuantity - nextQuantity })
     }
   }

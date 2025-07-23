@@ -805,7 +805,7 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
         isFullWidth
         onClose={() => {
           onClose()
-          const resource = resourceCollection.filter(notEmpty).length > 0 && resourceCollection[0]
+          const resource = resourceCollection.filter(notEmpty).length > 0 && resourceCollection?.[0]
           resource && tracking.removeFromCart(resource, { quantity: getSafeTotalQuantity(productDetails) })
         }}
       >
@@ -1060,7 +1060,7 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
             variant="outline"
             onClick={() => {
               onClose()
-              const resource = resourceCollection.filter(notEmpty).length > 0 && resourceCollection[0]
+              const resource = resourceCollection.filter(notEmpty).length > 0 && resourceCollection?.[0]
               resource && tracking.removeFromCart(resource)
             }}
             className="mr-3"
