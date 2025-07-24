@@ -81,7 +81,7 @@ const PodcastAlbumPage: React.FC = () => {
 
   return (
     <DefaultLayout white>
-      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
+      {resourceCollection?.[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       <Helmet>
         <title>{podcastAlbum.title}</title>
       </Helmet>

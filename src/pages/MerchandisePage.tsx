@@ -45,7 +45,7 @@ const MerchandisePage: React.FC = () => {
 
   return (
     <DefaultLayout white>
-      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
+      {resourceCollection?.[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       {/* // TODO: need to extend page helmet */}
       {!loadingApp && <PageHelmet title={merchandise?.title} isNoIndex={!merchandise?.publishedAt} />}
       <StyledContainer className="container">

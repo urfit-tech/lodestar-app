@@ -76,7 +76,7 @@ const ProjectPage: React.FC = () => {
 
   return (
     <>
-      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
+      {resourceCollection?.[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       {project && <ProjectPageHelmet project={project} />}
       {renderProjectPage(project)}
     </>

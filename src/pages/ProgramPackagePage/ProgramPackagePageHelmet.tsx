@@ -34,7 +34,7 @@ const ProgramPackagePageHelmet: React.FC<{ programPackage: ProgramPackage }> = (
           name: programPackage.title || app.settings['title'],
           image: programPackage.coverUrl || app.settings['open_graph.image'],
           description: getBraftContent(programPackage.description || app.settings['description'] || '{}'),
-          sku: resourceCollection[0]?.sku,
+          sku: resourceCollection?.[0]?.sku,
           mpn: programPackage.id,
           brand: {
             '@type': 'Brand',

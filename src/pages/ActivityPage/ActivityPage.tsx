@@ -164,7 +164,7 @@ const ActivityPage: React.FC = () => {
           publishedAt: activityData.publishedAt ? dayjs(activityData.publishedAt).toDate() : null,
         }}
       />
-      {resourceCollection[0] && <Tracking.Detail resource={resourceCollection[0]} />}
+      {resourceCollection?.[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       <ActivityBanner
         coverImage={activityData.coverUrl || ''}
         activityTitle={activityData.title}
