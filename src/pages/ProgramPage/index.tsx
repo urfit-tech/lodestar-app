@@ -38,7 +38,7 @@ const ProgramPage: React.FC = () => {
   const { currentLocale } = useContext(LocaleContext)
 
   useEffect(() => {
-    const resource = resourceCollection[0]
+    const resource = resourceCollection?.[0]
     if (!isAuthenticating && !loadingResourceCollection && resource && tracking) {
       tracking.detail(resource, { collection: pageFrom || undefined, utmSource: utmSource || '' })
     }

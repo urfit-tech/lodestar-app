@@ -59,7 +59,7 @@ const ProgramPackagePage: React.FC = () => {
   )
 
   useEffect(() => {
-    const resource = resourceCollection[0]
+    const resource = resourceCollection?.[0]
     if (!isAuthenticating && !loadingResourceCollection && resource && tracking) {
       tracking.detail(resource, { collection: pageFrom || undefined, utmSource: utmSource || '' })
     }

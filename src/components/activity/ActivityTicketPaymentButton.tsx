@@ -78,7 +78,7 @@ const ActivityTicketPaymentButton: React.FC<ActivityTicketPaymentButtonProps> = 
               isMultiline
               disabled={!isPublished}
               onClick={() => {
-                resourceCollection[0] && tracking.addToCart(resourceCollection[0], { direct: false })
+                resourceCollection?.[0] && tracking.addToCart(resourceCollection[0], { direct: false })
                 handleAddCart()
               }}
             >

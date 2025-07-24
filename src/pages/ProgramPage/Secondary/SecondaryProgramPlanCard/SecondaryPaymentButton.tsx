@@ -100,7 +100,7 @@ const SecondaryPaymentButton: React.FC<{
               line="multiline"
               isDisabled={!isPublished}
               onClick={() => {
-                resourceCollection[0] && tracking.addToCart(resourceCollection[0])
+                resourceCollection?.[0] && tracking.addToCart(resourceCollection[0])
                 handleAddCart()
               }}
             >

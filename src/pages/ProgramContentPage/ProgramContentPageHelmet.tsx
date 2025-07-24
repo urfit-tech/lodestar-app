@@ -41,7 +41,7 @@ const ProgramContentPageHelmet: React.FC<
           name: (programContent && programContent.title) || program.title || app.settings['title'],
           image: program.coverUrl || app.settings['open_graph.image'],
           description: getBraftContent(program.description || app.settings['description'] || '{}')?.slice(0, 150),
-          sku: resourceCollection[0]?.sku,
+          sku: resourceCollection?.[0]?.sku,
           mpn: program.id,
           brand: {
             '@type': 'Brand',

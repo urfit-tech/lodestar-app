@@ -33,7 +33,7 @@ const ProjectPageHelmet: React.FC<{ project: ProjectProps }> = ({ project }) => 
           name: project.title || app.settings['title'],
           image: project.coverUrl || app.settings['open_graph.image'],
           description: project.abstract || app.settings['description'],
-          sku: resourceCollection[0]?.sku,
+          sku: resourceCollection?.[0]?.sku,
           mpn: project.id,
           brand: {
             '@type': 'Brand',
