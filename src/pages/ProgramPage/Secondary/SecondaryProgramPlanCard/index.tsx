@@ -73,7 +73,7 @@ const SecondaryProgramPlanCard: React.FC<{
   const history = useHistory()
   const { isAuthenticated } = useAuth()
   const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
-  const { enabledModules } = useApp()
+  const { enabledModules, settings } = useApp()
 
   const { programPlanIds: enrolledProgramIds } = useEnrolledPlanIds()
   const { productGiftPlan } = useProductGiftPlan(`ProgramPlan_${programPlan?.id}`)
@@ -95,6 +95,8 @@ const SecondaryProgramPlanCard: React.FC<{
   const isOnSale = (programPlan.soldAt?.getTime() || 0) > Date.now()
   const enrolled = enrolledProgramIds.includes(programPlan.id)
 
+  const programPlanSalePriceColorSetting = settings['program_plan_card.sale_price.color']?.trim()
+
   return (
     <StyledAdminCard key={programPlan.id}>
       <header>
@@ -113,6 +115,11 @@ const SecondaryProgramPlanCard: React.FC<{
               listPricePrefix={listPricePrefix}
               listPriceSuffix={listPriceSuffix}
               priceDescription={priceDescription}
+              customStyle={
+                programPlanSalePriceColorSetting
+                  ? { salePrice: { amount: { color: programPlanSalePriceColorSetting } } }
+                  : undefined
+              }
             />
           </StyledPriceBlock>
           {productGiftPlan.id && <GiftPlanTag color={colors.orange} />}

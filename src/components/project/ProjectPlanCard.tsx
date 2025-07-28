@@ -95,6 +95,7 @@ const ProjectPlanCard: React.FC<
   const { settings } = useApp()
 
   const isOnSale = (soldAt?.getTime() || 0) > Date.now()
+  const projectPlanSalePriceColorSetting = settings['project_plan_card.sale_price.color']?.trim()
 
   return (
     <StyledWrapper>
@@ -112,6 +113,13 @@ const ProjectPlanCard: React.FC<
               downPrice={isSubscription && discountDownPrice > 0 ? discountDownPrice : undefined}
               periodAmount={periodAmount}
               periodType={periodType ? (periodType as PeriodType) : undefined}
+              customStyle={{
+                salePrice: {
+                  amount: {
+                    color: projectPlanSalePriceColorSetting ? projectPlanSalePriceColorSetting : undefined,
+                  },
+                },
+              }}
             />
           </div>
         )}

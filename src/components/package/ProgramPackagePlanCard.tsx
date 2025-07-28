@@ -9,6 +9,7 @@ import PaymentButton from '../common/PaymentButton'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 
 const StyledCard = styled.div`
   padding: 1.5rem;
@@ -66,8 +67,11 @@ const ProgramPackagePlanCard: React.FC<
   isEnrolled,
   isPublished,
 }) => {
+  const { settings } = useApp()
   const { formatMessage } = useIntl()
   const isOnSale = soldAt ? Date.now() < soldAt.getTime() : false
+
+  const programPackagePlanSalePriceColorSetting = settings['program_package_plan_card.sale_price.color']?.trim()
 
   return (
     <StyledCard>
@@ -79,6 +83,13 @@ const ProgramPackagePlanCard: React.FC<
         downPrice={discountDownPrice}
         periodType={isSubscription ? periodType : undefined}
         periodAmount={isSubscription ? periodAmount : undefined}
+        customStyle={{
+          salePrice: {
+            amount: {
+              color: programPackagePlanSalePriceColorSetting ? programPackagePlanSalePriceColorSetting : undefined,
+            },
+          },
+        }}
       />
       {isCountdownTimerVisible && soldAt && isOnSale && (
         <StyledCountDownBlock>

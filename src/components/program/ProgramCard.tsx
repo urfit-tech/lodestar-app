@@ -163,6 +163,7 @@ const PrimaryCard: React.FC<ProgramCardProps & SharedProps> = ({
   const { data: reviewable, loading: reviewableLoading } = useAdaptedReviewable(path, appId)
   const { data: enrolledCount } = useProgramEnrollmentAggregate(program.id, { skip: !program.isEnrolledCountVisible })
 
+  const programSalePriceColorSetting = settings['program_card.sale_price.color']?.trim()
   const programAdditionalSoldHeadcountSetting = settings['program.additional.sold.headcount'] || '[]'
   let programAdditionalSoldHeadcountSettingValue: { programId: string; count: number }[] | [] = []
   let programLabelColorConfig: { id: number; backgroundColor: string; textColor: string }[] = []
@@ -261,6 +262,11 @@ const PrimaryCard: React.FC<ProgramCardProps & SharedProps> = ({
                       periodAmount={periodAmount}
                       periodType={periodType || undefined}
                       currencyId={program.plans[0]?.currency.id}
+                      customStyle={{
+                        salePrice: {
+                          amount: { color: programSalePriceColorSetting ? programSalePriceColorSetting : undefined },
+                        },
+                      }}
                     />
                   )}
                 </div>
