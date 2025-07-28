@@ -58,7 +58,7 @@ export const StyledNavButton = styled(Button)<StyledUsePrimaryColorProps>`
   &&& {
     background: ${props => (props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff')};
     height: 4rem;
-    color: #585858;
+    color: ${props => props.theme['@nav-color'] || '#585858'};
     line-height: 1.5;
   }
 `
@@ -66,7 +66,7 @@ export const StyledNavAnimationButton = styled(Button)<StyledUsePrimaryColorProp
   &&& {
     background: ${props => (props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff')};
     height: 4rem;
-    color: #585858;
+    color: ${props => props.theme['@nav-color'] || '#585858'};
     line-height: 1.5;
     :hover {
       background: #ffffff;
@@ -107,7 +107,7 @@ export const StyledMenuItem = styled(MenuItem)`
   && {
     position: relative;
     height: 3.5rem;
-    color: #585858;
+    color: ${props => props.theme['@nav-color'] || '#585858'};
     line-height: 1.5;
 
     > ${StyledNavTag} {
