@@ -1,10 +1,22 @@
 import { useQuery } from '@apollo/client'
-import { Badge, Button, Checkbox, CheckboxGroup, FormControl, FormLabel, Heading, Input, Stack } from '@chakra-ui/react'
+import {
+  Badge,
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Radio,
+  RadioGroup,
+  Stack,
+} from '@chakra-ui/react'
 import axios from 'axios'
 import gql from 'graphql-tag'
 import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import { BooleanParam } from 'serialize-query-params'
@@ -22,6 +34,18 @@ type CategoryCheckboxes = {
   description: string
   value: string
 }[]
+
+type IdentityField = {
+  label: string
+  required: boolean
+  type: string
+  propertyName: string
+  options: {
+    id: number
+    title: string
+    value: string
+  }[]
+}
 
 const StyledForm = styled.form`
   padding: 48px 24px;
@@ -53,6 +77,23 @@ const MeetingPage = () => {
   } catch (error) {
     categoryCheckboxes = []
   }
+
+  let identityField: IdentityField | null = null
+  try {
+    identityField = JSON.parse(settings['custom.meeting_page']).identity as IdentityField
+  } catch (error) {
+    identityField = null
+  }
+
+  const [identity, setIdentity] = useState('')
+
+  useEffect(() => {
+    console.log(
+      Array.from(document.querySelectorAll<HTMLInputElement>('input[type=radio]')).map(
+        el => `${el.name}:${el.checked}`,
+      ),
+    )
+  })
 
   // custom property default values
   let propertyDefaultValue: { [key: string]: string } = {}
@@ -90,6 +131,7 @@ const MeetingPage = () => {
     const email = formEntries.find(entry => entry[0] === 'email')?.[1]
     const phone = formEntries.find(entry => entry[0] === 'phone')?.[1]
     const referal = formEntries.find(entry => entry[0] === 'referal')?.[1]
+    const identity = formEntries.find(entry => entry[0] === 'identity')?.[1]
     const uniqueFields = Array.from(
       new Set(formEntries.filter(entry => entry[0] === 'field').flatMap(entry => entry[1].toString().split('/'))),
     )
@@ -107,6 +149,12 @@ const MeetingPage = () => {
 
     if (timeslots.length === 0) {
       alert(formatMessage(MeetingPageMessages.MeetingPage.contactTimes))
+      setIsSubmitting(false)
+      return
+    }
+
+    if (identityField?.required && !identity) {
+      alert('請選擇您的身份')
       setIsSubmitting(false)
       return
     }
@@ -134,6 +182,7 @@ const MeetingPage = () => {
             { name: formatMessage(MeetingPageMessages.MeetingPage.allianceMemberId), value: utm.utm_id || '' },
             { name: formatMessage(MeetingPageMessages.MeetingPage.allianceTransactionId), value: utm.utm_term || '' },
             { name: formatMessage(MeetingPageMessages.MeetingPage.marketingContent), value: utm.utm_content || '' },
+            { name: identityField?.propertyName || '身份', value: identity || '' },
             { name: formatMessage(MeetingPageMessages.MeetingPage.sourceUrl), value: landingPage || '' },
             { name: formatMessage(MeetingPageMessages.MeetingPage.adMaterial), value: adPropertyValues || '' },
             {
@@ -191,6 +240,21 @@ const MeetingPage = () => {
                 ))}
               </Stack>
             </CheckboxGroup>
+          </FormControl>
+        ) : null}
+        {identityField ? (
+          <FormControl className="mb-3" isRequired={identityField.required}>
+            <FormLabel>{identityField.label}</FormLabel>
+            <RadioGroup colorScheme="primary" value={identity} onChange={next => setIdentity(String(next))}>
+              <Stack>
+                {identityField.options.map(option => (
+                  <Radio key={option.id} value={option.value} name="identity" isChecked={identity === option.value}>
+                    {option.title}
+                  </Radio>
+                ))}
+              </Stack>
+            </RadioGroup>
+            <input type="hidden" name="identity" value={identity} />
           </FormControl>
         ) : null}
         <FormControl className="mb-3" isRequired>
