@@ -176,23 +176,6 @@ const MeetingPage = () => {
         <Heading as="h3" size="lg" className="mb-4 text-center">
           {formatMessage(MeetingPageMessages.MeetingPage.bookingLink, { managerUsername: managerUsername })}
         </Heading>
-        <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.name)}</FormLabel>
-          <Input required name="name" placeholder={formatMessage(MeetingPageMessages.MeetingPage.name)} />
-        </FormControl>
-        <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.phone)}</FormLabel>
-          <Input required name="phone" placeholder={formatMessage(MeetingPageMessages.MeetingPage.phone)} />
-        </FormControl>
-        <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.email)}</FormLabel>
-          <Input
-            required
-            name="email"
-            type="email"
-            placeholder={formatMessage(MeetingPageMessages.MeetingPage.email)}
-          />
-        </FormControl>
         {categoryCheckboxes.length !== 0 ? (
           <FormControl className="mb-3" isRequired>
             <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.interest)}</FormLabel>
@@ -228,6 +211,23 @@ const MeetingPage = () => {
               </Checkbox>
             </Stack>
           </CheckboxGroup>
+        </FormControl>
+        <FormControl className="mb-3" isRequired>
+          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.name)}</FormLabel>
+          <Input required name="name" placeholder={formatMessage(MeetingPageMessages.MeetingPage.name)} />
+        </FormControl>
+        <FormControl className="mb-3" isRequired>
+          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.phone)}</FormLabel>
+          <Input required name="phone" placeholder={formatMessage(MeetingPageMessages.MeetingPage.phone)} />
+        </FormControl>
+        <FormControl className="mb-3" isRequired>
+          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.email)}</FormLabel>
+          <Input
+            required
+            name="email"
+            type="email"
+            placeholder={formatMessage(MeetingPageMessages.MeetingPage.email)}
+          />
         </FormControl>
         <FormControl className="mb-3">
           <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.introducer)}</FormLabel>
