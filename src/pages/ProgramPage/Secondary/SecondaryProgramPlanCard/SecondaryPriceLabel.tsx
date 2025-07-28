@@ -6,11 +6,22 @@ import styled from 'styled-components'
 import { PeriodType } from '../../../../types/program'
 import { colors } from '../style'
 
-const StyledDisplayPrice = styled(Text)`
+type CustomStyle = {
+  salePrice?: {
+    amount?: {
+      color?: string
+    }
+  }
+}
+
+const StyledDisplayPrice = styled(Text)<{ customStyle?: CustomStyle }>`
   color: ${colors.orange};
   letter-spacing: 0.23px;
   font-size: 28px;
   font-weight: bold;
+  span.sale_price_amount {
+    color: ${props => props?.customStyle?.salePrice?.amount?.color || colors.orange};
+  }
 `
 
 const StyledPriceDescription = styled(Box)`
@@ -29,6 +40,7 @@ const SecondaryPriceLabel: React.FC<{
   listPricePrefix?: string
   listPriceSuffix?: string
   priceDescription?: string
+  customStyle?: CustomStyle
 }> = ({
   salePrice,
   listPrice,
@@ -40,6 +52,7 @@ const SecondaryPriceLabel: React.FC<{
   currencyId,
   periodAmount,
   periodType,
+  customStyle,
 }) => {
   const { formatCurrency } = useCurrency(currencyId)
 
@@ -66,9 +79,9 @@ const SecondaryPriceLabel: React.FC<{
         </>
       ) : (
         <>
-          <StyledDisplayPrice>
+          <StyledDisplayPrice customStyle={customStyle}>
             {salePricePrefix}
-            {formatCurrency(Number(salePrice))}
+            <span className="sale_price_amount">{formatCurrency(Number(salePrice))}</span>
             {salePriceSuffix}
             {periodElem}
           </StyledDisplayPrice>

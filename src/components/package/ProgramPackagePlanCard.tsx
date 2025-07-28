@@ -1,14 +1,15 @@
 import { Button, Divider } from '@chakra-ui/react'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { ProgramPackagePlanProps } from '../../types/programPackage'
-import PaymentButton from '../common/PaymentButton'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import CountDownTimeBlock from '../common/CountDownTimeBlock'
+import PaymentButton from '../common/PaymentButton'
 
 const StyledCard = styled.div`
   padding: 1.5rem;
@@ -66,8 +67,11 @@ const ProgramPackagePlanCard: React.FC<
   isEnrolled,
   isPublished,
 }) => {
+  const { settings } = useApp()
   const { formatMessage } = useIntl()
   const isOnSale = soldAt ? Date.now() < soldAt.getTime() : false
+
+  const programPackagePlanSalePriceColorSetting = settings['program_package_plan_card.sale_price.color']?.trim()
 
   return (
     <StyledCard>
@@ -79,6 +83,13 @@ const ProgramPackagePlanCard: React.FC<
         downPrice={discountDownPrice}
         periodType={isSubscription ? periodType : undefined}
         periodAmount={isSubscription ? periodAmount : undefined}
+        customStyle={{
+          salePrice: {
+            amount: {
+              color: programPackagePlanSalePriceColorSetting ? programPackagePlanSalePriceColorSetting : undefined,
+            },
+          },
+        }}
       />
       {isCountdownTimerVisible && soldAt && isOnSale && (
         <StyledCountDownBlock>
