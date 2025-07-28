@@ -16,7 +16,7 @@ import axios from 'axios'
 import gql from 'graphql-tag'
 import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import { BooleanParam } from 'serialize-query-params'
@@ -36,6 +36,18 @@ type CategoryCheckboxes = {
 }[]
 
 type IdentityField = {
+  label: string
+  required: boolean
+  type: string
+  propertyName: string
+  options: {
+    id: number
+    title: string
+    value: string
+  }[]
+}
+
+type LearningBudgetField = {
   label: string
   required: boolean
   type: string
@@ -85,15 +97,15 @@ const MeetingPage = () => {
     identityField = null
   }
 
-  const [identity, setIdentity] = useState('')
+  let learningBudgetField: LearningBudgetField | null = null
+  try {
+    learningBudgetField = JSON.parse(settings['custom.meeting_page']).learningBudget as LearningBudgetField
+  } catch (error) {
+    learningBudgetField = null
+  }
 
-  useEffect(() => {
-    console.log(
-      Array.from(document.querySelectorAll<HTMLInputElement>('input[type=radio]')).map(
-        el => `${el.name}:${el.checked}`,
-      ),
-    )
-  })
+  const [identity, setIdentity] = useState('')
+  const [learningBudget, setLearningBudget] = useState('')
 
   // custom property default values
   let propertyDefaultValue: { [key: string]: string } = {}
@@ -132,6 +144,7 @@ const MeetingPage = () => {
     const phone = formEntries.find(entry => entry[0] === 'phone')?.[1]
     const referal = formEntries.find(entry => entry[0] === 'referal')?.[1]
     const identity = formEntries.find(entry => entry[0] === 'identity')?.[1]
+    const learningBudget = formEntries.find(entry => entry[0] === 'learningBudget')?.[1]
     const uniqueFields = Array.from(
       new Set(formEntries.filter(entry => entry[0] === 'field').flatMap(entry => entry[1].toString().split('/'))),
     )
@@ -155,6 +168,12 @@ const MeetingPage = () => {
 
     if (identityField?.required && !identity) {
       alert('請選擇您的身份')
+      setIsSubmitting(false)
+      return
+    }
+
+    if (learningBudgetField?.required && !learningBudget) {
+      alert('請選擇您的學習預算')
       setIsSubmitting(false)
       return
     }
@@ -183,6 +202,7 @@ const MeetingPage = () => {
             { name: formatMessage(MeetingPageMessages.MeetingPage.allianceTransactionId), value: utm.utm_term || '' },
             { name: formatMessage(MeetingPageMessages.MeetingPage.marketingContent), value: utm.utm_content || '' },
             { name: identityField?.propertyName || '身份', value: identity || '' },
+            { name: learningBudgetField?.propertyName || '每月學習預算', value: learningBudget || '' },
             { name: formatMessage(MeetingPageMessages.MeetingPage.sourceUrl), value: landingPage || '' },
             { name: formatMessage(MeetingPageMessages.MeetingPage.adMaterial), value: adPropertyValues || '' },
             {
@@ -255,6 +275,26 @@ const MeetingPage = () => {
               </Stack>
             </RadioGroup>
             <input type="hidden" name="identity" value={identity} />
+          </FormControl>
+        ) : null}
+        {learningBudgetField ? (
+          <FormControl className="mb-3" isRequired={learningBudgetField.required}>
+            <FormLabel>{learningBudgetField.label}</FormLabel>
+            <RadioGroup colorScheme="primary" value={learningBudget} onChange={next => setLearningBudget(String(next))}>
+              <Stack>
+                {learningBudgetField.options.map(option => (
+                  <Radio
+                    key={option.id}
+                    value={option.value}
+                    name="learningBudget"
+                    isChecked={learningBudget === option.value}
+                  >
+                    {option.title}
+                  </Radio>
+                ))}
+              </Stack>
+            </RadioGroup>
+            <input type="hidden" name="learningBudget" value={learningBudget} />
           </FormControl>
         ) : null}
         <FormControl className="mb-3" isRequired>
