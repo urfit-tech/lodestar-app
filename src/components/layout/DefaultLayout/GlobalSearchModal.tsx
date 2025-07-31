@@ -438,32 +438,34 @@ const GlobalSearchFilter: React.FC<{
           <StyledFilterSubTitle className="mb-2">
             {formatMessage(defineMessage({ id: 'common.ui.duration', defaultMessage: '時長（分鐘）' }))}
           </StyledFilterSubTitle>
-          {[0, ...settings['global_search.minute_interval'].split(',').map(Number)].map((minute, i, minutes) => (
-            <StyledRoundedButton
-              onClick={() => {
-                onFilterSet(prevFilter => ({
-                  ...prevFilter,
-                  durationRange: equals(prevFilter.durationRange, [minute, minutes[i + 1]])
-                    ? null
-                    : [minute, minutes[i + 1]],
-                }))
-              }}
-              active={equals(filter.durationRange, [minute, minutes[i + 1]])}
-              className="mr-2"
-              colorScheme="primary"
-              variant="outline"
-            >
-              {i === 0 ? (
-                <span>&lt; {minutes[i + 1]}</span>
-              ) : i === minutes.length - 1 ? (
-                <span>{minute} &gt;</span>
-              ) : (
-                <span>
-                  {minute} ~ {minutes[i + 1]}
-                </span>
-              )}
-            </StyledRoundedButton>
-          ))}
+          {[0, ...(settings['global_search.minute_interval']?.split(',').map(Number) ?? [])].map(
+            (minute, i, minutes) => (
+              <StyledRoundedButton
+                onClick={() => {
+                  onFilterSet(prevFilter => ({
+                    ...prevFilter,
+                    durationRange: equals(prevFilter.durationRange, [minute, minutes[i + 1]])
+                      ? null
+                      : [minute, minutes[i + 1]],
+                  }))
+                }}
+                active={equals(filter.durationRange, [minute, minutes[i + 1]])}
+                className="mr-2"
+                colorScheme="primary"
+                variant="outline"
+              >
+                {i === 0 ? (
+                  <span>&lt; {minutes[i + 1]}</span>
+                ) : i === minutes.length - 1 ? (
+                  <span>{minute} &gt;</span>
+                ) : (
+                  <span>
+                    {minute} ~ {minutes[i + 1]}
+                  </span>
+                )}
+              </StyledRoundedButton>
+            ),
+          )}
         </div>
         <div className="mb-2">
           <StyledFilterSubTitle className="mb-2">
