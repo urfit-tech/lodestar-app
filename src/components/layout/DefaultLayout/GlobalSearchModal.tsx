@@ -54,6 +54,7 @@ const StyleSearchIcon = styled.div`
   width: 48px;
   height: 48px;
   cursor: pointer;
+  color: ${props => props.theme['@nav-color'] || '#ffffff'};
 `
 
 const StyledClearButton = styled.span`
