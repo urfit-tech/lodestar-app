@@ -37,8 +37,14 @@ export const getAvailableCoupons = filter(
 
 export const getAvailableMembershipCards: (membershipCards: MembershipCardProps[]) => MembershipCardProps[] = filter(
   allPass([
-    pipe(prop('startedAt') as (membershipCard: MembershipCardProps) => number, gte(Number(new Date()))),
-    pipe(prop('endedAt') as (membershipCard: MembershipCardProps) => number, lte(Number(new Date()))),
+    pipe(
+      pipe(prop('startedAt') as (membershipCard: MembershipCardProps) => number, defaultTo(-Infinity)),
+      gte(Number(new Date())),
+    ),
+    pipe(
+      pipe(prop('endedAt') as (membershipCard: MembershipCardProps) => number, defaultTo(Infinity)),
+      lte(Number(new Date())),
+    ),
   ]),
 )
 
