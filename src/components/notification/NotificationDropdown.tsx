@@ -45,7 +45,7 @@ const StyledButton = styled(Button)`
   &&:hover,
   &&:active,
   &&:focus {
-    color: var(--gray-darker);
+    color: ${props => props.theme['@nav-color'] || '#585858'};
   }
 `
 const StyledReadAllButton = styled(Button)`
