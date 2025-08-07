@@ -319,6 +319,7 @@
   "checkout.title.cart": "Daftar Belanja",
   "checkout.title.chooseCart": "Pilih Keranjang Checkout",
   "checkout.ui.gift": "Hadiah",
+  "checkoutMessages.ui.approved": "Saya setuju",
   "code.E_BIND_CREDIT_CARD": "Kesalahan mengikat kartu kredit",
   "code.E_BIND_DEVICE": "Akun telah mencapai jumlah maksimum perangkat login",
   "code.E_CHECKOUT_ORDER": "Kesalahan checkout",

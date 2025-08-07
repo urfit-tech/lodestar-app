@@ -319,6 +319,7 @@
   "checkout.title.cart": "쇼핑 리스트",
   "checkout.title.chooseCart": "결제 장바구니 선택",
   "checkout.ui.gift": "선물",
+  "checkoutMessages.ui.approved": "동의합니다",
   "code.E_BIND_CREDIT_CARD": "신용카드 바인딩 오류",
   "code.E_BIND_DEVICE": "해당 계정의 기기 한도 초과",
   "code.E_CHECKOUT_ORDER": "결제 오류",

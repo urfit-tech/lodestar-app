@@ -42,8 +42,6 @@ import { CartProductProps, InvoiceProps, ShippingProps } from '../../types/check
 import { MemberProps } from '../../types/member'
 import { AuthModalContext } from '../auth/AuthModal'
 import GroupBuyingRuleModal from './CheckoutGroupBuyingForm/GroupBuyingRuleModal'
-import Cookies from 'js-cookie'
-import { TrackingEvent, Method } from '../../types/tracking'
 
 const StyledTitle = styled.div`
   ${CommonTitleMixin}
@@ -93,7 +91,7 @@ const CheckoutBlock: React.FC<{
   const history = useHistory()
   const { isAuthenticating, isAuthenticated, currentMemberId, authToken } = useAuth()
   const { settings, enabledModules } = useApp()
-  const { setVisible: setAuthModalVisible } = useContext(AuthModalContext)
+  const { setVisible } = useContext(AuthModalContext)
   const { removeCartProducts } = useContext(CartContext)
   const { memberShop } = useMemberShop(shopId)
   const [isApproved, setIsApproved] = useState(localStorage.getItem('kolable.checkout.approvement') === 'true')
@@ -211,6 +209,18 @@ const CheckoutBlock: React.FC<{
 
   const { memberId: referrerId, siteMemberValidateStatus } = useMemberValidation(referrerEmail)
 
+  const { locale } = useIntl()
+  const rawContent = settings['checkout.approvement_content']
+  let approvementContent = rawContent
+  const fallbackLocale = 'en-us'
+
+  try {
+    const parsed = JSON.parse(rawContent)
+    if (typeof parsed === 'object' && parsed !== null) {
+      approvementContent = parsed[locale] || parsed[fallbackLocale]
+    }
+  } catch (err) {}
+
   // checkout
   const [discountId, setDiscountId] = useState<string | null>(null)
 
@@ -257,9 +267,7 @@ const CheckoutBlock: React.FC<{
 
   const handleCheckoutAsync = async () => {
     if (!isAuthenticated || !member) {
-      Cookies.set(TrackingEvent.METHOD, Method.PURCHASE, { expires: 1 })
-      Cookies.set(TrackingEvent.PAGE, window.location.href, { expires: 1 })
-      setAuthModalVisible?.(true)
+      setVisible?.(true)
       return
     }
 
@@ -598,13 +606,8 @@ const CheckoutBlock: React.FC<{
             isChecked={isApproved}
             onChange={() => setIsApproved(prev => !prev)}
           />
-          <StyledLabel>
-            {formatMessage(defineMessage({ id: 'checkoutMessages.ui.approved', defaultMessage: '我同意' }))}
-          </StyledLabel>
-          <StyledApprovementBox
-            className="mt-2"
-            dangerouslySetInnerHTML={{ __html: settings['checkout.approvement_content'] }}
-          />
+          <StyledLabel>{formatMessage(defineMessage(checkoutMessages.ui.approved))}</StyledLabel>
+          <StyledApprovementBox className="mt-2" dangerouslySetInnerHTML={{ __html: approvementContent }} />
         </AdminCard>
       )}
       {renderTerms && (

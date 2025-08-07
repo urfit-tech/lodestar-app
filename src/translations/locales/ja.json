@@ -319,6 +319,7 @@
   "checkout.title.cart": "ショッピングリスト",
   "checkout.title.chooseCart": "チェックアウトカートを選択",
   "checkout.ui.gift": "ギフト",
+  "checkoutMessages.ui.approved": "同意します",
   "code.E_BIND_CREDIT_CARD": "クレジットカードのバインドエラー",
   "code.E_BIND_DEVICE": "アカウントのデバイス制限が上限に達しました",
   "code.E_CHECKOUT_ORDER": "チェックアウトエラー",
