@@ -1,5 +1,5 @@
 import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons'
-import { Button, Icon, Box, Center, Collapse, Flex, Spacer, useDisclosure } from '@chakra-ui/react'
+import { Button, Icon, Box, Center, Collapse, Flex, Spacer, useDisclosure, ButtonProps } from '@chakra-ui/react'
 import { List, message, Popover } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -21,7 +21,6 @@ import LocaleCollapse from './LocaleCollapse'
 import MemberAvatar from './MemberAvatar'
 import Responsive from './Responsive'
 import { MenuOutlined } from '@ant-design/icons'
-import { ButtonProps } from 'antd/lib/button'
 
 export const Wrapper = styled.div`
   padding: 12px 0;
