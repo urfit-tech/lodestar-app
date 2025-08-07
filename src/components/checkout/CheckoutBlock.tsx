@@ -209,6 +209,18 @@ const CheckoutBlock: React.FC<{
 
   const { memberId: referrerId, siteMemberValidateStatus } = useMemberValidation(referrerEmail)
 
+  const { locale } = useIntl()
+  const rawContent = settings['checkout.approvement_content']
+  let approvementContent = rawContent
+  const fallbackLocale = 'en-us'
+
+  try {
+    const parsed = JSON.parse(rawContent)
+    if (typeof parsed === 'object' && parsed !== null) {
+      approvementContent = parsed[locale] || parsed[fallbackLocale]
+    }
+  } catch (err) {}
+
   // checkout
   const [discountId, setDiscountId] = useState<string | null>(null)
 
@@ -594,13 +606,8 @@ const CheckoutBlock: React.FC<{
             isChecked={isApproved}
             onChange={() => setIsApproved(prev => !prev)}
           />
-          <StyledLabel>
-            {formatMessage(defineMessage({ id: 'checkoutMessages.ui.approved', defaultMessage: '我同意' }))}
-          </StyledLabel>
-          <StyledApprovementBox
-            className="mt-2"
-            dangerouslySetInnerHTML={{ __html: settings['checkout.approvement_content'] }}
-          />
+          <StyledLabel>{formatMessage(defineMessage(checkoutMessages.ui.approved))}</StyledLabel>
+          <StyledApprovementBox className="mt-2" dangerouslySetInnerHTML={{ __html: approvementContent }} />
         </AdminCard>
       )}
       {renderTerms && (

@@ -319,6 +319,7 @@
   "checkout.title.cart": "Danh sách mua hàng",
   "checkout.title.chooseCart": "Chọn giỏ hàng để thanh toán",
   "checkout.ui.gift": "Quà tặng",
+  "checkoutMessages.ui.approved": "Tôi đồng ý",
   "code.E_BIND_CREDIT_CARD": "Lỗi liên kết thẻ tín dụng",
   "code.E_BIND_DEVICE": "Tài khoản này đã đạt giới hạn thiết bị đăng nhập",
   "code.E_CHECKOUT_ORDER": "Lỗi thanh toán",
