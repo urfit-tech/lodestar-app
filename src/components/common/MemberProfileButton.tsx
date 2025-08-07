@@ -301,7 +301,7 @@ const MemberProfileButton: React.FC<{
   return (
     <Popover placement="bottomRight" trigger="click" content={content}>
       <Responsive.Default>
-        <StyledButton type="link">
+        <StyledButton>
           <Icon as={MenuOutlined} />
         </StyledButton>
       </Responsive.Default>
