@@ -546,6 +546,7 @@ export const checkoutMessages = {
   }),
   ui: defineMessages({
     gift: { id: 'checkout.ui.gift', defaultMessage: '贈品' },
+    approved: { id: 'checkoutMessages.ui.approved', defaultMessage: '我同意' },
   }),
   label: defineMessages({
     groupBuying: { id: 'checkout.label.groupBuying', defaultMessage: '多人同行揪團' },

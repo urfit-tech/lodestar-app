@@ -319,6 +319,7 @@
   "checkout.title.cart": "Einkaufszettel",
   "checkout.title.chooseCart": "Kassenkorb auswählen",
   "checkout.ui.gift": "Geschenk",
+  "checkoutMessages.ui.approved": "Ich stimme zu",
   "code.E_BIND_CREDIT_CARD": "Fehler beim Binden der Kreditkarte",
   "code.E_BIND_DEVICE": "Das Konto hat die maximale Anzahl an Login-Geräten erreicht",
   "code.E_CHECKOUT_ORDER": "Kauffehler",

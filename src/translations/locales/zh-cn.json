@@ -319,6 +319,7 @@
   "checkout.title.cart": "购物清单",
   "checkout.title.chooseCart": "选择结账购物车",
   "checkout.ui.gift": "赠品",
+  "checkoutMessages.ui.approved": "我同意",
   "code.E_BIND_CREDIT_CARD": "绑定信用卡错误",
   "code.E_BIND_DEVICE": "该账号登录设备已达上限",
   "code.E_CHECKOUT_ORDER": "结账错误",
