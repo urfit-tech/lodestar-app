@@ -1,4 +1,4 @@
-import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import { Button, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -55,6 +55,15 @@ const StyledNotificationBar = styled.div<{ variant?: string }>`
   color: ${props => (props.variant === 'warning' ? 'white' : '#777')};
   font-weight: 500;
   font-size: 14px;
+`
+const StyledButton = styled(Button)`
+  &&,
+  &&:hover,
+  &&:active,
+  &&:focus {
+    background: transparent;
+    color: ${props => props.theme['@nav-color'] || '#585858'};
+  }
 `
 
 const DefaultLayout: React.FC<{
@@ -267,7 +276,9 @@ const DefaultLayout: React.FC<{
                 <Responsive.Desktop>
                   <Menu>
                     <MenuButton p="1rem">
-                      <EarthGlobalIcon height="24px" width="24px" />
+                      <StyledButton>
+                        <EarthGlobalIcon height="24px" width="24px" />
+                      </StyledButton>
                     </MenuButton>
                     <MenuList>
                       {languagesList.map(supportedLocale => (

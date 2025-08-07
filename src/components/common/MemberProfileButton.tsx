@@ -1,6 +1,8 @@
+import { MenuOutlined } from '@ant-design/icons'
 import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons'
-import { Box, Center, Collapse, Flex, Spacer, useDisclosure } from '@chakra-ui/react'
-import { Button, Icon, List, message, Popover } from 'antd'
+import { Box, Button, Center, Collapse, Flex, Icon, Spacer, useDisclosure } from '@chakra-ui/react'
+import { List, message, Popover } from 'antd'
+import { ButtonProps } from 'antd/lib/button'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { parsePayload } from 'lodestar-app-element/src/hooks/util'
@@ -58,6 +60,16 @@ const StyledCollapseIconWrapper = styled(Box)`
 `
 const StyledListItem = styled(Flex)`
   padding: 16px 16px 16px 0px;
+`
+
+const StyledButton = styled((props: ButtonProps) => <Button {...props} />)`
+  &&,
+  &&:hover,
+  &&:active,
+  &&:focus {
+    background: transparent;
+    color: ${props => props.theme['@nav-color'] || '#585858'};
+  }
 `
 
 export const CollapseNavLinks: React.FC<{ nav: AppNavProps }> = ({ nav }) => {
@@ -289,7 +301,9 @@ const MemberProfileButton: React.FC<{
   return (
     <Popover placement="bottomRight" trigger="click" content={content}>
       <Responsive.Default>
-        <Button type="link" icon="menu" />
+        <StyledButton>
+          <Icon as={MenuOutlined} />
+        </StyledButton>
       </Responsive.Default>
 
       <Responsive.Desktop>
