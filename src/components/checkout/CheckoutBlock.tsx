@@ -597,7 +597,7 @@ const CheckoutBlock: React.FC<{
           </div>
         </AdminCard>
       )}
-      {settings['checkout.approvement'] === 'true' && (
+      {(settings['checkout.approvement'] === 'true' || settings['checkout.approvement'] === '1') && (
         <AdminCard className="mb-3">
           <StyledCheckbox
             className="mr-2"
@@ -617,7 +617,10 @@ const CheckoutBlock: React.FC<{
       )}
       <div className="mb-3">
         <CheckoutCard
-          isDisabled={settings['checkout.approvement'] === 'true' && isApproved === false}
+          isDisabled={
+            (settings['checkout.approvement'] === 'true' || settings['checkout.approvement'] === '1') &&
+            isApproved === false
+          }
           check={check}
           cartProducts={cartProducts}
           discountId={discountId}
