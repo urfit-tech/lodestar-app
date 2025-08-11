@@ -4,7 +4,7 @@ import { camelCase } from 'lodash'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
-import { addIndex, assoc, curry, map, pipe, prop, sum } from 'ramda'
+import { add, addIndex, assoc, curry, map, pipe, prop, sum } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { checkoutMessages } from '../../helpers/translation'
@@ -129,6 +129,7 @@ const CheckoutCard: React.FC<
                   calculateOriginalTotal,
                   applyDiscountToProduct(check.orderDiscounts, check.orderProducts) as PipeFunction,
                   applyNonProductSpecificDiscounts(check.orderDiscounts) as PipeFunction,
+                  add(check?.shippingOption?.fee ?? 0),
                 )(check.orderProducts)
 
                 return total
