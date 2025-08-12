@@ -1,5 +1,17 @@
 import { useQuery } from '@apollo/client'
-import { Badge, Button, Checkbox, CheckboxGroup, FormControl, FormLabel, Heading, Input, Stack } from '@chakra-ui/react'
+import {
+  Badge,
+  Button,
+  Checkbox,
+  CheckboxGroup,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Radio,
+  RadioGroup,
+  Stack,
+} from '@chakra-ui/react'
 import axios from 'axios'
 import gql from 'graphql-tag'
 import Cookies from 'js-cookie'
@@ -22,6 +34,30 @@ type CategoryCheckboxes = {
   description: string
   value: string
 }[]
+
+type IdentityField = {
+  label: string
+  required: boolean
+  type: string
+  propertyName: string
+  options: {
+    id: number
+    title: string
+    value: string
+  }[]
+}
+
+type LearningBudgetField = {
+  label: string
+  required: boolean
+  type: string
+  propertyName: string
+  options: {
+    id: number
+    title: string
+    value: string
+  }[]
+}
 
 const StyledForm = styled.form`
   padding: 48px 24px;
@@ -53,6 +89,23 @@ const MeetingPage = () => {
   } catch (error) {
     categoryCheckboxes = []
   }
+
+  let identityField: IdentityField | null = null
+  try {
+    identityField = JSON.parse(settings['custom.meeting_page']).identity as IdentityField
+  } catch (error) {
+    identityField = null
+  }
+
+  let learningBudgetField: LearningBudgetField | null = null
+  try {
+    learningBudgetField = JSON.parse(settings['custom.meeting_page']).learningBudget as LearningBudgetField
+  } catch (error) {
+    learningBudgetField = null
+  }
+
+  const [identity, setIdentity] = useState('')
+  const [learningBudget, setLearningBudget] = useState('')
 
   // custom property default values
   let propertyDefaultValue: { [key: string]: string } = {}
@@ -90,6 +143,8 @@ const MeetingPage = () => {
     const email = formEntries.find(entry => entry[0] === 'email')?.[1]
     const phone = formEntries.find(entry => entry[0] === 'phone')?.[1]
     const referal = formEntries.find(entry => entry[0] === 'referal')?.[1]
+    const identity = formEntries.find(entry => entry[0] === 'identity')?.[1]
+    const learningBudget = formEntries.find(entry => entry[0] === 'learningBudget')?.[1]
     const uniqueFields = Array.from(
       new Set(formEntries.filter(entry => entry[0] === 'field').flatMap(entry => entry[1].toString().split('/'))),
     )
@@ -107,6 +162,18 @@ const MeetingPage = () => {
 
     if (timeslots.length === 0) {
       alert(formatMessage(MeetingPageMessages.MeetingPage.contactTimes))
+      setIsSubmitting(false)
+      return
+    }
+
+    if (identityField?.required && !identity) {
+      alert('請選擇您的身份')
+      setIsSubmitting(false)
+      return
+    }
+
+    if (learningBudgetField?.required && !learningBudget) {
+      alert('請選擇您的學習預算')
       setIsSubmitting(false)
       return
     }
@@ -130,21 +197,23 @@ const MeetingPage = () => {
           categoryNames: uniqueFields,
           properties: [
             { name: formatMessage(MeetingPageMessages.MeetingPage.introducer), value: referal },
-            // { name: formatMessage(MeetingPageMessages.MeetingPage.allianceSource), value: utm.utm_source || '' },
-            // { name: formatMessage(MeetingPageMessages.MeetingPage.allianceMemberId), value: utm.utm_id || '' },
-            // { name: formatMessage(MeetingPageMessages.MeetingPage.allianceTransactionId), value: utm.utm_term || '' },
-            // { name: formatMessage(MeetingPageMessages.MeetingPage.marketingContent), value: utm.utm_content || '' },
-            { name: "來源網址", value: landingPage || '' },
-            { name: "廣告素材", value: adPropertyValues || '' },
+            { name: formatMessage(MeetingPageMessages.MeetingPage.allianceSource), value: utm.utm_source || '' },
+            { name: formatMessage(MeetingPageMessages.MeetingPage.allianceMemberId), value: utm.utm_id || '' },
+            { name: formatMessage(MeetingPageMessages.MeetingPage.allianceTransactionId), value: utm.utm_term || '' },
+            { name: formatMessage(MeetingPageMessages.MeetingPage.marketingContent), value: utm.utm_content || '' },
+            { name: identityField?.propertyName || '身份', value: identity || '' },
+            { name: learningBudgetField?.propertyName || '每月學習預算', value: learningBudget || '' },
+            { name: formatMessage(MeetingPageMessages.MeetingPage.sourceUrl), value: landingPage || '' },
+            { name: formatMessage(MeetingPageMessages.MeetingPage.adMaterial), value: adPropertyValues || '' },
             {
-              name: "行銷活動",
-              value: propertyDefaultValue["行銷活動"] || '',
+              name: '行銷活動',
+              value: propertyDefaultValue['行銷活動'] || '',
             },
             {
-              name: "名單分級",
-              value: propertyDefaultValue["名單分級"] || '',
+              name: '名單分級',
+              value: propertyDefaultValue['名單分級'] || '',
             },
-            { name: 'landing', value: landingPage || ''  },
+            { name: 'landing', value: landingPage || '' },
             { name: 'utm_source', value: utm.utm_source || '' },
             { name: 'utm_medium', value: utm.utm_medium || '' },
             { name: 'utm_id', value: utm.utm_id || '' },
@@ -183,23 +252,6 @@ const MeetingPage = () => {
         <Heading as="h3" size="lg" className="mb-4 text-center">
           {formatMessage(MeetingPageMessages.MeetingPage.bookingLink, { managerUsername: managerUsername })}
         </Heading>
-        <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.name)}</FormLabel>
-          <Input required name="name" placeholder={formatMessage(MeetingPageMessages.MeetingPage.name)} />
-        </FormControl>
-        <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.phone)}</FormLabel>
-          <Input required name="phone" placeholder={formatMessage(MeetingPageMessages.MeetingPage.phone)} />
-        </FormControl>
-        <FormControl className="mb-3" isRequired>
-          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.email)}</FormLabel>
-          <Input
-            required
-            name="email"
-            type="email"
-            placeholder={formatMessage(MeetingPageMessages.MeetingPage.email)}
-          />
-        </FormControl>
         {categoryCheckboxes.length !== 0 ? (
           <FormControl className="mb-3" isRequired>
             <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.interest)}</FormLabel>
@@ -215,6 +267,41 @@ const MeetingPage = () => {
                 ))}
               </Stack>
             </CheckboxGroup>
+          </FormControl>
+        ) : null}
+        {identityField ? (
+          <FormControl className="mb-3" isRequired={identityField.required}>
+            <FormLabel>{identityField.label}</FormLabel>
+            <RadioGroup colorScheme="primary" value={identity} onChange={next => setIdentity(String(next))}>
+              <Stack>
+                {identityField.options.map(option => (
+                  <Radio key={option.id} value={option.value} name="identity" isChecked={identity === option.value}>
+                    {option.title}
+                  </Radio>
+                ))}
+              </Stack>
+            </RadioGroup>
+            <input type="hidden" name="identity" value={identity} />
+          </FormControl>
+        ) : null}
+        {learningBudgetField ? (
+          <FormControl className="mb-3" isRequired={learningBudgetField.required}>
+            <FormLabel>{learningBudgetField.label}</FormLabel>
+            <RadioGroup colorScheme="primary" value={learningBudget} onChange={next => setLearningBudget(String(next))}>
+              <Stack>
+                {learningBudgetField.options.map(option => (
+                  <Radio
+                    key={option.id}
+                    value={option.value}
+                    name="learningBudget"
+                    isChecked={learningBudget === option.value}
+                  >
+                    {option.title}
+                  </Radio>
+                ))}
+              </Stack>
+            </RadioGroup>
+            <input type="hidden" name="learningBudget" value={learningBudget} />
           </FormControl>
         ) : null}
         <FormControl className="mb-3" isRequired>
@@ -235,6 +322,23 @@ const MeetingPage = () => {
               </Checkbox>
             </Stack>
           </CheckboxGroup>
+        </FormControl>
+        <FormControl className="mb-3" isRequired>
+          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.name)}</FormLabel>
+          <Input required name="name" placeholder={formatMessage(MeetingPageMessages.MeetingPage.name)} />
+        </FormControl>
+        <FormControl className="mb-3" isRequired>
+          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.phone)}</FormLabel>
+          <Input required name="phone" placeholder={formatMessage(MeetingPageMessages.MeetingPage.phone)} />
+        </FormControl>
+        <FormControl className="mb-3" isRequired>
+          <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.email)}</FormLabel>
+          <Input
+            required
+            name="email"
+            type="email"
+            placeholder={formatMessage(MeetingPageMessages.MeetingPage.email)}
+          />
         </FormControl>
         <FormControl className="mb-3">
           <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.introducer)}</FormLabel>
