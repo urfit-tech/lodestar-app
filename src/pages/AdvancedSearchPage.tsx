@@ -1,4 +1,3 @@
-import { gql, useQuery } from '@apollo/client'
 import { Button, Icon, SkeletonText } from '@chakra-ui/react'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { isEmpty, uniq } from 'ramda'
@@ -8,7 +7,7 @@ import styled from 'styled-components'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { FilterType } from '../components/layout/DefaultLayout/GlobalSearchModal'
-import hasura from '../hasura'
+import { useSearchProductCollection } from '../hooks/search'
 import EmptyCover from '../images/empty-cover.png'
 import { ReactComponent as EmptyBoxIcon } from '../images/icons-empty-box.svg'
 import { ReactComponent as StarIcon } from '../images/star-current-color.svg'
@@ -88,37 +87,144 @@ const StyledButton = styled(Button)`
   }
 `
 
+const getTypeDisplayName = (type: string, originalCategories: string[]) => {
+  if (originalCategories.length > 0) {
+    return originalCategories
+  }
+
+  const typeMap: Record<string, string[]> = {
+    program: ['課程'],
+    project: ['專案'],
+    activity: ['線上講座'],
+    post: ['文章'],
+    podcast_program: ['Podcast'],
+    merchandise: ['商品'],
+    program_package: ['課程包'],
+  }
+
+  return typeMap[type] || []
+}
+
 const AdvancedSearchPage: React.FC = () => {
   const history = useHistory()
   const { formatMessage } = useIntl()
-  const { state } = useLocation<{ title: string } & FilterType>()
+  const { state } = useLocation<{ title: string; memberId?: string; memberRoles?: string[] } & FilterType>()
 
-  const { isLoading, data } = useSearchPrograms({
-    is_private: { _eq: false },
-    published_at: { _is_null: false },
-    title: state?.title ? { _like: `%${state.title}%` } : undefined,
-    _and: [
-      ...(state?.categoryIdSList?.map(categoryIdS => ({
-        program_categories: {
-          category_id: { _in: categoryIdS },
+  const hasAdvancedParams = !!(
+    state?.categoryIdSList?.length ||
+    state?.tagNameSList?.length ||
+    state?.durationRange ||
+    state?.score
+  )
+
+  const { loadingSearchResults: isLoading, searchResults } = useSearchProductCollection(
+    state?.memberId || null,
+    state?.memberRoles || ['instructor', 'content-creator'],
+    {
+      title: state?.title || null,
+      tag: null,
+      ...(hasAdvancedParams && {
+        advancedFilters: {
+          categoryIds: state.categoryIdSList,
+          tagNames: state.tagNameSList,
+          durationRange: state.durationRange || undefined,
+          score: state.score || undefined,
+          onlyPrograms: true,
         },
-      })) || []),
-      ...(state?.tagNameSList?.map(tagNameS => ({
-        program_tags: {
-          tag_name: { _in: tagNameS },
-        },
-      })) || []),
-    ],
-    program_duration: state?.durationRange
-      ? {
-          _and: [
-            { duration: { _lte: state.durationRange[0] * 60 } },
-            { duration: { _gt: state.durationRange[1] * 60 } },
-          ],
-        }
-      : undefined,
-    program_review_score: state?.score ? { score: { _gt: state.score } } : undefined,
-  })
+      }),
+    },
+  )
+
+  const data = hasAdvancedParams
+    ? searchResults.programs.map(program => ({
+        id: program.id,
+        coverUrl: program.coverUrl,
+        title: program.title,
+        score: program.score || null,
+        categoryNames: uniq(
+          (program.categories || []).map(cat => (cat.name.includes('/') ? cat.name.split('/')[1] : cat.name)),
+        ),
+        type: 'program',
+      }))
+    : [
+        ...searchResults.programs.map(program => {
+          const originalCategories = program.categories?.map(cat => cat.name) || []
+          return {
+            id: program.id,
+            coverUrl: program.coverUrl,
+            title: program.title,
+            score: null,
+            categoryNames: getTypeDisplayName('program', originalCategories),
+            type: 'program',
+          }
+        }),
+        ...searchResults.projects.map(project => {
+          const originalCategories = project.categories?.map(cat => cat.name) || []
+          return {
+            id: project.id,
+            coverUrl: project.coverUrl,
+            title: project.title,
+            score: null,
+            categoryNames: getTypeDisplayName('project', originalCategories),
+            type: 'project',
+          }
+        }),
+        ...searchResults.activities.map(activity => {
+          const originalCategories = activity.categories?.map(cat => cat.name) || []
+          return {
+            id: activity.id,
+            coverUrl: activity.coverUrl,
+            title: activity.title,
+            score: null,
+            categoryNames: getTypeDisplayName('activity', originalCategories),
+            type: 'activity',
+          }
+        }),
+        ...searchResults.posts.map(post => {
+          const originalCategories: string[] = []
+          return {
+            id: post.id,
+            coverUrl: post.coverUrl,
+            title: post.title,
+            score: null,
+            categoryNames: getTypeDisplayName('post', originalCategories),
+            type: 'post',
+          }
+        }),
+        ...searchResults.podcastPrograms.map(podcast => {
+          const originalCategories = podcast.categories?.map(cat => cat.name) || []
+          return {
+            id: podcast.id,
+            coverUrl: podcast.coverUrl,
+            title: podcast.title,
+            score: null,
+            categoryNames: getTypeDisplayName('podcast_program', originalCategories),
+            type: 'podcast_program',
+          }
+        }),
+        ...searchResults.merchandises.map(merchandise => {
+          const originalCategories = merchandise.categories?.map(cat => cat.name) || []
+          return {
+            id: merchandise.id,
+            coverUrl: merchandise.images?.[0]?.url || null,
+            title: merchandise.title,
+            score: null,
+            categoryNames: getTypeDisplayName('merchandise', originalCategories),
+            type: 'merchandise',
+          }
+        }),
+        ...searchResults.programPackages.map(packageItem => {
+          const originalCategories: string[] = []
+          return {
+            id: packageItem.id,
+            coverUrl: packageItem.coverUrl,
+            title: packageItem.title,
+            score: null,
+            categoryNames: getTypeDisplayName('program_package', originalCategories),
+            type: 'program_package',
+          }
+        }),
+      ]
 
   return (
     <DefaultLayout white>
@@ -144,16 +250,16 @@ const AdvancedSearchPage: React.FC = () => {
           </StyledContainer>
         ) : (
           <StyledLayout className="mb-4">
-            {data.map(program => (
-              <Link to={`/programs/${program.id}`}>
+            {data.map(item => (
+              <Link key={item.id} to={getItemLink(item)}>
                 <div>
-                  <StyledProgramCover className="mb-3" src={program.coverUrl || EmptyCover} />
-                  <StyledProgramTitle className="mb-2">{program.title}</StyledProgramTitle>
+                  <StyledProgramCover className="mb-3" src={item.coverUrl || EmptyCover} />
+                  <StyledProgramTitle className="mb-2">{item.title}</StyledProgramTitle>
                   <div className="d-flex">
-                    <StyledName className="flex-grow-1">{program.categoryNames.slice(0, 3).join('．')}</StyledName>
-                    {!!program.score && (
+                    <StyledName className="flex-grow-1">{item.categoryNames?.slice(0, 3).join('．') || ''}</StyledName>
+                    {!!item.score && (
                       <div className="flex-shrink-0 d-flex justify-content-center align-items-center">
-                        <span className="mr-1">{program.score}</span>
+                        <span className="mr-1">{item.score}</span>
                         <StyledIcon as={StarIcon} />
                       </div>
                     )}
@@ -168,53 +274,19 @@ const AdvancedSearchPage: React.FC = () => {
   )
 }
 
-const useSearchPrograms = (condition: hasura.GET_ADVANCE_SEARCH_PROGRAMSVariables['condition']) => {
-  const { loading, data, error } = useQuery<
-    hasura.GET_ADVANCE_SEARCH_PROGRAMS,
-    hasura.GET_ADVANCE_SEARCH_PROGRAMSVariables
-  >(
-    gql`
-      query GET_ADVANCE_SEARCH_PROGRAMS($condition: program_bool_exp!) {
-        program(where: $condition) {
-          id
-          title
-          cover_url
-          program_categories(order_by: { position: asc }) {
-            id
-            category {
-              id
-              name
-            }
-          }
-          program_review_score {
-            score
-          }
-        }
-      }
-    `,
-    {
-      variables: {
-        condition,
-      },
-    },
-  )
-
-  return {
-    isLoading: loading,
-    data:
-      data?.program.map(v => ({
-        id: v.id,
-        coverUrl: v.cover_url || null,
-        title: v.title,
-        score: v.program_review_score?.score || null,
-        categoryNames: uniq(
-          v.program_categories.map(w =>
-            w.category.name.includes('/') ? w.category.name.split('/')[1] : w.category.name,
-          ),
-        ),
-      })) || [],
-    error,
+const getItemLink = (item: any) => {
+  const pathMap: Record<string, string> = {
+    program: 'programs',
+    program_package: 'program-packages',
+    activity: 'activities',
+    project: 'projects',
+    post: 'posts',
+    podcast_program: 'podcast-programs',
+    merchandise: 'merchandises',
   }
+
+  const route = pathMap[item.type] || 'programs'
+  return `/${route}/${item.id}`
 }
 
 export default AdvancedSearchPage
