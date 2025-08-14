@@ -1,5 +1,6 @@
+import { MenuOutlined } from '@ant-design/icons'
 import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons'
-import { Button, Icon, Box, Center, Collapse, Flex, Spacer, useDisclosure, ButtonProps } from '@chakra-ui/react'
+import { Box, Button, ButtonProps, Center, Collapse, Flex, Icon, Spacer, useDisclosure } from '@chakra-ui/react'
 import { List, message, Popover } from 'antd'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -20,7 +21,6 @@ import GlobalSearchInput from './GlobalSearchInput'
 import LocaleCollapse from './LocaleCollapse'
 import MemberAvatar from './MemberAvatar'
 import Responsive from './Responsive'
-import { MenuOutlined } from '@ant-design/icons'
 
 export const Wrapper = styled.div`
   padding: 12px 0;
@@ -298,19 +298,23 @@ const MemberProfileButton: React.FC<{
   )
 
   return (
-    <Popover placement="bottomRight" trigger="click" content={content}>
+    <>
       <Responsive.Default>
-        <StyledButton>
-          <Icon as={MenuOutlined} />
-        </StyledButton>
+        <Popover placement="bottomRight" trigger="click" content={content}>
+          <StyledButton>
+            <Icon as={MenuOutlined} />
+          </StyledButton>
+        </Popover>
       </Responsive.Default>
 
       <Responsive.Desktop>
-        <div className="cursor-pointer">
-          {renderMemberProfile?.(member) || <MemberAvatar memberId={member.id} size={36} />}
-        </div>
+        <Popover placement="bottomRight" trigger="click" content={content}>
+          <div className="cursor-pointer">
+            {renderMemberProfile?.(member) || <MemberAvatar memberId={member.id} size={36} />}
+          </div>
+        </Popover>
       </Responsive.Desktop>
-    </Popover>
+    </>
   )
 }
 
