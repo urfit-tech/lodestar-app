@@ -136,8 +136,8 @@ const MeetingPage = () => {
   }
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async e => {
-    setIsSubmitting(true)
     e.preventDefault()
+    setIsSubmitting(true)
     const formEntries = Array.from(new FormData(e.currentTarget).entries())
     const name = formEntries.find(entry => entry[0] === 'name')?.[1]
     const email = formEntries.find(entry => entry[0] === 'email')?.[1]
@@ -322,7 +322,14 @@ const MeetingPage = () => {
         </FormControl>
         <FormControl className="mb-3" isRequired>
           <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.phone)}</FormLabel>
-          <Input required name="phone" placeholder={formatMessage(MeetingPageMessages.MeetingPage.phone)} />
+          <Input
+            required
+            name="phone"
+            type="tel"
+            placeholder={formatMessage(MeetingPageMessages.MeetingPage.phone)}
+            pattern="^09[0-9]{8}$"
+            title="請輸入台灣手機號碼格式，例如：0912345678"
+          />
         </FormControl>
         <FormControl className="mb-3" isRequired>
           <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.email)}</FormLabel>
