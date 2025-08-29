@@ -858,10 +858,10 @@ export const useSearchProductCollection = (
           : null,
         instructorsSearchString: podcastProgram.podcast_program_roles.map(v => v.member?.name).toString(),
         isEnrolled: podcastProgram.podcast_program_enrollments.length > 0,
-        isSubscribed: data?.podcast_plan_enrollment
+        isSubscribed: (data?.podcast_plan_enrollment || [])
           .map(podcastPlanEnrollment => podcastPlanEnrollment.podcast_plan?.creator_id)
           .filter(notEmpty)
-          .includes(podcastProgram.podcast_program_roles[0].member?.id || ''),
+          .includes(podcastProgram.podcast_program_roles[0]?.member?.id || ''),
       }))
       .sort((a, b) =>
         sorting(a, b, ['bodyDescription', 'description', 'title', 'instructorsSearchString'], filter?.title || ''),
