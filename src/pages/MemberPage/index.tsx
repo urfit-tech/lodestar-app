@@ -156,8 +156,10 @@ const MemberPage: React.FC = () => {
       key: 'project-plan',
       name: formatMessage(commonMessages.tab.project),
       isVisible:
-        (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PROJECT_INFO)) &&
-        projectPlanEnrollments > 0,
+        settings['member_page.nav_project_plan.enabled'] === '0'
+          ? false
+          : (currentMemberId === memberId || Boolean(permissions.CHECK_MEMBER_PAGE_PROJECT_INFO)) &&
+            projectPlanEnrollments > 0,
       content: <ProjectPlanCollectionBlock memberId={memberId} />,
     },
     {
