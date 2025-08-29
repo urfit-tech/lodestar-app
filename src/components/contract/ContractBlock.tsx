@@ -166,6 +166,11 @@ const ContractBlock: React.FC<{
             <Embedded
               iframe={render(memberContract.contract.template, {
                 ...memberContract.values,
+                paymentMethodList:
+                  memberContract.values?.paymentOptions?.paymentMethods &&
+                  memberContract.values?.paymentOptions?.paymentMethods.length > 1
+                    ? memberContract.values?.paymentOptions?.paymentMethods
+                    : memberContract.values?.paymentOptions?.paymentMethod,
                 startedAt: memberContract.values?.startedAt ? dateFormatter(memberContract.values.startedAt) : '',
                 endedAt: memberContract.values?.endedAt ? dateFormatter(memberContract.values.endedAt) : '',
               })}
