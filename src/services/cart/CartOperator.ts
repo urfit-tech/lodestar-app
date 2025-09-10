@@ -227,9 +227,10 @@ export abstract class CartOperator {
   }
 
   private _hasValidEnrollments(cartProduct: CartProductProps): boolean {
-    return cartProduct.enrollments
-      ? cartProduct.enrollments.length === 0 || cartProduct.enrollments.some(enrollment => enrollment.isPhysical)
-      : false
+    if (!cartProduct.enrollments) {
+      return true
+    }
+    return cartProduct.enrollments.length === 0 || cartProduct.enrollments.some(enrollment => enrollment.isPhysical)
   }
 
   private _updateLocalCache(filteredProducts: CartProductProps[]) {
