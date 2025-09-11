@@ -89,8 +89,18 @@ const CartPage: React.FC = () => {
           shopId={shopId}
           cartProducts={cartProducts.filter(cartProduct => cartProduct.shopId === shopId)}
         />
+      ) : shopIds.length === 1 ? (
+        <CheckoutBlock
+          member={member}
+          shopId={shopIds[0]}
+          cartProducts={cartProducts.filter(cartProduct => cartProduct.shopId === shopIds[0])}
+        />
       ) : (
-        <CheckoutBlock member={member} shopId={shopIds[0] || ''} cartProducts={cartProducts} />
+        <CheckoutBlock
+          member={member}
+          shopId=""
+          cartProducts={cartProducts.filter(cartProduct => !cartProduct.shopId)}
+        />
       )}
     </DefaultLayout>
   )
