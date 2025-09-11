@@ -472,6 +472,8 @@ export const useSearchProductCollection = (
     else return 0
   }
 
+  const hasSearchKeyword = !!(filter?.title && filter.title.length > 1) || !!filter?.tag
+
   const { loading, error, data, refetch } = useQuery<
     hasura.SEARCH_PRODUCT_COLLECTION,
     hasura.SEARCH_PRODUCT_COLLECTIONVariables
@@ -479,8 +481,17 @@ export const useSearchProductCollection = (
     variables: {
       memberId: memberId || '',
       title:
-        filter?.title && filter.title.length > 1 ? `%${filter.title.replace(/_/g, '\\_').split('').join('%')}%` : '',
-      description: filter?.title && filter.title.length > 1 ? `%${filter.title}%` : '',
+        filter?.title && filter.title.length > 1
+          ? `%${filter.title.replace(/_/g, '\\_').split('').join('%')}%`
+          : !hasSearchKeyword && filter?.advancedFilters
+          ? '%'
+          : '',
+      description:
+        filter?.title && filter.title.length > 1
+          ? `%${filter.title}%`
+          : !hasSearchKeyword && filter?.advancedFilters
+          ? '%'
+          : '',
       tag: filter?.tag || '',
       memberRoles: memberRoles,
     },
@@ -664,16 +675,18 @@ export const useSearchProductCollection = (
         const { categoryIds, tagNames, durationRange, score } = filter.advancedFilters
 
         if (categoryIds?.length) {
-          const hasMatchingCategory = categoryIds.some(categoryIdList =>
-            categoryIdList.some(categoryId => program.categoryIds.includes(categoryId)),
-          )
+          const hasMatchingCategory = categoryIds.some(categoryIdList => {
+            if (categoryIdList.length === 0) return true
+            return categoryIdList.some(categoryId => program.categoryIds.includes(categoryId))
+          })
           if (!hasMatchingCategory) return false
         }
 
         if (tagNames?.length) {
-          const hasMatchingTag = tagNames.some(tagNameList =>
-            tagNameList.some(tagName => program.tags.includes(tagName)),
-          )
+          const hasMatchingTag = tagNames.some(tagNameList => {
+            if (tagNameList.length === 0) return true
+            return tagNameList.some(tagName => program.tags.includes(tagName))
+          })
           if (!hasMatchingTag) return false
         }
 
