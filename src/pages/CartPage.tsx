@@ -92,14 +92,7 @@ const CartPage: React.FC = () => {
           cartProducts={cartProducts.filter(cartProduct => cartProduct.shopId === (shopId || ''))}
         />
       ) : (
-        <div className="container py-5">
-          <Typography.Title level={3} className="mb-4">
-            <Icon type="shopping-cart" className="mr-2" />
-            <span>{formatMessage(checkoutMessages.title.cart)}</span>
-          </Typography.Title>
-
-          <CartProductTableCard className="mb-3" shopId="" cartProducts={cartProducts} />
-        </div>
+        <CheckoutBlock member={member} shopId={shopIds[0] || ''} cartProducts={cartProducts} />
       )}
     </DefaultLayout>
   )
