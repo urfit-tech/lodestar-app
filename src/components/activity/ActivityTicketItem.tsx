@@ -80,7 +80,7 @@ const ActivityTicketItem: React.FC<{
     id: string
     activity: {
       title: string
-      coverUrl: string
+      coverUrl: string | null
     }
     sessions: {
       id: string

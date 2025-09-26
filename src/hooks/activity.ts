@@ -737,8 +737,7 @@ export const GetActivityTicketsByIds = gql`
 `
 
 export const useActivityTicketsByIds = (ids: string[]) => {
-  const uniqueIds = Array.from(new Set(ids))
-
+  const uniqueIds = Array.from(new Set(ids.filter(id => id)))
   const { loading, error, data, refetch } = useQuery<
     hasura.GetActivityTicketsByIds,
     hasura.GetActivityTicketsByIdsVariables
@@ -771,16 +770,18 @@ export const useActivityTicketsByIds = (ids: string[]) => {
         coverUrl: ticket.activity.cover_url || '',
         activityTitle: ticket.activity.title,
       })),
-      activity: {
-        id: ticket.activity.id,
-        title: ticket.activity.title,
-        coverUrl: ticket.activity.cover_url || '',
-        categories: ticket.activity.activity_categories.map(category => ({
-          id: category.id,
-          name: category.category.name,
-          position: category.position,
-        })),
-      },
+      activity: ticket.activity
+        ? {
+            id: ticket.activity.id,
+            title: ticket.activity.title,
+            coverUrl: ticket.activity.cover_url || '',
+            categories: ticket.activity.activity_categories.map(category => ({
+              id: category.id,
+              name: category.category.name,
+              position: category.position,
+            })),
+          }
+        : null,
     })) || []
 
   return {
