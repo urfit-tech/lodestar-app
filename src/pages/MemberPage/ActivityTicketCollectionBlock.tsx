@@ -104,40 +104,39 @@ const ActivityTicketCollectionBlock: React.FC<{
       </div>
       <List>
         {displayType === 'ticket'
-          ? tickets.map(ticket => (
-              <Link
-                to={`/activity_ticket/${ticket.id}?memberId=${currentMemberId}`}
-                key={ticket.id}
-                style={{ pointerEvents: ticket.activity ? 'auto' : 'none' }}
-              >
-                <div className="mb-4">
-                  <ActivityTicketItem
-                    ticket={{
-                      id: ticket.id,
-                      activity: ticket.activity
-                        ? {
-                            title: ticket.activity.title,
-                            coverUrl: ticket.activity.coverUrl,
-                          }
-                        : {
-                            title: '',
-                            coverUrl: '',
+          ? tickets
+              .filter(ticket => ticket.activity)
+              .map(ticket => {
+                return (
+                  <Link
+                    to={`/activity_ticket/${ticket.id}?memberId=${currentMemberId}`}
+                    key={ticket.id}
+                    style={{ pointerEvents: ticket.activity ? 'auto' : 'none' }}
+                  >
+                    <div className="mb-4">
+                      <ActivityTicketItem
+                        ticket={{
+                          id: ticket.id,
+                          activity: {
+                            title: ticket.activity?.title || '',
+                            coverUrl: ticket.activity?.coverUrl || '',
                           },
-                      sessions: ticket.sessions.map(session => ({
-                        id: session.id,
-                        endedAt: session.endedAt,
-                        startedAt: session.startedAt,
-                        title: session.title,
-                        location: session.location,
-                        onlineLink: session.onlineLink,
-                        activityTitle: session.title,
-                        type: session.type,
-                      })),
-                    }}
-                  />
-                </div>
-              </Link>
-            ))
+                          sessions: ticket.sessions.map(session => ({
+                            id: session.id,
+                            endedAt: session.endedAt,
+                            startedAt: session.startedAt,
+                            title: session.title,
+                            location: session.location,
+                            onlineLink: session.onlineLink,
+                            activityTitle: session.title,
+                            type: session.type,
+                          })),
+                        }}
+                      />
+                    </div>
+                  </Link>
+                )
+              })
           : displayType === 'session'
           ? sessions.map(session => (
               <Link
