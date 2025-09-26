@@ -41,10 +41,12 @@ module.exports = override(
       })
     }
     config.optimization.minimize = true
+    config.optimization.occurrenceOrder = true
+    config.optimization.concatenateModules = true
     config.optimization.runtimeChunk = 'single'
     config.optimization.splitChunks = {
       chunks: 'all',
-      minSize: 20000,
+      minSize: 50000,
       maxSize: 250000,
       maxInitialRequests: 5,
       automaticNameDelimiter: '-',
@@ -61,7 +63,7 @@ module.exports = override(
           reuseExistingChunk: true,
         },
         default: {
-          minChunks: 2,
+          minChunks: 3,
           priority: -20,
           reuseExistingChunk: true,
         },
