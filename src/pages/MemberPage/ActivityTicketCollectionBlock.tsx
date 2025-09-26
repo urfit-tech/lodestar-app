@@ -105,15 +105,24 @@ const ActivityTicketCollectionBlock: React.FC<{
       <List>
         {displayType === 'ticket'
           ? tickets.map(ticket => (
-              <Link to={`/activity_ticket/${ticket.id}?memberId=${currentMemberId}`} key={ticket.id}>
+              <Link
+                to={`/activity_ticket/${ticket.id}?memberId=${currentMemberId}`}
+                key={ticket.id}
+                style={{ pointerEvents: ticket.activity ? 'auto' : 'none' }}
+              >
                 <div className="mb-4">
                   <ActivityTicketItem
                     ticket={{
                       id: ticket.id,
-                      activity: {
-                        title: ticket.activity.title,
-                        coverUrl: ticket.activity.coverUrl,
-                      },
+                      activity: ticket.activity
+                        ? {
+                            title: ticket.activity.title,
+                            coverUrl: ticket.activity.coverUrl,
+                          }
+                        : {
+                            title: '',
+                            coverUrl: '',
+                          },
                       sessions: ticket.sessions.map(session => ({
                         id: session.id,
                         endedAt: session.endedAt,
