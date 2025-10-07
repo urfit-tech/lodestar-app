@@ -40,6 +40,22 @@ export abstract class CartOperator {
 
   abstract operation(...args: any[]): Promise<void>
 
+  protected getApolloClient(): ApolloClient<any> {
+    return this.apolloClient
+  }
+
+  protected getAppId(): string {
+    return this.appId
+  }
+
+  protected getCurrentMemberId(): string | null {
+    return this.currentMemberId
+  }
+
+  protected isLoginStatus(): boolean {
+    return !!this.currentMemberId
+  }
+
   public async syncCartProducts(operation: CartOperatorEnum) {
     const cachedCartProducts = this.getLocalCartProducts()
     const cartProductOptions = this._restructureCachedCartProducts(cachedCartProducts)
@@ -234,9 +250,5 @@ export abstract class CartOperator {
 
   private _updateLocalCache(filteredProducts: CartProductProps[]) {
     localStorage.setItem('kolable.cart._products', JSON.stringify(filteredProducts))
-  }
-
-  private isLoginStatus() {
-    return !!this.currentMemberId
   }
 }
