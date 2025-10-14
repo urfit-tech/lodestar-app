@@ -1,12 +1,12 @@
 import { gql, useQuery } from '@apollo/client'
-import { Button, Divider, Icon, SkeletonText, Spinner } from '@chakra-ui/react'
+import { Button, Divider, Icon, SkeletonText } from '@chakra-ui/react'
 import { List } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
-import React, { Fragment, useContext, useEffect, useState } from 'react'
+import React, { Fragment, useContext, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { AiOutlineClose } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -39,7 +39,6 @@ const CartProductTableCard: React.FC<CartProductTableCardProps> = ({
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
   const { removeCartProducts } = useContext(CartContext)
-  const [loadingRemoveProductId, setLoadingRemoveProductId] = useState<string | null>(null)
   const { memberShop } = useMemberShop(shopId)
   const { loading, cartProductsWithInventory: cartProducts, refetch } = useProductInventory(cartProductWithoutInventory)
   const productIds = cartProducts.map(cartProduct => cartProduct.productId)
@@ -57,9 +56,7 @@ const CartProductTableCard: React.FC<CartProductTableCardProps> = ({
     refetch && refetch()
   }, [refetch])
 
-  const handleRemoveProduct = async (productId: string, quantity: number | undefined) => {
-    setLoadingRemoveProductId(productId)
-
+  const handleRemoveProduct = (productId: string, quantity: number | undefined) => {
     ReactGA.plugin.execute('ec', 'addProduct', {
       id: productId,
       quantity: `${quantity || 1}`,
@@ -67,22 +64,17 @@ const CartProductTableCard: React.FC<CartProductTableCardProps> = ({
     ReactGA.plugin.execute('ec', 'setAction', 'remove')
     ReactGA.ga('send', 'event', 'UX', 'click', 'remove from cart')
 
-    try {
-      await new Promise<void>(_ => {
-        removeCartProducts && removeCartProducts([productId])
-      })
-      const resource = resourceCollection.find(resource => resource?.id === productId.split('_')[1])
-      if (resource) {
-        tracking.removeFromCart(resource, { quantity })
-      }
-    } catch (error) {
-      console.error('Error removing product:', error)
-    } finally {
-      setLoadingRemoveProductId(null)
+    removeCartProducts && removeCartProducts([productId])
+
+    const resource = resourceCollection.find(resource => resource?.id === productId.split('_')[1])
+    if (resource) {
+      tracking.removeFromCart(resource, { quantity })
     }
   }
 
-  if (loading || loadingProductCollection) {
+  const isInitialLoading = (loading || loadingProductCollection) && productCollection.length === 0
+
+  if (isInitialLoading) {
     return (
       <AdminCard {...cardProps}>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -130,20 +122,16 @@ const CartProductTableCard: React.FC<CartProductTableCardProps> = ({
                     cartProducts.find(cartProduct => cartProduct.productId === productId)?.buyableQuantity
                   }
                 />
-                {loadingRemoveProductId === productId ? (
-                  <Spinner />
-                ) : (
-                  <Icon
-                    as={AiOutlineClose}
-                    className="flex-shrink-0 cursor-pointer"
-                    onClick={() =>
-                      handleRemoveProduct(
-                        productId,
-                        cartProducts.find(cartProduct => cartProduct.productId === productId)?.options?.quantity,
-                      )
-                    }
-                  />
-                )}
+                <Icon
+                  as={AiOutlineClose}
+                  className="flex-shrink-0 cursor-pointer"
+                  onClick={() =>
+                    handleRemoveProduct(
+                      productId,
+                      cartProducts.find(cartProduct => cartProduct.productId === productId)?.options?.quantity,
+                    )
+                  }
+                />
               </div>
               <CartProductGiftPlan productId={productId} />
               <Divider className="my-4" />
