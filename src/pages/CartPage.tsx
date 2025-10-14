@@ -1,3 +1,4 @@
+import { gql, useQuery } from '@apollo/client'
 import { SkeletonText } from '@chakra-ui/react'
 import { Icon, Typography } from 'antd'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
@@ -15,15 +16,18 @@ import CartProductTableCard from '../components/checkout/CartProductTableCard'
 import CheckoutBlock from '../components/checkout/CheckoutBlock'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import CartContext from '../contexts/CartContext'
+import hasura from '../hasura'
 import { checkoutMessages } from '../helpers/translation'
 import { useMember } from '../hooks/member'
+import { CartProductProps } from '../types/checkout'
 
 const CartPage: React.FC = () => {
   const location = useLocation<{ productUrn?: string }>()
   const { formatMessage } = useIntl()
   const [checkoutAlready, setCheckoutAlready] = useState(false)
   const [shopId] = useQueryParam('shopId', StringParam)
-  const { cartProducts } = useContext(CartContext)
+  const { cartProducts: rawCartProducts } = useContext(CartContext)
+  const { loading: loadingExistentProducts, data: cartProducts } = useFilterExistentProducts(rawCartProducts)
   const { id: appId } = useApp()
   const { isAuthenticating, currentMemberId } = useAuth()
   const { loadingMember, member } = useMember(currentMemberId || '')
@@ -49,7 +53,8 @@ const CartPage: React.FC = () => {
 
   const filteredResourceUrns = filteredResourceCollection.map(resource => resource.urn)
 
-  if (isAuthenticating || loadingMember) {
+  console.log(57, loadingExistentProducts)
+  if (isAuthenticating || loadingMember || loadingExistentProducts) {
     return (
       <DefaultLayout>
         <SkeletonText mt="1" noOfLines={4} spacing="4" />
@@ -105,5 +110,49 @@ const CartPage: React.FC = () => {
     </DefaultLayout>
   )
 }
+
+const useFilterExistentProducts = (cartProducts: CartProductProps[]) => {
+  const activityTicketIds = cartProducts
+    .map(cartProduct => cartProduct.productId.split('_'))
+    .filter(([type]) => type === 'ActivityTicket')
+    .map(([_, target]) => target)
+
+  const {
+    loading,
+    data: targetProducts,
+    error,
+  } = useQuery<hasura.GetExistentProducts, hasura.GetExistentProductsVariables>(GetExistentProducts, {
+    variables: { activityTicketIds },
+  })
+
+  console.log(130, targetProducts)
+
+  const pairs = [{ tableName: 'activity_ticket', prefix: 'ActivityTicket' }]
+
+  const existentIds = pairs.flatMap(pair =>
+    targetProducts
+      ? (targetProducts as any)[pair.tableName]
+          .filter((v: { id: string; deleted_at: null | string }) => !v?.deleted_at)
+          .map((v: { id: string; deleted_at: null | string }) => `${pair.prefix}_${v.id}`)
+      : [],
+  )
+
+  const data = cartProducts.filter(
+    cartProduct =>
+      !pairs.map(pair => pair.prefix).includes(cartProduct.productId.split('_')[0]) ||
+      existentIds.includes(cartProduct.productId),
+  )
+
+  return { loading, error, data }
+}
+
+const GetExistentProducts = gql`
+  query GetExistentProducts($activityTicketIds: [uuid!]!) {
+    activity_ticket(where: { id: { _in: $activityTicketIds } }) {
+      id
+      deleted_at
+    }
+  }
+`
 
 export default CartPage
