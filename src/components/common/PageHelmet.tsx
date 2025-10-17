@@ -87,6 +87,9 @@ const PageHelmet: React.FC<
       {openGraph.map(({ property, content }, index) => (
         <meta key={index} property={property} content={xss(content)} />
       ))}
+      {app.settings['google-site-verification'] && (
+        <meta name="google-site-verification" content={xss(app.settings['google-site-verification'])} />
+      )}
       {props.children}
     </Helmet>
   )
