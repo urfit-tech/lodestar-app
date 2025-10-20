@@ -11527,9 +11527,9 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lodestar-app-element@urfit-tech/lodestar-app-element#v1.93.8:
+lodestar-app-element@urfit-tech/lodestar-app-element#v1.94.6:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/ac0da86807f81bd7ee86177ddb9aea55b824fe7e"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/07feef6432a7750ea2dd42b715cb1dc789eba7a6"
   dependencies:
     "@apollo/client" "^3.7.11"
     "@babel/cli" "^7.13.16"
