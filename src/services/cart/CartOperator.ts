@@ -66,7 +66,7 @@ export abstract class CartOperator {
       cachedCartProducts,
       cartProductOptions,
     })
-    const availableProducts = this._removePhaseOutCartProducts(mergedCartProducts)
+    const availableProducts = this._removePhaseOutCartProducts(mergedCartProducts, remoteCartProducts?.merchandise_spec)
 
     this._updateLocalCache(availableProducts)
 
@@ -232,10 +232,14 @@ export abstract class CartOperator {
     )
   }
 
-  private _removePhaseOutCartProducts(cartProducts: CartProductProps[]): CartProductProps[] {
+  private _removePhaseOutCartProducts(
+    cartProducts: CartProductProps[],
+    merchandiseSpecData?: hasura.GET_CART_PRODUCT_COLLECTION['merchandise_spec'],
+  ): CartProductProps[] {
     return cartProducts
       .filter(cartProduct => !this._isPhasedOutProduct(cartProduct))
       .filter(cartProduct => this._hasValidEnrollments(cartProduct))
+      .filter(cartProduct => this._isPublishedMerchandiseSpec(cartProduct, merchandiseSpecData))
   }
 
   private _isPhasedOutProduct(cartProduct: CartProductProps): boolean {
@@ -246,6 +250,27 @@ export abstract class CartOperator {
     return cartProduct.enrollments
       ? cartProduct.enrollments.length === 0 || cartProduct.enrollments.some(enrollment => enrollment.isPhysical)
       : false
+  }
+
+  private _isPublishedMerchandiseSpec(
+    cartProduct: CartProductProps,
+    merchandiseSpecData?: hasura.GET_CART_PRODUCT_COLLECTION['merchandise_spec'],
+  ): boolean {
+    if (!cartProduct.productId.startsWith('MerchandiseSpec_')) {
+      return true
+    }
+
+    if (!merchandiseSpecData || merchandiseSpecData.length === 0) {
+      return false
+    }
+
+    const specId = cartProduct.productId.replace('MerchandiseSpec_', '')
+    const spec = merchandiseSpecData.find(s => s.id === specId)
+    if (!spec) {
+      return false
+    }
+
+    return true
   }
 
   private _updateLocalCache(filteredProducts: CartProductProps[]) {
