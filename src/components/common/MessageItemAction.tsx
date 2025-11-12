@@ -1,4 +1,5 @@
 import { Icon, Typography } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'
 import styled from 'styled-components'
@@ -17,11 +18,13 @@ const MessageItemAction: React.FC<{
   reactedMemberIds: string[]
   onRepliesVisible?: React.Dispatch<React.SetStateAction<boolean>>
   numReplies?: number
+  onSummaryVisible?: React.Dispatch<React.SetStateAction<boolean>>
   statusText?: string
   onReact?: (reacted: boolean) => Promise<any>
-}> = ({ reactedMemberIds, onReact, numReplies, statusText, onRepliesVisible }) => {
+}> = ({ reactedMemberIds, onReact, numReplies, onSummaryVisible, statusText, onRepliesVisible }) => {
   const { currentMemberId } = useAuth()
   const [reacted, setReacted] = useState(() => !!(currentMemberId && reactedMemberIds.some(v => v === currentMemberId)))
+  const { settings } = useApp()
 
   const toggleReaction = async (reacted: boolean) => {
     await onReact?.(reacted)
@@ -45,13 +48,20 @@ const MessageItemAction: React.FC<{
           <span>{reacted && currentMemberId ? otherReactedMemberIds + 1 : otherReactedMemberIds}</span>
         </StyledAction>
         {onRepliesVisible && (
-          <StyledAction onClick={() => onRepliesVisible(prev => !prev)}>
+          <StyledAction onClick={() => onRepliesVisible(prev => !prev)} className="mr-3">
             <Icon type="message" className="mr-1" />
             {numReplies && <span>{numReplies}</span>}
           </StyledAction>
         )}
+        {onSummaryVisible && (
+          <StyledAction onClick={() => onSummaryVisible(prev => !prev)}>
+            <Icon type="file-text" className="mr-1" />
+          </StyledAction>
+        )}
       </div>
-      {statusText && <StyledMessageState type="secondary">{statusText}</StyledMessageState>}
+      {!settings['program_issue.prompt_reply'] && statusText && (
+        <StyledMessageState type="secondary">{statusText}</StyledMessageState>
+      )}
     </div>
   )
 }

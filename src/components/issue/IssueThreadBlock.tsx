@@ -26,19 +26,7 @@ const IssueThreadBlock: React.FC<{
     <div>
       <IssueCreationModal threadId={threadId} onRefetch={() => refetchIssues()} />
       {issues.map(v => (
-        <MessageIssueItem
-          key={v.id}
-          issueId={v.id}
-          memberId={v.memberId}
-          description={v.description}
-          issueReplyCount={v.issueReplyCount}
-          programRoles={programRoles}
-          reactedMemberIds={v.reactedMemberIds}
-          createdAt={v.createdAt}
-          solvedAt={v.solvedAt}
-          title={v.title}
-          onRefetch={() => refetchIssues()}
-        />
+        <MessageIssueItem key={v.id} issue={v} programRoles={programRoles} onRefetch={() => refetchIssues()} />
       ))}
     </div>
   )
