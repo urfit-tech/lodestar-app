@@ -1,4 +1,4 @@
-import { gql, useMutation } from '@apollo/client'
+import { gql, useApolloClient, useMutation } from '@apollo/client'
 import { Form, message, Modal, Typography } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { ModalProps } from 'antd/lib/modal'
@@ -13,11 +13,17 @@ import { createUploadFn } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import MessageButton from '../common/MessageButton'
 import MigrationInput from '../common/MigrationInput'
+import {
+  getTheNextReplyNotFromAuthorOfIssue,
+  IssueReply,
+  pollUntilTheNextReplyNotFromAuthorOfIssueUpdated,
+  RefetchIssues,
+} from './issueHelper'
 
 type IssueCreationModalProps = ModalProps &
   FormComponentProps & {
     threadId: string
-    onRefetch?: () => void
+    onRefetch?: RefetchIssues
   }
 const IssueCreationModal: React.FC<IssueCreationModalProps> = ({ threadId, form, onRefetch, ...modalProps }) => {
   const { formatMessage } = useIntl()
@@ -27,6 +33,21 @@ const IssueCreationModal: React.FC<IssueCreationModalProps> = ({ threadId, form,
 
   const [loading, setLoading] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
+
+  const { settings } = useApp()
+  const apolloClient = useApolloClient()
+  const conditionallyPollUntilTheNextReplyNotFromAuthorOfIssueUpdated: (args: {
+    memberId: string
+    issueId: string
+  }) => void = ({ memberId, issueId }) => {
+    if (settings['program_issue.prompt_reply'] && onRefetch) {
+      const getTargetReply = (issueReplies: IssueReply[]) =>
+        getTheNextReplyNotFromAuthorOfIssue(memberId)(issueReplies)(null)
+      const cond = (now: Date) => (issueReplies: IssueReply[]) =>
+        !getTargetReply(issueReplies) || (getTargetReply(issueReplies)?.updatedAt ?? 0) < now
+      pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(cond)(onRefetch)
+    }
+  }
 
   const handleSubmit = () => {
     form.validateFields((error, values) => {
@@ -40,8 +61,14 @@ const IssueCreationModal: React.FC<IssueCreationModalProps> = ({ threadId, form,
             description: values.description.toRAW(),
           },
         })
-          .then(() => {
+          .then(res => {
             form.resetFields()
+            const issue = res.data?.insert_issue?.returning?.[0]
+            if (issue)
+              conditionallyPollUntilTheNextReplyNotFromAuthorOfIssueUpdated({
+                issueId: issue.id,
+                memberId: issue.member_id,
+              })
             onRefetch?.()
             setModalVisible(false)
           })
@@ -131,6 +158,10 @@ const INSERT_ISSUE = gql`
     insert_issue(
       objects: { app_id: $appId, member_id: $memberId, thread_id: $threadId, title: $title, description: $description }
     ) {
+      returning {
+        id
+        member_id
+      }
       affected_rows
     }
   }

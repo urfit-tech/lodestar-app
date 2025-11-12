@@ -1,4 +1,6 @@
+import { useApolloClient } from '@apollo/client'
 import { Menu, message } from 'antd'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -10,22 +12,54 @@ import MessageItem from '../common/MessageItem'
 import MessageItemAction from '../common/MessageItemAction'
 import MessageItemContent from '../common/MessageItemContent'
 import MessageItemHeader from '../common/MessageItemHeader'
+import {
+  getTheNextReplyNotFromAuthorOfIssue,
+  IssueReply,
+  pollUntilTheNextReplyNotFromAuthorOfIssueUpdated,
+} from '../issue/issueHelper'
 
 const MessageIssueReplyItem: React.FC<{
-  issueReplyId: string
-  memberId: string
-  content: string
+  issueId: string
+  issueReply: IssueReply
+  issueReplies: IssueReply[]
   programRoles: ProgramRole[]
-  reactedMemberIds: string[]
-  createdAt: Date
-  title?: string | undefined
   onRefetch?: () => Promise<any>
-}> = ({ issueReplyId, programRoles, memberId, createdAt, content, onRefetch, reactedMemberIds }) => {
+}> = ({ issueId, issueReply, issueReplies, programRoles, onRefetch }) => {
+  const { id: issueReplyId, memberId, createdAt, content, reactedMemberIds } = issueReply
   const [qIssueReplyId] = useQueryParam('issueReplyId', StringParam)
   const { updateIssueReply, deleteIssueReply, insertIssueReplyReaction, deleteIssueReplyReaction } =
     useMutateIssueReply(issueReplyId)
   const { formatMessage } = useIntl()
   const { currentMemberId } = useAuth()
+  const { settings } = useApp()
+
+  const apolloClient = useApolloClient()
+  const conditionallyPollUntilTheNextReplyNotFromAuthorOfIssueUpdated = () => {
+    if (settings['program_issue.prompt_reply'] && onRefetch) {
+      const getTargetReply = (issueReplies: IssueReply[]) =>
+        getTheNextReplyNotFromAuthorOfIssue(memberId)(issueReplies)(issueReplyId)
+      const cond = (now: Date) => (issueReplies: IssueReply[]) =>
+        !getTargetReply(issueReplies) || (getTargetReply(issueReplies)?.updatedAt ?? 0) < now
+      pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(cond)(onRefetch)
+    }
+  }
+
+  const conditionallyPollUntilTheNextReplyNotFromAuthorOfIssueDeleted =
+    (currentIssueReplies: IssueReply[]) => (issueReplyId: string) => {
+      if (settings['program_issue.prompt_reply'] && onRefetch) {
+        const targetReply = getTheNextReplyNotFromAuthorOfIssue(memberId)(currentIssueReplies)(issueReplyId)
+        const cond = () => (issueReplies: IssueReply[]) => issueReplies.map(v => v.id).includes(targetReply?.id ?? '')
+        pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(cond)(onRefetch)
+      }
+    }
+  type MemberStylePair = {
+    member_id: string
+    style: string
+  }
+  const getStyleByMember = (memberStyleMap: MemberStylePair[]) => (memberId: string) =>
+    memberStyleMap.find(v => v.member_id === memberId)?.style
+  const specialMembers = JSON.parse(settings['program_issue.special_member']) as MemberStylePair[]
+  const customizedStyle = ['*', memberId].map(getStyleByMember(specialMembers)).join(' ')
 
   return (
     <MessageItem focus={qIssueReplyId === issueReplyId}>
@@ -36,6 +70,7 @@ const MessageIssueReplyItem: React.FC<{
           updateIssueReply(description.toRAW())
             .then(() => {
               onRefetch?.()
+              conditionallyPollUntilTheNextReplyNotFromAuthorOfIssueUpdated()
             })
             .catch(() => message.error(formatMessage(issueMessages.messageError.update)))
         }
@@ -50,7 +85,12 @@ const MessageIssueReplyItem: React.FC<{
                     onClick={() =>
                       window.confirm(formatMessage(issueMessages.dropdown.content.unrecoverable)) &&
                       deleteIssueReply()
-                        .then(() => onRefetch?.())
+                        .then(res => {
+                          conditionallyPollUntilTheNextReplyNotFromAuthorOfIssueDeleted(issueReplies)(
+                            res.data?.update_issue_reply?.returning[0].id,
+                          )
+                          onRefetch?.()
+                        })
                         .catch(() => {})
                     }
                   >
@@ -60,6 +100,7 @@ const MessageIssueReplyItem: React.FC<{
               )
             : undefined
         }
+        customizedStyle={customizedStyle}
       >
         <MessageItemAction
           reactedMemberIds={reactedMemberIds}

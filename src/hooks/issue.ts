@@ -20,6 +20,7 @@ const useIssue = (threadId: string) => {
     id: string
     title: string
     description: string
+    summary: string
     memberId: string
     createdAt: Date
     solvedAt: Date | null
@@ -33,6 +34,7 @@ const useIssue = (threadId: string) => {
           title: v.title,
           description: v.description || '',
           memberId: v.member_id,
+          summary: v.summary || '',
           createdAt: new Date(v.created_at),
           solvedAt: v.solved_at ? new Date(v.solved_at) : null,
           reactedMemberIds: v.issue_reactions.map(w => w.member_id),
@@ -109,26 +111,31 @@ const useMutateIssue = (issueId: string) => {
   }
 }
 
+type IssueReply = {
+  id: string
+  memberId: string
+  content: EditorState
+  createdAt: Date
+  updatedAt: Date
+  reactedMemberIds: string[]
+}
+
+const adaptIssueReplyDTO: (issueReplyDTO: hasura.GET_ISSUE_REPLIES['issue_reply'][number]) => IssueReply =
+  issueReplyDTO => ({
+    id: issueReplyDTO.id,
+    memberId: issueReplyDTO.member_id,
+    content: issueReplyDTO.content,
+    createdAt: new Date(issueReplyDTO.created_at),
+    updatedAt: new Date(issueReplyDTO.updated_at),
+    reactedMemberIds: issueReplyDTO.issue_reply_reactions.map(reaction => reaction.public_member?.id || ''),
+  })
+
 const useIssueReply = (issueId: string) => {
   const { loading, data, error, refetch } = useQuery<hasura.GET_ISSUE_REPLIES, hasura.GET_ISSUE_REPLIESVariables>(
     GET_ISSUE_REPLIES,
     { variables: { issueId } },
   )
-
-  const issueReplies: {
-    id: string
-    memberId: string
-    content: EditorState
-    createdAt: Date
-    reactedMemberIds: string[]
-  }[] =
-    data?.issue_reply.map(v => ({
-      id: v.id,
-      memberId: v.member_id,
-      content: v.content,
-      createdAt: v.created_at,
-      reactedMemberIds: v.issue_reply_reactions.map(w => w.public_member?.id || ''),
-    })) || []
+  const issueReplies = data?.issue_reply.map(adaptIssueReplyDTO) || []
 
   return {
     loadingIssueReplies: loading,
@@ -143,9 +150,10 @@ const useMutateIssueReply = (issueReplyId: string) => {
   const [updateIssueReplyHandler] = useMutation<hasura.UPDATE_ISSUE_REPLY, hasura.UPDATE_ISSUE_REPLYVariables>(
     UPDATE_ISSUE_REPLY,
   )
-  const [deleteIssueReplyHandler] = useMutation<hasura.DELETE_ISSUE_REPLY, hasura.DELETE_ISSUE_REPLYVariables>(
-    DELETE_ISSUE_REPLY,
-  )
+  const [deleteIssueReplyHandler] = useMutation<
+    hasura.SOFT_DELETE_ISSUE_REPLY,
+    hasura.SOFT_DELETE_ISSUE_REPLYVariables
+  >(DELETE_ISSUE_REPLY)
   const [insertIssueReplyReactionHandler] = useMutation<
     hasura.INSERT_ISSUE_REPLY_REACTION,
     hasura.INSERT_ISSUE_REPLY_REACTIONVariables
@@ -161,7 +169,9 @@ const useMutateIssueReply = (issueReplyId: string) => {
     })
   }
   const deleteIssueReply = () => {
-    return deleteIssueReplyHandler({ variables: { issueReplyId } })
+    return deleteIssueReplyHandler({
+      variables: { issueReplyId, deletedAt: new Date().toISOString() },
+    })
   }
   const insertIssueReplyReaction = () => {
     return insertIssueReplyReactionHandler({
@@ -184,23 +194,18 @@ const useMutateIssueReply = (issueReplyId: string) => {
 
 const GET_ISSUE_THREAD = gql`
   query GET_ISSUE_THREAD($appId: String!, $threadId: String!) {
-    issue(
-      where: { app_id: { _eq: $appId }, thread_id: { _eq: $threadId } }
-      order_by: [
-        { created_at: desc }
-        # { issue_reactions_aggregate: { count: desc } }
-      ]
-    ) {
+    issue(where: { app_id: { _eq: $appId }, thread_id: { _eq: $threadId } }, order_by: [{ created_at: desc }]) {
       id
       title
       description
       solved_at
       created_at
       member_id
+      summary
       issue_reactions {
         member_id
       }
-      issue_replies_aggregate {
+      issue_replies_aggregate(where: { deleted_at: { _is_null: true } }) {
         aggregate {
           count
         }
@@ -255,10 +260,14 @@ const DELETE_ISSUE_REACTION = gql`
 
 const GET_ISSUE_REPLIES = gql`
   query GET_ISSUE_REPLIES($issueId: uuid!) {
-    issue_reply(where: { issue_id: { _eq: $issueId } }, order_by: [{ created_at: asc }]) {
+    issue_reply(
+      where: { issue_id: { _eq: $issueId }, deleted_at: { _is_null: true } }
+      order_by: [{ created_at: asc }]
+    ) {
       id
       content
       created_at
+      updated_at
       member_id
       issue_reply_reactions {
         public_member {
@@ -289,6 +298,9 @@ const DELETE_ISSUE_REPLY_REACTION = gql`
 const INSERT_ISSUE_REPLY = gql`
   mutation INSERT_ISSUE_REPLY($memberId: String!, $issueId: uuid!, $content: String) {
     insert_issue_reply(objects: { member_id: $memberId, issue_id: $issueId, content: $content }) {
+      returning {
+        id
+      }
       affected_rows
     }
   }
@@ -303,14 +315,14 @@ const UPDATE_ISSUE_REPLY = gql`
 `
 
 const DELETE_ISSUE_REPLY = gql`
-  mutation DELETE_ISSUE_REPLY($issueReplyId: uuid!) {
-    delete_issue_reply_reaction(where: { issue_reply_id: { _eq: $issueReplyId } }) {
-      affected_rows
-    }
-    delete_issue_reply(where: { id: { _eq: $issueReplyId } }) {
+  mutation SOFT_DELETE_ISSUE_REPLY($issueReplyId: uuid!, $deletedAt: timestamptz) {
+    update_issue_reply(where: { id: { _eq: $issueReplyId } }, _set: { deleted_at: $deletedAt }) {
+      returning {
+        id
+      }
       affected_rows
     }
   }
 `
 
-export { useIssue, useMutateIssue, useIssueReply, useMutateIssueReply }
+export { useIssue, useMutateIssue, useIssueReply, useMutateIssueReply, GET_ISSUE_REPLIES, adaptIssueReplyDTO }
