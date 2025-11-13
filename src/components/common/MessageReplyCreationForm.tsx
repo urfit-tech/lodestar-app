@@ -30,6 +30,7 @@ type MessageReplyCreationFormProps = FormComponentProps & {
   onRefetch: RefetchIssueReply
   onSubmit?: (content: any) => Promise<{ data: hasura.INSERT_ISSUE_REPLY }>
   replyEditorDisabled: boolean
+  setReplyEditorDisabled: (value: React.SetStateAction<boolean>) => void
 }
 const MessageReplyCreationForm: React.FC<MessageReplyCreationFormProps> = ({
   issue,
@@ -37,6 +38,7 @@ const MessageReplyCreationForm: React.FC<MessageReplyCreationFormProps> = ({
   onSubmit,
   form,
   replyEditorDisabled,
+  setReplyEditorDisabled,
 }) => {
   const { formatMessage } = useIntl()
   const [replying, setReplying] = useState(false)
@@ -52,7 +54,7 @@ const MessageReplyCreationForm: React.FC<MessageReplyCreationFormProps> = ({
         getTheNextReplyNotFromAuthorOfIssue(memberId)(issueReplies)(issueReplyId)
       const cond = (now: Date) => (issueReplies: IssueReply[]) =>
         !getTargetReply(issueReplies) || (getTargetReply(issueReplies)?.updatedAt ?? 0) < now
-      pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(cond)(onRefetch)
+      pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(setReplyEditorDisabled)(cond)(onRefetch)
     }
   }
 

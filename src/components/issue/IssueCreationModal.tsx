@@ -45,7 +45,7 @@ const IssueCreationModal: React.FC<IssueCreationModalProps> = ({ threadId, form,
         getTheNextReplyNotFromAuthorOfIssue(memberId)(issueReplies)(null)
       const cond = (now: Date) => (issueReplies: IssueReply[]) =>
         !getTargetReply(issueReplies) || (getTargetReply(issueReplies)?.updatedAt ?? 0) < now
-      pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(cond)(onRefetch)
+      pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(undefined)(cond)(onRefetch)
     }
   }
 
