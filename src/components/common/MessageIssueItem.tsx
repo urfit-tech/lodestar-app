@@ -56,9 +56,7 @@ const MessageIssueItem: React.FC<{
         getTheNextReplyNotFromAuthorOfIssue(memberId)(issueReplies)(null)
       const cond = (now: Date) => (issueReplies: IssueReply[]) =>
         !getTargetReply(issueReplies) || (getTargetReply(issueReplies)?.updatedAt ?? 0) < now
-      setReplyEditorDisabled(true)
-      pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(cond)(onRefetch)
-      setReplyEditorDisabled(false)
+      pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(setReplyEditorDisabled)(cond)(onRefetch)
     }
   }
 
@@ -164,6 +162,7 @@ const MessageIssueItem: React.FC<{
                           issueReplies={issueReplies}
                           programRoles={programRoles}
                           onRefetch={refetchIssueReplies}
+                          setReplyEditorDisabled={setReplyEditorDisabled}
                         />
                       </div>
                     ))}
@@ -173,6 +172,7 @@ const MessageIssueItem: React.FC<{
                         onRefetch={refetchIssueReplies}
                         onSubmit={insertIssueReply as any}
                         replyEditorDisabled={replyEditorDisabled}
+                        setReplyEditorDisabled={setReplyEditorDisabled}
                       />
                     </div>
                   </>

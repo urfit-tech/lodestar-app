@@ -27,50 +27,31 @@ export const pollUntilTheNextReplyNotFromAuthorOfIssueUpdated: (
 ) => (
   issueId: string,
 ) => (
+  setReplyEditorDisabled?: (value: React.SetStateAction<boolean>) => void,
+) => (
   cond: (now: Date) => (issueReplies: IssueReply[]) => boolean,
-) => (refetch: RefetchIssues | RefetchIssueReply) => void = apolloClient => issueId => cond => async refetch =>
-  polling(1000)(() =>
-    apolloClient.query<hasura.GET_ISSUE_REPLIES, hasura.GET_ISSUE_REPLIESVariables>({
-      query: GET_ISSUE_REPLIES,
-      variables: { issueId },
-      fetchPolicy: 'no-cache',
-    }),
-  )({
-    prepareForPolling: () => {
-      console.log('Polling starts.')
-      return { now: new Date(), pollingTime: 1 }
-    },
-    onSuccess: ({ result, preparation, polling }) => {
-      const fetchedIssueReplies = result?.data?.issue_reply.map(adaptIssueReplyDTO) ?? []
-      if (!cond(preparation.now)(fetchedIssueReplies)) {
-        refetch()
-        clearInterval(polling)
-        console.log('Polling ends.')
-      }
-    },
-  })
-
-/*{
-    refetch({ issueId })
-    const now = new Date()
-    console.log('Polling starts.')
-    const polling = setInterval(async () => {
-      console.log('Polling...')
-      const rawFetchedIssueReplies = (
+) => (refetch: RefetchIssues | RefetchIssueReply) => void =
+  apolloClient => issueId => setReplyEditorDisabled => cond => async refetch =>
+    polling(1000)(
+      async () =>
         await apolloClient.query<hasura.GET_ISSUE_REPLIES, hasura.GET_ISSUE_REPLIESVariables>({
           query: GET_ISSUE_REPLIES,
           variables: { issueId },
           fetchPolicy: 'no-cache',
-        })
-      )?.data?.issue_reply
-      const fetchedIssueReplies = rawFetchedIssueReplies.map(adaptIssueReplyDTO)
-      const cond =
-        !getTheNextReplyNotFromAuthorOfIssue(authorId)(fetchedIssueReplies)(referenceReplyId) ||
-        (getTheNextReplyNotFromAuthorOfIssue(authorId)(fetchedIssueReplies)(referenceReplyId)?.updatedAt ?? 0) < now
-      if (!cond) {
-        refetch({ issueId })
-        clearInterval(polling)
-        console.log('Polling ends.')
-      }
-    }, 1000)
-  }*/
+        }),
+    )({
+      prepareForPolling: () => {
+        console.log('Polling starts.')
+        setReplyEditorDisabled?.(true)
+        return { now: new Date(), pollingTime: 1 }
+      },
+      onSuccess: ({ result, preparation, polling }) => {
+        const fetchedIssueReplies = result?.data?.issue_reply.map(adaptIssueReplyDTO) ?? []
+        if (!cond(preparation.now)(fetchedIssueReplies)) {
+          refetch()
+          clearInterval(polling)
+          setReplyEditorDisabled?.(false)
+          console.log('Polling ends.')
+        }
+      },
+    })

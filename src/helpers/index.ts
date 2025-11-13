@@ -544,11 +544,11 @@ export const polling: (
   prepareForPolling?: PF
   onSuccess?: (arg: { result?: R; preparation: ReturnType<PF>; polling: NodeJS.Timeout }) => void
   onError?: (arg: { error?: any; preparation: ReturnType<PF>; polling: NodeJS.Timeout }) => void
-  onFinally?: (arg: { preparation?: any; polling: NodeJS.Timeout }) => () => void
+  onFinally?: (arg: { preparation?: any; polling: NodeJS.Timeout }) => void
 }) => void = interval => fetcher => options => {
   const preparation = options?.prepareForPolling?.() as ReturnType<Exclude<typeof options.prepareForPolling, undefined>>
   const polling = setInterval(async () => {
-    fetcher()
+    await fetcher()
       .then(res => options?.onSuccess?.({ result: res, preparation, polling }))
       .catch(err => options?.onError?.({ error: err, preparation, polling }))
       .finally(() => options?.onFinally?.({ preparation, polling }))
