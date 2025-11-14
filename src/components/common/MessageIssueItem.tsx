@@ -1,8 +1,10 @@
 import { useApolloClient } from '@apollo/client'
 import { Divider } from '@chakra-ui/react'
 import { Menu, message } from 'antd'
+import { StyledMarkdownDiv } from 'lodestar-app-element/src/components/common/StyledMarkdownEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import marked from 'marked'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { StringParam, useQueryParam } from 'use-query-params'
@@ -22,7 +24,6 @@ import {
   pollUntilTheNextReplyNotFromAuthorOfIssueUpdated,
 } from '../issue/issueHelper'
 import MessageIssueReplyItem from './MessageIssueReplyItem'
-import MessageSummaryBlock from './MessageSummaryBlock'
 
 const MessageIssueItem: React.FC<{
   issue: Issue
@@ -150,7 +151,12 @@ const MessageIssueItem: React.FC<{
                     } catch {}
                   }}
                 />
-                {summaryVisible && <MessageSummaryBlock issueId={issueId} defaultSummary={summary} />}
+                {summaryVisible && (
+                  <StyledMarkdownDiv
+                    dangerouslySetInnerHTML={{ __html: marked.parse(summary ?? '') }}
+                    customizedStyle={`margin-top: 1rem; padding: 1rem; background: #f7f8f8; border-radius: 0.5rem;`}
+                  />
+                )}
                 {repliesVisible && (
                   <>
                     {issueReplies.map(w => (
