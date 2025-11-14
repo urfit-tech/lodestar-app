@@ -227,7 +227,7 @@ const MemberProfileButton: React.FC<{
             (!!Number(settings['nav.creator_page.enabled']) && (
               <List.Item onClick={() => history.push(`/creators/${member.id}`)} style={{ cursor: 'pointer' }}>
                 <BlankIcon className="mr-2" />
-                {formatMessage(commonMessages.content.creatorPage)}
+                {settings['nav.creator_page.name'] || formatMessage(commonMessages.content.creatorPage)}
               </List.Item>
             ))}
 
@@ -237,7 +237,7 @@ const MemberProfileButton: React.FC<{
             (!(settings['nav.my_page.disable'] === '1') && (
               <BorderedItem onClick={() => history.push(`/members/${member.id}`)} style={{ cursor: 'pointer' }}>
                 <BlankIcon className="mr-2" />
-                {formatMessage(commonMessages.content.myPage)}
+                {settings['nav.my_page.name'] || formatMessage(commonMessages.content.myPage)}
               </BorderedItem>
             ))}
         </Responsive.Default>
