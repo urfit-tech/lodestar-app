@@ -1,6 +1,8 @@
 import { Dropdown, Icon, Typography } from 'antd'
 import { EditorState } from 'braft-editor'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
+import { StyledMarkdownDiv } from 'lodestar-app-element/src/components/common/StyledMarkdownEditor'
+import marked from 'marked'
 import React, { useState } from 'react'
 import styled, { css } from 'styled-components'
 import MessageItemForm from './MessageItemForm'
@@ -47,13 +49,33 @@ const MessageItemContent: React.FC<{
             <StyledIcon type="more" />
           </Dropdown>
         )}
-
         <StyledMessageContentBlock firstLayer={firstLayer} customizedStyle={customizedStyle}>
           <Typography.Text strong className="mb-2" style={{ fontSize: '16px' }}>
             {title}
           </Typography.Text>
           <div style={{ fontSize: '14px' }} className="mb-3">
-            <BraftContent customizedStyle={customizedStyle}>{description}</BraftContent>
+            {(() => {
+              const safeJSONParse = (_: any) => {
+                try {
+                  return JSON.parse(_)
+                } catch (e) {
+                  return _
+                }
+              }
+              const parsedDescription = safeJSONParse(description)
+              switch (parsedDescription?.syntax) {
+                case 'markdown': {
+                  console.log(parsedDescription?.content)
+                  return (
+                    <StyledMarkdownDiv
+                      dangerouslySetInnerHTML={{ __html: marked.parse(parsedDescription?.content ?? '') }}
+                    />
+                  )
+                }
+                default:
+                  return <BraftContent customizedStyle={customizedStyle}>{description}</BraftContent>
+              }
+            })()}
           </div>
           {children}
         </StyledMessageContentBlock>

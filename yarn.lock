@@ -7836,7 +7836,7 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
-easymde@^2.10.1, easymde@^2.20.0:
+easymde@^2.10.1:
   version "2.20.0"
   resolved "https://registry.yarnpkg.com/easymde/-/easymde-2.20.0.tgz#88b3161feab6e1900afa9c4dab3f1da352b0a26e"
   integrity sha512-V1Z5f92TfR42Na852OWnIZMbM7zotWQYTddNaLYZFVKj7APBbyZ3FYJ27gBw2grMW3R6Qdv9J8n5Ij7XRSIgXQ==
@@ -11581,9 +11581,9 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lodestar-app-element@urfit-tech/lodestar-app-element#v1.94.7:
+lodestar-app-element@urfit-tech/lodestar-app-element#v1.94.8:
   version "0.1.0"
-  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/1199f1621596cd11a359a759dfde7507b3b07bf8"
+  resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/19c3e0086b3b4d2df14d00d5718432ba525a84e2"
   dependencies:
     "@apollo/client" "^3.7.11"
     "@babel/cli" "^7.13.16"
@@ -11783,7 +11783,7 @@ marcosc-async@^3.0.4:
   resolved "https://registry.yarnpkg.com/marcosc-async/-/marcosc-async-3.0.5.tgz#41e6d56c656c811859d34b97a0a26093f71dc360"
   integrity sha1-QebVbGVsgRhZ00uXoKJgk/cdw2A=
 
-marked@^4.1.0:
+marked@4.3.0, marked@^4.1.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/marked/-/marked-4.3.0.tgz#796362821b019f734054582038b116481b456cf3"
   integrity sha512-PRsaiG84bK+AMvxziE/lCFss8juXjNaWzVbN5tXAm4XjeaS9NAHhop+PjQxz2A9h8Q4M/xGmzP8vqNwy6JeK0A==
