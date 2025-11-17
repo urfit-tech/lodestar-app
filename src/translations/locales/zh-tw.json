@@ -807,7 +807,7 @@
   "contract.ContractBlock.email": "信箱",
   "contract.ContractBlock.name": "姓名",
   "contract.ContractBlock.noContractContent": "無合約內容",
-  "contract.ContractBlock.onlineCourseServiceTerms": "線上課程服務約款",
+  "contract.ContractBlock.onlineCourseServiceTerms": "系統服務使用約款",
   "contract.ContractBlock.requireContractingParty": "需本人簽署合約",
   "contract.ContractBlock.revokedOn": "已於 {date} 解除此契約",
   "contract.ContractBlock.terminatedOn": "This contract was terminated on {date}",
