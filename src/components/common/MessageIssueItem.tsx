@@ -167,7 +167,10 @@ const MessageIssueItem: React.FC<{
                           issueReply={w}
                           issueReplies={issueReplies}
                           programRoles={programRoles}
-                          onRefetch={refetchIssueReplies}
+                          onRefetch={async () => {
+                            await onRefetch?.()
+                            return await refetchIssueReplies()
+                          }}
                           setReplyEditorDisabled={setReplyEditorDisabled}
                         />
                       </div>
@@ -175,7 +178,10 @@ const MessageIssueItem: React.FC<{
                     <div className="mt-5">
                       <MessageReplyCreationForm
                         issue={issue}
-                        onRefetch={refetchIssueReplies}
+                        onRefetch={async () => {
+                          await onRefetch?.()
+                          return await refetchIssueReplies()
+                        }}
                         onSubmit={insertIssueReply as any}
                         replyEditorDisabled={replyEditorDisabled}
                         setReplyEditorDisabled={setReplyEditorDisabled}
