@@ -1,7 +1,9 @@
 import { gql, useMutation, useQuery } from '@apollo/client'
+import axios from 'axios'
 import { EditorState } from 'braft-editor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import useSWR from 'swr'
 import hasura from '../hasura'
 
 const useIssue = (threadId: string) => {
@@ -325,4 +327,44 @@ const DELETE_ISSUE_REPLY = gql`
   }
 `
 
-export { useIssue, useMutateIssue, useIssueReply, useMutateIssueReply, GET_ISSUE_REPLIES, adaptIssueReplyDTO }
+const useIsIssueModuleAllowedForMember = () => {
+  const { authToken } = useAuth()
+  const isIssueModuleAllowedForMemberFetcher = async (url: string) => {
+    const payload = {
+      event: {
+        op: 'SELECT',
+      },
+      created_at: new Date().toISOString(),
+      id: 'string',
+      trigger: {
+        name: 'is_issue_module_allowed_for_member',
+      },
+    }
+
+    const headers = {
+      Authorization: `Bearer ${authToken}`,
+    }
+
+    return await axios.post(url, payload, { headers })
+  }
+
+  const {
+    data: rawIsIssueModuleAllowedForMember,
+    isLoading: isIssueModuleAllowedForMemberLoading,
+    error: isIssueModuleAllowedForMemberError,
+  } = useSWR(
+    `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/trigger-switchboard/outsourcing`,
+    isIssueModuleAllowedForMemberFetcher,
+  )
+  return { rawIsIssueModuleAllowedForMember, isIssueModuleAllowedForMemberLoading, isIssueModuleAllowedForMemberError }
+}
+
+export {
+  useIssue,
+  useMutateIssue,
+  useIssueReply,
+  useMutateIssueReply,
+  GET_ISSUE_REPLIES,
+  adaptIssueReplyDTO,
+  useIsIssueModuleAllowedForMember,
+}

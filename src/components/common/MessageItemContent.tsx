@@ -65,7 +65,6 @@ const MessageItemContent: React.FC<{
               const parsedDescription = safeJSONParse(description)
               switch (parsedDescription?.syntax) {
                 case 'markdown': {
-                  console.log(parsedDescription?.content)
                   return (
                     <StyledMarkdownDiv
                       dangerouslySetInnerHTML={{ __html: marked.parse(parsedDescription?.content ?? '') }}
