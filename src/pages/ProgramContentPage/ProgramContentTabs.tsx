@@ -7,6 +7,7 @@ import IssueThreadBlock from '../../components/issue/IssueThreadBlock'
 import PracticeDisplayedCollection from '../../components/practice/PracticeDisplayedCollection'
 import ProgramContentMaterialBlock from '../../components/program/ProgramContentMaterialBlock'
 import { programMessages } from '../../helpers/translation'
+import { useIsIssueModuleAllowedForMember } from '../../hooks/issue'
 import { useProgramContentMaterial } from '../../hooks/program'
 import {
   ProgramContent,
@@ -60,6 +61,9 @@ const ProgramContentTabs: React.FC<{
     }
   }, [isMaterialVisible, isPracticesVisible])
 
+  const { rawIsIssueModuleAllowedForMember, isIssueModuleAllowedForMemberLoading, isIssueModuleAllowedForMemberError } =
+    useIsIssueModuleAllowedForMember()
+
   if (!isIssueThreadVisible && !isPracticesVisible && !isMaterialVisible) {
     return null
   }
@@ -99,7 +103,14 @@ const ProgramContentTabs: React.FC<{
     },
   ].filter(v => v.isVisible)
 
-  return (
+  if (isIssueModuleAllowedForMemberLoading || isIssueModuleAllowedForMemberError) {
+    isIssueModuleAllowedForMemberError && console.error(isIssueModuleAllowedForMemberError)
+    return <></>
+  }
+
+  const isIssueModuleAllowedForMember = rawIsIssueModuleAllowedForMember?.data
+
+  return isIssueModuleAllowedForMember.every((v: boolean) => v) ? (
     <StyledContentBlock className="mb-3">
       <Tabs colorScheme="primary" index={tabContents.findIndex(v => v.key === activeKey)}>
         <StyledTabList>
@@ -116,6 +127,8 @@ const ProgramContentTabs: React.FC<{
         </TabPanels>
       </Tabs>
     </StyledContentBlock>
+  ) : (
+    <></>
   )
 }
 
