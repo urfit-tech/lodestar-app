@@ -9,7 +9,7 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import hasura from '../../hasura'
-import { createUploadFn } from '../../helpers'
+import { createUploadFn, PollingStatus } from '../../helpers'
 import { commonMessages, issueMessages } from '../../helpers/translation'
 import MemberAvatar from '../common/MemberAvatar'
 import {
@@ -29,16 +29,16 @@ type MessageReplyCreationFormProps = FormComponentProps & {
   issue: Issue
   onRefetch: RefetchIssueReply
   onSubmit?: (content: any) => Promise<{ data: hasura.INSERT_ISSUE_REPLY }>
-  replyEditorDisabled: boolean
-  setReplyEditorDisabled: (value: React.SetStateAction<boolean>) => void
+  pollingStatus: PollingStatus
+  setPollingStatus: (value: React.SetStateAction<PollingStatus>) => void
 }
 const MessageReplyCreationForm: React.FC<MessageReplyCreationFormProps> = ({
   issue,
   onRefetch,
   onSubmit,
   form,
-  replyEditorDisabled,
-  setReplyEditorDisabled,
+  pollingStatus,
+  setPollingStatus,
 }) => {
   const { formatMessage } = useIntl()
   const [replying, setReplying] = useState(false)
@@ -54,7 +54,7 @@ const MessageReplyCreationForm: React.FC<MessageReplyCreationFormProps> = ({
         getTheNextReplyNotFromAuthorOfIssue(memberId)(issueReplies)(issueReplyId)
       const cond = (now: Date) => (issueReplies: IssueReply[]) =>
         !getTargetReply(issueReplies) || (getTargetReply(issueReplies)?.updatedAt ?? 0) < now
-      pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(setReplyEditorDisabled)(cond)(onRefetch)
+      pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(setPollingStatus)(cond)(onRefetch)
     }
   }
 
@@ -105,12 +105,12 @@ const MessageReplyCreationForm: React.FC<MessageReplyCreationFormProps> = ({
               accepts: { video: false, audio: false },
               externals: { image: true, video: false, audio: false, embed: true },
             }}
-            readOnly={replyEditorDisabled}
+            readOnly={pollingStatus === 'START'}
           />,
         )}
       </Form.Item>
       <Form.Item style={{ textAlign: 'right' }}>
-        <Button variant="primary" type="submit" loading={replying} disabled={replyEditorDisabled}>
+        <Button variant="primary" type="submit" loading={replying} disabled={pollingStatus === 'START'}>
           {formatMessage(commonMessages.button.reply)}
         </Button>
       </Form.Item>

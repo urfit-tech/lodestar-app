@@ -554,3 +554,5 @@ export const polling: (
       .finally(() => options?.onFinally?.({ preparation, polling }))
   }, interval)
 }
+
+export type PollingStatus = 'NONE' | 'START' | 'END'

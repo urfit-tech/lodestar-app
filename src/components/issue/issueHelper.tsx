@@ -1,6 +1,6 @@
 import { ApolloClient } from '@apollo/client'
 import hasura from '../../hasura'
-import { polling } from '../../helpers'
+import { polling, PollingStatus } from '../../helpers'
 import { adaptIssueReplyDTO, GET_ISSUE_REPLIES, useIssue, useIssueReply } from '../../hooks/issue'
 
 export type Issues = ReturnType<typeof useIssue>['issues']
@@ -27,11 +27,11 @@ export const pollUntilTheNextReplyNotFromAuthorOfIssueUpdated: (
 ) => (
   issueId: string,
 ) => (
-  setReplyEditorDisabled?: (value: React.SetStateAction<boolean>) => void,
+  setPollingStatus?: (value: React.SetStateAction<PollingStatus>) => void,
 ) => (
   cond: (now: Date) => (issueReplies: IssueReply[]) => boolean,
 ) => (refetch: RefetchIssues | RefetchIssueReply) => void =
-  apolloClient => issueId => setReplyEditorDisabled => cond => async refetch =>
+  apolloClient => issueId => setPollingStatus => cond => async refetch =>
     polling(1000)(
       async () =>
         await apolloClient.query<hasura.GET_ISSUE_REPLIES, hasura.GET_ISSUE_REPLIESVariables>({
@@ -42,7 +42,7 @@ export const pollUntilTheNextReplyNotFromAuthorOfIssueUpdated: (
     )({
       prepareForPolling: () => {
         console.log('Polling starts.')
-        setReplyEditorDisabled?.(true)
+        setPollingStatus?.('START')
         return { now: new Date(), pollingTime: 1 }
       },
       onSuccess: ({ result, preparation, polling }) => {
@@ -50,8 +50,9 @@ export const pollUntilTheNextReplyNotFromAuthorOfIssueUpdated: (
         if (!cond(preparation.now)(fetchedIssueReplies)) {
           refetch()
           clearInterval(polling)
-          setReplyEditorDisabled?.(false)
+          setPollingStatus?.('END')
           console.log('Polling ends.')
+          setPollingStatus?.('NONE')
         }
       },
     })
