@@ -8,6 +8,7 @@ import marked from 'marked'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { StringParam, useQueryParam } from 'use-query-params'
+import { PollingStatus } from '../../helpers'
 import { issueMessages } from '../../helpers/translation'
 import { useIssueReply, useMutateIssue } from '../../hooks/issue'
 import { ProgramRole } from '../../types/program'
@@ -24,6 +25,7 @@ import {
   pollUntilTheNextReplyNotFromAuthorOfIssueUpdated,
 } from '../issue/issueHelper'
 import MessageIssueReplyItem from './MessageIssueReplyItem'
+import TypingIndicator from './TypingIndicator'
 
 const MessageIssueItem: React.FC<{
   issue: Issue
@@ -57,11 +59,11 @@ const MessageIssueItem: React.FC<{
         getTheNextReplyNotFromAuthorOfIssue(memberId)(issueReplies)(null)
       const cond = (now: Date) => (issueReplies: IssueReply[]) =>
         !getTargetReply(issueReplies) || (getTargetReply(issueReplies)?.updatedAt ?? 0) < now
-      pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(setReplyEditorDisabled)(cond)(onRefetch)
+      pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(setPollingStatus)(cond)(onRefetch)
     }
   }
 
-  const [replyEditorDisabled, setReplyEditorDisabled] = useState(false)
+  const [pollingStatus, setPollingStatus] = useState<PollingStatus>('NONE')
 
   return (
     <>
@@ -171,10 +173,11 @@ const MessageIssueItem: React.FC<{
                             await onRefetch?.()
                             return await refetchIssueReplies()
                           }}
-                          setReplyEditorDisabled={setReplyEditorDisabled}
+                          setPollingStatus={setPollingStatus}
                         />
                       </div>
                     ))}
+                    <TypingIndicator pollingStatus={pollingStatus} />
                     <div className="mt-5">
                       <MessageReplyCreationForm
                         issue={issue}
@@ -183,8 +186,8 @@ const MessageIssueItem: React.FC<{
                           return await refetchIssueReplies()
                         }}
                         onSubmit={insertIssueReply as any}
-                        replyEditorDisabled={replyEditorDisabled}
-                        setReplyEditorDisabled={setReplyEditorDisabled}
+                        pollingStatus={pollingStatus}
+                        setPollingStatus={setPollingStatus}
                       />
                     </div>
                   </>

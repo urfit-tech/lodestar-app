@@ -5,6 +5,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { StringParam, useQueryParam } from 'use-query-params'
+import { PollingStatus } from '../../helpers'
 import { issueMessages } from '../../helpers/translation'
 import { useMutateIssueReply } from '../../hooks/issue'
 import { ProgramRole } from '../../types/program'
@@ -24,8 +25,8 @@ const MessageIssueReplyItem: React.FC<{
   issueReplies: IssueReply[]
   programRoles: ProgramRole[]
   onRefetch?: () => Promise<any>
-  setReplyEditorDisabled: (value: React.SetStateAction<boolean>) => void
-}> = ({ issueId, issueReply, issueReplies, programRoles, onRefetch, setReplyEditorDisabled }) => {
+  setPollingStatus: (value: React.SetStateAction<PollingStatus>) => void
+}> = ({ issueId, issueReply, issueReplies, programRoles, onRefetch, setPollingStatus }) => {
   const { id: issueReplyId, memberId, createdAt, content, reactedMemberIds } = issueReply
   const [qIssueReplyId] = useQueryParam('issueReplyId', StringParam)
   const { updateIssueReply, deleteIssueReply, insertIssueReplyReaction, deleteIssueReplyReaction } =
@@ -41,7 +42,7 @@ const MessageIssueReplyItem: React.FC<{
         getTheNextReplyNotFromAuthorOfIssue(memberId)(issueReplies)(issueReplyId)
       const cond = (now: Date) => (issueReplies: IssueReply[]) =>
         !getTargetReply(issueReplies) || (getTargetReply(issueReplies)?.updatedAt ?? 0) < now
-      pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(setReplyEditorDisabled)(cond)(onRefetch)
+      pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(setPollingStatus)(cond)(onRefetch)
     }
   }
 
@@ -50,7 +51,7 @@ const MessageIssueReplyItem: React.FC<{
       if (settings['program_issue.prompt_reply'] && onRefetch) {
         const targetReply = getTheNextReplyNotFromAuthorOfIssue(memberId)(currentIssueReplies)(issueReplyId)
         const cond = () => (issueReplies: IssueReply[]) => issueReplies.map(v => v.id).includes(targetReply?.id ?? '')
-        pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(setReplyEditorDisabled)(cond)(onRefetch)
+        pollUntilTheNextReplyNotFromAuthorOfIssueUpdated(apolloClient)(issueId)(setPollingStatus)(cond)(onRefetch)
       }
     }
   type MemberStylePair = {

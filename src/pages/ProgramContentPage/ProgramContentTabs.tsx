@@ -110,7 +110,7 @@ const ProgramContentTabs: React.FC<{
 
   const isIssueModuleAllowedForMember = rawIsIssueModuleAllowedForMember?.data
 
-  return isIssueModuleAllowedForMember.every((v: boolean) => v) ? (
+  return (isIssueModuleAllowedForMember as any)?.every?.((v: boolean) => v) ? (
     <StyledContentBlock className="mb-3">
       <Tabs colorScheme="primary" index={tabContents.findIndex(v => v.key === activeKey)}>
         <StyledTabList>
