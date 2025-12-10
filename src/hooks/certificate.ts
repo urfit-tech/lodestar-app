@@ -26,6 +26,7 @@ export const useMemberCertificateCollection = (memberId: string) => {
             period_amount
             created_at
             updated_at
+            meta_tag
             certificate_template {
               id
               template
@@ -59,6 +60,7 @@ export const useMemberCertificateCollection = (memberId: string) => {
             periodType: memberCertificate.certificate?.period_type || '',
             periodAmount: memberCertificate.certificate?.period_amount || '',
             createdAt: new Date(memberCertificate.certificate?.created_at),
+            metaTag: memberCertificate.certificate?.meta_tag,
           },
         }))
 
@@ -94,6 +96,7 @@ export const useMemberCertificate = (memberCertificateId: string) => {
             period_amount
             created_at
             updated_at
+            meta_tag
             certificate_template {
               id
               template
@@ -128,6 +131,7 @@ export const useMemberCertificate = (memberCertificateId: string) => {
             code: data.member_certificate_by_pk.certificate?.code || '',
             template: data.member_certificate_by_pk.certificate?.certificate_template?.template || null,
             templateImage: data.member_certificate_by_pk.certificate?.certificate_template?.background_image || null,
+            metaTag: data.member_certificate_by_pk.certificate?.meta_tag,
           },
         }
 
@@ -156,6 +160,7 @@ export const useCertificate = (certificateId: string) => {
           published_at
           deleted_at
           code
+          meta_tag
           certificate_template {
             id
             template
@@ -180,6 +185,7 @@ export const useCertificate = (certificateId: string) => {
           code: data.certificate_by_pk.code || null,
           template: data.certificate_by_pk.certificate_template?.template || null,
           templateImage: data.certificate_by_pk.certificate_template?.background_image || null,
+          metaTag: data.certificate_by_pk?.meta_tag,
         }
 
   return {

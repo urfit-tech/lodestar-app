@@ -7,6 +7,7 @@ import crossIcon from '../../images/times.svg'
 import ForbiddenPage from '../ForbiddenPage'
 import { StyledPageHeader } from '../ProgramContentPage/index.styled'
 import CertificateContentBlock from './CertificateContentBlock'
+import MemberCertificatePageHelmet from './MemberCertificatePageHelmet'
 
 const MemberCertificatePage: React.FC = () => {
   const history = useHistory()
@@ -29,18 +30,20 @@ const MemberCertificatePage: React.FC = () => {
 
   return (
     <Layout>
-      <StyledPageHeader
-        title={memberCertificate?.certificate.title}
-        backIcon={<img src={crossIcon} height={20} alt="back" />}
-        onBack={() => {
-          history.push('/settings/certificates')
-        }}
-      />
-      <StyledLayoutContent>
-        <div className="d-flex justify-content-center">
-          <CertificateContentBlock memberCertificate={memberCertificate} />
-        </div>
-      </StyledLayoutContent>
+      <MemberCertificatePageHelmet memberCertificate={memberCertificate}>
+        <StyledPageHeader
+          title={memberCertificate?.certificate.title}
+          backIcon={<img src={crossIcon} height={20} alt="back" />}
+          onBack={() => {
+            history.push('/settings/certificates')
+          }}
+        />
+        <StyledLayoutContent>
+          <div className="d-flex justify-content-center">
+            <CertificateContentBlock memberCertificate={memberCertificate} />
+          </div>
+        </StyledLayoutContent>
+      </MemberCertificatePageHelmet>
     </Layout>
   )
 }
