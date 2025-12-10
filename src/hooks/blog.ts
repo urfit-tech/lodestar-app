@@ -3,7 +3,35 @@ import { max, min } from 'lodash'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import hasura from '../hasura'
 import { isUUIDv4, notEmpty } from '../helpers'
-import { Post, PostLatestProps, PostLinkProps, PostPreviewProps, PostRoleName } from '../types/blog'
+import { PostLatestProps, PostLinkProps, PostPreviewProps, PostRoleName } from '../types/blog'
+
+const GET_POST_ISSUES_BY_IDS = gql`
+  query GET_POST_ISSUES_BY_IDS($issueIds: [uuid!]!) {
+    issue(where: { id: { _in: $issueIds } }) {
+      id
+      description
+      created_at
+      member_id
+      issue_reactions {
+        member_id
+      }
+      issue_replies_aggregate {
+        aggregate {
+          count
+        }
+      }
+      issue_replies(order_by: [{ created_at: asc }]) {
+        id
+        content
+        created_at
+        member_id
+        issue_reply_reactions {
+          member_id
+        }
+      }
+    }
+  }
+`
 
 export const usePostPreviewCollection = (filter?: { authorId?: string; tags?: string[]; categories?: string }) => {
   const { loading, error, data, refetch } = useQuery<
@@ -246,31 +274,8 @@ export const usePost = (search: string) => {
             count
           }
         }
-        post_suggests: post_issue(order_by: { issue: { created_at: desc } }) {
-          suggest: issue {
-            id
-            description
-            created_at
-            member_id
-            suggest_reactions: issue_reactions {
-              id
-              member_id
-            }
-            suggest_replies_aggregate: issue_replies_aggregate {
-              aggregate {
-                count
-              }
-            }
-            suggest_replies: issue_replies(order_by: [{ created_at: asc }]) {
-              id
-              content
-              created_at
-              member_id
-              suggest_reply_reactions: issue_reply_reactions {
-                member_id
-              }
-            }
-          }
+        post_suggests: post_issue {
+          issue_id
         }
         post_reaction {
           member_id
@@ -374,9 +379,19 @@ export const usePost = (search: string) => {
   )
 
   const dataPost = data?.post[0] || data?.post_by_pk || null
+  const postSuggestIssueIds = dataPost?.post_suggests.map(postSuggest => postSuggest.issue_id).filter(notEmpty) || []
+  const {
+    data: postSuggestIssuesData,
+    loading: loadingPostSuggest,
+    error: errorPostSuggest,
+  } = useQuery<hasura.GET_POST_ISSUES_BY_IDS, hasura.GET_POST_ISSUES_BY_IDSVariables>(GET_POST_ISSUES_BY_IDS, {
+    variables: { issueIds: postSuggestIssueIds },
+    skip: postSuggestIssueIds.length === 0,
+  })
+  const postSuggestIssues = postSuggestIssueIds.length === 0 ? [] : postSuggestIssuesData?.issue || []
   const { prevPost, nextPost } = useNearPost(dataPost?.published_at)
 
-  const post: Post | null = !dataPost
+  const post: any | null = !dataPost
     ? null
     : {
         id: dataPost.id,
@@ -456,25 +471,24 @@ export const usePost = (search: string) => {
         prevPost,
         nextPost,
         reactedMemberIdsCount: dataPost.post_reaction_aggregate.aggregate?.count || 0,
-        suggests: dataPost.post_suggests
-          .map(w => w.suggest)
-          .filter(notEmpty)
+        suggests: postSuggestIssues
           .map(v => ({
             id: v.id,
             description: v.description || '',
             memberId: v.member_id,
             createdAt: new Date(v.created_at),
-            reactedMemberIds: v.suggest_reactions.map(w => w.member_id) || [],
+            reactedMemberIds: v.issue_reactions.map(w => w.member_id) || [],
             suggestReplies:
-              v.suggest_replies.map(y => ({
+              v.issue_replies.map(y => ({
                 id: y.id,
                 memberId: y.member_id,
                 content: y.content,
                 createdAt: y.created_at,
-                reactedMemberIds: y.suggest_reply_reactions.map(w => w.member_id),
+                reactedMemberIds: y.issue_reply_reactions.map(w => w.member_id),
               })) || [],
-            suggestReplyCount: v.suggest_replies_aggregate.aggregate?.count || 0,
-          })),
+            suggestReplyCount: v.issue_replies_aggregate.aggregate?.count || 0,
+          }))
+          .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
         postRoles: dataPost.post_roles.map(role => ({
           id: role.id,
           name: role.name as PostRoleName,
@@ -483,8 +497,8 @@ export const usePost = (search: string) => {
       }
 
   return {
-    loadingPost: loading,
-    errorPost: error,
+    loadingPost: loading || loadingPostSuggest,
+    errorPost: error || errorPostSuggest,
     post,
     refetchPosts: refetch,
   }
