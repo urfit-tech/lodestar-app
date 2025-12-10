@@ -1,3 +1,5 @@
+import { MetaTag } from 'lodestar-app-element/src/types/general'
+
 export type Certificate = {
   id: string
   title: string
@@ -9,6 +11,7 @@ export type Certificate = {
   periodType: string | null
   periodAmount: string | null
   createdAt: Date
+  metaTag: MetaTag
 }
 
 export type MemberCertificate = {
