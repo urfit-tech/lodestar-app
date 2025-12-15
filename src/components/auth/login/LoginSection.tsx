@@ -46,7 +46,7 @@ export const StyledModalTitle = styled.div`
 const LoginSection: React.FC<{
   noGeneralLogin?: boolean
   isBusinessMember?: boolean
-  onAuthStateChange: React.Dispatch<React.SetStateAction<AuthState>>
+  onAuthStateChange?: React.Dispatch<React.SetStateAction<AuthState>>
   accountLinkToken?: string
   renderTitle?: () => React.ReactNode
 }> = ({ noGeneralLogin, isBusinessMember, onAuthStateChange, accountLinkToken, renderTitle }) => {
@@ -218,7 +218,7 @@ const LoginSection: React.FC<{
               variant="ghost"
               size="sm"
               lineHeight="unset"
-              onClick={() => onAuthStateChange('register')}
+              onClick={() => onAuthStateChange?.('register')}
             >
               {formatMessage(isBusinessMember ? commonMessages.button.instantlySignUp : commonMessages.button.signUp)}
             </Button>

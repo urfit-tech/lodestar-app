@@ -57,6 +57,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/auth',
     pageName: 'AuthPage',
   },
+  safe_login: {
+    path: '/safe-login',
+    pageName: 'SafeLoginPage',
+  },
   line_binding: {
     path: '/line-binding',
     pageName: 'LineBindingPage',

@@ -123,6 +123,7 @@ const sectionConverter = {
 
 const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
+  const [scriptRun, setScriptRun] = useState(false)
   const { settings, id: appId, enabledModules } = useApp()
   const { updateAuthToken, currentMemberId } = useAuth()
   const { defaultLocale, currentLocale } = useContext(LocaleContext)
@@ -175,6 +176,7 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
             withCredentials: true,
           },
         )
+        console.log({ code })
         if (code !== 'SUCCESS') {
           updateAuthToken?.(null)
         }
@@ -206,6 +208,14 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, currentMemberId])
+
+  useEffect(() => {
+    const postLoginScript = settings['script.post_login_script'] || ''
+    if (currentMemberId && postLoginScript && !sessionStorage.getItem('safe-login') && !scriptRun) {
+      eval(postLoginScript)
+      setScriptRun(true)
+    }
+  }, [currentMemberId, scriptRun, settings])
 
   if (loadingAppPages) {
     return <LoadingPage />

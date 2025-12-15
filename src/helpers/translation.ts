@@ -3,6 +3,7 @@ import { defineMessages } from 'react-intl'
 export const authMessages = {
   title: defineMessages({
     login: { id: 'auth.title.login', defaultMessage: '登入' },
+    safeLogin: { id: 'auth.title.safeLogin', defaultMessage: '安全登入' },
   }),
   ui: defineMessages({
     facebookLogin: { id: 'auth.ui.facebookLogin', defaultMessage: 'Facebook 登入/註冊' },
@@ -22,6 +23,7 @@ export const authMessages = {
   }),
   link: defineMessages({
     forgotPassword: { id: 'auth.link.password.forgot', defaultMessage: '忘記密碼？' },
+    noPinCode: { id: 'auth.link.noPinCode', defaultMessage: '沒有臨時密碼？請聯繫網站管理員。' },
   }),
 }
 
@@ -265,6 +267,7 @@ export const commonMessages = {
       name: { id: 'common.form.message.name', defaultMessage: '請輸入名稱' },
       username: { id: 'common.form.message.username', defaultMessage: '請輸入使用者名稱' },
       password: { id: 'common.form.message.password', defaultMessage: '請輸入密碼' },
+      pinCode: { id: 'common.form.message.pinCode', defaultMessage: '請輸入臨時密碼' },
       email: { id: 'common.form.message.email', defaultMessage: '請輸入 Email' },
       emailFormatMessage: { id: 'common.form.message.email.format', defaultMessage: "'Email 格式錯誤'" },
       usernameAndEmail: { id: 'common.form.message.username.email', defaultMessage: '請輸入使用者名稱或 Email' },
