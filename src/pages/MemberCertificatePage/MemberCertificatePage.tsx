@@ -30,20 +30,19 @@ const MemberCertificatePage: React.FC = () => {
 
   return (
     <Layout>
-      <MemberCertificatePageHelmet memberCertificate={memberCertificate}>
-        <StyledPageHeader
-          title={memberCertificate?.certificate.title}
-          backIcon={<img src={crossIcon} height={20} alt="back" />}
-          onBack={() => {
-            history.push('/settings/certificates')
-          }}
-        />
-        <StyledLayoutContent>
-          <div className="d-flex justify-content-center">
-            <CertificateContentBlock memberCertificate={memberCertificate} />
-          </div>
-        </StyledLayoutContent>
-      </MemberCertificatePageHelmet>
+      <MemberCertificatePageHelmet memberCertificate={memberCertificate} />
+      <StyledPageHeader
+        title={memberCertificate?.certificate.title}
+        backIcon={<img src={crossIcon} height={20} alt="back" />}
+        onBack={() => {
+          history.push('/settings/certificates')
+        }}
+      />
+      <StyledLayoutContent>
+        <div className="d-flex justify-content-center">
+          <CertificateContentBlock memberCertificate={memberCertificate} />
+        </div>
+      </StyledLayoutContent>
     </Layout>
   )
 }
