@@ -1,5 +1,6 @@
 import { gql, useMutation, useQuery } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { uniq } from 'ramda'
 import hasura from '../hasura'
 import { notEmpty } from '../helpers'
@@ -62,6 +63,7 @@ export const useMember = (memberId: string) => {
           verifiedEmails: data.member_by_pk.verified_emails,
           isBusiness: data.member_by_pk.is_business,
           phone: data.member_by_pk.member_phones[0]?.phone || '',
+          metadata: data?.member_by_pk?.metadata || {},
         }
 
   return {
@@ -70,6 +72,13 @@ export const useMember = (memberId: string) => {
     member,
     refetchMember: refetch,
   }
+}
+
+export const useVipTheme = () => {
+  const { currentMemberId } = useAuth()
+  const { member } = useMember(currentMemberId || '')
+  const isVip = member?.metadata?.mode === 'vip'
+  return { isVip }
 }
 
 export const usePublicMember = (memberId: string) => {
