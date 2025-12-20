@@ -7,6 +7,7 @@ import { BREAK_POINT } from '../../common/Responsive'
 
 interface StyledUsePrimaryColorProps {
   usePrimaryColor?: boolean
+  isVip?: boolean
 }
 
 export const StyledLayout = styled(Layout)<{ variant?: 'white'; header?: string }>`
@@ -18,7 +19,8 @@ export const StyledLayoutHeader = styled(Layout.Header)<StyledUsePrimaryColorPro
   position: -webkit-sticky;
   height: 4rem;
   top: 0;
-  background: ${props => (props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff')};
+  background: ${props => (props.isVip ? '#2F387B' : props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff')};
+  color: ${props => (props.isVip ? '#ffffff' : 'inherit')};
   z-index: 1000;
 
   &.hidden {
@@ -56,21 +58,23 @@ export const StyledNavTag = styled(Tag)`
 `
 export const StyledNavButton = styled(Button)<StyledUsePrimaryColorProps>`
   &&& {
-    background: ${props => (props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff')};
+    background: ${props =>
+      props.isVip ? '#2F387B' : props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff'};
     height: 4rem;
-    color: ${props => props.theme['@nav-color'] || '#585858'};
+    color: ${props => (props.isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
     line-height: 1.5;
   }
 `
 export const StyledNavAnimationButton = styled(Button)<StyledUsePrimaryColorProps>`
   &&& {
-    background: ${props => (props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff')};
+    background: ${props =>
+      props.isVip ? '#2F387B' : props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff'};
     height: 4rem;
-    color: ${props => props.theme['@nav-color'] || '#585858'};
+    color: ${props => (props.isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
     line-height: 1.5;
     :hover {
-      background: #ffffff;
-      color: ${props => props.theme['@primary-color']};
+      background: ${props => (props.isVip ? '#2F387B' : '#ffffff')};
+      color: ${props => (props.isVip ? '#ffffff' : props.theme['@primary-color'])};
     }
     :hover:after {
       width: 100%;
@@ -103,11 +107,11 @@ export const StyledMenuTag = styled(Tag)`
     font-size: 12px;
   }
 `
-export const StyledMenuItem = styled(MenuItem)`
+export const StyledMenuItem = styled(MenuItem)<StyledUsePrimaryColorProps>`
   && {
     position: relative;
     height: 3.5rem;
-    color: ${props => props.theme['@nav-color'] || '#585858'};
+    color: ${props => (props.isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
     line-height: 1.5;
 
     > ${StyledNavTag} {

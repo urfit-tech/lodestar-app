@@ -13,7 +13,7 @@ import MediaPlayerContext from '../../../contexts/MediaPlayerContext'
 import PodcastPlayerContext from '../../../contexts/PodcastPlayerContext'
 import { commonMessages } from '../../../helpers/translation'
 import { useNav } from '../../../hooks/data'
-import { useMember } from '../../../hooks/member'
+import { useMember, useVipTheme } from '../../../hooks/member'
 import { EarthGlobalIcon } from '../../../images'
 import DefaultAvatar from '../../../images/avatar.svg'
 import AuthModal, { AuthModalContext } from '../../auth/AuthModal'
@@ -56,13 +56,13 @@ const StyledNotificationBar = styled.div<{ variant?: string }>`
   font-weight: 500;
   font-size: 14px;
 `
-const StyledButton = styled(Button)`
+const StyledButton = styled(Button)<{ isVip?: boolean }>`
   &&,
   &&:hover,
   &&:active,
   &&:focus {
     background: transparent;
-    color: ${props => props.theme['@nav-color'] || '#585858'};
+    color: ${props => (props.isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
   }
 `
 
@@ -98,6 +98,7 @@ const DefaultLayout: React.FC<{
   const { name, settings, enabledModules } = useApp()
   const { member } = useMember(currentMemberId || '')
   const { navs } = useNav()
+  const { isVip } = useVipTheme()
   const { visible: podcastPlayerVisible } = useContext(PodcastPlayerContext)
   const { visible: mediaPlayerVisible } = useContext(MediaPlayerContext)
   const { currentLocale, setCurrentLocale, languagesList } = useContext(LocaleContext)
@@ -128,6 +129,7 @@ const DefaultLayout: React.FC<{
           <StyledLayoutHeader
             className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}
             usePrimaryColor={isPrimaryColorEnabled}
+            isVip={isVip}
           >
             <div className="d-flex align-items-center">
               <LogoBlock className="mr-4">
@@ -152,6 +154,7 @@ const DefaultLayout: React.FC<{
                               : StyledNavButton
                           }
                           usePrimaryColor={isPrimaryColorEnabled}
+                          isVip={isVip}
                           onClick={() => {
                             nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')
                           }}
@@ -173,6 +176,7 @@ const DefaultLayout: React.FC<{
                               : StyledNavButton
                           }
                           usePrimaryColor={isPrimaryColorEnabled}
+                          isVip={isVip}
                           onClick={e => {
                             if (nav.href) {
                               if (nav.href[0] === '/') {
@@ -196,7 +200,11 @@ const DefaultLayout: React.FC<{
                               subNav.external ? (
                                 <StyledMenuItem
                                   key={idx}
-                                  _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}
+                                  isVip={isVip}
+                                  _focus={{
+                                    bg: isVip ? '#2F387B' : '#fff',
+                                    color: isVip ? '#ffffff' : theme?.colors?.primary?.[500],
+                                  }}
                                   onClick={() =>
                                     subNav.href && window.open(subNav.href, '_blank', 'noopener=yes,noreferrer=yes')
                                   }
@@ -206,7 +214,11 @@ const DefaultLayout: React.FC<{
                               ) : (
                                 <StyledMenuItem
                                   key={idx}
-                                  _focus={{ bg: '#fff', color: theme?.colors?.primary?.[500] }}
+                                  isVip={isVip}
+                                  _focus={{
+                                    bg: isVip ? '#2F387B' : '#fff',
+                                    color: isVip ? '#ffffff' : theme?.colors?.primary?.[500],
+                                  }}
                                   onClick={() => {
                                     if (subNav.href) {
                                       if (subNav.href[0] === '/') {
@@ -240,6 +252,7 @@ const DefaultLayout: React.FC<{
                               : StyledNavButton
                           }
                           usePrimaryColor={isPrimaryColorEnabled}
+                          isVip={isVip}
                           onClick={() => history.push(`/creators/${currentMemberId}`)}
                         >
                           <Link to={`/creators/${currentMemberId}`}>
@@ -262,6 +275,7 @@ const DefaultLayout: React.FC<{
                               : StyledNavButton
                           }
                           usePrimaryColor={isPrimaryColorEnabled}
+                          isVip={isVip}
                           onClick={() => history.push(`/members/${currentMemberId}`)}
                         >
                           <Link to={`/members/${currentMemberId}`}>
@@ -276,7 +290,7 @@ const DefaultLayout: React.FC<{
                 <Responsive.Desktop>
                   <Menu>
                     <MenuButton p="1rem">
-                      <StyledButton>
+                      <StyledButton isVip={isVip}>
                         <EarthGlobalIcon height="24px" width="24px" />
                       </StyledButton>
                     </MenuButton>

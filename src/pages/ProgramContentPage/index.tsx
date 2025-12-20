@@ -14,15 +14,17 @@ import { Link, useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { BREAK_POINT } from '../../components/common/Responsive'
+import { StyledPageHeader } from '../../components/common/StyledPageHeader'
 import { EmptyBlock, StyledLayoutContent } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
 import ProgramContentMenu from '../../components/program/ProgramContentMenu'
 import ProgramContentNoAuthBlock from '../../components/program/ProgramContentNoAuthBlock'
 import { ProgressProvider } from '../../contexts/ProgressContext'
 import { commonMessages } from '../../helpers/translation'
+import { useVipTheme } from '../../hooks/member'
 import { useProgram } from '../../hooks/program'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
-import { StyledPageHeader, StyledSideBar } from './index.styled'
+import { StyledSideBar, StyledVipButton } from './index.styled'
 import ProgramContentBlock from './ProgramContentBlock'
 import ProgramContentPageHelmet from './ProgramContentPageHelmet'
 import ProgramCustomContentBlock from './ProgramCustomContentBlock'
@@ -46,6 +48,7 @@ const ProgramContentPage: React.FC = () => {
   const { enabledModules, settings, id: appId, loading: loadingApp } = useApp()
   const { currentMemberId, isAuthenticating } = useAuth()
   const { program, loadingProgram } = useProgram(programId)
+  const { isVip } = useVipTheme()
   const { resourceCollection } = useResourceCollection([`${appId}:program_content:${programContentId}`])
   const [menuVisible, setMenuVisible] = useState(window.innerWidth >= BREAK_POINT)
   const [previousPage] = useQueryParam('back', StringParam)
@@ -85,11 +88,13 @@ const ProgramContentPage: React.FC = () => {
       ) : null}
       {!loadingApp && <ProgramContentPageHelmet program={program!} contentId={programContentId} />}
       <StyledPageHeader
+        isVip={isVip}
         title={program?.title || programId}
         extra={
           <div>
             {ebook ? (
-              <Button
+              <StyledVipButton
+                isVip={isVip}
                 paddingX="0.4rem"
                 colorScheme="primary"
                 variant="ghost"
@@ -105,11 +110,12 @@ const ProgramContentPage: React.FC = () => {
               >
                 <Icon as={SearchIcon} mr="0.3rem" />
                 {formatMessage(commonMessages.ui.search)}
-              </Button>
+              </StyledVipButton>
             ) : null}
 
             {enabledModules.customer_review && (
-              <Button
+              <StyledVipButton
+                isVip={isVip}
                 paddingX="0.4rem"
                 colorScheme="primary"
                 variant="ghost"
@@ -118,9 +124,10 @@ const ProgramContentPage: React.FC = () => {
               >
                 <Icon as={BsStar} mr="0.3rem" />
                 {formatMessage(commonMessages.button.review)}
-              </Button>
+              </StyledVipButton>
             )}
-            <Button
+            <StyledVipButton
+              isVip={isVip}
               paddingX="0.4rem"
               size="sm"
               colorScheme="primary"
@@ -129,9 +136,10 @@ const ProgramContentPage: React.FC = () => {
             >
               <Icon as={AiOutlineProfile} mr="0.3rem" />
               {formatMessage(commonMessages.button.intro)}
-            </Button>
+            </StyledVipButton>
             {!settings['layout.program_content'] && (
-              <Button
+              <StyledVipButton
+                isVip={isVip}
                 paddingX="0.4rem"
                 size="sm"
                 colorScheme="primary"
@@ -147,7 +155,7 @@ const ProgramContentPage: React.FC = () => {
               >
                 <Icon as={AiOutlineUnorderedList} mr="0.3rem" />
                 {formatMessage(commonMessages.button.list)}
-              </Button>
+              </StyledVipButton>
             )}
           </div>
         }
