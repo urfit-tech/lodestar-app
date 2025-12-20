@@ -133,12 +133,11 @@ const useManagementDomain = (appId: string) => {
 }
 
 const VipSidebar: React.FC<VipSidebarProps> = ({ onExpandChange }) => {
-  const [isExpanded, setIsExpanded] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const history = useHistory()
   const { formatMessage } = useIntl()
   const { id: appId } = useApp()
-  const { routesMap } = useAppRouter()
+  const { routesMap, sidebarExpanded, setSidebarExpanded } = useAppRouter()
   const { currentMemberId, currentUserRole, permissions, authToken } = useAuth()
   const { enabledModules, settings } = useApp()
   const { enrolledMembershipCardIds } = useEnrolledMembershipCardIds(currentMemberId || '')
@@ -147,8 +146,8 @@ const VipSidebar: React.FC<VipSidebarProps> = ({ onExpandChange }) => {
   const { managementDomain } = useManagementDomain(appId)
 
   const handleExpandToggle = () => {
-    const newExpanded = !isExpanded
-    setIsExpanded(newExpanded)
+    const newExpanded = !sidebarExpanded
+    setSidebarExpanded(newExpanded)
     onExpandChange?.(newExpanded)
   }
 
@@ -370,12 +369,12 @@ const VipSidebar: React.FC<VipSidebarProps> = ({ onExpandChange }) => {
   }
 
   return (
-    <StyledSidebar isExpanded={isExpanded}>
+    <StyledSidebar isExpanded={sidebarExpanded}>
       {menuItems.map((item, index) => (
         <MenuItem
           key={item.key}
           isActive={activeIndex === index}
-          isExpanded={isExpanded}
+          isExpanded={sidebarExpanded}
           onClick={() => handleMenuItemClick(index, item)}
         >
           {item.icon}
@@ -385,9 +384,9 @@ const VipSidebar: React.FC<VipSidebarProps> = ({ onExpandChange }) => {
       
       <ExpandButtonWrapper>
         <StyledExpandButton
-          aria-label={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
+          aria-label={sidebarExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
           icon={<ChevronRightIcon />}
-          isExpanded={isExpanded}
+          isExpanded={sidebarExpanded}
           onClick={handleExpandToggle}
         />
       </ExpandButtonWrapper>

@@ -54,6 +54,7 @@ import NotFoundPage from '../NotFoundPage'
 import pageMessages from '../translation'
 import CraftBlock from './CraftBlock'
 import VipSidebar from '../../components/layout/VipSidebar'
+import { useAppRouter } from '../../components/common/AppRouter'
 
 type SectionType =
   | 'homeCover'
@@ -152,7 +153,7 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
   const tracking = useTracking()
   const { formatMessage } = useIntl()
   const { isVip } = useVipTheme()
-  const [sidebarExpanded, setSidebarExpanded] = useState(false)
+  const { sidebarExpanded } = useAppRouter()
 
   const [utmQuery] = useQueryParams({
     utm_campaign: StringParam,
@@ -243,7 +244,7 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
 
   return (
     <>
-      {isVip && <VipSidebar onExpandChange={setSidebarExpanded} />}
+      {isVip && <VipSidebar />}
       <ContentWrapper sidebarWidth={isVip ? (sidebarExpanded ? 200 : 64) : 0}>
         {currentAppPage ? (
           <>
