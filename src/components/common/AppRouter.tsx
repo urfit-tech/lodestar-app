@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { QueryParamProvider } from 'use-query-params'
 import LoadablePage from '../../LoadablePage'
@@ -379,14 +379,23 @@ const defaultRoutesMap: RoutesMap = {
     pageName: 'ProjectPage',
   },
 }
-const AppRouterContext = React.createContext<{ routesMap: RoutesMap }>({ routesMap: {} })
+const AppRouterContext = React.createContext<{
+  routesMap: RoutesMap
+  sidebarExpanded: boolean
+  setSidebarExpanded: (expanded: boolean) => void
+}>({
+  routesMap: {},
+  sidebarExpanded: false,
+  setSidebarExpanded: () => {},
+})
 const AppRouter: React.FC<{ extra?: RoutesMap }> = ({ children, extra }) => {
+  const [sidebarExpanded, setSidebarExpanded] = useState(false)
   const routesMap: RoutesMap = {
     ...defaultRoutesMap,
     ...extra,
   }
   return (
-    <AppRouterContext.Provider value={{ routesMap }}>
+    <AppRouterContext.Provider value={{ routesMap, sidebarExpanded, setSidebarExpanded }}>
       <BrowserRouter>
         <QueryParamProvider ReactRouterRoute={Route}>
           <AppPage

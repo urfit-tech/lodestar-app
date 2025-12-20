@@ -12,6 +12,7 @@ import { useIntl } from 'react-intl'
 import { Link, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParams } from 'use-query-params'
+import { useAppRouter } from '../../components/common/AppRouter'
 import MessengerChat from '../../components/common/MessengerChat'
 import PageHelmet from '../../components/common/PageHelmet'
 import DefaultLayout from '../../components/layout/DefaultLayout'
@@ -150,7 +151,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
 
   const { formatMessage } = useIntl()
   const { isVip } = useVipTheme()
-  const [sidebarExpanded, setSidebarExpanded] = useState(false)
+  const { sidebarExpanded } = useAppRouter()
 
   const [utmQuery] = useQueryParams({
     utm_campaign: StringParam,
@@ -222,7 +223,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
 
   return (
     <>
-      {isVip && <VipSidebar onExpandChange={setSidebarExpanded} />}
+      {isVip && <VipSidebar />}
       <ContentWrapper sidebarWidth={isVip ? (sidebarExpanded ? 200 : 64) : 0}>
         {currentAppPage ? (
           <>
