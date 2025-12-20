@@ -1,37 +1,18 @@
-import { PageHeader } from 'antd'
+import { Button } from '@chakra-ui/react'
 import styled from 'styled-components'
-import { BREAK_POINT } from '../../components/common/Responsive'
 
-export const StyledPageHeader = styled(PageHeader)`
+export const StyledVipButton = styled(Button)<{ isVip?: boolean }>`
   && {
-    padding: 1rem 1.5rem;
-    height: 4rem;
-    background: white;
+    color: ${props => (props.isVip ? '#ffffff' : 'inherit')};
   }
-
-  .ant-page-header-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  &&:hover {
+    color: ${props => (props.isVip ? '#ffffff' : 'inherit')};
   }
-
-  .ant-page-header-heading-title,
-  .ant-divider {
-    display: none;
+  && svg {
+    color: ${props => (props.isVip ? '#ffffff' : 'inherit')};
   }
-
-  .ant-page-header-heading-extra {
-    width: auto;
-    padding: 0;
-  }
-
-  @media (min-width: ${BREAK_POINT}px) {
-    .ant-page-header-heading-title {
-      display: block;
-      flex-grow: 1;
-      font-size: 16px;
-      line-height: 32px;
-    }
+  &&:hover svg {
+    color: ${props => (props.isVip ? '#ffffff' : 'inherit')};
   }
 `
 

@@ -9,6 +9,7 @@ import ProductItem from '../../components/common/ProductItem'
 import CartContext from '../../contexts/CartContext'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useProductCollection } from '../../hooks/common'
+import { useVipTheme } from '../../hooks/member'
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -44,18 +45,19 @@ const StyledBadge = styled(Badge)`
     right: 4px;
   }
 `
-const StyledButton = styled(Button)`
+const StyledButton = styled(Button)<{ isVip?: boolean }>`
   &&,
   &&:hover,
   &&:active,
   &&:focus {
-    color: ${props => props.theme['@nav-color'] || '#585858'};
+    color: ${props => (props.isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
   }
 `
 
 const CartDropdown: React.FC = () => {
   const { cartProducts } = useContext(CartContext)
   const { formatMessage } = useIntl()
+  const { isVip } = useVipTheme()
 
   const ProductListItem: React.FC<{ productIds: string[] }> = ({ productIds }) => {
     const { loading, productCollection } = useProductCollection(productIds)
@@ -118,7 +120,7 @@ const CartDropdown: React.FC = () => {
       content={content}
     >
       <StyledBadge count={cartProducts.length} className="mr-2">
-        <StyledButton variant="ghost">
+        <StyledButton isVip={isVip} variant="ghost">
           <Icon as={AiOutlineShoppingCart} />
         </StyledButton>
       </StyledBadge>
