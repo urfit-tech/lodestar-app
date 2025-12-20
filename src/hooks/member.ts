@@ -2,10 +2,14 @@ import { gql, useMutation, useQuery } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { uniq } from 'ramda'
+import { useEffect, useRef } from 'react'
 import hasura from '../hasura'
 import { notEmpty } from '../helpers'
 import { Category } from '../types/general'
 import { MemberProps, MemberPublicProps, MemberSocialType, SocialCardProps, UserRole } from '../types/member'
+
+// 用於追蹤已經執行過的腳本，確保全局只執行一次
+const executedScripts = new Set<string>()
 
 export const useMember = (memberId: string) => {
   const { loading, data, error, refetch } = useQuery<hasura.GET_MEMBER, hasura.GET_MEMBERVariables>(
@@ -76,8 +80,28 @@ export const useMember = (memberId: string) => {
 
 export const useVipTheme = () => {
   const { currentMemberId } = useAuth()
+  const { settings } = useApp()
   const { member } = useMember(currentMemberId || '')
-  const isVip = member?.metadata?.mode === 'vip'
+  const scriptExecutedRef = useRef(false)
+  const contractServiceEndedAt = member?.metadata?.contractServiceEndedAt
+  const isVip = contractServiceEndedAt && new Date(contractServiceEndedAt) < new Date()
+  const vipLaunchScript = settings['script.vip_launch_script'] || ''
+
+  useEffect(() => {
+    // 創建唯一的腳本標識符（基於腳本內容和用戶ID）
+    const scriptKey = `${currentMemberId || ''}_${vipLaunchScript}`
+    
+    if (isVip && vipLaunchScript && !scriptExecutedRef.current && !executedScripts.has(scriptKey)) {
+      try {
+        eval(vipLaunchScript)
+        executedScripts.add(scriptKey)
+        scriptExecutedRef.current = true
+      } catch (error) {
+        console.error('執行 VIP 啟動腳本時發生錯誤:', error)
+      }
+    }
+  }, [isVip, vipLaunchScript, currentMemberId])
+
   return { isVip }
 }
 
