@@ -37,7 +37,7 @@ export type MemberProps = {
   youtubeChannelIds: string[] | null
   verifiedEmails: string[] | null
   isBusiness?: boolean | null
-
+  metadata?: Record<string, any> 
   phone?: string
 }
 
