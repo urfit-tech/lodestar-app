@@ -1,13 +1,13 @@
+import { gql, useQuery } from '@apollo/client'
 import { ChevronRightIcon, SettingsIcon } from '@chakra-ui/icons'
 import { Icon, IconButton } from '@chakra-ui/react'
-import { gql, useQuery } from '@apollo/client'
-import React, { useMemo, useState } from 'react'
-import { useHistory } from 'react-router-dom'
-import { useIntl } from 'react-intl'
-import styled from 'styled-components'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { parsePayload } from 'lodestar-app-element/src/hooks/util'
+import React, { useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { useHistory } from 'react-router-dom'
+import styled from 'styled-components'
 import hasura from '../../../hasura'
 import { commonMessages } from '../../../helpers/translation'
 import { useEnrolledMembershipCardIds } from '../../../hooks/card'
@@ -33,7 +33,7 @@ const StyledSidebar = styled.div<{ isExpanded: boolean }>`
   top: 64px;
   height: calc(100vh - 64px);
   width: ${props => (props.isExpanded ? '200px' : '64px')};
-  background: #2F387B;
+  background: #2f387b;
   color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -56,17 +56,17 @@ const MenuItem = styled.div<{ isActive?: boolean; isExpanded: boolean }>`
   cursor: pointer;
   transition: all 0.2s ease;
   background: ${props => (props.isActive ? 'rgba(255, 255, 255, 0.2)' : 'transparent')};
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.15);
   }
-  
+
   svg {
     font-size: 24px;
     flex-shrink: 0;
     margin-right: ${props => (props.isExpanded ? '12px' : '0')};
   }
-  
+
   span {
     white-space: nowrap;
     display: ${props => (props.isExpanded ? 'block' : 'none')};
@@ -90,11 +90,11 @@ const StyledExpandButton = styled(IconButton)<{ isExpanded: boolean }>`
     color: #ffffff;
     width: 40px;
     height: 40px;
-    
+
     &:hover {
       background: rgba(255, 255, 255, 0.15);
     }
-    
+
     svg {
       transform: ${props => (props.isExpanded ? 'rotate(180deg)' : 'rotate(0deg)')};
       transition: transform 0.3s ease;
@@ -153,20 +153,20 @@ const VipSidebar: React.FC<VipSidebarProps> = ({ onExpandChange }) => {
 
   const menuItems: MenuItemData[] = useMemo(() => {
     const hideKeys = settings['settings.menu.hide_keys']?.split(',') || []
+    const managementHost = managementDomain?.domain?.[0]
     const defaultMenuItems: MenuItemData[] = []
 
     // management_system
     if (
-      (currentUserRole === 'app-owner' ||
-        currentUserRole === 'content-creator' ||
-        permissions.BACKSTAGE_ENTER) &&
-      !hideKeys.includes('management_system')
+      (currentUserRole === 'app-owner' || currentUserRole === 'content-creator' || permissions.BACKSTAGE_ENTER) &&
+      !hideKeys.includes('management_system') &&
+      managementHost
     ) {
       defaultMenuItems.push({
         key: 'management_system',
         icon: <SettingsIcon />,
         label: formatMessage(commonMessages.content.managementSystem),
-        href: `//${managementDomain?.domain[0]}/admin`,
+        href: `//${managementHost}/admin`,
         isExternal: true,
       })
     }
@@ -261,11 +261,7 @@ const VipSidebar: React.FC<VipSidebarProps> = ({ onExpandChange }) => {
     }
 
     // member_social_cards
-    if (
-      enabledModules.social_connect &&
-      !!socialCards.length &&
-      !hideKeys.includes('member_social_cards')
-    ) {
+    if (enabledModules.social_connect && !!socialCards.length && !hideKeys.includes('member_social_cards')) {
       defaultMenuItems.push({
         key: 'member_social_cards',
         icon: <Icon as={IdentityIcon} />,
@@ -357,13 +353,13 @@ const VipSidebar: React.FC<VipSidebarProps> = ({ onExpandChange }) => {
     setActiveIndex(index)
     if (item.href) {
       if (item.isExternal || item.key.startsWith('_blank')) {
-        window.open(item.href, '_blank')
+        window.open(item.href, '_blank', 'noopener=yes,noreferrer=yes')
       } else if (item.key.startsWith('management_system')) {
-        window.open(item.href, '_blank')
+        window.open(item.href, '_blank', 'noopener=yes,noreferrer=yes')
       } else if (item.href.startsWith('/')) {
         history.push(item.href)
       } else {
-        window.open(item.href, '_blank')
+        window.open(item.href, '_blank', 'noopener=yes,noreferrer=yes')
       }
     }
   }
@@ -381,7 +377,7 @@ const VipSidebar: React.FC<VipSidebarProps> = ({ onExpandChange }) => {
           <span>{item.label}</span>
         </MenuItem>
       ))}
-      
+
       <ExpandButtonWrapper>
         <StyledExpandButton
           aria-label={sidebarExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
