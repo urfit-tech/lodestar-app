@@ -122,20 +122,20 @@ const sectionConverter = {
   homeHaohaoming: HaohaomingSection,
 }
 
-const ContentWrapper = styled.div<{ sidebarWidth: number }>`
+const ContentWrapper = styled.div<{ isVip?: boolean; sidebarWidth: number }>`
   margin-left: ${props => `${props.sidebarWidth}px`};
   transition: margin-left 0.3s ease;
   position: relative;
-  background: #2f387b;
+  background: ${props => (props.isVip ? '#2f387b' : 'transparent')};
 
   &::before {
     content: '';
     position: absolute;
-    left: ${props => `-${props.sidebarWidth}px`};
+    left: ${props => (props.isVip ? `-${props.sidebarWidth}px` : '0')};
     top: 0;
-    width: ${props => `${props.sidebarWidth}px`};
+    width: ${props => (props.isVip ? `${props.sidebarWidth}px` : '0')};
     height: 100%;
-    background: #2f387b;
+    background: ${props => (props.isVip ? '#2f387b' : 'transparent')};
     z-index: -1;
   }
 `
@@ -224,7 +224,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
   return (
     <>
       {isVip && <VipSidebar />}
-      <ContentWrapper sidebarWidth={isVip ? (sidebarExpanded ? 200 : 64) : 0}>
+      <ContentWrapper isVip={isVip} sidebarWidth={isVip ? (sidebarExpanded ? 200 : 64) : 0}>
         {currentAppPage ? (
           <>
             {metaLoaded && <Tracking.View />}
