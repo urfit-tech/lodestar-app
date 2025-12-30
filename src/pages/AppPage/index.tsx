@@ -13,9 +13,11 @@ import { useIntl } from 'react-intl'
 import { Link, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParams } from 'use-query-params'
+import { useAppRouter } from '../../components/common/AppRouter'
 import MessengerChat from '../../components/common/MessengerChat'
 import PageHelmet from '../../components/common/PageHelmet'
 import DefaultLayout from '../../components/layout/DefaultLayout'
+import VipSidebar from '../../components/layout/VipSidebar'
 import {
   ActivityIntroSection,
   ActivitySection,
@@ -45,6 +47,7 @@ import HaohaomingSection from '../../components/page/HaohaomingSection'
 import LocaleContext from '../../contexts/LocaleContext'
 import hasura from '../../hasura'
 import { getBraftContent, getOgLocale } from '../../helpers'
+import { useVipTheme } from '../../hooks/member'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { MetaTag } from '../../types/general'
 import { TrackingEvent } from '../../types/tracking'
@@ -121,6 +124,24 @@ const sectionConverter = {
   homeHaohaoming: HaohaomingSection,
 }
 
+const ContentWrapper = styled.div<{ isVip?: boolean; sidebarWidth: number }>`
+  margin-left: ${props => `${props.sidebarWidth}px`};
+  transition: margin-left 0.3s ease;
+  position: relative;
+  background: ${props => (props.isVip ? '#2f387b' : 'transparent')};
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: ${props => (props.isVip ? `-${props.sidebarWidth}px` : '0')};
+    top: 0;
+    width: ${props => (props.isVip ? `${props.sidebarWidth}px` : '0')};
+    height: 100%;
+    background: ${props => (props.isVip ? '#2f387b' : 'transparent')};
+    z-index: -1;
+  }
+`
+
 const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
   const { settings, id: appId, enabledModules } = useApp()
@@ -131,6 +152,8 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
   const ogLocale = getOgLocale(defaultLocale || '')
   const tracking = useTracking()
   const { formatMessage } = useIntl()
+  const { isVip } = useVipTheme()
+  const { sidebarExpanded } = useAppRouter()
 
   const [utmQuery] = useQueryParams({
     utm_campaign: StringParam,
@@ -221,81 +244,86 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
 
   return (
     <>
-      {currentAppPage ? (
-        <>
-          {metaLoaded && <Tracking.View />}
-          <PageHelmet
-            title={currentAppPage?.metaTag?.seo?.pageTitle || currentAppPage?.title || ''}
-            description={currentAppPage?.metaTag?.seo?.description || currentAppPage.defaultSettings.description || ''}
-            keywords={currentAppPage?.metaTag?.seo?.keywords?.split(',')}
-            isNoIndex={!currentAppPage.publishedAt}
-            openGraph={[
-              { property: 'fb:app_id', content: settings['auth.facebook_app_id'] },
-              { property: 'og:site_name', content: settings['name'] },
-              { property: 'og:type', content: 'website' },
-              { property: 'og:url', content: window.location.href },
-              {
-                property: 'og:title',
-                content:
-                  currentAppPage?.metaTag?.openGraph?.title ||
-                  currentAppPage?.title ||
-                  settings['open_graph.title'] ||
-                  settings['title'],
-              },
-              {
-                property: 'og:description',
-                content: getBraftContent(
-                  currentAppPage?.metaTag?.openGraph?.description ||
-                    currentAppPage.defaultSettings.description ||
-                    settings['open_graph.description'] ||
-                    settings['description'],
-                )?.slice(0, 150),
-              },
-              { property: 'og:locale', content: ogLocale },
-              {
-                property: 'og:image',
-                content:
-                  currentAppPage?.metaTag?.openGraph?.image ||
-                  currentAppPage.defaultSettings.img ||
-                  settings['open_graph.image'] ||
-                  settings['logo'],
-              },
-              { property: 'og:image:width', content: '1200' },
-              { property: 'og:image:height', content: '630' },
-              { property: 'og:image:alt', content: currentAppPage?.metaTag?.openGraph?.imageAlt || '' },
-            ]}
-            onLoaded={() => setMetaLoaded(true)}
-          />
-          <DefaultLayout {...currentAppPage.options}>
-            {currentAppPage.craftData ? (
-              <Editor enabled={false} resolver={CraftElement}>
-                <CraftBlock craftData={currentAppPage.craftData} />
-              </Editor>
-            ) : (
-              <Editor enabled={false} resolver={CraftElement}>
-                <Frame>
-                  <>
-                    {currentAppPage.appPageSections.map(section => {
-                      const Section = sectionConverter[section.type]
-                      if (!sectionConverter[section.type]) {
-                        return null
-                      }
-                      return <Section key={section.id} options={section.options} />
-                    })}
-                  </>
-                </Frame>
-              </Editor>
-            )}
-          </DefaultLayout>
-        </>
-      ) : renderFallback ? (
-        <>
-          <Tracking.View />
-          {renderFallback(location.pathname)}
-        </>
-      ) : (
-        <NotFoundPage />
-      )}
+      {isVip && <VipSidebar />}
+      <ContentWrapper isVip={isVip} sidebarWidth={isVip ? (sidebarExpanded ? 200 : 64) : 0}>
+        {currentAppPage ? (
+          <>
+            {metaLoaded && <Tracking.View />}
+            <PageHelmet
+              title={currentAppPage?.metaTag?.seo?.pageTitle || currentAppPage?.title || ''}
+              description={
+                currentAppPage?.metaTag?.seo?.description || currentAppPage.defaultSettings.description || ''
+              }
+              keywords={currentAppPage?.metaTag?.seo?.keywords?.split(',')}
+              isNoIndex={!currentAppPage.publishedAt}
+              openGraph={[
+                { property: 'fb:app_id', content: settings['auth.facebook_app_id'] },
+                { property: 'og:site_name', content: settings['name'] },
+                { property: 'og:type', content: 'website' },
+                { property: 'og:url', content: window.location.href },
+                {
+                  property: 'og:title',
+                  content:
+                    currentAppPage?.metaTag?.openGraph?.title ||
+                    currentAppPage?.title ||
+                    settings['open_graph.title'] ||
+                    settings['title'],
+                },
+                {
+                  property: 'og:description',
+                  content: getBraftContent(
+                    currentAppPage?.metaTag?.openGraph?.description ||
+                      currentAppPage.defaultSettings.description ||
+                      settings['open_graph.description'] ||
+                      settings['description'],
+                  )?.slice(0, 150),
+                },
+                { property: 'og:locale', content: ogLocale },
+                {
+                  property: 'og:image',
+                  content:
+                    currentAppPage?.metaTag?.openGraph?.image ||
+                    currentAppPage.defaultSettings.img ||
+                    settings['open_graph.image'] ||
+                    settings['logo'],
+                },
+                { property: 'og:image:width', content: '1200' },
+                { property: 'og:image:height', content: '630' },
+                { property: 'og:image:alt', content: currentAppPage?.metaTag?.openGraph?.imageAlt || '' },
+              ]}
+              onLoaded={() => setMetaLoaded(true)}
+            />
+            <DefaultLayout {...currentAppPage.options}>
+              {currentAppPage.craftData ? (
+                <Editor enabled={false} resolver={CraftElement}>
+                  <CraftBlock craftData={currentAppPage.craftData} />
+                </Editor>
+              ) : (
+                <Editor enabled={false} resolver={CraftElement}>
+                  <Frame>
+                    <>
+                      {currentAppPage.appPageSections.map(section => {
+                        const Section = sectionConverter[section.type]
+                        if (!sectionConverter[section.type]) {
+                          return null
+                        }
+                        return <Section key={section.id} options={section.options} />
+                      })}
+                    </>
+                  </Frame>
+                </Editor>
+              )}
+            </DefaultLayout>
+          </>
+        ) : renderFallback ? (
+          <>
+            <Tracking.View />
+            {renderFallback(location.pathname)}
+          </>
+        ) : (
+          <NotFoundPage />
+        )}
+      </ContentWrapper>
     </>
   )
 }
