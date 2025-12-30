@@ -13,9 +13,11 @@ import { useIntl } from 'react-intl'
 import { Link, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParams } from 'use-query-params'
+import { useAppRouter } from '../../components/common/AppRouter'
 import MessengerChat from '../../components/common/MessengerChat'
 import PageHelmet from '../../components/common/PageHelmet'
 import DefaultLayout from '../../components/layout/DefaultLayout'
+import VipSidebar from '../../components/layout/VipSidebar'
 import {
   ActivityIntroSection,
   ActivitySection,
@@ -45,16 +47,14 @@ import HaohaomingSection from '../../components/page/HaohaomingSection'
 import LocaleContext from '../../contexts/LocaleContext'
 import hasura from '../../hasura'
 import { getBraftContent, getOgLocale } from '../../helpers'
+import { useVipTheme } from '../../hooks/member'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { MetaTag } from '../../types/general'
 import { TrackingEvent } from '../../types/tracking'
-import { useVipTheme } from '../../hooks/member'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 import pageMessages from '../translation'
 import CraftBlock from './CraftBlock'
-import VipSidebar from '../../components/layout/VipSidebar'
-import { useAppRouter } from '../../components/common/AppRouter'
 
 type SectionType =
   | 'homeCover'
@@ -124,20 +124,20 @@ const sectionConverter = {
   homeHaohaoming: HaohaomingSection,
 }
 
-const ContentWrapper = styled.div<{ sidebarWidth: number }>`
+const ContentWrapper = styled.div<{ isVip?: boolean; sidebarWidth: number }>`
   margin-left: ${props => `${props.sidebarWidth}px`};
   transition: margin-left 0.3s ease;
   position: relative;
-  background: #2f387b;
-  
+  background: ${props => (props.isVip ? '#2f387b' : 'transparent')};
+
   &::before {
     content: '';
     position: absolute;
-    left: ${props => `-${props.sidebarWidth}px`};
+    left: ${props => (props.isVip ? `-${props.sidebarWidth}px` : '0')};
     top: 0;
-    width: ${props => `${props.sidebarWidth}px`};
+    width: ${props => (props.isVip ? `${props.sidebarWidth}px` : '0')};
     height: 100%;
-    background: #2f387b;
+    background: ${props => (props.isVip ? '#2f387b' : 'transparent')};
     z-index: -1;
   }
 `
@@ -245,7 +245,7 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
   return (
     <>
       {isVip && <VipSidebar />}
-      <ContentWrapper sidebarWidth={isVip ? (sidebarExpanded ? 200 : 64) : 0}>
+      <ContentWrapper isVip={isVip} sidebarWidth={isVip ? (sidebarExpanded ? 200 : 64) : 0}>
         {currentAppPage ? (
           <>
             {metaLoaded && <Tracking.View />}
