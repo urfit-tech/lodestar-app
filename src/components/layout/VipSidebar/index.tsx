@@ -153,18 +153,20 @@ const VipSidebar: React.FC<VipSidebarProps> = ({ onExpandChange }) => {
 
   const menuItems: MenuItemData[] = useMemo(() => {
     const hideKeys = settings['settings.menu.hide_keys']?.split(',') || []
+    const managementHost = managementDomain?.domain?.[0]
     const defaultMenuItems: MenuItemData[] = []
 
     // management_system
     if (
       (currentUserRole === 'app-owner' || currentUserRole === 'content-creator' || permissions.BACKSTAGE_ENTER) &&
-      !hideKeys.includes('management_system')
+      !hideKeys.includes('management_system') &&
+      managementHost
     ) {
       defaultMenuItems.push({
         key: 'management_system',
         icon: <SettingsIcon />,
         label: formatMessage(commonMessages.content.managementSystem),
-        href: `//${managementDomain?.domain[0]}/admin`,
+        href: `//${managementHost}/admin`,
         isExternal: true,
       })
     }
@@ -351,13 +353,13 @@ const VipSidebar: React.FC<VipSidebarProps> = ({ onExpandChange }) => {
     setActiveIndex(index)
     if (item.href) {
       if (item.isExternal || item.key.startsWith('_blank')) {
-        window.open(item.href, '_blank')
+        window.open(item.href, '_blank', 'noopener=yes,noreferrer=yes')
       } else if (item.key.startsWith('management_system')) {
-        window.open(item.href, '_blank')
+        window.open(item.href, '_blank', 'noopener=yes,noreferrer=yes')
       } else if (item.href.startsWith('/')) {
         history.push(item.href)
       } else {
-        window.open(item.href, '_blank')
+        window.open(item.href, '_blank', 'noopener=yes,noreferrer=yes')
       }
     }
   }
