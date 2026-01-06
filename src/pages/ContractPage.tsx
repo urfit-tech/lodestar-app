@@ -20,7 +20,6 @@ import { dateFormatter, handleError } from '../helpers'
 import { useAuthModal } from '../hooks/auth'
 import { useMemberContract } from '../hooks/data'
 import pageMessages from './translation'
-import dayjs from 'dayjs'
 
 const StyledTitle = styled(Typography.Title)`
   && {
@@ -107,6 +106,7 @@ const ContractPage: React.FC = () => {
           agreedOptions: {
             agreedName: memberContract.values?.invoice?.name,
             agreedPhone: memberContract.values?.invoice?.phone,
+            agreedAnnouncement: formatMessage(pageMessages.ContractPage.alreadyReadAndAgree),
           },
         },
       })
@@ -173,6 +173,14 @@ const ContractPage: React.FC = () => {
                       date: moment(memberContract.agreedAt).format('YYYY-MM-DD HH:mm:ss'),
                     })}
                   </b>
+                  {memberContract.agreedOptions.agreedAnnouncement ? (
+                    <>
+                      <br />
+                      <b>{memberContract.agreedOptions.agreedAnnouncement}</b>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </>
               ) : memberContract.startedAt && moment() >= moment(memberContract.startedAt) ? (
                 <b> {formatMessage(pageMessages.ContractPage.contractExpired)}</b>
@@ -233,6 +241,7 @@ const ContractPage: React.FC = () => {
                       agreedOptions: {
                         agreedName: memberContract.values?.invoice?.name,
                         agreedPhone: memberContract.values?.invoice?.phone,
+                        agreedAnnouncement: formatMessage(pageMessages.ContractPage.alreadyReadAndAgree),
                       },
                     },
                   })
