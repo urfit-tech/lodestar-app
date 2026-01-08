@@ -2,6 +2,7 @@ import { Divider } from '@chakra-ui/react'
 import { Button } from 'antd'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -87,7 +88,7 @@ const CouponAdminCard: React.FC<{
 }> = ({ coupon, currentTab }) => {
   const { formatMessage } = useIntl()
   const [visible, setVisible] = useState(false)
-
+  const { settings } = useApp()
   return (
     <StyledAdminCard
       title={
@@ -130,10 +131,12 @@ const CouponAdminCard: React.FC<{
         {coupon.couponCode.couponPlan.startedAt
           ? dateFormatter(coupon.couponCode.couponPlan.startedAt)
           : formatMessage(checkoutMessages.coupon.fromNow)}
-        {' ~ '}
-        {coupon.couponCode.couponPlan.endedAt
-          ? dateFormatter(coupon.couponCode.couponPlan.endedAt)
-          : formatMessage(checkoutMessages.coupon.noPeriod)}
+        {settings['coupon.hide_expired_at_front_stage'] !== 'true' &&
+          ` ~ ${
+            coupon.couponCode.couponPlan.endedAt
+              ? dateFormatter(coupon.couponCode.couponPlan.endedAt)
+              : formatMessage(checkoutMessages.coupon.noPeriod)
+          }`}
       </div>
 
       <Divider className="my-3" />
