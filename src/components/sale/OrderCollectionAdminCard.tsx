@@ -176,12 +176,14 @@ const OrderCollectionAdminCard: React.FC<
                 <div className="d-flex align-items-center">
                   {!orderProduct.deliveredAt && <LockIcon className="mr-1" />}
                   {orderProduct.name}
-                  {orderProduct.endedAt && orderProduct.product.type !== 'AppointmentPlan' && (
-                    <span className="ml-2">
-                      ({moment(orderProduct.endedAt).format('YYYY-MM-DD HH:mm')}{' '}
-                      {formatMessage(commonMessages.term.expiredAt)})
-                    </span>
-                  )}
+                  {orderProduct.endedAt &&
+                    orderProduct.product.type !== 'AppointmentPlan' &&
+                    settings['order.hide_product_expired_at_front_stage'] !== 'true' && (
+                      <span className="ml-2">
+                        ({moment(orderProduct.endedAt).format('YYYY-MM-DD HH:mm')}{' '}
+                        {formatMessage(commonMessages.term.expiredAt)})
+                      </span>
+                    )}
                   {orderProduct.startedAt && orderProduct.endedAt && orderProduct.product.type === 'AppointmentPlan' && (
                     <span>
                       (
