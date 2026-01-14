@@ -2741,34 +2741,44 @@
     tslib "^2.0.1"
     typescript "^4.0"
 
-"@fullcalendar/core@^6.1.15":
+"@fullcalendar/core@6.1.15", "@fullcalendar/core@^6.1.15":
   version "6.1.15"
   resolved "https://registry.yarnpkg.com/@fullcalendar/core/-/core-6.1.15.tgz#6c3f5259fc4589870228853072131219bb533f6e"
   integrity sha512-BuX7o6ALpLb84cMw1FCB9/cSgF4JbVO894cjJZ6kP74jzbUZNjtwffwRdA+Id8rrLjT30d/7TrkW90k4zbXB5Q==
   dependencies:
     preact "~10.12.1"
 
-"@fullcalendar/daygrid@~6.1.15":
+"@fullcalendar/daygrid@6.1.15", "@fullcalendar/daygrid@~6.1.15":
   version "6.1.15"
   resolved "https://registry.yarnpkg.com/@fullcalendar/daygrid/-/daygrid-6.1.15.tgz#91208b0955ba805ddad285a53ee6f53855146963"
   integrity sha512-j8tL0HhfiVsdtOCLfzK2J0RtSkiad3BYYemwQKq512cx6btz6ZZ2RNc/hVnIxluuWFyvx5sXZwoeTJsFSFTEFA==
 
-"@fullcalendar/interaction@^6.1.15":
+"@fullcalendar/interaction@6.1.15", "@fullcalendar/interaction@^6.1.15":
   version "6.1.15"
   resolved "https://registry.yarnpkg.com/@fullcalendar/interaction/-/interaction-6.1.15.tgz#1c685d5c269388d4877b75ab2185e97d7c386cc7"
   integrity sha512-DOTSkofizM7QItjgu7W68TvKKvN9PSEEvDJceyMbQDvlXHa7pm/WAVtAc6xSDZ9xmB1QramYoWGLHkCYbTW1rQ==
 
-"@fullcalendar/react@^6.1.15":
+"@fullcalendar/list@6.1.15":
+  version "6.1.15"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/list/-/list-6.1.15.tgz#d9b7ff0a50d7efa0d31234ed6caea06db6090c29"
+  integrity sha512-U1bce04tYDwkFnuVImJSy2XalYIIQr6YusOWRPM/5ivHcJh67Gm8CIMSWpi3KdRSNKFkqBxLPkfZGBMaOcJYug==
+
+"@fullcalendar/moment@6.1.15":
+  version "6.1.15"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/moment/-/moment-6.1.15.tgz#8bc6b5bb1f25f9b040b2afd7a270dd3865273aed"
+  integrity sha512-z3SqNpeCbXnnMd6Vq4XXE6noWFY6AWp1vsmiI9hftIxGV9k9oenDBPV04GvuU69AxipF9wzXm6pHvCwoP3bR4A==
+
+"@fullcalendar/react@6.1.15", "@fullcalendar/react@^6.1.15":
   version "6.1.15"
   resolved "https://registry.yarnpkg.com/@fullcalendar/react/-/react-6.1.15.tgz#3198b4a64e256afd37c9760c8741a9af89ade894"
   integrity sha512-L0b9hybS2J4e7lq6G2CD4nqriyLEqOH1tE8iI6JQjAMTVh5JicOo5Mqw+fhU5bJ7hLfMw2K3fksxX3Ul1ssw5w==
 
-"@fullcalendar/rrule@^6.1.15":
+"@fullcalendar/rrule@6.1.15", "@fullcalendar/rrule@^6.1.15":
   version "6.1.15"
   resolved "https://registry.yarnpkg.com/@fullcalendar/rrule/-/rrule-6.1.15.tgz#ef8bd49c9730d63b5d7366b59d773bedcfa5962e"
   integrity sha512-4tJivAncp/eIhMDTH2v1gssv3sHPYrj2RHfbUklz2Z7bYRSj8tI7mjZWve2acqPmbg21y1nVEOwDfjWhHPcE/Q==
 
-"@fullcalendar/timegrid@^6.1.15":
+"@fullcalendar/timegrid@6.1.15", "@fullcalendar/timegrid@^6.1.15":
   version "6.1.15"
   resolved "https://registry.yarnpkg.com/@fullcalendar/timegrid/-/timegrid-6.1.15.tgz#c4630b7c03c813065154c6e3981f8d51d9d692e5"
   integrity sha512-61ORr3A148RtxQ2FNG7JKvacyA/TEVZ7z6I+3E9Oeu3dqTf6M928bFcpehRTIK6zIA6Yifs7BeWHgOE9dFnpbw==
@@ -11581,7 +11591,7 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lodestar-app-element@urfit-tech/lodestar-app-element#v1.94.8:
+lodestar-app-element@urfit-tech/lodestar-app-element#master:
   version "0.1.0"
   resolved "https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/19c3e0086b3b4d2df14d00d5718432ba525a84e2"
   dependencies:
@@ -11632,6 +11642,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#v1.94.8:
     js-cookie "^3.0.5"
     jsonwebtoken "8.5.1"
     libphonenumber-js "1.9.34"
+    marked "4.3.0"
     moment "^2.29.1"
     mustache "4.2.0"
     query-string "7.0.1"
@@ -11650,6 +11661,7 @@ lodestar-app-element@urfit-tech/lodestar-app-element#v1.94.8:
     react-responsive "8.1.0"
     react-router-dom "5.2.0"
     react-scripts "4.0.3"
+    react-simplemde-editor "4.1.3"
     react-slick "0.28.1"
     react-style-editor "^0.4.0"
     rrule "^2.8.1"
@@ -12109,6 +12121,11 @@ moment@^2.29.1:
   version "2.29.3"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.3.tgz#edd47411c322413999f7a5940d526de183c031f3"
   integrity sha512-c6YRvhEo//6T2Jz/vVtYzqBzwvPT95JBQ+smCytzf7c50oMZRsR/a4w88aD34I+/QVSfnoAnSBFPJHItlOMJVw==
+
+moment@^2.30.1:
+  version "2.30.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.30.1.tgz#f8c91c07b7a786e30c59926df530b4eac96974ae"
+  integrity sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==
 
 move-concurrently@^1.0.1:
   version "1.0.1"

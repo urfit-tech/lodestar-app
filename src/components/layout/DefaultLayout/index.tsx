@@ -201,7 +201,10 @@ const DefaultLayout: React.FC<{
                                 <StyledMenuItem
                                   key={idx}
                                   isVip={isVip}
-                                  _focus={{ bg: isVip ? '#2F387B' : '#fff', color: isVip ? '#ffffff' : theme?.colors?.primary?.[500] }}
+                                  _focus={{
+                                    bg: isVip ? '#2F387B' : '#fff',
+                                    color: isVip ? '#ffffff' : theme?.colors?.primary?.[500],
+                                  }}
                                   onClick={() =>
                                     subNav.href && window.open(subNav.href, '_blank', 'noopener=yes,noreferrer=yes')
                                   }
@@ -212,7 +215,10 @@ const DefaultLayout: React.FC<{
                                 <StyledMenuItem
                                   key={idx}
                                   isVip={isVip}
-                                  _focus={{ bg: isVip ? '#2F387B' : '#fff', color: isVip ? '#ffffff' : theme?.colors?.primary?.[500] }}
+                                  _focus={{
+                                    bg: isVip ? '#2F387B' : '#fff',
+                                    color: isVip ? '#ffffff' : theme?.colors?.primary?.[500],
+                                  }}
                                   onClick={() => {
                                     if (subNav.href) {
                                       if (subNav.href[0] === '/') {
@@ -274,6 +280,29 @@ const DefaultLayout: React.FC<{
                         >
                           <Link to={`/members/${currentMemberId}`}>
                             {settings['nav.my_page.name'] || formatMessage(commonMessages.button.myPage)}
+                          </Link>
+                        </MenuButton>
+                      </Menu>
+                    )))}
+
+                {isAuthenticated &&
+                  (renderMyPageNavItem?.({
+                    memberId: currentMemberId,
+                  }) ||
+                    (!(settings['nav.my_page.disable'] === '1') && (
+                      <Menu>
+                        <MenuButton
+                          as={
+                            settings['style.header.menu_button.animation.enable'] === '1'
+                              ? StyledNavAnimationButton
+                              : StyledNavButton
+                          }
+                          usePrimaryColor={isPrimaryColorEnabled}
+                          isVip={isVip}
+                          onClick={() => history.push(`/members/${currentMemberId}/class`)}
+                        >
+                          <Link to={`/members/${currentMemberId}/class`}>
+                            {formatMessage(commonMessages.button.myClass)}
                           </Link>
                         </MenuButton>
                       </Menu>

@@ -201,6 +201,7 @@ export const commonMessages = {
     home: { id: 'common.button.home', defaultMessage: '首頁' },
     backToHome: { id: 'common.button.backToHome', defaultMessage: '回首頁' },
     myPage: { id: 'common.button.myPage', defaultMessage: '我的主頁' },
+    myClass: { id: 'common.button.myClass', defaultMessage: '參與課程' },
     creatorPage: { id: 'common.button.creatorPage', defaultMessage: 'Creator page' },
     reply: { id: 'common.button.reply', defaultMessage: '回覆' },
     leaveQuestion: { id: 'common.button.leaveQuestion', defaultMessage: '留下你的問題...' },

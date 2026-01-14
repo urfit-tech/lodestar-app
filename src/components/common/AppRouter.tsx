@@ -121,6 +121,10 @@ const defaultRoutesMap: RoutesMap = {
     path: '/creators-display',
     pageName: 'CreatorDisplayedPage',
   },
+  member_class: {
+    path: '/members/:memberId/class',
+    pageName: 'MemberClassPage',
+  },
   member: {
     path: '/members/:memberId',
     pageName: 'MemberPage',
