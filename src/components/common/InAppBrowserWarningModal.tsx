@@ -8,7 +8,7 @@ import {
   ModalOverlay,
   useToast,
 } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { WarningIcon } from '../../images'
@@ -41,7 +41,6 @@ const InAppBrowserWarningModal = () => {
   const [isOpen, setIsOpen] = useState(true)
   const { formatMessage } = useIntl()
   const toast = useToast({ duration: 15000, isClosable: true })
-  const [isToast, setIsToast] = useState(false)
 
   const userAgent = window.navigator.userAgent
   const isInAppBrowser = checkInAppBrowser(userAgent).isInAppBrowser
@@ -49,17 +48,22 @@ const InAppBrowserWarningModal = () => {
   const lineOpenExternalBrowserUrl = addOpenExternalBrowserParam(`${window.location.href}`)
   if (isLineInAppBrowser) window.location.assign(lineOpenExternalBrowserUrl)
 
-  const isRemind = sessionStorage.getItem('kolable.InAppBrowserWarning.isRemind')
-  if (isInAppBrowser && !isToast && !isRemind) {
-    toast({
-      title: formatMessage(commonMessages.InAppBrowserWarningModal.warning),
-      status: 'warning',
-      isClosable: true,
-      position: 'bottom',
-    })
-    setIsToast(true)
-    sessionStorage.setItem('kolable.InAppBrowserWarning.isRemind', 'true')
-  }
+  const isRemind = useRef<string | null>(sessionStorage.getItem('kolable.InAppBrowserWarning.isRemind'))
+  const toastId = 'inAppBrowser'
+
+  useEffect(() => {
+    if (isInAppBrowser && !isRemind.current && !toast.isActive(toastId)) {
+      sessionStorage.setItem('kolable.InAppBrowserWarning.isRemind', '1')
+      isRemind.current = sessionStorage.getItem('kolable.InAppBrowserWarning.isRemind')
+
+      toast({
+        id: toastId,
+        title: formatMessage(commonMessages.InAppBrowserWarningModal.warning),
+        status: 'warning',
+        position: 'bottom',
+      })
+    }
+  }, [formatMessage, isInAppBrowser, toast])
 
   return isInAppBrowser && isLineInAppBrowser ? (
     <Modal
