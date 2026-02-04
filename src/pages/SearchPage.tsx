@@ -258,6 +258,9 @@ const SearchResultBlock: React.FC<{
                     coverUrl={programPackage.coverUrl}
                     title={programPackage.title}
                     link={`/program-packages/${programPackage.id}`}
+                    listPrice={(programPackage as any).listPrice}
+                    salePrice={(programPackage as any).salePrice}
+                    soldAt={(programPackage as any).soldAt}
                   />
                 </div>
               ))}
