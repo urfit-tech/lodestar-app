@@ -303,6 +303,7 @@ const AdvancedSearchPage: React.FC = () => {
                   </div>
                   {(item.type === 'program' || item.type === 'program_package') && item.listPrice !== null && (
                     <PriceLabel
+                      variant="inline"
                       listPrice={item.listPrice}
                       salePrice={item.soldAt && new Date(item.soldAt) > new Date() ? item.salePrice : undefined}
                       currencyId={item.currencyId}

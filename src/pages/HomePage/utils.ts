@@ -196,7 +196,7 @@ const useLatestPrograms: () => {
         })),
         plans: program.program_plans.map(programPlan => ({
           id: programPlan.id,
-          position: (programPlan as any).position ?? 0,
+          position: programPlan.position ?? 0,
           type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
           title: programPlan.title || '',
           description: programPlan.description || '',
@@ -293,7 +293,7 @@ const useAffordablePrograms: () => {
         roles: [],
         plans: program.program_plans.map(programPlan => ({
           id: programPlan.id,
-          position: (programPlan as any).position ?? 0,
+          position: programPlan.position ?? 0,
           type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
           title: programPlan.title || '',
           description: programPlan.description || '',
@@ -381,7 +381,7 @@ const useHottestTagPrograms: () => {
         })),
         plans: program.program_plans.map(programPlan => ({
           id: programPlan.id,
-          position: (programPlan as any).position ?? 0,
+          position: programPlan.position ?? 0,
           type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
           title: programPlan.title || '',
           description: programPlan.description || '',
@@ -469,7 +469,7 @@ const useUnitCategoryPrograms: () => {
         })),
         plans: program.program_plans.map(programPlan => ({
           id: programPlan.id,
-          position: (programPlan as any).position ?? 0,
+          position: programPlan.position ?? 0,
           type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
           title: programPlan.title || '',
           description: programPlan.description || '',
@@ -557,7 +557,7 @@ const useSystematicCategoryPrograms: () => {
         })),
         plans: program.program_plans.map(programPlan => ({
           id: programPlan.id,
-          position: (programPlan as any).position ?? 0,
+          position: programPlan.position ?? 0,
           type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
           title: programPlan.title || '',
           description: programPlan.description || '',
