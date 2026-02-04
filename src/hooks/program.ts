@@ -66,8 +66,12 @@ export const usePublishedProgramCollection = (options?: {
               name
             }
           }
-          program_plans(where: { published_at: { _lte: "now()" } }, order_by: { created_at: asc }) {
+          program_plans(
+            where: { published_at: { _lte: "now()" } }
+            order_by: [{ position: asc }, { created_at: asc }]
+          ) {
             id
+            position
             type
             title
             description
@@ -169,6 +173,7 @@ export const usePublishedProgramCollection = (options?: {
             })),
             plans: program.program_plans.map(programPlan => ({
               id: programPlan.id,
+              position: (programPlan as any).position ?? 0,
               type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
               title: programPlan.title || '',
               description: programPlan.description || '',
@@ -384,8 +389,9 @@ export const useProgram = (programId: string) => {
   >(
     gql`
       query GetProgramPlans($programId: uuid!) {
-        program_plan(where: { program_id: { _eq: $programId } }, order_by: { position: asc }) {
+        program_plan(where: { program_id: { _eq: $programId } }, order_by: [{ position: asc }, { created_at: asc }]) {
           id
+          position
           type
           title
           description
@@ -470,6 +476,7 @@ export const useProgram = (programId: string) => {
       plans:
         programPlans?.program_plan.map(programPlan => ({
           id: programPlan.id,
+          position: (programPlan as any).position ?? 0,
           type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
           title: programPlan.title || '',
           description: programPlan.description || '',
