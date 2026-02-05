@@ -568,7 +568,11 @@ export const useSearchProductCollection = (
       tags: string[]
       score: number | null
     })[]
-    programPackages: Pick<ProgramPackageProps, 'id' | 'coverUrl' | 'title' | 'description'>[]
+    programPackages: (Pick<ProgramPackageProps, 'id' | 'coverUrl' | 'title' | 'description'> & {
+      listPrice: number | null
+      salePrice: number | null
+      soldAt: Date | null
+    })[]
     activities: (DeepPick<
       Activity,
       | 'id'
@@ -729,7 +733,7 @@ export const useSearchProductCollection = (
       .sort((a, b) => sorting(a, b, ['description', 'title', 'instructorsSearchString'], filter?.title || '')),
     programPackages: [...(data?.program_package || [])]
       .map(programPackage => {
-        const plan = (programPackage as any).program_package_plans?.[0]
+        const plan = programPackage.program_package_plans?.[0]
         return {
           id: programPackage.id,
           coverUrl: programPackage.cover_url || null,
