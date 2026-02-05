@@ -109,6 +109,7 @@ const PackageCard: React.FC<
                 )}
                 {listPrice !== undefined && listPrice !== null && (
                   <PriceLabel
+                    variant="inline"
                     listPrice={listPrice}
                     salePrice={isOnSale ? salePrice : undefined}
                     currencyId={currencyId}
