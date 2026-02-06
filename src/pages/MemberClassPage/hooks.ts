@@ -1,6 +1,7 @@
+import { gql, useQuery } from '@apollo/client'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CalendarEvent, CalendarEventStatus, CoursePackageSummary, CourseType, TeachingCourseSummary } from './types'
 
 // Helper to parse metadata and extract class details
@@ -8,11 +9,20 @@ const parseEventMetadata = (metadata: any) => {
   if (!metadata) return {}
   try {
     const parsed = typeof metadata === 'string' ? JSON.parse(metadata) : metadata
+    const studentIds = parsed.studentIds || (parsed.studentId ? [parsed.studentId] : undefined)
+    const orderIds = parsed.orderIds || (parsed.orderId ? [parsed.orderId] : undefined)
     return {
       location: parsed.location || parsed.room || '線上',
       needOnlineRoom: parsed.needOnlineRoom || false,
       materialName: parsed.materialName || parsed.textbook || null,
       materialLink: parsed.materialLink || null,
+      language: parsed.language || undefined,
+      orderIds,
+      studentIds,
+      teacherId: parsed.teacherId || undefined,
+      material: parsed.material || undefined,
+      scheduleType: parsed.scheduleType || undefined,
+      classId: parsed.classId || undefined,
     }
   } catch {
     return {}
@@ -151,6 +161,14 @@ export const useClassEvents = ({ memberId, role }: UseClassEventsOptions) => {
           hostMemberId: event.host_member_id,
           materialName: metadata.materialName,
           materialLink: metadata.materialLink,
+          classGroupId: metadata.classId || event.source_target,
+          language: metadata.language,
+          orderIds: metadata.orderIds,
+          studentIds: metadata.studentIds,
+          teacherId: metadata.teacherId,
+          material: metadata.material,
+          scheduleType: metadata.scheduleType,
+          startedAt: event.started_at,
         }
       })
 
@@ -176,31 +194,168 @@ export const useClassEvents = ({ memberId, role }: UseClassEventsOptions) => {
 }
 
 // Hook to get course package summaries for students
-export const useStudentCourseSummaries = (memberId: string) => {
-  const [loading, setLoading] = useState(true)
-  const [summaries, setSummaries] = useState<CoursePackageSummary[]>([])
+export const useStudentCourseSummaries = (events: CalendarEvent[]) => {
+  // Group events by classGroupId
+  const grouped = useMemo(() => {
+    const map = new Map<string, CalendarEvent[]>()
+    events.forEach(e => {
+      const key = e.classGroupId || 'unknown'
+      const arr = map.get(key) || []
+      arr.push(e)
+      map.set(key, arr)
+    })
+    return map
+  }, [events])
 
-  useEffect(() => {
-    // TODO: Implement actual API call when endpoint is available
-    // For now, return empty array to indicate no data
-    setLoading(false)
-    setSummaries([])
-  }, [memberId])
+  // Collect all unique orderIds
+  const allOrderIds = useMemo(() => {
+    const ids = new Set<string>()
+    events.forEach(e => e.orderIds?.forEach(id => ids.add(id)))
+    return Array.from(ids)
+  }, [events])
+
+  // Query order_log for expiry and status
+  const { data: orderData, loading } = useQuery<{
+    order_log: Array<{ id: string; status: string; expired_at: string | null }>
+  }>(
+    gql`
+      query GetOrderLogsByIds($orderIds: [String!]!) {
+        order_log(where: { id: { _in: $orderIds } }) {
+          id
+          status
+          expired_at
+        }
+      }
+    `,
+    {
+      variables: { orderIds: allOrderIds },
+      skip: allOrderIds.length === 0,
+    },
+  )
+
+  const summaries = useMemo<CoursePackageSummary[]>(() => {
+    const orderMap = new Map<string, { status: string; expired_at: string | null }>()
+    orderData?.order_log.forEach(o => orderMap.set(o.id, { status: o.status, expired_at: o.expired_at }))
+
+    const now = new Date()
+    const result: CoursePackageSummary[] = []
+
+    grouped.forEach((groupEvents, classGroupId) => {
+      const first = groupEvents[0]
+      // Find the order info for this group
+      const groupOrderIds = first.orderIds || []
+      const order = groupOrderIds.map(id => orderMap.get(id)).find(Boolean)
+
+      const completedLessons = groupEvents.filter(e => e.startedAt && new Date(e.startedAt) < now).length
+
+      let paymentStatus: CoursePackageSummary['paymentStatus'] = 'Pending'
+      if (order) {
+        paymentStatus = order.status === 'SUCCESS' ? 'Paid' : order.status === 'UNPAID' ? 'Unpaid' : 'Pending'
+      }
+
+      result.push({
+        id: classGroupId,
+        name: first.title,
+        language: first.language || '',
+        totalLessons: groupEvents.length,
+        completedLessons,
+        expiryDate: order?.expired_at || '',
+        paymentStatus,
+      })
+    })
+
+    return result
+  }, [grouped, orderData])
 
   return { summaries, loading }
 }
 
 // Hook to get teaching course summaries for teachers
-export const useTeacherCourseSummaries = (memberId: string) => {
-  const [loading, setLoading] = useState(true)
-  const [summaries, setSummaries] = useState<TeachingCourseSummary[]>([])
+export const useTeacherCourseSummaries = (events: CalendarEvent[]) => {
+  // Group events by classGroupId
+  const grouped = useMemo(() => {
+    const map = new Map<string, CalendarEvent[]>()
+    events.forEach(e => {
+      const key = e.classGroupId || 'unknown'
+      const arr = map.get(key) || []
+      arr.push(e)
+      map.set(key, arr)
+    })
+    return map
+  }, [events])
 
-  useEffect(() => {
-    // TODO: Implement actual API call when endpoint is available
-    // For now, return empty array to indicate no data
-    setLoading(false)
-    setSummaries([])
-  }, [memberId])
+  // Collect all unique studentIds
+  const allStudentIds = useMemo(() => {
+    const ids = new Set<string>()
+    events.forEach(e => e.studentIds?.forEach(id => ids.add(id)))
+    return Array.from(ids)
+  }, [events])
+
+  // Query member_public for student names
+  const { data: memberData, loading } = useQuery<{
+    member_public: Array<{ id: string; name: string; username: string }>
+  }>(
+    gql`
+      query GetMemberNamesByIds($memberIds: [String!]!) {
+        member_public(where: { id: { _in: $memberIds } }) {
+          id
+          name
+          username
+        }
+      }
+    `,
+    {
+      variables: { memberIds: allStudentIds },
+      skip: allStudentIds.length === 0,
+    },
+  )
+
+  const summaries = useMemo<TeachingCourseSummary[]>(() => {
+    const memberMap = new Map<string, string>()
+    memberData?.member_public.forEach(m => memberMap.set(m.id, m.name || m.username || m.id))
+
+    const now = new Date()
+    const result: TeachingCourseSummary[] = []
+
+    grouped.forEach((groupEvents, classGroupId) => {
+      const first = groupEvents[0]
+
+      const completedLessons = groupEvents.filter(e => e.startedAt && new Date(e.startedAt) < now).length
+
+      // Resolve student names
+      const studentIdSet = new Set<string>()
+      groupEvents.forEach(e => e.studentIds?.forEach(id => studentIdSet.add(id)))
+      const students = Array.from(studentIdSet).map(id => memberMap.get(id) || id)
+
+      // Find most common material
+      const materialCounts = new Map<string, number>()
+      groupEvents.forEach(e => {
+        if (e.material) {
+          materialCounts.set(e.material, (materialCounts.get(e.material) || 0) + 1)
+        }
+      })
+      let primaryMaterial = ''
+      let maxCount = 0
+      materialCounts.forEach((count, mat) => {
+        if (count > maxCount) {
+          maxCount = count
+          primaryMaterial = mat
+        }
+      })
+
+      result.push({
+        id: classGroupId,
+        name: first.title,
+        language: first.language || '',
+        students,
+        completedLessons,
+        totalScheduledLessons: groupEvents.length,
+        primaryMaterial,
+      })
+    })
+
+    return result
+  }, [grouped, memberData])
 
   return { summaries, loading }
 }
