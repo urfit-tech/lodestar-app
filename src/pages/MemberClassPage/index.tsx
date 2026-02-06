@@ -89,8 +89,8 @@ const MemberClassPage: React.FC = () => {
 
   const { events: teachingEvents, loading: teachingEventsLoading } = useClassEvents({ memberId, role: 'host' })
 
-  const { summaries: studentSummaries, loading: studentSummariesLoading } = useStudentCourseSummaries(memberId)
-  const { summaries: teachingSummaries, loading: teachingSummariesLoading } = useTeacherCourseSummaries(memberId)
+  const { summaries: studentSummaries, loading: studentSummariesLoading } = useStudentCourseSummaries(studentEvents)
+  const { summaries: teachingSummaries, loading: teachingSummariesLoading } = useTeacherCourseSummaries(teachingEvents)
 
   const isLoading =
     activeTab === 'dashboard'
