@@ -11,7 +11,7 @@ import PageHelmet from '../../components/common/PageHelmet'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import { usePublicMember } from '../../hooks/member'
 import ClassDashboard from './ClassDashboard'
-import { useClassEvents, useStudentCourseSummaries, useTeacherCourseSummaries } from './hooks'
+import { useMemberClassEvents, useStudentCourseSummaries, useTeacherCourseSummaries } from './hooks'
 
 const messages = defineMessages({
   myClasses: { id: 'memberClass.title.myClasses', defaultMessage: '我的課程' },
@@ -84,18 +84,13 @@ const MemberClassPage: React.FC = () => {
   const { member } = usePublicMember(memberId)
   const [activeTab, setActiveTab] = useState<'dashboard' | 'teachingCourses'>('dashboard')
 
-  // Fetch real data using hooks
-  const { events: studentEvents, loading: studentEventsLoading } = useClassEvents({ memberId, role: 'participant' })
-
-  const { events: teachingEvents, loading: teachingEventsLoading } = useClassEvents({ memberId, role: 'host' })
+  const { studentEvents, teachingEvents, loading: eventsLoading } = useMemberClassEvents(memberId)
 
   const { summaries: studentSummaries, loading: studentSummariesLoading } = useStudentCourseSummaries(studentEvents)
   const { summaries: teachingSummaries, loading: teachingSummariesLoading } = useTeacherCourseSummaries(teachingEvents)
 
   const isLoading =
-    activeTab === 'dashboard'
-      ? studentEventsLoading || studentSummariesLoading
-      : teachingEventsLoading || teachingSummariesLoading
+    activeTab === 'dashboard' ? eventsLoading || studentSummariesLoading : eventsLoading || teachingSummariesLoading
 
   if (memberId === 'currentMemberId' && isAuthenticated) {
     return <Redirect to={`/members/${currentMemberId}/class`} />
