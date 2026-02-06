@@ -36,6 +36,14 @@ export interface CalendarEvent {
   hostMemberId?: string
   materialLink?: string
   materialName?: string
+  classGroupId?: string
+  language?: string
+  orderIds?: string[]
+  studentIds?: string[]
+  teacherId?: string
+  material?: string
+  scheduleType?: string
+  startedAt?: string
 }
 
 export interface TeachingCourseSummary {
