@@ -173,7 +173,7 @@ export const usePublishedProgramCollection = (options?: {
             })),
             plans: program.program_plans.map(programPlan => ({
               id: programPlan.id,
-              position: programPlan.position ?? 0,
+              position: (programPlan as any).position ?? 0,
               type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
               title: programPlan.title || '',
               description: programPlan.description || '',
@@ -476,7 +476,7 @@ export const useProgram = (programId: string) => {
       plans:
         programPlans?.program_plan.map(programPlan => ({
           id: programPlan.id,
-          position: programPlan.position ?? 0,
+          position: (programPlan as any).position ?? 0,
           type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
           title: programPlan.title || '',
           description: programPlan.description || '',

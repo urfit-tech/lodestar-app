@@ -255,9 +255,9 @@ const AdvancedSearchPage: React.FC = () => {
             score: null,
             categoryNames: getTypeDisplayName('program_package', originalCategories),
             type: 'program_package',
-            listPrice: packageItem.listPrice ?? null,
-            salePrice: packageItem.salePrice ?? null,
-            soldAt: packageItem.soldAt ?? null,
+            listPrice: (packageItem as any).listPrice ?? null,
+            salePrice: (packageItem as any).salePrice ?? null,
+            soldAt: (packageItem as any).soldAt ?? null,
             currencyId: 'TWD',
           }
         }),
@@ -303,7 +303,6 @@ const AdvancedSearchPage: React.FC = () => {
                   </div>
                   {(item.type === 'program' || item.type === 'program_package') && item.listPrice !== null && (
                     <PriceLabel
-                      variant="inline"
                       listPrice={item.listPrice}
                       salePrice={item.soldAt && new Date(item.soldAt) > new Date() ? item.salePrice : undefined}
                       currencyId={item.currencyId}

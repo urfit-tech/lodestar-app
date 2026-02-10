@@ -302,21 +302,13 @@ const PrimaryCard: React.FC<ProgramCardProps & SharedProps> = ({
 const SecondaryCard: React.FC<ProgramCardProps & SharedProps> = ({
   program,
   variant = 'secondary',
-  noPrice,
   onClick,
   renderCover,
   programLink,
 }) => {
-  const { formatMessage } = useIntl()
-  const { enabledModules, settings } = useApp()
+  const { enabledModules } = useApp()
   const history = useHistory()
   const { averageScore } = useReviewAggregate(`/programs/${program.id}`)
-
-  const listPrice = program.plans[0]?.listPrice || 0
-  const salePrice = (program.plans[0]?.soldAt?.getTime() || 0) > Date.now() ? program.plans[0]?.salePrice : undefined
-  const periodAmount = program.plans.length > 1 ? program.plans[0]?.periodAmount : null
-  const periodType = program.plans.length > 1 ? program.plans[0]?.periodType : null
-  const programSalePriceColorSetting = settings['program_card.sale_price.color']?.trim()
 
   return (
     <StyledWrapper
@@ -357,30 +349,6 @@ const SecondaryCard: React.FC<ProgramCardProps & SharedProps> = ({
             </div>
           )}
         </div>
-
-        {!noPrice && (
-          <div className="mt-2">
-            {program.plans.length === 0 ? (
-              <span style={{ fontSize: '14px', color: 'var(--gray-dark)' }}>
-                {formatMessage(programMessages.ProgramCard.notForSale)}
-              </span>
-            ) : (
-              <PriceLabel
-                variant="inline"
-                listPrice={listPrice}
-                salePrice={salePrice}
-                periodAmount={periodAmount}
-                periodType={periodType || undefined}
-                currencyId={program.plans[0]?.currency.id}
-                customStyle={{
-                  salePrice: {
-                    amount: { color: programSalePriceColorSetting ? programSalePriceColorSetting : undefined },
-                  },
-                }}
-              />
-            )}
-          </div>
-        )}
       </StyledContentBlock>
     </StyledWrapper>
   )
