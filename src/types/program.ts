@@ -105,7 +105,6 @@ export type ProgramRole = {
 
 export type ProgramPlan = {
   id: string
-  position: number
   type: ProgramPlanType
   title: string
   description: string | null

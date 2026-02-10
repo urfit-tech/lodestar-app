@@ -1,6 +1,5 @@
 import { Button, Icon, SkeletonText } from '@chakra-ui/react'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { isEmpty, uniq } from 'ramda'
 import { defineMessage, useIntl } from 'react-intl'
 import { Link, useHistory, useLocation } from 'react-router-dom'
@@ -137,27 +136,19 @@ const AdvancedSearchPage: React.FC = () => {
   )
 
   const data = hasAdvancedParams
-    ? searchResults.programs.map(program => {
-        const plan = program.plans?.[0]
-        return {
-          id: program.id,
-          coverUrl: program.coverUrl,
-          title: program.title,
-          score: program.score || null,
-          categoryNames: uniq(
-            (program.categories || []).map(cat => (cat.name.includes('/') ? cat.name.split('/')[1] : cat.name)),
-          ),
-          type: 'program',
-          listPrice: plan?.listPrice ?? null,
-          salePrice: plan?.salePrice ?? null,
-          soldAt: plan?.soldAt ?? null,
-          currencyId: plan?.currency?.id ?? 'TWD',
-        }
-      })
+    ? searchResults.programs.map(program => ({
+        id: program.id,
+        coverUrl: program.coverUrl,
+        title: program.title,
+        score: program.score || null,
+        categoryNames: uniq(
+          (program.categories || []).map(cat => (cat.name.includes('/') ? cat.name.split('/')[1] : cat.name)),
+        ),
+        type: 'program',
+      }))
     : [
         ...searchResults.programs.map(program => {
           const originalCategories = program.categories?.map(cat => cat.name) || []
-          const plan = program.plans?.[0]
           return {
             id: program.id,
             coverUrl: program.coverUrl,
@@ -165,10 +156,6 @@ const AdvancedSearchPage: React.FC = () => {
             score: null,
             categoryNames: getTypeDisplayName('program', originalCategories),
             type: 'program',
-            listPrice: plan?.listPrice ?? null,
-            salePrice: plan?.salePrice ?? null,
-            soldAt: plan?.soldAt ?? null,
-            currencyId: plan?.currency?.id ?? 'TWD',
           }
         }),
         ...searchResults.projects.map(project => {
@@ -180,10 +167,6 @@ const AdvancedSearchPage: React.FC = () => {
             score: null,
             categoryNames: getTypeDisplayName('project', originalCategories),
             type: 'project',
-            listPrice: null,
-            salePrice: null,
-            soldAt: null,
-            currencyId: 'TWD',
           }
         }),
         ...searchResults.activities.map(activity => {
@@ -195,10 +178,6 @@ const AdvancedSearchPage: React.FC = () => {
             score: null,
             categoryNames: getTypeDisplayName('activity', originalCategories),
             type: 'activity',
-            listPrice: null,
-            salePrice: null,
-            soldAt: null,
-            currencyId: 'TWD',
           }
         }),
         ...searchResults.posts.map(post => {
@@ -210,10 +189,6 @@ const AdvancedSearchPage: React.FC = () => {
             score: null,
             categoryNames: getTypeDisplayName('post', originalCategories),
             type: 'post',
-            listPrice: null,
-            salePrice: null,
-            soldAt: null,
-            currencyId: 'TWD',
           }
         }),
         ...searchResults.podcastPrograms.map(podcast => {
@@ -225,10 +200,6 @@ const AdvancedSearchPage: React.FC = () => {
             score: null,
             categoryNames: getTypeDisplayName('podcast_program', originalCategories),
             type: 'podcast_program',
-            listPrice: null,
-            salePrice: null,
-            soldAt: null,
-            currencyId: 'TWD',
           }
         }),
         ...searchResults.merchandises.map(merchandise => {
@@ -240,10 +211,6 @@ const AdvancedSearchPage: React.FC = () => {
             score: null,
             categoryNames: getTypeDisplayName('merchandise', originalCategories),
             type: 'merchandise',
-            listPrice: null,
-            salePrice: null,
-            soldAt: null,
-            currencyId: 'TWD',
           }
         }),
         ...searchResults.programPackages.map(packageItem => {
@@ -255,10 +222,6 @@ const AdvancedSearchPage: React.FC = () => {
             score: null,
             categoryNames: getTypeDisplayName('program_package', originalCategories),
             type: 'program_package',
-            listPrice: (packageItem as any).listPrice ?? null,
-            salePrice: (packageItem as any).salePrice ?? null,
-            soldAt: (packageItem as any).soldAt ?? null,
-            currencyId: 'TWD',
           }
         }),
       ]
@@ -301,13 +264,6 @@ const AdvancedSearchPage: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  {(item.type === 'program' || item.type === 'program_package') && item.listPrice !== null && (
-                    <PriceLabel
-                      listPrice={item.listPrice}
-                      salePrice={item.soldAt && new Date(item.soldAt) > new Date() ? item.salePrice : undefined}
-                      currencyId={item.currencyId}
-                    />
-                  )}
                 </div>
               </Link>
             ))}

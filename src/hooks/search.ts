@@ -76,13 +76,8 @@ export const SEARCH_PRODUCT_COLLECTION = gql`
           duration
         }
       }
-      program_plans(
-        where: { published_at: { _lte: "now()" } }
-        order_by: [{ position: asc }, { created_at: asc }]
-        limit: 1
-      ) {
+      program_plans(where: { published_at: { _is_null: false } }, limit: 1) {
         id
-        position
         type
         title
         description
@@ -149,16 +144,6 @@ export const SEARCH_PRODUCT_COLLECTION = gql`
             }
           }
         }
-      }
-      program_package_plans(
-        where: { published_at: { _is_null: false } }
-        order_by: { position: asc, created_at: asc }
-        limit: 1
-      ) {
-        id
-        list_price
-        sale_price
-        sold_at
       }
     }
     activity(
@@ -657,7 +642,6 @@ export const useSearchProductCollection = (
         instructorsSearchString: program.program_roles.map(v => v.member?.name).toString(),
         plans: program.program_plans.map(programPlan => ({
           id: programPlan.id,
-          position: (programPlan as any).position ?? 0,
           type: (programPlan.type === 1
             ? 'subscribeFromNow'
             : programPlan.type === 2
@@ -728,26 +712,20 @@ export const useSearchProductCollection = (
       })
       .sort((a, b) => sorting(a, b, ['description', 'title', 'instructorsSearchString'], filter?.title || '')),
     programPackages: [...(data?.program_package || [])]
-      .map(programPackage => {
-        const plan = (programPackage as any).program_package_plans?.[0]
-        return {
-          id: programPackage.id,
-          coverUrl: programPackage.cover_url || null,
-          title: programPackage.title,
-          description:
-            programPackage?.description && hasJsonStructure(programPackage.description || '')
-              ? JSON.parse(programPackage.description)
-                  ?.blocks.map((v: any) => v?.text)
-                  .toString()
-              : programPackage.description || '',
-          instructorsSearchString: flatten(
-            programPackage.program_package_programs.map(v => v.program.program_roles.map(w => w.member?.name)),
-          ).toString(),
-          listPrice: plan?.list_price ?? null,
-          salePrice: plan?.sale_price ?? null,
-          soldAt: plan?.sold_at ? new Date(plan.sold_at) : null,
-        }
-      })
+      .map(programPackage => ({
+        id: programPackage.id,
+        coverUrl: programPackage.cover_url || null,
+        title: programPackage.title,
+        description:
+          programPackage?.description && hasJsonStructure(programPackage.description || '')
+            ? JSON.parse(programPackage.description)
+                ?.blocks.map((v: any) => v?.text)
+                .toString()
+            : programPackage.description || '',
+        instructorsSearchString: flatten(
+          programPackage.program_package_programs.map(v => v.program.program_roles.map(w => w.member?.name)),
+        ).toString(),
+      }))
       .sort((a, b) => sorting(a, b, ['description', 'title', 'instructorsSearchString'], filter?.title || '')),
     activities: [...(data?.activity || [])]
       .map(activity => ({

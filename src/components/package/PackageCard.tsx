@@ -2,7 +2,6 @@ import { Box, Text } from '@chakra-ui/react'
 import { LayoutProps, SpaceProps } from '@chakra-ui/styled-system'
 import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
-import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -75,26 +74,8 @@ const PackageCard: React.FC<
     lastViewedAt?: Date | null
     deliveredAt?: Date | null
     link: string
-    listPrice?: number | null
-    salePrice?: number | null
-    soldAt?: Date | null
-    currencyId?: string
   }
-> = ({
-  coverUrl,
-  title,
-  memberId,
-  view,
-  lastViewedAt,
-  programDateEnabled: datetimeEnabled,
-  deliveredAt,
-  link,
-  listPrice,
-  salePrice,
-  soldAt,
-  currencyId = 'TWD',
-}) => {
-  const isOnSale = soldAt ? Date.now() < soldAt.getTime() : false
+> = ({ coverUrl, title, memberId, view, lastViewedAt, programDateEnabled: datetimeEnabled, deliveredAt, link }) => {
   return (
     <>
       <Link to={link}>
@@ -106,13 +87,6 @@ const PackageCard: React.FC<
                 <StyledTitle>{title}</StyledTitle>
                 {datetimeEnabled && memberId && (
                   <PackageDatetime deliveredAt={deliveredAt} lastViewedAt={lastViewedAt} />
-                )}
-                {listPrice !== undefined && listPrice !== null && (
-                  <PriceLabel
-                    listPrice={listPrice}
-                    salePrice={isOnSale ? salePrice : undefined}
-                    currencyId={currencyId}
-                  />
                 )}
               </Box>
             </>
