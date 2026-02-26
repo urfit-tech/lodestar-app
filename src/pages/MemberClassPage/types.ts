@@ -44,6 +44,9 @@ export interface CalendarEvent {
   material?: string
   scheduleType?: string
   startedAt?: string
+  classroomId?: string
+  classroomIds?: string[]
+  classMode?: string
 }
 
 export interface TeachingCourseSummary {
