@@ -4,30 +4,84 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CalendarEvent, CalendarEventStatus, CoursePackageSummary, CourseType, TeachingCourseSummary } from './types'
 
+const isUuid = (value?: string) =>
+  !!value && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(value)
+
+type ParsedEventMetadata = {
+  legacyLocation?: string
+  needOnlineRoom: boolean
+  material?: string
+  materialName?: string
+  materialLink?: string
+  language?: string
+  orderIds?: string[]
+  studentIds?: string[]
+  teacherId?: string
+  scheduleType?: string
+  classId?: string
+  title?: string
+  classroomId?: string
+  classroomIds?: string[]
+  isExternal: boolean
+  classMode?: string
+}
+
 // Helper to parse metadata and extract class details
-const parseEventMetadata = (metadata: any) => {
-  if (!metadata) return {}
+const parseEventMetadata = (metadata: any): ParsedEventMetadata => {
+  if (!metadata) return { needOnlineRoom: false, isExternal: false }
   try {
     const parsed = typeof metadata === 'string' ? JSON.parse(metadata) : metadata
     const studentIds = parsed.studentIds || (parsed.studentId ? [parsed.studentId] : undefined)
     const orderIds = parsed.orderIds || (parsed.orderId ? [parsed.orderId] : undefined)
+    const classroomIds = Array.isArray(parsed.classroomIds)
+      ? Array.from(new Set(parsed.classroomIds.filter(Boolean)))
+      : []
+    const classroomId = parsed.classroomId || classroomIds[0]
+    if (classroomId && !classroomIds.includes(classroomId)) {
+      classroomIds.unshift(classroomId)
+    }
+
+    const needOnlineRoom =
+      typeof parsed.needsOnlineRoom === 'boolean'
+        ? parsed.needsOnlineRoom
+        : typeof parsed.needOnlineRoom === 'boolean'
+        ? parsed.needOnlineRoom
+        : false
+
     return {
-      location: parsed.location || parsed.room || '線上',
-      needOnlineRoom: parsed.needsOnlineRoom || parsed.needOnlineRoom || false,
-      materialName: parsed.materialName || parsed.textbook || null,
-      materialLink: parsed.materialLink || null,
+      legacyLocation: parsed.location || parsed.room || undefined,
+      needOnlineRoom,
+      material: parsed.material || parsed.materialName || parsed.textbook || undefined,
+      materialName: parsed.materialName || parsed.textbook || undefined,
+      materialLink: parsed.materialLink || undefined,
       language: parsed.language || undefined,
       orderIds,
       studentIds,
       teacherId: parsed.teacherId || undefined,
-      material: parsed.material || undefined,
       scheduleType: parsed.scheduleType || undefined,
       classId: parsed.classId || undefined,
       title: parsed.title || undefined,
+      classroomId,
+      classroomIds,
+      isExternal: parsed.is_external === true || parsed.classMode === '外課',
+      classMode: parsed.classMode || undefined,
     }
   } catch {
-    return {}
+    return { needOnlineRoom: false, isExternal: false }
   }
+}
+
+const resolveEventLocation = (metadata: ParsedEventMetadata, classroomMap: Map<string, string>) => {
+  if (metadata.isExternal) {
+    return '外課'
+  }
+
+  const classroomNames = (metadata.classroomIds || []).map(id => classroomMap.get(id)).filter(Boolean) as string[]
+  if (classroomNames.length > 0) {
+    return classroomNames.join(' / ')
+  }
+
+  return metadata.legacyLocation || '線上'
 }
 
 // Helper to determine course type from metadata or title
@@ -72,7 +126,7 @@ const formatDate = (isoString: string): string => {
   return date.toISOString().split('T')[0]
 }
 
-const transformToCalendarEvent = (event: any): CalendarEvent => {
+const transformToCalendarEvent = (event: any, classroomMap: Map<string, string>): CalendarEvent => {
   const metadata = parseEventMetadata(event.event_metadata)
   return {
     id: event.event_id,
@@ -83,13 +137,13 @@ const transformToCalendarEvent = (event: any): CalendarEvent => {
     date: formatDate(event.started_at),
     teacher: '',
     students: undefined,
-    location: metadata.location || '線上',
-    isExternal: false,
+    location: resolveEventLocation(metadata, classroomMap),
+    isExternal: metadata.isExternal,
     status: event.source_target ? CalendarEventStatus.Published : CalendarEventStatus.Scheduled,
     courseType: determineCourseType(event.event_metadata, event.title),
     needOnlineRoom: metadata.needOnlineRoom,
     hostMemberId: event.host_member_id,
-    materialName: metadata.materialName,
+    materialName: metadata.material || metadata.materialName,
     materialLink: metadata.materialLink,
     classGroupId: metadata.classId || event.source_target,
     language: metadata.language,
@@ -99,6 +153,9 @@ const transformToCalendarEvent = (event: any): CalendarEvent => {
     material: metadata.material,
     scheduleType: metadata.scheduleType,
     startedAt: event.started_at,
+    classroomId: metadata.classroomId,
+    classroomIds: metadata.classroomIds,
+    classMode: metadata.classMode,
   }
 }
 
@@ -168,7 +225,7 @@ export const useMemberClassEvents = (memberId: string) => {
   const allTeacherIds = useMemo(() => {
     const ids = new Set<string>()
     rawEvents.forEach((e: any) => {
-      const meta = typeof e.event_metadata === 'string' ? JSON.parse(e.event_metadata || '{}') : e.event_metadata || {}
+      const meta = parseEventMetadata(e.event_metadata)
       if (meta.teacherId) ids.add(meta.teacherId)
     })
     return Array.from(ids)
@@ -198,18 +255,54 @@ export const useMemberClassEvents = (memberId: string) => {
     return map
   }, [teacherData])
 
+  const allClassroomIds = useMemo(() => {
+    const ids = new Set<string>()
+    rawEvents.forEach((event: any) => {
+      const metadata = parseEventMetadata(event.event_metadata)
+      metadata.classroomIds?.forEach(classroomId => {
+        if (isUuid(classroomId)) {
+          ids.add(classroomId)
+        }
+      })
+    })
+    return Array.from(ids)
+  }, [rawEvents])
+
+  const { data: classroomData } = useQuery<{
+    classroom: Array<{ id: string; name: string }>
+  }>(
+    gql`
+      query GetClassroomNamesByIds($classroomIds: [uuid!]!) {
+        classroom(where: { id: { _in: $classroomIds } }) {
+          id
+          name
+        }
+      }
+    `,
+    {
+      variables: { classroomIds: allClassroomIds },
+      skip: allClassroomIds.length === 0,
+    },
+  )
+
+  const classroomMap = useMemo(() => {
+    const map = new Map<string, string>()
+    classroomData?.classroom.forEach(c => map.set(c.id, c.name || c.id))
+    return map
+  }, [classroomData])
+
   const filterByRole = useCallback(
     (role: 'participant' | 'host') =>
       rawEvents
         .filter((event: any) => event.role === role && !event.event_deleted_at && !event.event_resource_deleted_at)
         .map((event: any) => {
-          const calendarEvent = transformToCalendarEvent(event)
+          const calendarEvent = transformToCalendarEvent(event, classroomMap)
           if (calendarEvent.teacherId) {
             calendarEvent.teacher = teacherMap.get(calendarEvent.teacherId) || ''
           }
           return calendarEvent
         }),
-    [rawEvents, teacherMap],
+    [rawEvents, teacherMap, classroomMap],
   )
 
   const studentEvents = useMemo(() => filterByRole('participant'), [filterByRole])
