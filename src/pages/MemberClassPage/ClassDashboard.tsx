@@ -1,3 +1,5 @@
+import { BookOutlined, CalendarOutlined, EnvironmentOutlined, UserOutlined } from '@ant-design/icons'
+import { Modal } from 'antd'
 import React, { useMemo, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -16,6 +18,11 @@ const messages = defineMessages({
   privateClass: { id: 'memberClass.courseType.private', defaultMessage: '個人班' },
   groupClass: { id: 'memberClass.courseType.group', defaultMessage: '團體班' },
   termClass: { id: 'memberClass.courseType.term', defaultMessage: '學期班' },
+  teacher: { id: 'memberClass.card.teacher', defaultMessage: '老師' },
+  students: { id: 'memberClass.card.students', defaultMessage: '學生' },
+  location: { id: 'memberClass.card.location', defaultMessage: '地點' },
+  material: { id: 'memberClass.card.material', defaultMessage: '教材' },
+  notSpecified: { id: 'memberClass.card.notSpecified', defaultMessage: '未指定' },
 })
 
 const StyledDashboardGrid = styled.div`
@@ -151,6 +158,69 @@ const StyledViewButton = styled.button<{ $active: boolean }>`
   }
 `
 
+const StyledEventModal = styled(Modal)`
+  .ant-modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .ant-modal-header {
+    padding: 2rem 2rem 1.25rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .ant-modal-title {
+    color: #111827;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .ant-modal-close {
+    top: 1.5rem;
+    right: 1.5rem;
+    color: #9ca3af;
+  }
+
+  .ant-modal-body {
+    padding: 2rem;
+  }
+`
+
+const StyledEventInfoList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`
+
+const StyledEventInfoRow = styled.div`
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  align-items: center;
+  column-gap: 1rem;
+  color: #4b5563;
+  font-size: 1.25rem;
+  line-height: 1.4;
+`
+
+const StyledEventInfoIcon = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 1.3rem;
+`
+
+const dayMap: Record<CalendarEvent['day'], string> = {
+  Mon: '星期一',
+  Tue: '星期二',
+  Wed: '星期三',
+  Thu: '星期四',
+  Fri: '星期五',
+  Sat: '星期六',
+  Sun: '星期日',
+}
+
 interface ClassDashboardProps {
   summaries: CoursePackageSummary[] | TeachingCourseSummary[]
   events: CalendarEvent[]
@@ -161,6 +231,7 @@ const ClassDashboard: React.FC<ClassDashboardProps> = ({ summaries, events, view
   const { formatMessage } = useIntl()
   const [activeView, setActiveView] = useState<CalendarViewType>('week')
   const [currentDate, setCurrentDate] = useState(new Date())
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
 
   const upcomingEvents = useMemo(() => {
     const now = new Date()
@@ -189,66 +260,127 @@ const ClassDashboard: React.FC<ClassDashboardProps> = ({ summaries, events, view
   }
 
   const currentMonthYear = new Intl.DateTimeFormat('zh-TW', { year: 'numeric', month: 'long' }).format(currentDate)
+  const roleLabel = viewAs === 'teacher' ? formatMessage(messages.students) : formatMessage(messages.teacher)
+  const roleValue = useMemo(() => {
+    if (!selectedEvent) return ''
+
+    if (viewAs === 'teacher') {
+      if (selectedEvent.students?.length) return selectedEvent.students.join('、')
+      if (selectedEvent.studentIds?.length) return `${selectedEvent.studentIds.length} 位`
+      return formatMessage(messages.notSpecified)
+    }
+
+    return selectedEvent.teacher || formatMessage(messages.notSpecified)
+  }, [selectedEvent, viewAs, formatMessage])
 
   return (
-    <StyledDashboardGrid>
-      <StyledSidebarColumn>
-        <NextUpCard event={nextEvent} viewAs={viewAs} />
-        {viewAs === 'student' ? (
-          <CourseSummaryCard summaries={summaries as CoursePackageSummary[]} />
-        ) : (
-          <TeachingSummaryCard summaries={summaries as TeachingCourseSummary[]} />
+    <>
+      <StyledDashboardGrid>
+        <StyledSidebarColumn>
+          <NextUpCard event={nextEvent} viewAs={viewAs} />
+          {viewAs === 'student' ? (
+            <CourseSummaryCard summaries={summaries as CoursePackageSummary[]} />
+          ) : (
+            <TeachingSummaryCard summaries={summaries as TeachingCourseSummary[]} />
+          )}
+        </StyledSidebarColumn>
+
+        <StyledCalendarContainer>
+          <StyledCalendarHeader>
+            <StyledHeaderRow>
+              <StyledNavGroup>
+                <StyledNavButton onClick={() => setCurrentDate(new Date())}>
+                  {formatMessage(messages.today)}
+                </StyledNavButton>
+                <StyledArrowButton onClick={() => handleNav('prev')}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M15 19l-7-7 7-7" />
+                  </svg>
+                </StyledArrowButton>
+                <StyledArrowButton onClick={() => handleNav('next')}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 5l7 7-7 7" />
+                  </svg>
+                </StyledArrowButton>
+                <StyledMonthYear>{currentMonthYear}</StyledMonthYear>
+              </StyledNavGroup>
+
+              <StyledViewButtons>
+                {calendarViews.map(v => (
+                  <StyledViewButton key={v.id} $active={activeView === v.id} onClick={() => setActiveView(v.id)}>
+                    {v.label}
+                  </StyledViewButton>
+                ))}
+              </StyledViewButtons>
+            </StyledHeaderRow>
+
+            <StyledLegend>
+              <StyledLegendItem>
+                <StyledLegendDot $color="#fff7e6" $borderColor="#fa8c16" />
+                {formatMessage(messages.privateClass)}
+              </StyledLegendItem>
+              <StyledLegendItem>
+                <StyledLegendDot $color="#fffbe6" $borderColor="#faad14" />
+                {formatMessage(messages.groupClass)}
+              </StyledLegendItem>
+              <StyledLegendItem>
+                <StyledLegendDot $color="#e6fffb" $borderColor="#13c2c2" />
+                {formatMessage(messages.termClass)}
+              </StyledLegendItem>
+            </StyledLegend>
+          </StyledCalendarHeader>
+
+          <CalendarView
+            events={events}
+            currentDate={currentDate}
+            activeView={activeView}
+            viewAs={viewAs}
+            onEventClick={event => setSelectedEvent(event)}
+          />
+        </StyledCalendarContainer>
+      </StyledDashboardGrid>
+
+      <StyledEventModal
+        visible={!!selectedEvent}
+        title={selectedEvent?.title}
+        onCancel={() => setSelectedEvent(null)}
+        footer={null}
+        destroyOnClose
+      >
+        {selectedEvent && (
+          <StyledEventInfoList>
+            <StyledEventInfoRow>
+              <StyledEventInfoIcon>
+                <CalendarOutlined />
+              </StyledEventInfoIcon>
+              <span>{`${dayMap[selectedEvent.day]}, ${selectedEvent.startTime} - ${selectedEvent.endTime}`}</span>
+            </StyledEventInfoRow>
+            <StyledEventInfoRow>
+              <StyledEventInfoIcon>
+                <UserOutlined />
+              </StyledEventInfoIcon>
+              <span>{`${roleLabel}：${roleValue}`}</span>
+            </StyledEventInfoRow>
+            <StyledEventInfoRow>
+              <StyledEventInfoIcon>
+                <EnvironmentOutlined />
+              </StyledEventInfoIcon>
+              <span>{`${formatMessage(messages.location)}：${
+                selectedEvent.location || formatMessage(messages.notSpecified)
+              }`}</span>
+            </StyledEventInfoRow>
+            <StyledEventInfoRow>
+              <StyledEventInfoIcon>
+                <BookOutlined />
+              </StyledEventInfoIcon>
+              <span>{`${formatMessage(messages.material)}：${
+                selectedEvent.material || selectedEvent.materialName || formatMessage(messages.notSpecified)
+              }`}</span>
+            </StyledEventInfoRow>
+          </StyledEventInfoList>
         )}
-      </StyledSidebarColumn>
-
-      <StyledCalendarContainer>
-        <StyledCalendarHeader>
-          <StyledHeaderRow>
-            <StyledNavGroup>
-              <StyledNavButton onClick={() => setCurrentDate(new Date())}>
-                {formatMessage(messages.today)}
-              </StyledNavButton>
-              <StyledArrowButton onClick={() => handleNav('prev')}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M15 19l-7-7 7-7" />
-                </svg>
-              </StyledArrowButton>
-              <StyledArrowButton onClick={() => handleNav('next')}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M9 5l7 7-7 7" />
-                </svg>
-              </StyledArrowButton>
-              <StyledMonthYear>{currentMonthYear}</StyledMonthYear>
-            </StyledNavGroup>
-
-            <StyledViewButtons>
-              {calendarViews.map(v => (
-                <StyledViewButton key={v.id} $active={activeView === v.id} onClick={() => setActiveView(v.id)}>
-                  {v.label}
-                </StyledViewButton>
-              ))}
-            </StyledViewButtons>
-          </StyledHeaderRow>
-
-          <StyledLegend>
-            <StyledLegendItem>
-              <StyledLegendDot $color="#fff7e6" $borderColor="#fa8c16" />
-              {formatMessage(messages.privateClass)}
-            </StyledLegendItem>
-            <StyledLegendItem>
-              <StyledLegendDot $color="#fffbe6" $borderColor="#faad14" />
-              {formatMessage(messages.groupClass)}
-            </StyledLegendItem>
-            <StyledLegendItem>
-              <StyledLegendDot $color="#e6fffb" $borderColor="#13c2c2" />
-              {formatMessage(messages.termClass)}
-            </StyledLegendItem>
-          </StyledLegend>
-        </StyledCalendarHeader>
-
-        <CalendarView events={events} currentDate={currentDate} activeView={activeView} viewAs={viewAs} />
-      </StyledCalendarContainer>
-    </StyledDashboardGrid>
+      </StyledEventModal>
+    </>
   )
 }
 
