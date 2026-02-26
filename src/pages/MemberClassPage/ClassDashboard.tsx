@@ -171,7 +171,7 @@ const StyledEventModal = styled(Modal)`
 
   .ant-modal-title {
     color: #111827;
-    font-size: 2rem;
+    font-size: 1.25rem;
     font-weight: 700;
     line-height: 1.3;
   }
@@ -199,7 +199,7 @@ const StyledEventInfoRow = styled.div`
   align-items: center;
   column-gap: 1rem;
   color: #4b5563;
-  font-size: 1.25rem;
+  font-size: 1rem;
   line-height: 1.4;
 `
 
