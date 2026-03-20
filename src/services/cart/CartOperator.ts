@@ -68,14 +68,16 @@ export abstract class CartOperator {
     })
     const availableProducts = this._removePhaseOutCartProducts(mergedCartProducts, remoteCartProducts?.merchandise_spec)
 
-    this._updateLocalCache(availableProducts)
+    const validProducts = filterByValidProductIds(availableProducts, remoteCartProducts as hasura.GET_CART_PRODUCT_COLLECTION | undefined)
+
+    this._updateLocalCache(validProducts)
 
     try {
       if (this.isLoginStatus()) {
         await this.updateCartProducts({
           variables: {
             memberId: this.currentMemberId || '',
-            cartProductObjects: availableProducts.map(product => {
+            cartProductObjects: validProducts.map(product => {
               const tracking = product?.options?.tracking || {}
               return {
                 app_id: this.appId,
@@ -88,7 +90,7 @@ export abstract class CartOperator {
         })
       }
 
-      this.setCartProducts(availableProducts)
+      this.setCartProducts(validProducts)
     } catch (error) {
       console.error(error)
     }
@@ -150,6 +152,11 @@ export abstract class CartOperator {
         product(where: { id: { _in: $localProductIds } }) {
           id
           type
+          product_owner {
+            member {
+              app_id
+            }
+          }
           product_enrollments(where: { member_id: { _eq: $memberId } }) {
             member_id
             is_physical
@@ -276,4 +283,24 @@ export abstract class CartOperator {
   private _updateLocalCache(filteredProducts: CartProductProps[]) {
     localStorage.setItem('kolable.cart._products', JSON.stringify(filteredProducts))
   }
+}
+
+export function filterByValidProductIds(
+  products: CartProductProps[],
+  remoteCartProducts: any,
+): CartProductProps[] {
+  if (!remoteCartProducts?.product) return products
+
+  // Invalid products have either:
+  // - product_owner = null (no owner, e.g. deleted/orphan products)
+  // - product_owner.member = null (cross-app, filtered by Hasura row-level permissions)
+  const validProductIds = new Set(
+    remoteCartProducts.product
+      .filter((p: any) => p.product_owner && p.product_owner.member)
+      .map((p: any) => p.id),
+  )
+
+  return validProductIds.size > 0
+    ? products.filter(p => validProductIds.has(p.productId))
+    : products
 }
