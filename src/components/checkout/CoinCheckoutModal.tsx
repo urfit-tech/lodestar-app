@@ -4,11 +4,12 @@ import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { validationRegExp } from 'lodestar-app-element/src/helpers'
 import { sum } from 'ramda'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { handleError } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useCheck } from '../../hooks/checkout'
@@ -111,6 +112,16 @@ const CoinCheckoutModal: React.FC<{
       onOpen()
     }
   }
+
+  const [checkoutProductId] = useQueryParam('checkoutProductId', StringParam)
+  const checkoutOpened = useRef(false)
+
+  useEffect(() => {
+    if (!checkoutOpened.current && checkoutProductId === productId) {
+      checkoutOpened.current = true
+      handleOpen()
+    }
+  }, [checkoutProductId])
 
   return (
     <>
