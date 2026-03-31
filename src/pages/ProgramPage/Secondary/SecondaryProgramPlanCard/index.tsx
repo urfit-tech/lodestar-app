@@ -176,6 +176,7 @@ const SecondaryProgramPlanCard: React.FC<{
             </SecondaryEnrollButton>
           )}
           defaultProductId={`ProgramPlan_${programPlan.id}`}
+          onAuthRequired={() => setAuthModalVisible?.(true)}
           warningText={
             listPrice <= 0 || (typeof salePrice === 'number' && salePrice <= 0)
               ? formatMessage(productMessages.program.defaults.warningText)
@@ -185,6 +186,7 @@ const SecondaryProgramPlanCard: React.FC<{
       ) : enabledModules.group_buying && programPlan.groupBuyingPeople > 1 ? (
         <CheckoutProductModal
           defaultProductId={`ProgramPlan_${programPlan.id}`}
+          onAuthRequired={() => setAuthModalVisible?.(true)}
           renderTrigger={({ isLoading, onOpen }) => (
             <SecondaryEnrollButton
               isDisabled={(isAuthenticated && isLoading) || !programPlan.publishedAt}
