@@ -41,17 +41,26 @@ export class RemoveCartProductOperator extends CartOperator {
   operator = CartOperatorEnum.REMOVE_CART_PRODUCTS
 
   async operation(productIds: string[]) {
-    const cachedCartProducts = this.getLocalCartProducts()
+    const pending = this.getPendingDeletionIds()
+    productIds.forEach(id => pending.add(id))
 
-    const optimisticCartProducts = reject(cartProduct => productIds.includes(cartProduct.productId), cachedCartProducts)
+    try {
+      const cachedCartProducts = this.getLocalCartProducts()
+      const optimisticCartProducts = reject(
+        cartProduct => productIds.includes(cartProduct.productId),
+        cachedCartProducts,
+      )
 
-    this._updateLocalStorage(optimisticCartProducts)
-    this.setCartProducts(optimisticCartProducts)
+      this._updateLocalStorage(optimisticCartProducts)
+      this.setCartProducts(optimisticCartProducts)
 
-    this._performBackgroundCleanup(productIds, optimisticCartProducts)
+      await this._performCleanup(productIds, optimisticCartProducts)
+    } finally {
+      productIds.forEach(id => pending.delete(id))
+    }
   }
 
-  private async _performBackgroundCleanup(productIds: string[], optimisticCartProducts: CartProductProps[]) {
+  private async _performCleanup(productIds: string[], optimisticCartProducts: CartProductProps[]) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [_, validationData] = await Promise.all([
@@ -70,7 +79,7 @@ export class RemoveCartProductOperator extends CartOperator {
         await this._syncCleanedProducts(cleanedCartProducts)
       }
     } catch (error) {
-      console.error('Background cleanup failed:', error)
+      console.error('Cart cleanup failed:', error)
     }
   }
 
