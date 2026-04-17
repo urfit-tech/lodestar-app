@@ -1,5 +1,5 @@
 import { ApolloClient, gql } from '@apollo/client'
-import { uniqBy } from 'ramda'
+import { reject, uniqBy } from 'ramda'
 import hasura from '../../hasura'
 import { CartProductProps } from '../../types/checkout'
 import { CartOperatorEnum } from './CartOperatorEnum'
@@ -22,6 +22,7 @@ export abstract class CartOperator {
   private currentMemberId: string | null
   protected updateCartProducts: (variables: updateCartProductVariables) => Promise<any>
   protected setCartProducts: React.Dispatch<React.SetStateAction<CartProductProps[]>>
+  protected pendingDeletionIds: Set<string>
   protected operator: CartOperatorEnum | undefined
 
   constructor(
@@ -30,12 +31,14 @@ export abstract class CartOperator {
     currentMemberId: string | null,
     updateCartProducts: (variables: updateCartProductVariables) => Promise<any>,
     setCartProducts: React.Dispatch<React.SetStateAction<CartProductProps[]>>,
+    pendingDeletionIds: Set<string>,
   ) {
     this.apolloClient = apolloClient
     this.appId = appId
     this.currentMemberId = currentMemberId
     this.updateCartProducts = updateCartProducts
     this.setCartProducts = setCartProducts
+    this.pendingDeletionIds = pendingDeletionIds
   }
 
   abstract operation(...args: any[]): Promise<void>
@@ -56,6 +59,10 @@ export abstract class CartOperator {
     return !!this.currentMemberId
   }
 
+  protected getPendingDeletionIds(): Set<string> {
+    return this.pendingDeletionIds
+  }
+
   public async syncCartProducts(operation: CartOperatorEnum) {
     const cachedCartProducts = this.getLocalCartProducts()
     const cartProductOptions = this._restructureCachedCartProducts(cachedCartProducts)
@@ -68,14 +75,17 @@ export abstract class CartOperator {
     })
     const availableProducts = this._removePhaseOutCartProducts(mergedCartProducts, remoteCartProducts?.merchandise_spec)
 
-    this._updateLocalCache(availableProducts)
+    const pendingIds = this.getPendingDeletionIds()
+    const finalProducts = reject(product => pendingIds.has(product.productId), availableProducts)
+
+    this._updateLocalCache(finalProducts)
 
     try {
       if (this.isLoginStatus()) {
         await this.updateCartProducts({
           variables: {
             memberId: this.currentMemberId || '',
-            cartProductObjects: availableProducts.map(product => {
+            cartProductObjects: finalProducts.map(product => {
               const tracking = product?.options?.tracking || {}
               return {
                 app_id: this.appId,
@@ -88,7 +98,7 @@ export abstract class CartOperator {
         })
       }
 
-      this.setCartProducts(availableProducts)
+      this.setCartProducts(finalProducts)
     } catch (error) {
       console.error(error)
     }
@@ -119,8 +129,10 @@ export abstract class CartOperator {
         ? `product: { id: { _in: $productIds }, product_owner: { member: { app_id: { _eq: $appId } } } }`
         : ''
 
+    // `PH_` prefix routes this query to the primary Hasura endpoint (read-your-own-writes),
+    // bypassing the read replica's replication lag. See lodestar-app-element/src/helpers/apollo.ts.
     return gql`
-      query GET_CART_PRODUCT_COLLECTION(
+      query PH_GET_CART_PRODUCT_COLLECTION(
         $appId: String!
         $memberId: String!
         $productIds: [String!]
@@ -192,7 +204,7 @@ export abstract class CartOperator {
     cachedCartProducts,
     cartProductOptions,
   }: {
-    remoteCartProducts: hasura.GET_CART_PRODUCT_COLLECTION
+    remoteCartProducts: hasura.PH_GET_CART_PRODUCT_COLLECTION
     cachedCartProducts: any[]
     cartProductOptions: { [ProductId: string]: any }
   }) {
@@ -234,7 +246,7 @@ export abstract class CartOperator {
 
   private _removePhaseOutCartProducts(
     cartProducts: CartProductProps[],
-    merchandiseSpecData?: hasura.GET_CART_PRODUCT_COLLECTION['merchandise_spec'],
+    merchandiseSpecData?: hasura.PH_GET_CART_PRODUCT_COLLECTION['merchandise_spec'],
   ): CartProductProps[] {
     return cartProducts
       .filter(cartProduct => !this._isPhasedOutProduct(cartProduct))
@@ -254,7 +266,7 @@ export abstract class CartOperator {
 
   private _isPublishedMerchandiseSpec(
     cartProduct: CartProductProps,
-    merchandiseSpecData?: hasura.GET_CART_PRODUCT_COLLECTION['merchandise_spec'],
+    merchandiseSpecData?: hasura.PH_GET_CART_PRODUCT_COLLECTION['merchandise_spec'],
   ): boolean {
     if (!cartProduct.productId.startsWith('MerchandiseSpec_')) {
       return true

@@ -3,7 +3,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { getConversionApiData } from 'lodestar-app-element/src/helpers/conversionApi'
 import { ConversionApiContent, ConversionApiEvent } from 'lodestar-app-element/src/types/conversionApi'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import hasura from '../hasura'
 import { getTrackingCookie } from '../helpers'
 import { useMember } from '../hooks/member'
@@ -39,10 +39,18 @@ export const CartProvider: React.FC = ({ children }) => {
   )
 
   const [cartProducts, setCartProducts] = useState<CartProductProps[]>([])
+  const pendingDeletionIdsRef = useRef<Set<string>>(new Set())
 
   const cartOperationFactory = useMemo(
     () =>
-      new CreateCartOperationContextFactory(apolloClient, appId, currentMemberId, updateCartProducts, setCartProducts),
+      new CreateCartOperationContextFactory(
+        apolloClient,
+        appId,
+        currentMemberId,
+        updateCartProducts,
+        setCartProducts,
+        pendingDeletionIdsRef.current,
+      ),
     [apolloClient, appId, currentMemberId, updateCartProducts],
   )
 
