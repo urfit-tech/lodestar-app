@@ -14,6 +14,7 @@ export class CreateCartOperationContextFactory {
   private currentMemberId: string | null
   protected updateCartProducts: (variables: any) => Promise<any>
   protected setCartProducts: React.Dispatch<React.SetStateAction<CartProductProps[]>>
+  private pendingDeletionIds: Set<string>
 
   constructor(
     apolloClient: ApolloClient<any>,
@@ -21,12 +22,14 @@ export class CreateCartOperationContextFactory {
     currentMemberId: string | null,
     updateCartProducts: (variables: any) => Promise<any>,
     setCartProducts: React.Dispatch<React.SetStateAction<CartProductProps[]>>,
+    pendingDeletionIds: Set<string>,
   ) {
     this.apolloClient = apolloClient
     this.appId = appId
     this.currentMemberId = currentMemberId
     this.updateCartProducts = updateCartProducts
     this.setCartProducts = setCartProducts
+    this.pendingDeletionIds = pendingDeletionIds
   }
 
   createOperator(operation: CartOperatorEnum): CartOperator {
@@ -50,6 +53,7 @@ export class CreateCartOperationContextFactory {
       this.currentMemberId,
       this.updateCartProducts,
       this.setCartProducts,
+      this.pendingDeletionIds,
     )
   }
 }
