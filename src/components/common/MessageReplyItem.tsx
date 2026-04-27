@@ -1,6 +1,9 @@
 import { Button } from '@chakra-ui/react'
 import { Dropdown, Icon, Menu, Tag } from 'antd'
 import BraftEditor from 'braft-editor'
+import 'braft-editor/dist/index.css'
+import 'braft-editor/dist/output.css'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -15,7 +18,6 @@ import { ProgramRoleName } from '../../types/program'
 import MemberAvatar from './MemberAvatar'
 import { StyledEditor } from './MessageReplyCreationForm'
 import ProductRoleFormatter from './ProductRoleFormatter'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 
 const MessageReplyContentBlock = styled.div`
   padding: 1rem;

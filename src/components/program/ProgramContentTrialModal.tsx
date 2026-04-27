@@ -1,5 +1,7 @@
 import { Modal } from 'antd'
 import BraftEditor from 'braft-editor'
+import 'braft-editor/dist/index.css'
+import 'braft-editor/dist/output.css'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'

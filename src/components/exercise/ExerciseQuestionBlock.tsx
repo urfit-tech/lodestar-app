@@ -1,5 +1,7 @@
 import { Button, Icon, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
+import 'braft-editor/dist/index.css'
+import 'braft-editor/dist/output.css'
 import { CommonLargeTextMixin, CommonTextMixin } from 'lodestar-app-element/src/components/common/index'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import React, { memo, useState } from 'react'

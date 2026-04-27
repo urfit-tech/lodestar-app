@@ -1,6 +1,8 @@
 import { Button } from '@chakra-ui/react'
 import { Dropdown, Icon, Menu, message, Tag } from 'antd'
 import BraftEditor from 'braft-editor'
+import 'braft-editor/dist/index.css'
+import 'braft-editor/dist/output.css'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'

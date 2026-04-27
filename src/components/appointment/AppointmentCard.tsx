@@ -5,6 +5,8 @@ import { Divider, Dropdown, Form, Icon as AntdIcon, Menu, message, Modal } from 
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
 import BraftEditor from 'braft-editor'
+import 'braft-editor/dist/index.css'
+import 'braft-editor/dist/output.css'
 import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import StyledBraftEditor, { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'

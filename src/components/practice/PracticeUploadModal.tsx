@@ -12,6 +12,8 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import BraftEditor, { EditorState } from 'braft-editor'
+import 'braft-editor/dist/index.css'
+import 'braft-editor/dist/output.css'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useState } from 'react'

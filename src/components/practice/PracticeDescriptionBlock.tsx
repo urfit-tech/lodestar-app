@@ -1,6 +1,8 @@
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import { Button, Menu, MenuButton, MenuItem, MenuList, Skeleton, Spinner, useToast } from '@chakra-ui/react'
 import BraftEditor from 'braft-editor'
+import 'braft-editor/dist/index.css'
+import 'braft-editor/dist/output.css'
 import { CommonLargeTitleMixin, CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import StarRating from 'lodestar-app-element/src/components/common/StarRating'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
