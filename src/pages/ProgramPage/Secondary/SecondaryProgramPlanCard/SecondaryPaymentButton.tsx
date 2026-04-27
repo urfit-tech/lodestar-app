@@ -74,6 +74,7 @@ const SecondaryPaymentButton: React.FC<{
       ) : isSubscription ? (
         <CheckoutProductModal
           defaultProductId={`${type}_${target}`}
+          onAuthRequired={() => setAuthModalVisible?.(true)}
           renderTrigger={({ isLoading, onOpen }) => (
             <StyledSecondaryCartButton
               colorScheme="outline"
