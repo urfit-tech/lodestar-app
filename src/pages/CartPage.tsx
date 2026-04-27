@@ -8,9 +8,9 @@ import { notEmpty } from 'lodestar-app-element/src/helpers'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
 import { groupBy } from 'ramda'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useLocation } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
 import CartProductTableCard from '../components/checkout/CartProductTableCard'
 import CheckoutBlock from '../components/checkout/CheckoutBlock'
@@ -20,14 +20,43 @@ import hasura from '../hasura'
 import { checkoutMessages } from '../helpers/translation'
 import { useMember } from '../hooks/member'
 import { CartProductProps } from '../types/checkout'
+import { ProductType } from '../types/product'
 
 const CartPage: React.FC = () => {
   const location = useLocation<{ productUrn?: string }>()
+  const history = useHistory()
   const { formatMessage } = useIntl()
   const [checkoutAlready, setCheckoutAlready] = useState(false)
   const [shopId] = useQueryParam('shopId', StringParam)
-  const { cartProducts: rawCartProducts } = useContext(CartContext)
+  const [productParam] = useQueryParam('product', StringParam)
+  const { cartProducts: rawCartProducts, addCartProduct } = useContext(CartContext)
   const { loading: loadingExistentProducts, data: cartProducts } = useFilterExistentProducts(rawCartProducts)
+
+  // 從 query string 讀取 product 參數，自動加入購物車
+  const isAddingFromUrl = useRef(false)
+  useEffect(() => {
+    if (!productParam || isAddingFromUrl.current || !addCartProduct) return
+
+    // 解析格式：ProgramPlan_{planId}
+    const underscoreIndex = productParam.indexOf('_')
+    if (underscoreIndex === -1) return
+
+    const productType = productParam.substring(0, underscoreIndex) as ProductType
+    const productTarget = productParam.substring(underscoreIndex + 1)
+    if (!productType || !productTarget) return
+
+    isAddingFromUrl.current = true
+    addCartProduct(productType, productTarget).then(() => {
+      // 清除 URL 上的 product 參數，避免重新整理重複加入
+      const searchParams = new URLSearchParams(window.location.search)
+      searchParams.delete('product')
+      const newSearch = searchParams.toString()
+      history.replace({
+        pathname: location.pathname,
+        search: newSearch ? `?${newSearch}` : '',
+      })
+    })
+  }, [productParam, addCartProduct])
   const { id: appId } = useApp()
   const { isAuthenticating, currentMemberId } = useAuth()
   const { loadingMember, member } = useMember(currentMemberId || '')
