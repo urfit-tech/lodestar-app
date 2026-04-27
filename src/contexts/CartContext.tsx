@@ -30,6 +30,7 @@ const CartContext = React.createContext<{
 })
 
 export const CartProvider: React.FC = ({ children }) => {
+  'use memo'
   const { id: appId, settings, enabledModules } = useApp()
   const apolloClient = useApolloClient()
   const { currentMemberId, authToken } = useAuth()

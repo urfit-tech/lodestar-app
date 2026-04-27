@@ -25,6 +25,7 @@ const NotificationContext = createContext<{
 })
 
 export const NotificationProvider: React.FC = ({ children }) => {
+  'use memo'
   const { loadingNotifications, errorNotifications, notifications, unreadCount, refetchNotifications } =
     useNotifications(15)
 

@@ -53,6 +53,7 @@ const defaultPodcastPlayerContext: PodcastPlayerContextValue = {
 const PodcastPlayerContext = createContext<PodcastPlayerContextValue>(defaultPodcastPlayerContext)
 
 export const PodcastPlayerProvider: React.FC = ({ children }) => {
+  'use memo'
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const modeRef = useRef<PodcastPlayerMode>(defaultPodcastPlayerContext.mode)
   const { currentMemberId, authToken } = useAuth()
