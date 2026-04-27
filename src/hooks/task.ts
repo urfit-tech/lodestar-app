@@ -16,18 +16,25 @@ export const useTask = (queue: string, taskId: string) => {
   const [code, setCode] = useState<string | null>(null)
 
   useEffect(() => {
+    let cancelled = false
+    let timer: ReturnType<typeof setTimeout> | undefined
     authToken &&
       axios
         .get(`${process.env.REACT_APP_API_BASE_ROOT}/tasks/${queue}/${taskId}`, {
           headers: { authorization: `Bearer ${authToken}` },
         })
         .then(({ data: { code, result } }) => {
+          if (cancelled) return
           setCode(code)
           setTask(result)
           if (!result || !result.finishedOn) {
-            setTimeout(() => setRetry(v => v + 1), 1000)
+            timer = setTimeout(() => setRetry(v => v + 1), 1000)
           }
         })
+    return () => {
+      cancelled = true
+      if (timer) clearTimeout(timer)
+    }
   }, [authToken, queue, taskId, retry])
   return { task, code, retry }
 }

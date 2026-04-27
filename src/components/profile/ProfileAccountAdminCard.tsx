@@ -8,7 +8,7 @@ import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import hasura from '../../hasura'
@@ -80,6 +80,17 @@ const CountDownText: React.FC<{ email: string; memberId: string }> = ({ email, m
 
   const { authToken } = useAuth()
   const { id: appId } = useApp()
+  const handleClickTimersRef = useRef<{
+    interval?: ReturnType<typeof setInterval>
+    timeout?: ReturnType<typeof setTimeout>
+  }>({})
+
+  useEffect(() => {
+    return () => {
+      if (handleClickTimersRef.current.interval) clearInterval(handleClickTimersRef.current.interval)
+      if (handleClickTimersRef.current.timeout) clearTimeout(handleClickTimersRef.current.timeout)
+    }
+  }, [])
 
   useEffect(() => {
     const lastVerificationSent = Number(localStorage.getItem('verifyTime'))
@@ -130,22 +141,19 @@ const CountDownText: React.FC<{ email: string; memberId: string }> = ({ email, m
         message.success(formatMessage(localProfileMessages.ProfileAccountAdminCard.sendVerifiedEmailSuccessfully))
         setShowButton(false)
 
-        const interval = setInterval(() => {
+        if (handleClickTimersRef.current.interval) clearInterval(handleClickTimersRef.current.interval)
+        if (handleClickTimersRef.current.timeout) clearTimeout(handleClickTimersRef.current.timeout)
+
+        handleClickTimersRef.current.interval = setInterval(() => {
           setCount(currentCount => --currentCount)
         }, 1000)
 
-        const timeout = setTimeout(() => {
-          clearInterval(interval)
+        handleClickTimersRef.current.timeout = setTimeout(() => {
+          if (handleClickTimersRef.current.interval) clearInterval(handleClickTimersRef.current.interval)
           setShowButton(true)
           setCount(30)
           localStorage.removeItem('currentTime')
         }, 1000 * 30)
-        // cleanup
-        return () => {
-          clearInterval(interval)
-          clearTimeout(timeout)
-          setShowButton(true)
-        }
       })
       .catch(handleError)
   }

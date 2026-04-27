@@ -3,11 +3,12 @@ import { Button, Icon } from '@chakra-ui/react'
 import { Checkbox, Form, Input, message, Skeleton } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import Axios from 'axios'
+import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { parsePayload } from 'lodestar-app-element/src/hooks/util'
 import { isEmpty } from 'ramda'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineMail, AiOutlinePhone, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -19,14 +20,13 @@ import { codeMessages, commonMessages } from '../../helpers/translation'
 import { useSignUpProperty } from '../../hooks/common'
 import { GET_MEMBER_EMAIL, GET_MEMBER_USERNAME } from '../../hooks/member'
 import { AuthState } from '../../types/member'
+import { Method, TrackingEvent } from '../../types/tracking'
 import BusinessSignupForm from '../common/BusinessSignupForm'
 import MigrationInput from '../common/MigrationInput'
 import SignupForm from '../common/SignupForm'
 import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from './AuthModal'
 import { FacebookLoginButton, GoogleLoginButton, LineLoginButton } from './SocialLoginButton'
 import authMessages from './translation'
-import Cookies from 'js-cookie'
-import { TrackingEvent, Method } from '../../types/tracking'
 
 const StyledParagraph = styled.p`
   color: var(--gray-dark);
@@ -56,6 +56,13 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, isBusinessMembe
   const [signupInfos, setSignupInfos] = useState<{ id: string; value: string }[]>()
   const [passwordShow, setPasswordShow] = useState(false)
   const [companyPictureFile, setCompanyPictureFile] = useState<File | null>(null)
+  const smsCooldownTimerRef = useRef<ReturnType<typeof setTimeout>>()
+
+  useEffect(() => {
+    return () => {
+      if (smsCooldownTimerRef.current) clearTimeout(smsCooldownTimerRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     setAuthState(
@@ -76,7 +83,8 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, isBusinessMembe
           setSendingState('idle')
           // TODO: locale
           message.success(formatMessage(authMessages.RegisterSection.smsSentSuccess))
-          setTimeout(() => {
+          if (smsCooldownTimerRef.current) clearTimeout(smsCooldownTimerRef.current)
+          smsCooldownTimerRef.current = setTimeout(() => {
             setSendingState('ready')
           }, 30000)
         })
@@ -208,7 +216,7 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, isBusinessMembe
             )
           }
           if (currentMemberId) {
-            Cookies.set(TrackingEvent.METHOD, Method.STANDARD , { expires: 1 })
+            Cookies.set(TrackingEvent.METHOD, Method.STANDARD, { expires: 1 })
             Cookies.set(TrackingEvent.PAGE, window.location.href, { expires: 1 })
           }
           setVisible?.(false)
