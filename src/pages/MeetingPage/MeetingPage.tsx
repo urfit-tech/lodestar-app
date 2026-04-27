@@ -117,6 +117,16 @@ const MeetingPage = () => {
     propertyDefaultValue = {}
   }
 
+  // overrides applied only when the page is opened via a manager personal link (/meets/:username)
+  let propertyDefaultValueWithManager: { [key: string]: string } = {}
+  try {
+    propertyDefaultValueWithManager = JSON.parse(settings['custom.meeting_page']).propertyDefaultValueWithManager as {
+      [key: string]: string
+    }
+  } catch (error) {
+    propertyDefaultValueWithManager = {}
+  }
+
   const { data: memberData, loading } = useQuery<hasura.GetMemberByUsername, hasura.GetMemberByUsernameVariables>(
     GetMemberByUsername,
     {
@@ -149,8 +159,11 @@ const MeetingPage = () => {
       new Set(formEntries.filter(entry => entry[0] === 'field').flatMap(entry => entry[1].toString().split('/'))),
     )
     const timeslots = formEntries.filter(entry => entry[0] === 'timeslot').map(entry => entry[1])
+    const effectivePropertyDefaultValue = managerUsername
+      ? { ...propertyDefaultValue, ...propertyDefaultValueWithManager }
+      : propertyDefaultValue
     const adPropertyValues = (
-      propertyDefaultValue[formatMessage(MeetingPageMessages.MeetingPage.adMaterial)] || ''
+      effectivePropertyDefaultValue[formatMessage(MeetingPageMessages.MeetingPage.adMaterial)] || ''
     ).replace(new RegExp(`{${formatMessage(MeetingPageMessages.MeetingPage.field)}}`, 'g'), uniqueFields.join('+'))
     const landingPage = Cookies.get('landing') // setting from backend
 
@@ -207,11 +220,12 @@ const MeetingPage = () => {
             { name: formatMessage(MeetingPageMessages.MeetingPage.adMaterial), value: adPropertyValues || '' },
             {
               name: formatMessage(MeetingPageMessages.MeetingPage.marketingCampaign),
-              value: propertyDefaultValue[formatMessage(MeetingPageMessages.MeetingPage.marketingCampaign)] || '',
+              value:
+                effectivePropertyDefaultValue[formatMessage(MeetingPageMessages.MeetingPage.marketingCampaign)] || '',
             },
             {
               name: formatMessage(MeetingPageMessages.MeetingPage.leadRating),
-              value: propertyDefaultValue[formatMessage(MeetingPageMessages.MeetingPage.leadRating)] || '',
+              value: effectivePropertyDefaultValue[formatMessage(MeetingPageMessages.MeetingPage.leadRating)] || '',
             },
           ],
         },
