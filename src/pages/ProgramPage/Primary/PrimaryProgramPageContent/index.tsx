@@ -118,7 +118,8 @@ const PrimaryProgramPageContent: React.FC<{
 
   useEffect(() => {
     if (customerReviewBlockRef.current && params.moveToBlock === 'customer-review') {
-      setTimeout(() => customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' }), 1000)
+      const timer = setTimeout(() => customerReviewBlockRef.current?.scrollIntoView({ behavior: 'smooth' }), 1000)
+      return () => clearTimeout(timer)
     }
   }, [customerReviewBlockRef, params])
 

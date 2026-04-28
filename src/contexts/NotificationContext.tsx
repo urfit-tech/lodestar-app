@@ -25,11 +25,16 @@ const NotificationContext = createContext<{
 })
 
 export const NotificationProvider: React.FC = ({ children }) => {
+  'use memo'
   const { loadingNotifications, errorNotifications, notifications, unreadCount, refetchNotifications } =
     useNotifications(15)
 
   const [isNotificationInitRequired, setIsNotificationInitRequired] = useState(false)
-  setTimeout(() => setIsNotificationInitRequired(true), 2000)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsNotificationInitRequired(true), 2000)
+    return () => clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     isNotificationInitRequired && refetchNotifications()

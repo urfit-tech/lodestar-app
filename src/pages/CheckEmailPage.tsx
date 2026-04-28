@@ -2,7 +2,7 @@ import { Icon } from '@chakra-ui/icons'
 import { Button, message } from 'antd'
 import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
@@ -31,11 +31,19 @@ const CheckEmailPage: React.FC = () => {
   const [email] = useQueryParam('email', StringParam)
   const [type] = useQueryParam('type', StringParam)
   const [loading, setLoading] = useState(false)
+  const resendTimerRef = useRef<ReturnType<typeof setTimeout>>()
+
+  useEffect(() => {
+    return () => {
+      if (resendTimerRef.current) clearTimeout(resendTimerRef.current)
+    }
+  }, [])
 
   const handleResendEmail = () => {
     setLoading(true)
     if (!email) {
-      setTimeout(() => {
+      if (resendTimerRef.current) clearTimeout(resendTimerRef.current)
+      resendTimerRef.current = setTimeout(() => {
         setLoading(false)
       }, 3000)
       return

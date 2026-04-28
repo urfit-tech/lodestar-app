@@ -26,6 +26,7 @@ const defaultMediaPlayValue = { resourceList: [] as MediaResource[], currentReso
 const MediaPlayerContext = React.createContext<MediaPlayerValue>(defaultMediaPlayValue)
 
 export const MediaPlayerProvider: React.FC = ({ children }) => {
+  'use memo'
   const { id: appId, settings } = useApp()
   const { authToken, currentMemberId } = useAuth()
   const [resourceList, setSourceList] = useState(defaultMediaPlayValue.resourceList)

@@ -3,6 +3,14 @@ const path = require('path')
 const rewireReactHotLoader = require('react-app-rewire-hot-loader')
 const defaultThemeVars = require('./src/theme.json')
 
+const ReactCompilerConfig = {
+  target: '17',
+  compilationMode: 'annotation',
+  sources: filename =>
+    filename.includes(path.resolve('src')) &&
+    !filename.includes('lodestar-app-element'),
+}
+
 module.exports = override(
   removeModuleScopePlugin(),
   babelInclude([path.resolve('src'), path.resolve('node_modules/lodestar-app-element/src')]),
@@ -33,6 +41,10 @@ module.exports = override(
             ...rule.options,
             cacheDirectory: true,
             compact: true,
+            plugins: [
+              ['babel-plugin-react-compiler', ReactCompilerConfig],
+              ...(rule.options.plugins || []),
+            ],
           }
           if (Array.isArray(rule.include)) {
             rule.include.push(path.resolve(__dirname, 'node_modules/lodestar-app-element/src'))

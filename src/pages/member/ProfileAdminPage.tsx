@@ -14,7 +14,7 @@ import ProfileIntroBusinessCard from '../../components/profile/ProfileIntroBusin
 import ProfileOtherAdminCard from '../../components/profile/ProfileOtherAdminCard'
 import ProfilePasswordAdminCard from '../../components/profile/ProfilePasswordAdminCard'
 import { commonMessages } from '../../helpers/translation'
-import { UserIcon, CompanyIcon } from '../../images'
+import { CompanyIcon, UserIcon } from '../../images'
 import memberPageMessages from './translation'
 
 const ProfileAdminPage: React.FC = () => {
@@ -39,13 +39,14 @@ const ProfileAdminPage: React.FC = () => {
       return
     }
 
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       const id = hash.replace('#', '')
       const element = document.getElementById(id)
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'end' })
       }
     }, 0)
+    return () => clearTimeout(timer)
   }, [hash])
 
   const payload = authToken ? parsePayload(authToken) : null

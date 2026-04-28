@@ -1,7 +1,5 @@
 import { ConfigProvider } from 'antd'
 import zhTW from 'antd/lib/locale-provider/zh_TW'
-import 'braft-editor/dist/index.css'
-import 'braft-editor/dist/output.css'
 import { LodestarAppProvider } from 'lodestar-app-element/src/contexts/LodestarAppContext'
 import React from 'react'
 import { StyleSheetManager } from 'styled-components'

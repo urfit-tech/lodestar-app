@@ -3,6 +3,8 @@ import { Form, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
 import BraftEditor from 'braft-editor'
+import 'braft-editor/dist/index.css'
+import 'braft-editor/dist/output.css'
 import StyledBraftEditor from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -123,10 +125,10 @@ const ProfileIntroBusinessCard: React.FC<ProfileIntroBusinessCardProps> = ({ for
                 'fullscreen',
               ]}
               media={{
-                  uploadFn: createUploadFn(appId, authToken),
-                  accepts: { video: false, audio: false },
-                  externals: { image: true, video: false, audio: false, embed: true },
-                }}
+                uploadFn: createUploadFn(appId, authToken),
+                accepts: { video: false, audio: false },
+                externals: { image: true, video: false, audio: false, embed: true },
+              }}
               placeholder={formatMessage(profileMessages.ProfileIntroBusinessCard.companyIntroPlaceholder)}
             ></StyledBraftEditor>,
           )}

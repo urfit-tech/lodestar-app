@@ -1,6 +1,8 @@
 import { gql, useMutation } from '@apollo/client'
 import { Button, ButtonGroup, Icon, IconButton, useToast } from '@chakra-ui/react'
 import BraftEditor, { EditorState } from 'braft-editor'
+import 'braft-editor/dist/index.css'
+import 'braft-editor/dist/output.css'
 import StarRating from 'lodestar-app-element/src/components/common/StarRating'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'

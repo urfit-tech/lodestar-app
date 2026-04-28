@@ -55,6 +55,7 @@ const defaultAudioPlayerContext: AudioPlayerContextValue = {
 const AudioPlayerContext = createContext<AudioPlayerContextValue>(defaultAudioPlayerContext)
 
 export const AudioPlayerProvider: React.FC = ({ children }) => {
+  'use memo'
   const { id: appId } = useApp()
   const { authToken } = useAuth()
   const localPlaying = localStorage.getItem('playing')

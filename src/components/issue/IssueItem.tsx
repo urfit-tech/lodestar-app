@@ -2,11 +2,14 @@ import { Button } from '@chakra-ui/react'
 import { Dropdown, Form, Icon, Input, Menu, message, Tag, Typography } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import BraftEditor from 'braft-editor'
+import 'braft-editor/dist/index.css'
+import 'braft-editor/dist/output.css'
+import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
@@ -17,7 +20,6 @@ import { ProductRoleName } from '../../types/general'
 import { ProgramRole } from '../../types/program'
 import MemberAvatar from '../common/MemberAvatar'
 import ProductRoleFormatter from '../common/ProductRoleFormatter'
-import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import IssueReplyCollectionBlock from './IssueReplyCollectionBlock'
 import { StyledEditor } from './IssueReplyCreationBlock'
 
@@ -95,6 +97,7 @@ const IssueItem: React.FC<IssueItemProps> = ({
   const [focus, setFocus] = useState(!qIssueReplyId && qIssueId === issueId)
   const [repliesVisible, setRepliesVisible] = useState(defaultRepliesVisible)
   const [reacted, setReacted] = useState(false)
+  const itemRef = useRef<HTMLDivElement>(null)
 
   const otherReactedMemberIds = reactedMemberIds.filter(id => id !== currentMemberId).length
 
@@ -105,6 +108,16 @@ const IssueItem: React.FC<IssueItemProps> = ({
       setReacted(false)
     }
   }, [currentMemberId, reactedMemberIds])
+
+  useEffect(() => {
+    if (itemRef.current && focus) {
+      itemRef.current.scrollIntoView()
+      const timer = setTimeout(() => {
+        setFocus(false)
+      }, 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [focus])
 
   const toggleReaction = async (reacted: boolean) => {
     reacted ? await deleteIssueReaction() : await insertIssueReaction()
@@ -130,17 +143,7 @@ const IssueItem: React.FC<IssueItemProps> = ({
   }
 
   return (
-    <StyledIssueItem
-      className={focus ? 'focus' : ''}
-      ref={ref => {
-        if (ref && focus) {
-          ref.scrollIntoView()
-          setTimeout(() => {
-            setFocus(false)
-          }, 1000)
-        }
-      }}
-    >
+    <StyledIssueItem className={focus ? 'focus' : ''} ref={itemRef}>
       <div className="d-flex align-items-center justify-content-between mb-2">
         <div className="d-flex align-items-center justify-content-center">
           <MemberAvatar

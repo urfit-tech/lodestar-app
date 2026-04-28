@@ -30,6 +30,7 @@ const CartContext = React.createContext<{
 })
 
 export const CartProvider: React.FC = ({ children }) => {
+  'use memo'
   const { id: appId, settings, enabledModules } = useApp()
   const apolloClient = useApolloClient()
   const { currentMemberId, authToken } = useAuth()
@@ -57,7 +58,10 @@ export const CartProvider: React.FC = ({ children }) => {
   const [isCartInitRequired, setIsCartInitRequired] = useState(false)
   const operator = cartOperationFactory.createOperator(CartOperatorEnum.INIT)
 
-  setTimeout(() => setIsCartInitRequired(true), 2000)
+  useEffect(() => {
+    const timer = setTimeout(() => setIsCartInitRequired(true), 2000)
+    return () => clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     if (isCartInitRequired && appId && currentMemberId) operator.operation()
