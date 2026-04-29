@@ -117,7 +117,7 @@ interface NextUpCardProps {
 
 const NextUpCard: React.FC<NextUpCardProps> = ({ event, viewAs }) => {
   const { formatMessage } = useIntl()
-  const { authToken } = useAuth()
+  const { authToken, currentMemberId } = useAuth()
   const [isZoomActive, setIsZoomActive] = useState(false)
   const [zoomHint, setZoomHint] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -150,6 +150,10 @@ const NextUpCard: React.FC<NextUpCardProps> = ({ event, viewAs }) => {
 
   const handleOpenZoom = useCallback(async () => {
     if (!event || !isZoomActive || isLoading || !authToken) return
+    if (!event.hostMemberId) {
+      console.error('Cannot create meeting: event.hostMemberId is missing')
+      return
+    }
 
     try {
       setIsLoading(true)
@@ -159,24 +163,28 @@ const NextUpCard: React.FC<NextUpCardProps> = ({ event, viewAs }) => {
       const endedAt = new Date(`${event.date}T${event.endTime}`).toISOString()
 
       const response = await axios.post(
-        `${kolableEndpoint}/e/kolable/meets/by-time`,
+        `${kolableEndpoint}/kolable/meets/by-time`,
         {
           startedAt,
           endedAt,
           eventId: event.id,
           autoRecording: false,
           service: 'zoom',
-          nbfAt: '',
+          nbfAt: null,
           expAt: null,
-          hostMemberId: event.hostMemberId || '',
+          hostMemberId: event.hostMemberId,
         },
         {
           headers: { authorization: `Bearer ${authToken}` },
         },
       )
 
-      if (response.data?.code === 'SUCCESS' && response.data?.data?.link) {
-        window.open(response.data.data.link, '_blank', 'noopener,noreferrer')
+      const meeting = response.data?.data
+      const isHost = !!currentMemberId && currentMemberId === event.hostMemberId
+      const meetingUrl = isHost ? meeting?.options?.startUrl : meeting?.options?.joinUrl
+
+      if (response.data?.code === 'SUCCESS' && meetingUrl) {
+        window.open(meetingUrl, '_blank', 'noopener,noreferrer')
       } else {
         console.error('Failed to get Zoom link:', response.data)
       }
@@ -185,7 +193,7 @@ const NextUpCard: React.FC<NextUpCardProps> = ({ event, viewAs }) => {
     } finally {
       setIsLoading(false)
     }
-  }, [event, isZoomActive, isLoading, authToken])
+  }, [event, isZoomActive, isLoading, authToken, currentMemberId])
 
   if (!event) {
     return (
