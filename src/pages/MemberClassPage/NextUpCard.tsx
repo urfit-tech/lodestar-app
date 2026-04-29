@@ -163,7 +163,7 @@ const NextUpCard: React.FC<NextUpCardProps> = ({ event, viewAs }) => {
       const endedAt = new Date(`${event.date}T${event.endTime}`).toISOString()
 
       const response = await axios.post(
-        `${kolableEndpoint}/e/kolable/meets/by-time`,
+        `${kolableEndpoint}/kolable/meets/by-time`,
         {
           startedAt,
           endedAt,
