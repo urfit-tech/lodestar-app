@@ -29,7 +29,7 @@ const FundingCoverBlock: React.FC<{
     <StyledWrapper coverType={coverType} coverUrl={previewUrl || coverUrl}>
       {coverType === 'video' && (
         <StyledPlayer>
-          {coverUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
+          {coverUrl.includes(`https://${import.meta.env.VITE_S3_BUCKET}`) ? (
             <video
               controlsList="nodownload"
               className="smartvideo"

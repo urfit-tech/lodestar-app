@@ -249,7 +249,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
       if (rescheduleAppointment) {
         await axios
           .post(
-            `${process.env.REACT_APP_API_BASE_ROOT}/product/${orderProductId}/reschedule`,
+            `${import.meta.env.VITE_API_BASE_ROOT}/product/${orderProductId}/reschedule`,
             {
               meetId: orderProduct.options?.['meetId'],
               memberId,
@@ -297,7 +297,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
       // create zoom meeting than get joinUrl
       try {
         const { data: createMeetData } = await axios.post(
-          `${process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT}/kolable/meets`,
+          `${import.meta.env.VITE_KOLABLE_SERVER_ENDPOINT}/kolable/meets`,
           {
             memberId: currentMemberId,
             startedAt: orderProduct.startedAt,

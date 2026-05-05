@@ -20,7 +20,7 @@ export const useTask = (queue: string, taskId: string) => {
     let timer: ReturnType<typeof setTimeout> | undefined
     authToken &&
       axios
-        .get(`${process.env.REACT_APP_API_BASE_ROOT}/tasks/${queue}/${taskId}`, {
+        .get(`${import.meta.env.VITE_API_BASE_ROOT}/tasks/${queue}/${taskId}`, {
           headers: { authorization: `Bearer ${authToken}` },
         })
         .then(({ data: { code, result } }) => {

@@ -118,7 +118,7 @@ const PerpetualProgramBanner: React.FC<{
           <div className="container">
             <StyledVideoWrapper>
               <StyledPlayer>
-                {program.coverVideoUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
+                {program.coverVideoUrl.includes(`https://${import.meta.env.VITE_S3_BUCKET}`) ? (
                   <video
                     controlsList="nodownload"
                     className="smartvideo"

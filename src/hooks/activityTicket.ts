@@ -53,7 +53,7 @@ export const useMemberRightActivityTicket = (
 
         setLoading(true)
         try {
-          const response = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+          const response = await axios.get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`, {
             params: {
               activityTicketId: activityTicketId,
               ...(memberId ? { memberId: memberId } : {}),

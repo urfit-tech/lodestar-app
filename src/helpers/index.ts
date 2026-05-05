@@ -47,7 +47,7 @@ export const uploadFile = async (
   file &&
     (await axios
       .post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/sys/sign-url`,
+        `${import.meta.env.VITE_API_BASE_ROOT}/sys/sign-url`,
         {
           operation: 'putObject',
           params: {
@@ -78,7 +78,7 @@ export const uploadFile = async (
 
 export const getFileDownloadableLink = async (key: string, authToken: string | null) => {
   const { data } = await axios.post(
-    `${process.env.REACT_APP_API_BASE_ROOT}/sys/sign-url`,
+    `${import.meta.env.VITE_API_BASE_ROOT}/sys/sign-url`,
     {
       operation: 'getObject',
       params: {
@@ -427,7 +427,7 @@ export const getRedeemLink = async (
   await axios.request<ApiResponse<{ link: string }>>({
     ...config,
     method: 'POST',
-    url: `${process.env.REACT_APP_API_BASE_ROOT}/discount/get-redeem-link`,
+    url: `${import.meta.env.VITE_API_BASE_ROOT}/discount/get-redeem-link`,
     data: {
       type,
       target,
@@ -510,7 +510,7 @@ export const getProductEnrollmentFromLodestar = async (
   const route = getLodestarRoute(product)
   if (route) {
     const { data } = await axios.get(
-      `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}${memberId ? `/?memberId=${memberId}` : ''}`,
+      `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}${memberId ? `/?memberId=${memberId}` : ''}`,
       {
         headers: { authorization: `Bearer ${authToken}` },
       },

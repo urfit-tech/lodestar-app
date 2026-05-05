@@ -129,7 +129,7 @@ const CountDownText: React.FC<{ email: string; memberId: string }> = ({ email, m
     localStorage.setItem('verifyTime', currentTime.toString())
     axios
       .post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/auth/request-email-verification`,
+        `${import.meta.env.VITE_API_BASE_ROOT}/auth/request-email-verification`,
         {
           appId,
           memberId,

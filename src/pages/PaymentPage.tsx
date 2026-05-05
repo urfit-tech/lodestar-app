@@ -140,7 +140,7 @@ const PaymentPage: React.FC = () => {
                       onClick={() => {
                         axios
                           .put(
-                            `${process.env.REACT_APP_API_BASE_ROOT}/payment/bank-code/${paymentNo}`,
+                            `${import.meta.env.VITE_API_BASE_ROOT}/payment/bank-code/${paymentNo}`,
                             { bankCode },
                             {
                               headers: {

@@ -176,7 +176,7 @@ export const useMemberClassEvents = (memberId: string) => {
       setLoading(true)
       setError(null)
 
-      const baseEndpoint = process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT
+      const baseEndpoint = import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT
 
       const resourceResponse = await axios.post(
         `${baseEndpoint}/temporally-exclusive-resource/batch/get/member`,

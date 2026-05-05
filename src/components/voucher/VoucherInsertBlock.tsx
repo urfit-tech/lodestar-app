@@ -72,7 +72,7 @@ const VoucherInsertBlock: React.FC<VoucherInsertBlockProps> = ({
     onChangeLoading(true)
     axios
       .post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/payment/exchange`,
+        `${import.meta.env.VITE_API_BASE_ROOT}/payment/exchange`,
         {
           code: voucherCode.trim(),
           type: 'Voucher',

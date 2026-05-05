@@ -317,7 +317,7 @@ const ProgramContentEbookReader: React.FC<{
     async (programContentId, authToken) => {
       try {
         const config = createRequestConfig(authToken)
-        const ebookUrl = `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/ebook/${programContentId}.epub`
+        const ebookUrl = `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/ebook/${programContentId}.epub`
         const response = await axios.get(ebookUrl, config)
 
         const hashKey = calculateHashKey(authToken)
@@ -346,7 +346,7 @@ const ProgramContentEbookReader: React.FC<{
     if (authToken) {
       return authToken.split('.')[2] || ''
     }
-    return isTrial ? `trial_key_${process.env.REACT_APP_EBOOK_SALT}` : ''
+    return isTrial ? `trial_key_${import.meta.env.VITE_EBOOK_SALT}` : ''
   }
 
   const readerStyles = {

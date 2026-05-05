@@ -13,7 +13,7 @@ export const useFetchPayFormToken = (paymentNo?: string, cacheToken?: string | n
       setLoading(true)
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_ROOT}/payment/${paymentNo}/pay-form-token/${cacheToken}`,
+          `${import.meta.env.VITE_API_BASE_ROOT}/payment/${paymentNo}/pay-form-token/${cacheToken}`,
         )
         if (response.data.code === 'SUCCESS') {
           setResult({

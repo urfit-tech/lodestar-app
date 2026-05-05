@@ -64,7 +64,7 @@ const OrderTaskPage: React.FC = () => {
         const clientBackUrl = search.substring(1, search.length).split('&')[0].split('=')[1]
         axios
           .post(
-            `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
+            `${import.meta.env.VITE_API_BASE_ROOT}/tasks/payment/`,
             { orderId: task.returnvalue.orderId, clientBackUrl: clientBackUrl || window.location.origin },
             { headers: { authorization: `Bearer ${authToken}` } },
           )

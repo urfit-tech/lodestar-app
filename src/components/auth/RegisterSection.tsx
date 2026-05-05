@@ -173,13 +173,13 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, isBusinessMembe
           if (companyPictureFile) {
             const avatarId = uuid()
             const path = `avatars/${decodedToken.appId}/${currentMemberId}/${avatarId}`
-            pictureUrl = `https://${process.env.REACT_APP_S3_BUCKET}/${path}`
+            pictureUrl = `https://${import.meta.env.VITE_S3_BUCKET}/${path}`
             await uploadFile(path, companyPictureFile, authToken)
           }
 
-          if (process.env.REACT_APP_GRAPHQL_PH_ENDPOINT) {
+          if (import.meta.env.VITE_GRAPHQL_PH_ENDPOINT) {
             await Axios.post(
-              process.env.REACT_APP_GRAPHQL_PH_ENDPOINT,
+              import.meta.env.VITE_GRAPHQL_PH_ENDPOINT,
               {
                 query: `
               mutation UPDATE_MEMBER_INFO($memberId: String!, $setMember: member_set_input, $memberProperties: [member_property_insert_input!]!) {

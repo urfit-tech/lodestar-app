@@ -19,7 +19,7 @@ const OverLoginDevicePage: React.FC = () => {
     const fingerPrintId = await getFingerPrintId()
     await axios
       .post(
-        `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/device/manage-logged-in-limit`,
+        `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/device/manage-logged-in-limit`,
         {
           appId,
           memberId: member.id,

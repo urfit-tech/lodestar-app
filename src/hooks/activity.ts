@@ -202,7 +202,7 @@ export const useEnrolledActivityTicket = (memberId: string) => {
       const route = `/activity/`
       try {
         setLoading(true)
-        const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`, {
           params: { memberId },
         })
 
@@ -238,7 +238,7 @@ export const useEnrolledActivity = (activityId: string, memberId: string) => {
       const route = `/activity/${activityId}`
       setLoading(true)
       try {
-        const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`, {
           params: { memberId },
         })
 

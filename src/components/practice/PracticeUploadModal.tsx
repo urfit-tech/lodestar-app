@@ -99,7 +99,7 @@ const PracticeUploadModal: React.FC<{
     }
     setLoading(true)
     const path = `images/${appId}/practices`
-    const practiceFolder = `https://${process.env.REACT_APP_S3_BUCKET}/${path}`
+    const practiceFolder = `https://${import.meta.env.VITE_S3_BUCKET}/${path}`
 
     try {
       if (variant === 'upload') {

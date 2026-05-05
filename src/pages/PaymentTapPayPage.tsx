@@ -121,7 +121,7 @@ const usePayment = (paymentNo: string) => {
         if (memberCreditCardId) {
           axios
             .post(
-              `${process.env.REACT_APP_API_BASE_ROOT}/payment/pay/${paymentNo}`,
+              `${import.meta.env.VITE_API_BASE_ROOT}/payment/pay/${paymentNo}`,
               {
                 memberCreditCardId,
                 cardHolder: {
@@ -148,7 +148,7 @@ const usePayment = (paymentNo: string) => {
           TPDirect.card.getPrime(({ status, card, msg }: { status: number; card: { prime: string }; msg: string }) => {
             axios
               .post(
-                `${process.env.REACT_APP_API_BASE_ROOT}/payment/pay/${paymentNo}`,
+                `${import.meta.env.VITE_API_BASE_ROOT}/payment/pay/${paymentNo}`,
                 {
                   prime: card.prime,
                   cardHolder: {

@@ -27,8 +27,8 @@ const padHexString = (hexString: string, targetLength: number): string => {
  */
 const generateCryptoKey = (hexString: string, keySize: number): CryptoJS.lib.WordArray => {
   const paddedHexString = padHexString(hexString, keySize * 8)
-  const salt = CryptoJS.enc.Utf8.parse(process.env.REACT_APP_EBOOK_SALT as string)
-  const iterations = Number(process.env.REACT_APP_EBOOK_ITERATION)
+  const salt = CryptoJS.enc.Utf8.parse(import.meta.env.VITE_EBOOK_SALT as string)
+  const iterations = Number(import.meta.env.VITE_EBOOK_ITERATION)
 
   return CryptoJS.PBKDF2(paddedHexString, salt, {
     keySize: keySize,

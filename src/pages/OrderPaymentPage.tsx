@@ -130,7 +130,7 @@ const OrderPaymentPage = () => {
   useEffect(() => {
     setLoading(true)
     axios
-      .get(`${process.env.REACT_APP_API_BASE_ROOT}/order/${orderId}/payment`, {
+      .get(`${import.meta.env.VITE_API_BASE_ROOT}/order/${orderId}/payment`, {
         params: { appId },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -373,7 +373,7 @@ const PaymentBlock: React.FC<{
               if (exemptMember(memberType) ? false : !memberContract?.agreedAt) return
               axios
                 .post(
-                  `${process.env.REACT_APP_API_BASE_ROOT}/order/${order.id}/pay`,
+                  `${import.meta.env.VITE_API_BASE_ROOT}/order/${order.id}/pay`,
                   {
                     appId,
                     paymentNo: payment.no,

@@ -99,7 +99,7 @@ const OrderRequestRefundModal: React.FC<{
             message?: string
           }[]
         }
-      }>(`${process.env.REACT_APP_API_BASE_ROOT}/order/detail/${orderId}`, {
+      }>(`${import.meta.env.VITE_API_BASE_ROOT}/order/detail/${orderId}`, {
         headers: { authorization: `Bearer ${authToken}` },
       })
       .then(({ data: { code, message, result } }) => {
@@ -133,7 +133,7 @@ const OrderRequestRefundModal: React.FC<{
         message: string
         result: string
       }>(
-        `${process.env.REACT_APP_API_BASE_ROOT}/payment/refund`,
+        `${import.meta.env.VITE_API_BASE_ROOT}/payment/refund`,
         {
           orderId,
           refundOrderProducts: refundableProducts.filter(product => refundIds.includes(product.id)),

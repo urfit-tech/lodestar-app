@@ -141,7 +141,7 @@ export const useMerchandiseSpecQuantity = (merchandiseSpecId: string) => {
     const route = `/merchandise-spec/${merchandiseSpecId}/inventory/status`
     setLoading(true)
     try {
-      const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+      const { data } = await axios.get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`, {
         headers: { authorization: `Bearer ${authToken}` },
       })
 

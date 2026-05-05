@@ -41,9 +41,9 @@ const PageHelmet: React.FC<
     `https://${window.location.host}/api/v2/`,
     `https://${window.location.host}/api/v2/`,
     `https://${window.location.host}/api/enterprise`,
-    process.env.REACT_APP_S3_BUCKET,
-    process.env.REACT_APP_GRAPHQL_PH_ENDPOINT,
-    process.env.REACT_APP_GRAPHQL_RH_ENDPOINT,
+    import.meta.env.VITE_S3_BUCKET,
+    import.meta.env.VITE_GRAPHQL_PH_ENDPOINT,
+    import.meta.env.VITE_GRAPHQL_RH_ENDPOINT,
   ]
 
   const defaultOpenGraph = [

@@ -60,7 +60,7 @@ const CouponInsertionCard: React.FC<CouponInsertionCardProps> = ({ form, onInser
         setLoading(true)
         axios
           .post(
-            `${process.env.REACT_APP_API_BASE_ROOT}/payment/exchange`,
+            `${import.meta.env.VITE_API_BASE_ROOT}/payment/exchange`,
             {
               code: values.code.trim(),
               type: 'Coupon',

@@ -20,7 +20,7 @@ const JoinPage: React.FC = () => {
     if (permissionGroupId && authToken && currentUsername) {
       axios
         .post(
-          `${process.env.REACT_APP_API_BASE_ROOT}/sys/attach-permission-group`,
+          `${import.meta.env.VITE_API_BASE_ROOT}/sys/attach-permission-group`,
           { permissionGroupId },
           { headers: { authorization: `Bearer ${authToken}` } },
         )

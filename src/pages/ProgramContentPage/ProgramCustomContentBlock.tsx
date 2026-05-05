@@ -121,7 +121,7 @@ const ProgramCustomContentBlock: React.FC<{
   }) => {
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
+        `${import.meta.env.VITE_API_BASE_ROOT}/tasks/player-event-logs/`,
         {
           programContentId,
           data,

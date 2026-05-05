@@ -49,7 +49,7 @@ const CheckEmailPage: React.FC = () => {
       return
     }
     axios
-      .post(`${process.env.REACT_APP_API_BASE_ROOT}/auth/forgot-password`, {
+      .post(`${import.meta.env.VITE_API_BASE_ROOT}/auth/forgot-password`, {
         appId,
         account: email,
       })

@@ -98,7 +98,7 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
 
       if (cloudfrontPath) {
         axios
-          .get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos/${videoId}/sign`, {
+          .get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/videos/${videoId}/sign`, {
             headers: {
               Authorization: `Bearer ${authToken}`,
             },
@@ -111,8 +111,8 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
             setMimeType('application/x-mpegURL')
             setAudioUrl(
               hlsPath && dashPath
-                ? `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${hlsPath}`
-                : `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${cloudfrontMigratedHlsPath}`,
+                ? `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/videos${hlsPath}`
+                : `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/videos${cloudfrontMigratedHlsPath}`,
             )
           })
 
@@ -122,7 +122,7 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
       if (source === 'cloudflare') {
         axios
           .post(
-            `${process.env.REACT_APP_API_BASE_ROOT}/videos/${videoId}/token`,
+            `${import.meta.env.VITE_API_BASE_ROOT}/videos/${videoId}/token`,
             {},
             {
               headers: {

@@ -59,7 +59,7 @@ export const useInsertProgress = (memberId: string) => {
   ) => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/programs/${programId}/content/${programContentId}/track-process`,
+        `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/programs/${programId}/content/${programContentId}/track-process`,
         {
           progress,
           lastProgress,

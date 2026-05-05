@@ -157,7 +157,7 @@ const NextUpCard: React.FC<NextUpCardProps> = ({ event, viewAs }) => {
 
     try {
       setIsLoading(true)
-      const kolableEndpoint = process.env.REACT_APP_KOLABLE_SERVER_ENDPOINT
+      const kolableEndpoint = import.meta.env.VITE_KOLABLE_SERVER_ENDPOINT
 
       const startedAt = new Date(`${event.date}T${event.startTime}`).toISOString()
       const endedAt = new Date(`${event.date}T${event.endTime}`).toISOString()

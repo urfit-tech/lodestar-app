@@ -618,7 +618,7 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
         TPDirect.card.getPrime(({ status, card: { prime } }: { status: number; card: { prime: string } }) => {
           axios({
             method: 'POST',
-            url: `${process.env.REACT_APP_API_BASE_ROOT}/payment/credit-cards`,
+            url: `${import.meta.env.VITE_API_BASE_ROOT}/payment/credit-cards`,
             withCredentials: true,
             data: {
               prime,
@@ -667,7 +667,7 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
             discounts: { name: string; price: number }[]
           }
         }>(
-          `${process.env.REACT_APP_API_BASE_ROOT}/order/create`,
+          `${import.meta.env.VITE_API_BASE_ROOT}/order/create`,
           {
             clientBackUrl: window.location.origin,
             paymentModel: { type: paymentType, gateway: payment?.gateway, method: payment?.method },

@@ -202,7 +202,7 @@ const PostCover: React.FC<{
           {coverUrl && (
             <StyledVideoWrapper>
               <StyledPlayer>
-                {coverUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
+                {coverUrl.includes(`https://${import.meta.env.VITE_S3_BUCKET}`) ? (
                   <video
                     controlsList="nodownload"
                     className="smartvideo"

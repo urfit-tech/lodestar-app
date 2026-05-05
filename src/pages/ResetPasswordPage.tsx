@@ -68,7 +68,7 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
         if (isProjectPortfolioParticipant) {
           axios
             .post(
-              `${process.env.REACT_APP_API_BASE_ROOT}/auth/set-participant-password`,
+              `${import.meta.env.VITE_API_BASE_ROOT}/auth/set-participant-password`,
               {
                 appId,
                 name: values.name,
@@ -110,7 +110,7 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
         } else {
           axios
             .post(
-              `${process.env.REACT_APP_API_BASE_ROOT}/auth/reset-password`,
+              `${import.meta.env.VITE_API_BASE_ROOT}/auth/reset-password`,
               {
                 appId,
                 memberId,

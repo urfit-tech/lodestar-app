@@ -268,7 +268,7 @@ export const useProgramPackage = (programPackageId: string, memberId: string | n
     try {
       const route = `/program-packages/${programPackageId}`
       setLoading(true)
-      const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+      const { data } = await axios.get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`, {
         params: { memberId },
         headers: { authorization: `Bearer ${authToken}` },
       })

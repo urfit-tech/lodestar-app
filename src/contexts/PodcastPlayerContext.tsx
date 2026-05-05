@@ -104,7 +104,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   useInterval(() => {
     if (playing && podcastProgramIds[currentIndex] && currentMemberId && authToken) {
       axios.post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/tasks/podcast-program-progress`,
+        `${import.meta.env.VITE_API_BASE_ROOT}/tasks/podcast-program-progress`,
         {
           podcastProgramId: podcastProgramIds[currentIndex],
           memberId: currentMemberId,

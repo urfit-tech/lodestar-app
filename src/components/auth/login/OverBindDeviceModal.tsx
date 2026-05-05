@@ -33,7 +33,7 @@ const OverBindDeviceModal: React.FC<{
   const handleConfirm = async () => {
     try {
       await axios
-        .post(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/mail-verification-code/verify`, {
+        .post(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/mail-verification-code/verify`, {
           appId,
           email: member.email,
           memberId: member.id,
@@ -73,7 +73,7 @@ const OverBindDeviceModal: React.FC<{
     try {
       const { ip } = await fetchCurrentGeolocation()
       await axios
-        .post(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/mail-verification-code/send`, {
+        .post(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/mail-verification-code/send`, {
           appId,
           email: member.email,
           type: eventType,

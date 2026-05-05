@@ -81,7 +81,7 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
         } else if (currentResource?.options?.source === 'cloudflare') {
           axios
             .post(
-              `${process.env.REACT_APP_API_BASE_ROOT}/videos/${currentResource.options.videoId}/token`,
+              `${import.meta.env.VITE_API_BASE_ROOT}/videos/${currentResource.options.videoId}/token`,
               {},
               {
                 headers: {
@@ -110,7 +110,7 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
     try {
       currentResource &&
         (await axios.post(
-          `${process.env.REACT_APP_API_BASE_ROOT}/tasks/player-event-logs/`,
+          `${import.meta.env.VITE_API_BASE_ROOT}/tasks/player-event-logs/`,
           {
             programContentId: currentResource.target,
             data,

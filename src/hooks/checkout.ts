@@ -72,7 +72,7 @@ export const useCheck = ({
         shippingOption: ShippingOptionProps
       }
     }>(
-      `${process.env.REACT_APP_API_BASE_ROOT}/payment/checkout-order`,
+      `${import.meta.env.VITE_API_BASE_ROOT}/payment/checkout-order`,
       {
         appId,
         productIds,
@@ -139,7 +139,7 @@ export const useCheck = ({
         discounts: { name: string; price: number }[]
       }
     }>(
-      `${process.env.REACT_APP_API_BASE_ROOT}/order/create`,
+      `${import.meta.env.VITE_API_BASE_ROOT}/order/create`,
       {
         clientBackUrl: window.location.origin,
         paymentModel: { type: paymentType, gateway: payment?.gateway, method: payment?.method },

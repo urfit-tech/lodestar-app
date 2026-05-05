@@ -191,7 +191,7 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
         const {
           data: { code },
         } = await Axios.post(
-          `${process.env.REACT_APP_API_BASE_ROOT}/auth/refresh-token`,
+          `${import.meta.env.VITE_API_BASE_ROOT}/auth/refresh-token`,
           { appId, fingerPrintId, geoLocation: { ip, country, countryCode } },
           {
             method: 'POST',

@@ -52,7 +52,7 @@ const LineBindingPage: React.FC = () => {
     setBinding(true)
     await axios
       .post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/line/generate-nonce`,
+        `${import.meta.env.VITE_API_BASE_ROOT}/line/generate-nonce`,
         { appId, memberId: currentMemberId },
         {
           headers: { authorization: `Bearer ${authToken}` },

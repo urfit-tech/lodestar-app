@@ -88,7 +88,7 @@ const VoucherExchangeModalBlock: React.FC<{
     message.info(formatMessage(voucherMessages.VoucherExchangeModal.exchangingInfo))
     await axios
       .post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/order/create`,
+        `${import.meta.env.VITE_API_BASE_ROOT}/order/create`,
         {
           paymentModel: { type: 'perpetual' },
           discountId: `Voucher_${voucherId}`,
@@ -125,7 +125,7 @@ const VoucherExchangeModalBlock: React.FC<{
     }
 
     await axios
-      .get(`${process.env.REACT_APP_API_BASE_ROOT}/voucher/pin-code/${voucherPlanId}`, {
+      .get(`${import.meta.env.VITE_API_BASE_ROOT}/voucher/pin-code/${voucherPlanId}`, {
         headers: { authorization: `Bearer ${authToken}` },
       })
       .then(res => {
@@ -151,7 +151,7 @@ const VoucherExchangeModalBlock: React.FC<{
 
     await axios
       .post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/voucher/pin-code/${voucherPlanId}`,
+        `${import.meta.env.VITE_API_BASE_ROOT}/voucher/pin-code/${voucherPlanId}`,
         {
           pinCode,
         },

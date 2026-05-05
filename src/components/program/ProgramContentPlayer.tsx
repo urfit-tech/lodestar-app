@@ -448,7 +448,7 @@ const ProgramContentPlayerWrapper = (props: {
     if (props.options?.cloudfront) {
       setLoading(true)
       axios
-        .get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos/${props.videoId}/sign`, {
+        .get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/videos/${props.videoId}/sign`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
@@ -464,17 +464,17 @@ const ProgramContentPlayerWrapper = (props: {
               ? [
                   {
                     type: 'application/x-mpegURL',
-                    src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${hlsPath}`,
+                    src: `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/videos${hlsPath}`,
                   },
                   {
                     type: 'application/dash+xml',
-                    src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${dashPath}`,
+                    src: `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/videos${dashPath}`,
                   },
                 ]
               : [
                   {
                     type: 'application/x-mpegURL',
-                    src: `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/videos${cloudfrontMigratedHlsPath}`,
+                    src: `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/videos${cloudfrontMigratedHlsPath}`,
                   },
                 ]
           setSources(source)
@@ -489,7 +489,7 @@ const ProgramContentPlayerWrapper = (props: {
       setLoading(true)
       axios
         .post(
-          `${process.env.REACT_APP_API_BASE_ROOT}/videos/${props.videoId}/token`,
+          `${import.meta.env.VITE_API_BASE_ROOT}/videos/${props.videoId}/token`,
           {},
           {
             headers: {

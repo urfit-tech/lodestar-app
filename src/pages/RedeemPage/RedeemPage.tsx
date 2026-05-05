@@ -98,7 +98,7 @@ const RedeemPage: React.FC = () => {
     setSendingState('loading')
     axios
       .post<ApiResponse>(
-        `${process.env.REACT_APP_API_BASE_ROOT}/discount/redeem`,
+        `${import.meta.env.VITE_API_BASE_ROOT}/discount/redeem`,
         {
           token,
         },

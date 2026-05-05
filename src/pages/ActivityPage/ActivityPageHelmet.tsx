@@ -110,7 +110,7 @@ const ActivityPageHelmet: React.FC<{ activity: ActivityPageHelmetProps }> = ({ a
             offerCount: activity.tickets.length,
             lowPrice: Math.min(...activity.tickets.map(activityTicket => activityTicket.price)),
             highPrice: Math.max(...activity.tickets.map(activityTicket => activityTicket.price)),
-            priceCurrency: app.settings['currency_id'] || process.env.REACT_APP_SYS_CURRENCY,
+            priceCurrency: app.settings['currency_id'] || import.meta.env.VITE_SYS_CURRENCY,
           },
           performer: {
             '@type': 'Person',

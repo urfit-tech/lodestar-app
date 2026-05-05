@@ -638,7 +638,7 @@ export const useProgramContentById = (programId: string, contentId: string) => {
       if (programId && contentId) {
         try {
           const { data } = await axios.get<ProgramContentResponse>(
-            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`,
             {
               cancelToken: source.token,
               headers: authToken ? { authorization: `Bearer ${authToken}` } : null,
@@ -681,7 +681,7 @@ export const useEquityPrograms = () => {
       const getEquityPrograms = async () => {
         try {
           const { data } = await axios.get<EquityPrograms>(
-            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`,
             {
               headers: { authorization: `Bearer ${authToken}` },
             },
@@ -716,7 +716,7 @@ export const useEquityProgramByProgramId = (programId: string) => {
       const getEquityProgram = async () => {
         try {
           const { data } = await axios.get<EquityProgram[]>(
-            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`,
             {
               headers: { authorization: `Bearer ${authToken}` },
             },
@@ -804,7 +804,7 @@ export const useProgramContentMaterial = (programId: string) => {
       const getProgramContentMaterialByProgramId = async () => {
         try {
           const { data } = await axios.get<ProgramContentMaterial[]>(
-            `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`,
+            `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`,
             {
               headers: { authorization: `Bearer ${authToken}` },
             },
@@ -1083,7 +1083,7 @@ export const useProgramContentEnrollment = (programId: string) => {
       const route = `/programs/${programId}/contents`
       setIsLoading(true)
       try {
-        const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`, {
           params: { memberId: currentMemberId },
           headers: { authorization: `Bearer ${authToken}` },
         })

@@ -19,7 +19,7 @@ export const useEnrolledVoucherCollection = (memberId: string) => {
       const route = '/vouchers'
       try {
         setLoading(true)
-        const { data } = await axios.get(`${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}${route}`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`, {
           params: { memberId, includeDeleted: false },
           headers: { authorization: `Bearer ${authToken}` },
         })

@@ -59,7 +59,7 @@ const MeetingPage = () => {
     // This API includes an update event
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API_BASE_ROOT}/sys/create-lead`,
+        `${import.meta.env.VITE_API_BASE_ROOT}/sys/create-lead`,
         {
           phone,
           email,

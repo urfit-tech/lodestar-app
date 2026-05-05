@@ -147,7 +147,7 @@ const GroupBuyingReceivedContainer: React.FC = () => {
     if (currentMemberId) {
       axios
         .put<ApiResponse>(
-          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/orders/transfer-received-order`,
+          `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/orders/transfer-received-order`,
           {
             token,
             memberId: currentMemberId,
@@ -282,7 +282,7 @@ const useGetOrderLog = (orderId: string | undefined, authToken: string) => {
     ;(async () => {
       try {
         const response = await axios.get<ApiResponse>(
-          `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/orders/${orderId}`,
+          `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/orders/${orderId}`,
           {
             headers: { authorization: `Bearer ${authToken}` },
           },

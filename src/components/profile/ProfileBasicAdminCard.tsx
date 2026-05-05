@@ -80,7 +80,7 @@ const ProfileBasicAdminCard: React.FC<ProfileBasicAdminCardProps> = ({ form, mem
             username: member.username,
             name: values.name,
             pictureUrl: avatarImageFile
-              ? `https://${process.env.REACT_APP_S3_BUCKET}/avatars/${appId}/${memberId}/${avatarId}`
+              ? `https://${import.meta.env.VITE_S3_BUCKET}/avatars/${appId}/${memberId}/${avatarId}`
               : member.pictureUrl,
             title: values.title,
             abstract: values.abstract || '',

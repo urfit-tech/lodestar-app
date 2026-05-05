@@ -95,7 +95,7 @@ const ProgramContentPageHelmet: React.FC<
               offerCount: programPlans.length,
               lowPrice: Math.min(...programPlans),
               highPrice: Math.max(...programPlans),
-              priceCurrency: app.settings['currency_id'] || process.env.REACT_APP_SYS_CURRENCY,
+              priceCurrency: app.settings['currency_id'] || import.meta.env.VITE_SYS_CURRENCY,
             },
           }),
         },

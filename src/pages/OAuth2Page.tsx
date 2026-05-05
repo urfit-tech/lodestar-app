@@ -216,7 +216,7 @@ const Oauth2Section: React.FC = () => {
       const redirectUri = `${host}/oauth2/${provider}`
       axios
         .post(
-          `${process.env.REACT_APP_API_BASE_ROOT}/auth/get-oauth-token`,
+          `${import.meta.env.VITE_API_BASE_ROOT}/auth/get-oauth-token`,
           {
             appId,
             provider,

@@ -31,7 +31,7 @@ const ProfilePasswordAdminCard: React.FC<ProfilePasswordAdminCardProps> = ({ for
         setLoading(true)
         axios
           .post(
-            `${process.env.REACT_APP_API_BASE_ROOT}/auth/change-password`,
+            `${import.meta.env.VITE_API_BASE_ROOT}/auth/change-password`,
             {
               password: values.password,
               newPassword: values.newPassword,

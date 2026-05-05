@@ -50,7 +50,7 @@ const VerifyEmailPage: React.FC = () => {
     if (authToken && token && memberId === member?.id && member?.email) {
       axios
         .post(
-          `${process.env.REACT_APP_API_BASE_ROOT}/auth/verify-email`,
+          `${import.meta.env.VITE_API_BASE_ROOT}/auth/verify-email`,
           { memberId, email: member.email, token },
           { headers: { authorization: `Bearer ${authToken}` } },
         )

@@ -88,7 +88,7 @@ abstract class BasePaymentStrategy implements PaymentStrategy {
 export class OrderSplitPaymentStrategy extends BasePaymentStrategy {
   protected async makeRequest(record: RecordType): Promise<StandardApiResponse> {
     const response = await axios.post(
-      `${process.env.REACT_APP_API_BASE_ROOT}/order/${record.orderLogId}/payment/link`,
+      `${import.meta.env.VITE_API_BASE_ROOT}/order/${record.orderLogId}/payment/link`,
       { appId: record.appId },
     )
 
@@ -112,7 +112,7 @@ export class OrderSplitPaymentStrategy extends BasePaymentStrategy {
 export class OrderDefaultPaymentStrategy extends BasePaymentStrategy {
   protected async makeRequest(record: RecordType): Promise<StandardApiResponse> {
     const response = await axios.post(
-      `${process.env.REACT_APP_API_BASE_ROOT}/tasks/payment/`,
+      `${import.meta.env.VITE_API_BASE_ROOT}/tasks/payment/`,
       {
         orderId: record.orderLogId,
         clientBackUrl: record.clientBackUrl,

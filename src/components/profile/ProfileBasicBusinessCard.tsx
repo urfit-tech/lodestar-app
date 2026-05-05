@@ -95,7 +95,7 @@ const ProfileBasicBusinessCard: React.FC<ProfileBasicBusinessCardProps> = ({ for
             username: member.username,
             name: formValues[companyShortNamePropertyId] || member.name,
             pictureUrl: avatarImageFile
-              ? `https://${process.env.REACT_APP_S3_BUCKET}/avatars/${appId}/${memberId}/${avatarId}`
+              ? `https://${import.meta.env.VITE_S3_BUCKET}/avatars/${appId}/${memberId}/${avatarId}`
               : member.pictureUrl,
             title: member.title,
             abstract: member.abstract || '',

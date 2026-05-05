@@ -129,7 +129,7 @@ const CustomizeProgramBanner: React.FC<{
         >
           {program.coverVideoUrl && (
             <StyledPlayer>
-              {program.coverVideoUrl.includes(`https://${process.env.REACT_APP_S3_BUCKET}`) ? (
+              {program.coverVideoUrl.includes(`https://${import.meta.env.VITE_S3_BUCKET}`) ? (
                 <video
                   controlsList="nodownload"
                   className="smartvideo"

@@ -88,7 +88,7 @@ const ProgramPackagePageHelmet: React.FC<{ programPackage: ProgramPackage }> = (
               offerCount: allPlanPrice.length,
               lowPrice: Math.min(...allPlanPrice),
               highPrice: Math.max(...allPlanPrice),
-              priceCurrency: app.settings['currency_id'] || process.env.REACT_APP_SYS_CURRENCY,
+              priceCurrency: app.settings['currency_id'] || import.meta.env.VITE_SYS_CURRENCY,
             },
           }),
         },

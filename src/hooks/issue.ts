@@ -353,7 +353,7 @@ const useIsIssueModuleAllowedForMember = () => {
     isLoading: isIssueModuleAllowedForMemberLoading,
     error: isIssueModuleAllowedForMemberError,
   } = useSWR(
-    `${process.env.REACT_APP_LODESTAR_SERVER_ENDPOINT}/trigger-switchboard/outsourcing`,
+    `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/trigger-switchboard/outsourcing`,
     isIssueModuleAllowedForMemberFetcher,
   )
   return { rawIsIssueModuleAllowedForMember, isIssueModuleAllowedForMemberLoading, isIssueModuleAllowedForMemberError }
