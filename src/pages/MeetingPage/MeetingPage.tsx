@@ -67,6 +67,7 @@ const GetMemberByUsername = gql`
   query GetMemberByUsername($appId: String!, $username: String!) {
     member_public(where: { app_id: { _eq: $appId }, username: { _eq: $username } }) {
       id
+      name
     }
   }
 `
@@ -136,8 +137,9 @@ const MeetingPage = () => {
   )
 
   const managerId = managerUsername ? memberData?.member_public[0]?.id || undefined : undefined
+  const managerName = managerUsername ? memberData?.member_public[0]?.name || '' : ''
 
-  if (loading && loadingAppData) {
+  if (loading || loadingAppData) {
     return <LoadingPage />
   }
 
@@ -362,7 +364,11 @@ const MeetingPage = () => {
         </FormControl>
         <FormControl className="mb-3">
           <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.introducer)}</FormLabel>
-          <Input name="referal" placeholder={formatMessage(MeetingPageMessages.MeetingPage.referralName)} />
+          <Input
+            name="referal"
+            defaultValue={managerName}
+            placeholder={formatMessage(MeetingPageMessages.MeetingPage.referralName)}
+          />
         </FormControl>
         <Button width="100%" colorScheme="primary" type="submit" isLoading={isSubmitting}>
           {formatMessage(MeetingPageMessages.MeetingPage.submit)}
