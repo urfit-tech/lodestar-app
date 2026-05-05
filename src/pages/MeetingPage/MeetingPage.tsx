@@ -67,6 +67,7 @@ const GetMemberByUsername = gql`
   query GetMemberByUsername($appId: String!, $username: String!) {
     member_public(where: { app_id: { _eq: $appId }, username: { _eq: $username } }) {
       id
+      name
     }
   }
 `
@@ -117,6 +118,16 @@ const MeetingPage = () => {
     propertyDefaultValue = {}
   }
 
+  // overrides applied only when the page is opened via a manager personal link (/meets/:username)
+  let propertyDefaultValueWithManager: { [key: string]: string } = {}
+  try {
+    propertyDefaultValueWithManager = JSON.parse(settings['custom.meeting_page']).propertyDefaultValueWithManager as {
+      [key: string]: string
+    }
+  } catch (error) {
+    propertyDefaultValueWithManager = {}
+  }
+
   const { data: memberData, loading } = useQuery<hasura.GetMemberByUsername, hasura.GetMemberByUsernameVariables>(
     GetMemberByUsername,
     {
@@ -126,8 +137,9 @@ const MeetingPage = () => {
   )
 
   const managerId = managerUsername ? memberData?.member_public[0]?.id || undefined : undefined
+  const managerName = managerUsername ? memberData?.member_public[0]?.name || '' : ''
 
-  if (loading && loadingAppData) {
+  if (loading || loadingAppData) {
     return <LoadingPage />
   }
 
@@ -149,8 +161,11 @@ const MeetingPage = () => {
       new Set(formEntries.filter(entry => entry[0] === 'field').flatMap(entry => entry[1].toString().split('/'))),
     )
     const timeslots = formEntries.filter(entry => entry[0] === 'timeslot').map(entry => entry[1])
+    const effectivePropertyDefaultValue = managerUsername
+      ? { ...propertyDefaultValue, ...propertyDefaultValueWithManager }
+      : propertyDefaultValue
     const adPropertyValues = (
-      propertyDefaultValue[formatMessage(MeetingPageMessages.MeetingPage.adMaterial)] || ''
+      effectivePropertyDefaultValue[formatMessage(MeetingPageMessages.MeetingPage.adMaterial)] || ''
     ).replace(new RegExp(`{${formatMessage(MeetingPageMessages.MeetingPage.field)}}`, 'g'), uniqueFields.join('+'))
     const landingPage = Cookies.get('landing') // setting from backend
 
@@ -207,11 +222,11 @@ const MeetingPage = () => {
             { name: formatMessage(MeetingPageMessages.MeetingPage.adMaterial), value: adPropertyValues || '' },
             {
               name: '行銷活動',
-              value: propertyDefaultValue['行銷活動'] || '',
+              value: effectivePropertyDefaultValue['行銷活動'] || '',
             },
             {
               name: '名單分級',
-              value: propertyDefaultValue['名單分級'] || '',
+              value: effectivePropertyDefaultValue['名單分級'] || '',
             },
             { name: 'landing', value: landingPage || '' },
             { name: 'utm_source', value: utm.utm_source || '' },
@@ -349,7 +364,11 @@ const MeetingPage = () => {
         </FormControl>
         <FormControl className="mb-3">
           <FormLabel>{formatMessage(MeetingPageMessages.MeetingPage.introducer)}</FormLabel>
-          <Input name="referal" placeholder={formatMessage(MeetingPageMessages.MeetingPage.referralName)} />
+          <Input
+            name="referal"
+            defaultValue={managerName}
+            placeholder={formatMessage(MeetingPageMessages.MeetingPage.referralName)}
+          />
         </FormControl>
         <Button width="100%" colorScheme="primary" type="submit" isLoading={isSubmitting}>
           {formatMessage(MeetingPageMessages.MeetingPage.submit)}
