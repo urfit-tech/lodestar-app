@@ -20,10 +20,10 @@ jobs:
         uses: jdx/mise-action@v4
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: pnpm install --frozen-lockfile
 
       - name: Build project
-        run: yarn build
+        run: pnpm build
 
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@v0.5.1
