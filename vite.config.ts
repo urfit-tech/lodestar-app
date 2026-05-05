@@ -1,7 +1,8 @@
 import react from '@vitejs/plugin-react'
 import { readFile } from 'fs/promises'
 import path from 'path'
-import { defineConfig, loadEnv, transformWithEsbuild, type Plugin } from 'vite'
+import { defineConfig, loadEnv, transformWithEsbuild } from 'vite'
+import type { Plugin } from 'vite'
 import { AntdResolve, createStyleImportPlugin } from 'vite-plugin-style-import'
 import svgr from '@svgr/core'
 import themeVars from './src/theme.json'
@@ -11,9 +12,7 @@ const sourceRoot = path.resolve(__dirname, 'src')
 const ReactCompilerConfig = {
   target: '17',
   compilationMode: 'annotation',
-  sources: (filename: string) =>
-    filename.includes(sourceRoot) &&
-    !filename.includes('lodestar-app-element'),
+  sources: (filename: string) => filename.includes(sourceRoot) && !filename.includes('lodestar-app-element'),
 }
 
 const craSvgComponentPlugin = (): Plugin => ({
@@ -50,17 +49,35 @@ const lodestarAppElementCompatPlugin = (): Plugin => ({
   name: 'vite:lodestar-app-element-compat',
   enforce: 'pre',
   transform(code, id) {
-    if (
-      !id.includes('node_modules/lodestar-app-element/src/') ||
-      !code.includes("import { now } from 'moment'")
-    ) {
+    if (!id.includes('node_modules/lodestar-app-element/src/')) {
       return null
     }
 
-    return {
-      code: code.replace("import { now } from 'moment'", "import moment from 'moment'\nconst { now } = moment"),
-      map: null,
+    let transformed = code
+
+    if (transformed.includes("import { now } from 'moment'")) {
+      transformed = transformed.replace(
+        "import { now } from 'moment'",
+        "import moment from 'moment'\nconst { now } = moment",
+      )
     }
+
+    if (
+      id.includes('node_modules/lodestar-app-element/src/contexts/LanguageContext.tsx') &&
+      transformed.includes('require(`../translations/locales/${currentLanguage}.json`)')
+    ) {
+      transformed = transformed
+        .replace(
+          "import { IntlProvider } from 'react-intl'\nimport { useApp } from './AppContext'",
+          "import { IntlProvider } from 'react-intl'\nimport { useApp } from './AppContext'\n\nconst localeMessageModules = import.meta.glob('../translations/locales/*.json', { eager: true, import: 'default' }) as Record<string, Record<string, string>>",
+        )
+        .replace(
+          'messages = require(`../translations/locales/${currentLanguage}.json`)',
+          'messages = localeMessageModules[`../translations/locales/${currentLanguage}.json`] || {}',
+        )
+    }
+
+    return transformed === code ? null : { code: transformed, map: null }
   },
 })
 
@@ -71,8 +88,9 @@ const getLegacyReactAppEnv = (env: Record<string, string>) =>
       .map(([key, value]) => [`process.env.REACT_APP_${key.slice('VITE_'.length)}`, JSON.stringify(value)]),
   )
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
+  const nodeEnv = command === 'build' ? 'production' : 'development'
 
   return {
     plugins: [
@@ -98,6 +116,7 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: {
       alias: {
+        ajv: path.resolve(__dirname, 'src/vite-compat/ajv.ts'),
         jsonwebtoken: path.resolve(__dirname, 'src/vite-compat/jsonwebtoken.ts'),
       },
     },
@@ -112,6 +131,9 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'build',
       sourcemap: false,
+      commonjsOptions: {
+        transformMixedEsModules: true,
+      },
       rollupOptions: {
         output: {
           manualChunks: id => {
@@ -123,7 +145,7 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       ...getLegacyReactAppEnv(env),
-      'process.env.NODE_ENV': JSON.stringify(mode),
+      'process.env.NODE_ENV': JSON.stringify(nodeEnv),
       'process.env': {},
     },
     server: {

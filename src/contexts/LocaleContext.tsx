@@ -7,6 +7,20 @@ import { IntlProvider } from 'react-intl'
 import hasura from '../hasura'
 import defaultLocaleMessages from '../translations/locales/en-us.json'
 
+type LocaleMessages = Record<string, string>
+
+const localeMessageModules = import.meta.glob('../translations/locales/*.json', {
+  eager: true,
+  import: 'default',
+}) as Record<string, LocaleMessages>
+const elementMessageModules = import.meta.glob(
+  '../../node_modules/lodestar-app-element/src/translations/locales/*.json',
+  {
+    eager: true,
+    import: 'default',
+  },
+) as Record<string, LocaleMessages>
+
 export const SUPPORTED_LOCALES = [
   { locale: 'zh-cn', label: '简体中文' },
   { locale: 'zh-tw', label: '繁體中文' },
@@ -95,15 +109,15 @@ export const LocaleProvider: React.FC = ({ children }) => {
   }, [defaultLocale, enabledModules, settings])
 
   moment.locale(currentLocale)
-  let localeMessages: { [key: string]: string } = defaultLocaleMessages
-  let elementMessages: { [key: string]: string } = {}
-  try {
-    localeMessages = require(`../translations/locales/${currentLocale}.json`)
-    elementMessages = require(`lodestar-app-element/src/translations/locales/${currentLocale}.json`)
-  } catch (error) {
-    console.warn('cannot load the locale:', currentLocale, error)
+  const localeMessages = localeMessageModules[`../translations/locales/${currentLocale}.json`] || defaultLocaleMessages
+  const elementMessages =
+    elementMessageModules[`../../node_modules/lodestar-app-element/src/translations/locales/${currentLocale}.json`] ||
+    {}
+
+  if (!localeMessages && !elementMessages) {
+    console.warn('cannot load the locale:', currentLocale)
   }
-  localeMessages = { ...elementMessages, ...localeMessages, ...appLocaleMessages }
+  const messages = { ...elementMessages, ...localeMessages, ...appLocaleMessages }
 
   return (
     <LocaleContext.Provider
@@ -119,7 +133,7 @@ export const LocaleProvider: React.FC = ({ children }) => {
         languagesList,
       }}
     >
-      <IntlProvider defaultLocale="zh" locale={currentLocale} messages={localeMessages}>
+      <IntlProvider defaultLocale="zh" locale={currentLocale} messages={messages}>
         {children}
       </IntlProvider>
     </LocaleContext.Provider>
