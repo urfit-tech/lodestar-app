@@ -1,6 +1,5 @@
 const { override, fixBabelImports, addLessLoader, removeModuleScopePlugin, babelInclude } = require('customize-cra')
 const path = require('path')
-const rewireReactHotLoader = require('react-app-rewire-hot-loader')
 const defaultThemeVars = require('./src/theme.json')
 
 const ReactCompilerConfig = {
@@ -27,9 +26,6 @@ module.exports = override(
   }),
   (config, env) => {
     const isDev = env === 'development' || process.env.NODE_ENV === 'development'
-    if (isDev) {
-      config = rewireReactHotLoader(config, 'development')
-    }
     if (!isDev) {
       config.devtool = false
     }

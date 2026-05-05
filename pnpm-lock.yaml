@@ -416,18 +416,12 @@ importers:
       prettier:
         specifier: 2.4.1
         version: 2.4.1
-      react-app-rewire-hot-loader:
-        specifier: ^2.0.1
-        version: 2.0.1(react-hot-loader@4.13.0(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react@17.0.2))
       react-app-rewired:
         specifier: ^2.1.8
         version: 2.2.1(react-scripts@4.0.3(@types/webpack@4.41.32)(eslint@7.32.0)(react@17.0.2)(sass@1.57.1)(sockjs-client@1.6.0)(typescript@4.4.3))
       react-error-overlay:
         specifier: 6.0.9
         version: 6.0.9
-      react-hot-loader:
-        specifier: ^4.12.21
-        version: 4.13.0(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       react-intl-translations-manager:
         specifier: ^5.0.3
         version: 5.0.3
@@ -7523,11 +7517,6 @@ packages:
     resolution: {integrity: sha512-0sF4ny9v/B7s6aoehwze9vJNWcmCemAUYBVasscVr92+UYiEqDXOxfKjXN685mDaMRNF3WdhHQs76oTODMocFA==}
     engines: {node: '>=10'}
 
-  react-app-rewire-hot-loader@2.0.1:
-    resolution: {integrity: sha512-XTUPOv5q0zJeEtXECfilDPfqCiktSVbIyupiqigIHOO8EMZec2YfNpwZzqDWMu3yfaEHRs54qRCcCgRR/1w3EQ==}
-    peerDependencies:
-      react-hot-loader: ^4.0.0
-
   react-app-rewired@2.2.1:
     resolution: {integrity: sha512-uFQWTErXeLDrMzOJHKp0h8P1z0LV9HzPGsJ6adOtGlA/B9WfT6Shh4j2tLTTGlXOfiVx6w6iWpp7SOC5pvk+gA==}
     hasBin: true
@@ -7602,17 +7591,6 @@ packages:
     resolution: {integrity: sha512-prq82ofMbnRyj5wqDe8hsTRcdR25jQ+B8KtCS7BLCzjFHAwNuCjRwzPuP4eYLsEBjEIeYd6try+pdLdw0kPkpg==}
     peerDependencies:
       react: ^16.8.0 || ^17
-
-  react-hot-loader@4.13.0:
-    resolution: {integrity: sha512-JrLlvUPqh6wIkrK2hZDfOyq/Uh/WeVEr8nc7hkn2/3Ul0sx1Kr5y4kOGNacNRoj7RhwLNcQ3Udf1KJXrqc0ZtA==}
-    engines: {node: '>= 6'}
-    peerDependencies:
-      '@types/react': 17.0.0
-      react: '^15.0.0 || ^16.0.0 || ^17.0.0 '
-      react-dom: '^15.0.0 || ^16.0.0 || ^17.0.0 '
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
 
   react-hotjar@2.2.1:
     resolution: {integrity: sha512-rkHdsFDfI7HCKeAwkHPf8Vq7ZbpX0oE4/5GgVvNambWw8z0PSKKxi59qWYX7H+dDYjchiL3z3hrAFQ+PohgQOA==}
@@ -16605,11 +16583,7 @@ snapshots:
       pretty-format: 26.6.2
       throat: 5.0.0
     transitivePeerDependencies:
-      - bufferutil
-      - canvas
       - supports-color
-      - ts-node
-      - utf-8-validate
 
   jest-leak-detector@26.6.2:
     dependencies:
@@ -19230,10 +19204,6 @@ snapshots:
       regenerator-runtime: 0.13.9
       whatwg-fetch: 3.6.2
 
-  react-app-rewire-hot-loader@2.0.1(react-hot-loader@4.13.0(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)):
-    dependencies:
-      react-hot-loader: 4.13.0(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
-
   react-app-rewired@2.2.1(react-scripts@4.0.3(@types/webpack@4.41.32)(eslint@7.32.0)(react@17.0.2)(sass@1.57.1)(sockjs-client@1.6.0)(typescript@4.4.3)):
     dependencies:
       react-scripts: 4.0.3(@types/webpack@4.41.32)(eslint@7.32.0)(react@17.0.2)(sass@1.57.1)(sockjs-client@1.6.0)(typescript@4.4.3)
@@ -19358,21 +19328,6 @@ snapshots:
   react-hook-form@6.15.8(react@17.0.2):
     dependencies:
       react: 17.0.2
-
-  react-hot-loader@4.13.0(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react@17.0.2):
-    dependencies:
-      fast-levenshtein: 2.0.6
-      global: 4.4.0
-      hoist-non-react-statics: 3.3.2
-      loader-utils: 1.4.0
-      prop-types: 15.8.1
-      react: 17.0.2
-      react-dom: 17.0.2(react@17.0.2)
-      react-lifecycles-compat: 3.0.4
-      shallowequal: 1.1.0
-      source-map: 0.7.3
-    optionalDependencies:
-      '@types/react': 17.0.0
 
   react-hotjar@2.2.1: {}
 
