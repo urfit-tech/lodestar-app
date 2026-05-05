@@ -471,10 +471,12 @@ git commit -m "refactor: replace dynamic page imports with import.meta.glob"
 
 ```bash
 cd /Users/eddy/urfit/lodestar-app
-pnpm add -D vite@^5 @vitejs/plugin-react@^4 vite-plugin-style-import@^2 consola @types/node@^22
+pnpm add -D vite@^5 @vitejs/plugin-react@^4 vite-plugin-style-import@^2 consola @types/node@18.11.18
 ```
 
 Expected: pnpm reports added packages, lockfile updates. The `consola` install is the documented workaround for `vite-plugin-style-import@2.0.0`'s missing peer dep.
+
+Note: keep `@types/node` on `18.11.18` while the repo uses TypeScript `4.4.3`. Current `@types/node@22` declarations require TypeScript 5.3+ and fail to parse under the existing compiler. Vite 5 accepts `@types/node` 18 via its peer range.
 
 - [ ] **Step 2: Verify `less` is on 3.x (must NOT be 4.x)**
 
@@ -895,7 +897,7 @@ Note: `resolutions` is a Yarn-only field. pnpm uses `pnpm.overrides`. Replace th
 
 Do not keep the old `resolutions` field after the pnpm cutover.
 
-- [ ] **Step 3: Bump `@types/node` from 12 to 22**
+- [ ] **Step 3: Keep `@types/node` on the TypeScript-4-compatible Node 18 types**
 
 In `devDependencies` change:
 
@@ -906,10 +908,10 @@ In `devDependencies` change:
 to:
 
 ```json
-    "@types/node": "^22",
+    "@types/node": "18.11.18",
 ```
 
-(Already added in Task 5 step 1; this just removes the old pin.)
+(Already added in Task 5 step 1; this just removes the old Node 12 pin without introducing declarations that TypeScript 4.4 cannot parse.)
 
 - [ ] **Step 4: Reinstall to apply changes**
 
