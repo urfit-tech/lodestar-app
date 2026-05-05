@@ -38,8 +38,9 @@
 - `src/LoadablePage.tsx` — replace template-literal `import()` with `import.meta.glob`
 - `src/Application.tsx` — no change expected (verify at validation)
 - `.env`, `.env.development`, `.env.staging`, `.env.production` — rename keys `REACT_APP_*` → `VITE_*`
-- ~71 source files — codemod `process.env.REACT_APP_*` → `import.meta.env.VITE_*`
-- ~10 source files — codemod `process.env.PUBLIC_URL` → `import.meta.env.BASE_URL`
+- 71 source files — codemod `process.env.REACT_APP_*` → `import.meta.env.VITE_*`
+- 1 source file — codemod `process.env.PUBLIC_URL` → `import.meta.env.BASE_URL`
+- `public/index.html` — replace the 4 `%PUBLIC_URL%` placeholders while moving the file to root `index.html`
 
 ---
 
@@ -56,46 +57,62 @@ Each task ends with a verification command + expected output. Commits happen at 
 
 ---
 
-## Task 0: Capture baseline metrics
+## Task 0: Prepare branch and capture baseline metrics
 
-**Files:** None (read-only)
+**Files:** None (git branch setup + read-only baseline measurement)
 
-- [ ] **Step 1: Record current dev server boot time**
+- [ ] **Step 1: Confirm the workspace starts clean**
 
 ```bash
 cd /Users/eddy/urfit/lodestar-app
-git checkout develop
+git status --short
+```
+
+Expected: empty output. If output is not empty, stop and inspect before proceeding so unrelated local work is not mixed into the migration.
+
+- [ ] **Step 2: Create the implementation branch**
+
+```bash
+cd /Users/eddy/urfit/lodestar-app
+git switch develop
+git pull --ff-only
+git switch -c codex/react17-vite-migration
+```
+
+Expected: branch `codex/react17-vite-migration` is created from the latest `develop`.
+
+- [ ] **Step 3: Install current Yarn 4 dependencies**
+
+```bash
+cd /Users/eddy/urfit/lodestar-app
+mise install
+corepack enable
 yarn install --immutable
-time yarn start &
-# wait for "Compiled successfully" in stdout, then SIGINT
-# record the elapsed time
 ```
 
-Expected: Note the time-to-ready (typically 30-60s for CRA on this codebase). Save as `BASELINE_DEV_START_TIME`.
+Expected: Yarn install completes with the existing `yarn.lock`.
 
-- [ ] **Step 2: Record current production build time and bundle size**
+- [ ] **Step 4: Record current production build time and bundle size**
 
 ```bash
-NODE_ENV=production yarn build
-ls -lh build/static/js/*.js | awk '{print $5, $9}'
-du -sh build/
+cd /Users/eddy/urfit/lodestar-app
+rm -f /tmp/lodestar-cra-build.log /tmp/lodestar-cra-baseline.env
+/usr/bin/time -p env NODE_ENV=production yarn build 2>&1 | tee /tmp/lodestar-cra-build.log
+du -sk build | awk '{print "cra_build_kib="$1}' | tee /tmp/lodestar-cra-baseline.env
+find build/static/js -name '*.js' -type f -print0 | xargs -0 stat -f '%z' | awk '{sum += $1} END {print "cra_js_bytes="sum}' | tee -a /tmp/lodestar-cra-baseline.env
+awk '/^real / {print "cra_build_seconds="$2}' /tmp/lodestar-cra-build.log | tee -a /tmp/lodestar-cra-baseline.env
+cat /tmp/lodestar-cra-baseline.env
 ```
 
-Expected: Save total `build/static/js/` size and `build/` size as `BASELINE_JS_SIZE` and `BASELINE_BUILD_SIZE`. Note the time taken.
+Expected: `yarn build` succeeds and `/tmp/lodestar-cra-baseline.env` contains exactly these keys:
 
-- [ ] **Step 3: Save baseline to a scratch file**
-
-```bash
-cat > /tmp/migration-baseline.txt <<EOF
-dev_start: <time from step 1>
-build_time: <time from step 2>
-js_total: <size from step 2>
-build_total: <size from step 2>
-EOF
-cat /tmp/migration-baseline.txt
+```text
+cra_build_kib=
+cra_js_bytes=
+cra_build_seconds=
 ```
 
-Expected: File contains four lines of metrics. Used in Task 11 for comparison.
+These values are used in Task 11 for comparison.
 
 ---
 
@@ -124,7 +141,7 @@ Replace contents of `/Users/eddy/urfit/lodestar-app/mise.toml`:
 ```toml
 [tools]
 node = "22"
-pnpm = "9"
+pnpm = "9.15.9"
 ```
 
 - [ ] **Step 3: Add `packageManager` field to `package.json`**
@@ -132,10 +149,10 @@ pnpm = "9"
 In `/Users/eddy/urfit/lodestar-app/package.json`, add the field at top level (next to `engines`):
 
 ```json
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@9.15.9",
 ```
 
-(Use whatever `pnpm --version` reports after `mise install`. Update string after step 5.)
+Use `pnpm@9.15.9` in both `packageManager` and `mise.toml` so local development and CI resolve the same package-manager version.
 
 - [ ] **Step 4: Update `engines.node`**
 
@@ -161,12 +178,11 @@ to:
 cd /Users/eddy/urfit/lodestar-app
 mise install
 node --version    # expect v22.x
-pnpm --version    # expect 9.x
-# Update packageManager in package.json to match exact pnpm version printed
+pnpm --version    # expect 9.15.9
 pnpm install
 ```
 
-Expected: pnpm install completes, `pnpm-lock.yaml` is created. There may be peer warnings — acceptable due to `.npmrc` settings.
+Expected: pnpm prints `9.15.9`, install completes, and `pnpm-lock.yaml` is created. Peer warnings are acceptable due to `.npmrc` settings.
 
 - [ ] **Step 6: Verify the project still builds under CRA on the new toolchain**
 
@@ -247,7 +263,7 @@ if (!appId) {
 unregister()
 ```
 
-Note: `process.env.REACT_APP_ID` here will be renamed to `import.meta.env.VITE_APP_ID` in Task 4. We rename in two passes to keep diffs reviewable.
+Note: `process.env.REACT_APP_ID` here will be renamed to `import.meta.env.VITE_APP_ID` in Task 3. We rename in two passes to keep diffs reviewable.
 
 - [ ] **Step 2: Remove `react-hot-loader` and `react-app-rewire-hot-loader` from package.json**
 
@@ -287,8 +303,8 @@ git commit -m "refactor: remove react-hot-loader and dead hydrate branch from en
 ## Task 3: Codemod env vars (`REACT_APP_*` → `VITE_*`, `PUBLIC_URL` → `BASE_URL`)
 
 **Files:**
-- Modify: ~71 source files (`process.env.REACT_APP_*`)
-- Modify: ~10 source files (`process.env.PUBLIC_URL`)
+- Modify: 71 source files (`process.env.REACT_APP_*`)
+- Modify: 1 source file (`process.env.PUBLIC_URL`)
 - Modify: `.env`, `.env.development`, `.env.staging`, `.env.production`
 
 This task makes the codebase Vite-only. After this commit, CRA will not build.
@@ -297,11 +313,11 @@ This task makes the codebase Vite-only. After this commit, CRA will not build.
 
 ```bash
 cd /Users/eddy/urfit/lodestar-app
-grep -rE 'process\.env\.REACT_APP_[A-Z0-9_]+' src/ --include='*.ts' --include='*.tsx' | wc -l
-grep -rE 'process\.env\.PUBLIC_URL' src/ --include='*.ts' --include='*.tsx' | wc -l
+rg -o 'process\.env\.REACT_APP_[A-Z0-9_]+' src --glob '*.{ts,tsx}' | wc -l
+rg -o 'process\.env\.PUBLIC_URL' src --glob '*.{ts,tsx}' | wc -l
 ```
 
-Expected: ~106 and ~10 respectively. Record exact numbers.
+Expected: `106` and `1` respectively.
 
 - [ ] **Step 2: Run the `REACT_APP_*` rename across `src/`**
 
@@ -325,19 +341,19 @@ find src -type f \( -name '*.ts' -o -name '*.tsx' \) -print0 | \
 
 ```bash
 cd /Users/eddy/urfit/lodestar-app
-grep -rE 'process\.env\.REACT_APP_' src/ --include='*.ts' --include='*.tsx' || echo "OK: no REACT_APP_ left"
-grep -rE 'process\.env\.PUBLIC_URL' src/ --include='*.ts' --include='*.tsx' || echo "OK: no PUBLIC_URL left"
-grep -rE 'import\.meta\.env\.VITE_' src/ --include='*.ts' --include='*.tsx' | wc -l
+rg 'process\.env\.REACT_APP_' src --glob '*.{ts,tsx}' || echo "OK: no REACT_APP_ left"
+rg 'process\.env\.PUBLIC_URL' src --glob '*.{ts,tsx}' || echo "OK: no PUBLIC_URL left"
+rg -o 'import\.meta\.env\.VITE_[A-Z0-9_]+' src --glob '*.{ts,tsx}' | wc -l
 ```
 
-Expected: both grep return non-zero (no matches → "OK"); the count of `import.meta.env.VITE_` matches the number from Step 1.
+Expected: both `rg` commands print the OK messages; the count of `import.meta.env.VITE_` is `106`.
 
 - [ ] **Step 5: Manual review pass for template-literal env keys**
 
 ```bash
 cd /Users/eddy/urfit/lodestar-app
-grep -rnE 'process\.env\[' src/ --include='*.ts' --include='*.tsx'
-grep -rnE 'process\.env\.\$\{' src/ --include='*.ts' --include='*.tsx'
+rg -n 'process\.env\[' src --glob '*.{ts,tsx}'
+rg -n 'process\.env\.\$\{' src --glob '*.{ts,tsx}'
 ```
 
 Expected: empty output. If any match appears, manually rewrite that line — the regex codemod cannot handle dynamic keys.
@@ -354,11 +370,9 @@ grep -E '^REACT_APP_' .env .env.development .env.staging .env.production || echo
 
 Expected: "OK: all renamed".
 
-- [ ] **Step 7: Special handling for `PORT` in `.env.development`**
+- [ ] **Step 7: Delete CRA-only `PORT` from `.env.development`**
 
-The current `.env.development` has `PORT=3333` (a CRA convention). Vite does not auto-read `PORT`; the value will be wired into `vite.config.ts` in Task 6. Leave the line in `.env.development` as documentation but do not rely on it.
-
-Actually delete the line to avoid confusion:
+The current `.env.development` has `PORT=3333`, which is a CRA convention. Vite does not auto-read that key; Task 6 wires the dev-server port in `vite.config.ts`, so delete the env-file line to avoid confusion:
 
 ```bash
 cd /Users/eddy/urfit/lodestar-app
@@ -372,7 +386,7 @@ git add src/ .env .env.development .env.staging .env.production
 git commit -m "refactor: rename REACT_APP_* env vars to VITE_*"
 ```
 
-Expected: Large mechanical diff (~106 changes in src + 4 env files).
+Expected: Large mechanical diff (106 `import.meta.env.VITE_*` replacements in `src/` + 4 env files).
 
 ---
 
@@ -868,7 +882,7 @@ becomes:
   },
 ```
 
-Note: `resolutions` is a Yarn-only field. pnpm uses `pnpm.overrides`. Replace the block:
+Note: `resolutions` is a Yarn-only field. pnpm uses `pnpm.overrides`. Replace the entire `resolutions` block with:
 
 ```json
   "pnpm": {
@@ -879,7 +893,7 @@ Note: `resolutions` is a Yarn-only field. pnpm uses `pnpm.overrides`. Replace th
   },
 ```
 
-(Keep both fields for now if you're worried about other tools reading `resolutions`. Otherwise just rename to `pnpm.overrides`.)
+Do not keep the old `resolutions` field after the pnpm cutover.
 
 - [ ] **Step 3: Bump `@types/node` from 12 to 22**
 
@@ -1002,12 +1016,12 @@ Expected: build completes without errors. Note time elapsed.
 
 ```bash
 cd /Users/eddy/urfit/lodestar-app
-ls -lh build/assets/*.js 2>/dev/null | awk '{print $5, $9}'
-du -sh build/
-cat /tmp/migration-baseline.txt
+find build/assets -name '*.js' -type f -print0 | xargs -0 stat -f '%z' | awk '{sum += $1} END {print "vite_js_bytes="sum}'
+du -sk build | awk '{print "vite_build_kib="$1}'
+cat /tmp/lodestar-cra-baseline.env
 ```
 
-Expected: Total `build/` size within ±20% of `BASELINE_BUILD_SIZE`. Vite outputs to `build/assets/` rather than `build/static/js/`; total bytes are the comparison metric.
+Expected: `vite_build_kib` is within ±20% of `cra_build_kib` from `/tmp/lodestar-cra-baseline.env`. Vite outputs to `build/assets/` rather than `build/static/js/`; total bytes are the comparison metric.
 
 If bundle grew significantly, inspect the manualChunks output for misclassified chunks.
 
@@ -1097,14 +1111,14 @@ Otherwise no commit needed.
 
 ```bash
 cd /Users/eddy/urfit/lodestar-app
-git push -u origin <feature-branch>
+git push -u origin codex/react17-vite-migration
 gh pr create --title "Migrate to React 17 + Vite + pnpm" \
   --body "$(cat <<'EOF'
 ## Summary
 - Replace CRA with Vite 5 (keeps React 17)
 - Switch package manager Yarn 4 → pnpm 9
 - Bump Node 18 → 22
-- Rename env vars `REACT_APP_*` → `VITE_*` (codemod, ~106 occurrences)
+- Rename env vars `REACT_APP_*` → `VITE_*` (codemod, 106 occurrences)
 - Refactor dynamic page imports to `import.meta.glob`
 
 Spec: `docs/superpowers/specs/2026-04-30-react17-vite-migration-design.md`
@@ -1116,8 +1130,6 @@ Plan: `docs/superpowers/plans/2026-04-30-react17-vite-migration.md`
 - [ ] Smoke test on staging: HomePage, CartPage, MeetingPage, MemberPage, ProgramContentPage
 - [ ] antd primary color renders as `#000`
 - [ ] No console errors on smoke-tested pages
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
 EOF
 )"
 ```
@@ -1137,6 +1149,6 @@ Expected: PR opened. Wait for CI green; deploy to staging; manual smoke test; me
 - §Pre-merge validation → Task 11
 - §Risks → Each risk has at least one validation step in Task 11
 
-**Placeholder scan:** None remain. The single `pnpm@9.15.0` value in Task 1 step 3 is a real version (latest pnpm 9 LTS at time of writing) with explicit instructions to update after `pnpm --version` confirms.
+**Placeholder scan:** None remain. Branch name, pnpm version, env occurrence counts, and baseline metric file names are concrete.
 
 **Type / name consistency:** `import.meta.env.VITE_*`, `import.meta.env.BASE_URL`, `LoadablePage`, `folderModules`/`flatModules`, `themeVars` are used consistently across tasks 3-9.
