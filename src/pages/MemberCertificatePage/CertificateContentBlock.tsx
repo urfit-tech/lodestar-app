@@ -4,7 +4,7 @@ import html2canvas from 'html2canvas'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
-import { render } from 'mustache'
+import Mustache from 'mustache'
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -228,7 +228,7 @@ const CertificateImpl: React.FC<{
       <StyledCertificateCard
         ref={cardRef}
         scale={scale}
-        dangerouslySetInnerHTML={{ __html: render(sanitizedTemplate, templateVars) }}
+        dangerouslySetInnerHTML={{ __html: Mustache.render(sanitizedTemplate, templateVars) }}
       />
     </StyledCertificateContainer>
   )

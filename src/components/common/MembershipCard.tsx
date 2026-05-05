@@ -1,4 +1,4 @@
-import { render } from 'mustache'
+import Mustache from 'mustache'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import DefaultAvatar from '../../images/avatar.svg'
@@ -47,7 +47,7 @@ const MembershipCard: React.FC<{
       <StyledMembershipCard
         ref={cardRef}
         scale={scale}
-        dangerouslySetInnerHTML={{ __html: render(template, templateVars) }}
+        dangerouslySetInnerHTML={{ __html: Mustache.render(template, templateVars) }}
       />
     </StyledContainer>
   )

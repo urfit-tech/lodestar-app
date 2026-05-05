@@ -1,4 +1,4 @@
-import { render } from 'mustache'
+import Mustache from 'mustache'
 import styled from 'styled-components'
 
 type PropsTypes = {
@@ -56,7 +56,7 @@ export const VirtualCredentials: React.FC<PropsTypes> = ({ html, templateVars, c
     <StyledCertificateCard
       ref={certificateRef}
       scale={scale}
-      dangerouslySetInnerHTML={{ __html: render(_html, templateVars) }}
+      dangerouslySetInnerHTML={{ __html: Mustache.render(_html, templateVars) }}
     />
   )
 }

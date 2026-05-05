@@ -1,6 +1,5 @@
 import { Button, Icon as ChakraIcon } from '@chakra-ui/react'
 import axios from 'axios'
-import jwt from 'jsonwebtoken'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -11,6 +10,7 @@ import { AuthModalContext } from '../../components/auth/AuthModal'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import { rgba } from '../../helpers'
+import { decodeJwtPayload } from '../../helpers/jwt'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
 import { ReactComponent as AlertIcon } from '../../images/status-alert.svg'
 import { ReactComponent as SuccessIcon } from '../../images/status-success.svg'
@@ -77,7 +77,7 @@ const RedeemPage: React.FC = () => {
       return
     }
     try {
-      const tmpPayload = jwt.decode(token) as any
+      const tmpPayload = decodeJwtPayload<any>(token)
 
       if (!tmpPayload || !tmpPayload?.type || !tmpPayload?.target || !tmpPayload?.owner?.name || !tmpPayload?.title) {
         return

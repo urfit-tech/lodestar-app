@@ -1,7 +1,7 @@
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
-import { render } from 'mustache'
+import Mustache from 'mustache'
 import { props } from 'ramda'
 import React, { useEffect } from 'react'
 import ReactGA from 'react-ga'
@@ -17,7 +17,7 @@ import ProjectPageHelmet from './ProjectPageHelmet'
 
 const renderProjectPage = (project: ProjectProps) => {
   if (project.template) {
-    return <div dangerouslySetInnerHTML={{ __html: render(project.template, props) }} />
+    return <div dangerouslySetInnerHTML={{ __html: Mustache.render(project.template, props) }} />
   }
 
   switch (project.type) {
@@ -41,7 +41,7 @@ const ProjectPage: React.FC = () => {
   const { loadingProject, errorProject, project } = useProject(projectId)
   const { id: appId } = useApp()
   const { resourceCollection } = useResourceCollection([`${appId}:project:${projectId}`], true)
- 
+
   useEffect(() => {
     if (project) {
       project.projectPlans?.forEach((projectPlan, index) => {

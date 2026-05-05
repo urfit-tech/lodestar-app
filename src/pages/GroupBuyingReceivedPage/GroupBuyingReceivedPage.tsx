@@ -2,7 +2,6 @@ import { Button, Icon as ChakraIcon } from '@chakra-ui/react'
 import { Spin } from 'antd'
 import axios from 'axios'
 import dayjs from 'dayjs'
-import jwt from 'jsonwebtoken'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import React, { useContext, useEffect, useState } from 'react'
@@ -14,6 +13,7 @@ import { AuthModalContext } from '../../components/auth/AuthModal'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import { rgba } from '../../helpers'
+import { decodeJwtPayload } from '../../helpers/jwt'
 import { useAuthModal } from '../../hooks/auth'
 import { ReactComponent as GiftIcon } from '../../images/gift.svg'
 import { ReactComponent as AlertIcon } from '../../images/status-alert.svg'
@@ -112,7 +112,7 @@ const GroupBuyingReceivedContainer: React.FC = () => {
       return
     }
     try {
-      const tmpPayload = jwt.decode(token) as any
+      const tmpPayload = decodeJwtPayload<any>(token)
       if (
         !tmpPayload ||
         !tmpPayload?.appId ||

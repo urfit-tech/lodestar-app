@@ -15,6 +15,7 @@ import hasura from '../../hasura'
 import { commonMessages } from '../../helpers/translation'
 import { useEbookHighlight, useGetEbookTrialPercentage } from '../../hooks/ebook'
 import { Highlight } from '../../hooks/model/api/ebookHighlightGraphql'
+import { Book, Contents, Location, NavItem, Rendition } from '../../types/epub'
 import CommonModal from '../common/CommonModal'
 import { deleteProgramContentEbookBookmark } from '../ebook/EbookBookmarkModal'
 import EbookCommentModal from '../ebook/EbookCommentModel'
@@ -23,7 +24,6 @@ import { EbookReaderControlBar } from '../ebook/EbookReaderControlBar'
 import EbookTextSelectionToolbar from '../ebook/EbookTextSelectionToolbar'
 import { decryptData } from './decryptUtils'
 import programMessages from './translation'
-import { NavItem, Rendition, Book, Location, Contents } from '../../types/epub'
 
 const ReaderBookmark = styled.div`
   position: relative;
@@ -736,7 +736,7 @@ const ProgramContentEbookReader: React.FC<{
                               }
                             })
                         } catch (error) {
-                          process.env.NODE_ENV === 'development' ?? console.error(error)
+                          process.env.NODE_ENV === 'development' && console.error(error)
                         }
                       }
                     }

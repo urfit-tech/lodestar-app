@@ -1,6 +1,5 @@
 import { Button, MenuItem, Tag } from '@chakra-ui/react'
 import { Layout } from 'antd'
-import { extname } from 'path'
 import styled, { css } from 'styled-components'
 import { desktopViewMixin } from '../../../helpers'
 import { BREAK_POINT } from '../../common/Responsive'
@@ -8,6 +7,12 @@ import { BREAK_POINT } from '../../common/Responsive'
 interface StyledUsePrimaryColorProps {
   usePrimaryColor?: boolean
   isVip?: boolean
+}
+
+const hasSvgExtension = (src?: string) => {
+  const pathname = src?.split(/[?#]/)[0]
+
+  return pathname?.toLowerCase().endsWith('.svg') || false
 }
 
 export const StyledLayout = styled(Layout)<{ variant?: 'white'; header?: string }>`
@@ -19,8 +24,7 @@ export const StyledLayoutHeader = styled(Layout.Header)<StyledUsePrimaryColorPro
   position: -webkit-sticky;
   height: 4rem;
   top: 0;
-  background: ${props =>
-    props.isVip ? '#2F387B' : props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff'};
+  background: ${props => (props.isVip ? '#2F387B' : props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff')};
   color: ${props => (props.isVip ? '#ffffff' : 'inherit')};
   z-index: 1000;
 
@@ -43,7 +47,7 @@ export const SearchBlock = styled.div`
 export const StyledLogo = styled.img`
   width: auto;
   max-width: 100%;
-  ${props => (props.src && extname(props.src) === '.svg' ? 'height: 100vh;' : '')}
+  ${props => (hasSvgExtension(props.src) ? 'height: 100vh;' : '')}
   max-height: 36px;
 `
 export const StyledNavTag = styled(Tag)`

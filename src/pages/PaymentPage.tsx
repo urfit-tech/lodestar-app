@@ -1,7 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
 import { Button, Icon, Input, message, Typography } from 'antd'
 import axios from 'axios'
-import jwt from 'jsonwebtoken'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
@@ -13,6 +12,7 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
+import { decodeJwtPayload } from '../helpers/jwt'
 import { commonMessages } from '../helpers/translation'
 import { useFetchPayFormToken } from '../hooks/payment'
 import LoadingPage from './LoadingPage'
@@ -73,7 +73,7 @@ const PaymentPage: React.FC = () => {
   )
   const [bankCode, setBankCode] = useState('')
 
-  let decodedToken = payToken && jwt.decode(payToken)
+  let decodedToken = decodeJwtPayload(payToken)
 
   const { result: payFormResult, loading: payFormLoading } = useFetchPayFormToken(paymentNo, cacheToken || '')
 
@@ -83,7 +83,7 @@ const PaymentPage: React.FC = () => {
     }
 
     if (payFormResult?.token) {
-      decodedToken = jwt.decode(payFormResult.token)
+      decodedToken = decodeJwtPayload(payFormResult.token)
     }
   }
 

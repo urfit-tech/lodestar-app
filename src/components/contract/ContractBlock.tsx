@@ -9,7 +9,7 @@ import dayjs from 'dayjs'
 import Embedded from 'lodestar-app-element/src/components/common/Embedded'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { render } from 'mustache'
+import Mustache from 'mustache'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -164,7 +164,7 @@ const ContractBlock: React.FC<{
             <Skeleton />
           ) : memberContract ? (
             <Embedded
-              iframe={render(memberContract.contract.template, {
+              iframe={Mustache.render(memberContract.contract.template, {
                 ...memberContract.values,
                 paymentMethodList:
                   memberContract.values?.paymentOptions?.paymentMethods &&
