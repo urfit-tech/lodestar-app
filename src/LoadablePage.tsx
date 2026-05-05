@@ -6,6 +6,9 @@ import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import NotificationContext from './contexts/NotificationContext'
 
+const folderModules = import.meta.glob('./pages/**/index.{ts,tsx}')
+const flatModules = import.meta.glob('./pages/**/*.{ts,tsx}')
+
 const LoadablePage: React.FC<{ pageName: string }> = ({ pageName }) => {
   const tracking = useTracking()
   const { settings } = useApp()
@@ -22,7 +25,19 @@ const LoadablePage: React.FC<{ pageName: string }> = ({ pageName }) => {
     currentMemberId && refetchNotifications && refetchNotifications()
   }, [currentMemberId, pageName, refetchNotifications])
 
-  const PageComponent = React.lazy(() => import(`./pages/${pageName}`))
+  const PageComponent = React.lazy(() => {
+    const pageLoaders = [
+      folderModules[`./pages/${pageName}/index.tsx`],
+      folderModules[`./pages/${pageName}/index.ts`],
+      flatModules[`./pages/${pageName}.tsx`],
+      flatModules[`./pages/${pageName}.ts`],
+    ]
+    const loader = pageLoaders.find(Boolean)
+    if (!loader) {
+      throw new Error(`Unknown page: ${pageName}`)
+    }
+    return loader() as Promise<{ default: React.ComponentType }>
+  })
   return <PageComponent />
 }
 
