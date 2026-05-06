@@ -1,5 +1,4 @@
 import React from 'react'
-import { Redirect } from 'react-router'
 
 type errorState = {
   hasError: boolean
@@ -14,10 +13,14 @@ class ErrorBoundary extends React.Component<{}, errorState> {
   componentDidCatch(error: Error | null, errorInfo: React.ErrorInfo | null): void {
     // Catch errors in any components below and re-render with error message
     console.error('errorCatch', error, errorInfo)
+
+    if (window.location.pathname !== '/error') {
+      window.location.replace('/error')
+    }
   }
   render() {
     if (this.state.hasError) {
-      return <Redirect to="/error" />
+      return null
     }
 
     return this.props.children

@@ -161,6 +161,7 @@ export default defineConfig(({ command, mode }) => {
         'classnames',
         'dayjs/plugin/timezone',
         'dayjs/plugin/utc',
+        'easymde',
         'react-is',
         'react-style-editor',
       ],
