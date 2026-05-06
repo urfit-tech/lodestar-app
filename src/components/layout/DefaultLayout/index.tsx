@@ -1,4 +1,4 @@
-import { Button, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -56,7 +56,7 @@ const StyledNotificationBar = styled.div<{ variant?: string }>`
   font-weight: 500;
   font-size: 14px;
 `
-const StyledButton = styled(Button)<{ isVip?: boolean }>`
+const StyledButton = styled.span<{ isVip?: boolean }>`
   &&,
   &&:hover,
   &&:active,
@@ -64,6 +64,9 @@ const StyledButton = styled(Button)<{ isVip?: boolean }>`
     background: transparent;
     color: ${props => (props.isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
   }
+
+  display: inline-flex;
+  align-items: center;
 `
 
 const DefaultLayout: React.FC<{
