@@ -75,8 +75,11 @@ const ProgramContentCutscenePage: React.FC = () => {
 
   if (errorProgram) return <>{formatMessage(pageMessages.ProgramContentCutscenePage.fetchProgramDataError)}</>
 
+  const programContents = flatten(program.contentSections.map(section => section.contents))
+  const programContentIds = programContents.map(content => content.id)
+
   // ProgramContentPage
-  if (flatten(program?.contentSections.map(v => v.contents) || []).length === 0) {
+  if (programContents.length === 0) {
     return (
       <Layout>
         <StyledPCPageHeader
@@ -132,19 +135,11 @@ const ProgramContentCutscenePage: React.FC = () => {
         </StyledLayoutContent>
       </Layout>
     )
-  } else if (
-    contentId !== '' &&
-    flatten(program?.contentSections.map(v => v.contents.map(w => w.id)) || []).includes(contentId)
-  ) {
+  } else if (contentId !== '' && programContentIds.includes(contentId)) {
     return (
       <Redirect to={`/programs/${programId}/contents/${contentId}?back=${previousPage || `programs_${programId}`}`} />
     )
-  } else if (
-    recentProgramContent?.contentId &&
-    flatten(program?.contentSections.map(v => v.contents.map(w => w.id)) || []).includes(
-      recentProgramContent?.contentId,
-    )
-  ) {
+  } else if (recentProgramContent?.contentId && programContentIds.includes(recentProgramContent?.contentId)) {
     return (
       <Redirect
         to={`/programs/${programId}/contents/${recentProgramContent?.contentId}?back=${
@@ -155,9 +150,7 @@ const ProgramContentCutscenePage: React.FC = () => {
   } else {
     return (
       <Redirect
-        to={`/programs/${programId}/contents/${program?.contentSections[0].contents[0].id}?back=${
-          previousPage || `programs_${programId}`
-        }`}
+        to={`/programs/${programId}/contents/${programContents[0].id}?back=${previousPage || `programs_${programId}`}`}
       />
     )
   }
