@@ -163,6 +163,7 @@ export default defineConfig(({ command, mode }) => {
         'dayjs/plugin/utc',
         'easymde',
         'react-is',
+        'react-simplemde-editor',
         'react-style-editor',
       ],
     },
