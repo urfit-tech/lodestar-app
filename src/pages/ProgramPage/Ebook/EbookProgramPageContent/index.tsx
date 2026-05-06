@@ -3,12 +3,12 @@ import { BraftContent } from 'lodestar-app-element/src/components/common/StyledB
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { desktopViewMixin } from 'lodestar-app-element/src/helpers'
 import queryString from 'query-string'
-import { lazy, Suspense, useContext, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { FaShareAlt } from 'react-icons/fa'
 import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { useLocation } from 'react-router'
-import styled, { css, ThemeContext } from 'styled-components'
+import styled, { css } from 'styled-components'
 import { BREAK_POINT } from '../../../../components/common/Responsive'
 import ReviewCollectionBlock from '../../../../components/review/ReviewCollectionBlock'
 import { useProgramPlansEnrollmentsAggregateList } from '../../../../hooks/program'
@@ -78,9 +78,9 @@ const StyledButton = styled(Button)`
     height: 45px;
     font-weight: 600;
     border-radius: 21.5px;
-    border: solid 1px ${props => props.theme['@primary-color']};
+    border: solid 1px ${props => props.theme?.['@primary-color'] || '#2d313a'};
     background: ${colors.white};
-    color: ${props => props.theme['@primary-color']};
+    color: ${props => props.theme?.['@primary-color'] || '#2d313a'};
   }
 `
 
@@ -124,7 +124,6 @@ const EbookProgramPageContent: React.FC<{
   const { enabledModules } = useApp()
   const { pathname, search } = useLocation()
   const params = queryString.parse(search)
-  const theme = useContext(ThemeContext)
   const { loading: loadingProgramPlansEnrollmentsAggregateList, programPlansEnrollmentsAggregateList } =
     useProgramPlansEnrollmentsAggregateList(program?.plans.map(plan => plan.id) || [])
   const { moduleData, title, coverUrl, coverMobileUrl } = program
@@ -186,7 +185,7 @@ const EbookProgramPageContent: React.FC<{
                   <Text fontSize="xl" as="b">
                     {title}
                   </Text>
-                  <Text fontSize="lg" as="b" color={theme['@primary-color']} marginBottom="20px">
+                  <Text fontSize="lg" as="b" color="primary.500" marginBottom="20px">
                     {bookSubTitle}
                   </Text>
                   <BraftContent>{bookInformation}</BraftContent>
