@@ -56,6 +56,8 @@ import NotFoundPage from '../NotFoundPage'
 import pageMessages from '../translation'
 import CraftBlock from './CraftBlock'
 
+const craftElementResolver = { ...CraftElement }
+
 type SectionType =
   | 'homeCover'
   | 'homeActivity'
@@ -295,11 +297,11 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
             />
             <DefaultLayout {...currentAppPage.options}>
               {currentAppPage.craftData ? (
-                <Editor enabled={false} resolver={CraftElement}>
+                <Editor enabled={false} resolver={craftElementResolver}>
                   <CraftBlock craftData={currentAppPage.craftData} />
                 </Editor>
               ) : (
-                <Editor enabled={false} resolver={CraftElement}>
+                <Editor enabled={false} resolver={craftElementResolver}>
                   <Frame>
                     <>
                       {currentAppPage.appPageSections.map(section => {

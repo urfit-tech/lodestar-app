@@ -145,11 +145,25 @@ export default defineConfig(({ command, mode }) => {
     },
     define: {
       ...getLegacyReactAppEnv(env),
+      global: 'globalThis',
       'process.env.NODE_ENV': JSON.stringify(nodeEnv),
       'process.env': {},
     },
     server: {
       port: 3333,
+    },
+    optimizeDeps: {
+      // lodestar-app-element imports TS source directly, so Vite does not discover these nested CJS deps.
+      include: [
+        '@bobthered/tailwindcss-palette-generator',
+        '@craftjs/core',
+        '@craftjs/utils',
+        'classnames',
+        'dayjs/plugin/timezone',
+        'dayjs/plugin/utc',
+        'react-is',
+        'react-style-editor',
+      ],
     },
   }
 })
