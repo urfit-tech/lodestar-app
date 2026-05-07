@@ -3,6 +3,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useCallback, useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
+import { getPrimaryColor } from './theme'
 import { CalendarEvent, CourseType, ViewAs } from './types'
 
 const messages = defineMessages({
@@ -95,12 +96,12 @@ const StyledZoomButton = styled.button<{ $disabled: boolean }>`
   font-weight: 500;
   font-size: 1rem;
   cursor: ${props => (props.$disabled ? 'not-allowed' : 'pointer')};
-  background: ${props => (props.$disabled ? '#f5f5f5' : props.theme['@primary-color'])};
+  background: ${props => (props.$disabled ? '#f5f5f5' : getPrimaryColor(props.theme))};
   color: ${props => (props.$disabled ? '#8c8c8c' : 'white')};
   transition: all 0.2s;
 
   &:hover {
-    background: ${props => (props.$disabled ? '#f5f5f5' : props.theme['@primary-color'])};
+    background: ${props => (props.$disabled ? '#f5f5f5' : getPrimaryColor(props.theme))};
     color: ${props => (props.$disabled ? '#8c8c8c' : 'white')};
     opacity: ${props => (props.$disabled ? 1 : 0.85)};
   }
@@ -117,7 +118,7 @@ interface NextUpCardProps {
 
 const NextUpCard: React.FC<NextUpCardProps> = ({ event, viewAs }) => {
   const { formatMessage } = useIntl()
-  const { authToken, currentMemberId } = useAuth()
+  const { authToken } = useAuth()
   const [isZoomActive, setIsZoomActive] = useState(false)
   const [zoomHint, setZoomHint] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -150,9 +151,14 @@ const NextUpCard: React.FC<NextUpCardProps> = ({ event, viewAs }) => {
 
   const handleOpenZoom = useCallback(async () => {
     if (!event || !isZoomActive || isLoading || !authToken) return
-    if (!event.hostMemberId) {
-      console.error('Cannot create meeting: event.hostMemberId is missing')
-      return
+
+    const zoomWindow = window.open('', '_blank')
+    if (zoomWindow) {
+      try {
+        zoomWindow.opener = null
+      } catch {
+        // Ignore browsers that do not allow mutating opener on a newly opened window.
+      }
     }
 
     try {
@@ -168,11 +174,9 @@ const NextUpCard: React.FC<NextUpCardProps> = ({ event, viewAs }) => {
           startedAt,
           endedAt,
           eventId: event.id,
-          autoRecording: false,
           service: 'zoom',
           nbfAt: null,
           expAt: null,
-          hostMemberId: event.hostMemberId,
         },
         {
           headers: { authorization: `Bearer ${authToken}` },
@@ -180,20 +184,26 @@ const NextUpCard: React.FC<NextUpCardProps> = ({ event, viewAs }) => {
       )
 
       const meeting = response.data?.data
-      const isHost = !!currentMemberId && currentMemberId === event.hostMemberId
-      const meetingUrl = isHost ? meeting?.options?.startUrl : meeting?.options?.joinUrl
+      const meetingUrl = meeting?.link || meeting?.startUrl || meeting?.joinUrl
 
       if (response.data?.code === 'SUCCESS' && meetingUrl) {
-        window.open(meetingUrl, '_blank', 'noopener,noreferrer')
+        if (zoomWindow && !zoomWindow.closed) {
+          zoomWindow.location.href = meetingUrl
+          zoomWindow.focus()
+        } else {
+          window.location.href = meetingUrl
+        }
       } else {
+        zoomWindow?.close()
         console.error('Failed to get Zoom link:', response.data)
       }
     } catch (err) {
+      zoomWindow?.close()
       console.error('Failed to create meeting:', err)
     } finally {
       setIsLoading(false)
     }
-  }, [event, isZoomActive, isLoading, authToken, currentMemberId])
+  }, [event, isZoomActive, isLoading, authToken])
 
   if (!event) {
     return (

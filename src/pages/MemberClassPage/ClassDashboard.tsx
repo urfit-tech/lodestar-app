@@ -7,6 +7,7 @@ import CalendarView from './CalendarView'
 import CourseSummaryCard from './CourseSummaryCard'
 import NextUpCard from './NextUpCard'
 import TeachingSummaryCard from './TeachingSummaryCard'
+import { getPrimaryColor } from './theme'
 import { CalendarEvent, CalendarViewType, CoursePackageSummary, TeachingCourseSummary, ViewAs } from './types'
 
 const messages = defineMessages({
@@ -139,7 +140,7 @@ const StyledViewButton = styled.button<{ $active: boolean }>`
   padding: 0.5rem 1rem;
   border: 1px solid #d9d9d9;
   border-left-width: 0;
-  background: ${props => (props.$active ? props.theme['@primary-color'] : 'white')};
+  background: ${props => (props.$active ? getPrimaryColor(props.theme) : 'white')};
   color: ${props => (props.$active ? 'white' : '#595959')};
   cursor: pointer;
   font-size: 0.875rem;
@@ -154,7 +155,7 @@ const StyledViewButton = styled.button<{ $active: boolean }>`
   }
 
   &:hover {
-    background: ${props => (props.$active ? props.theme['@primary-color'] : '#f5f5f5')};
+    background: ${props => (props.$active ? getPrimaryColor(props.theme) : '#f5f5f5')};
   }
 `
 
