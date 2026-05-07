@@ -22,6 +22,7 @@
     "@ant-design/icons": "^5.5.1",
     "@apollo/client": "^3.7.11",
     "@bobthered/tailwindcss-palette-generator": "2.0.0",
+    "@chakra-ui/hooks": "1.0.2",
     "@chakra-ui/icons": "1.0.0",
     "@chakra-ui/react": "1.1.2",
     "@cloudflare/stream-react": "^1.2.0",
@@ -37,6 +38,7 @@
     "@fullcalendar/react": "6.1.15",
     "@fullcalendar/rrule": "6.1.15",
     "@fullcalendar/timegrid": "6.1.15",
+    "@tanstack/react-router": "1.0.0",
     "antd": "3",
     "aws-sdk": "^2.711.0",
     "axios": "0.21.4",
@@ -167,6 +169,9 @@
     "overrides": {
       "@craftjs/utils": "0.1.0-beta.20",
       "@types/react": "17.0.0"
+    },
+    "patchedDependencies": {
+      "lodestar-app-element@0.1.0": "patches/lodestar-app-element@0.1.0.patch"
     }
   },
   "packageManager": "pnpm@9.15.9",

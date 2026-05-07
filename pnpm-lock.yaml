@@ -8,6 +8,11 @@ overrides:
   '@craftjs/utils': 0.1.0-beta.20
   '@types/react': 17.0.0
 
+patchedDependencies:
+  lodestar-app-element@0.1.0:
+    hash: 3tqrxe2ru32plshuke3yi55h6a
+    path: patches/lodestar-app-element@0.1.0.patch
+
 importers:
 
   .:
@@ -21,6 +26,9 @@ importers:
       '@bobthered/tailwindcss-palette-generator':
         specifier: 2.0.0
         version: 2.0.0
+      '@chakra-ui/hooks':
+        specifier: 1.0.2
+        version: 1.0.2(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       '@chakra-ui/icons':
         specifier: 1.0.0
         version: 1.0.0(@chakra-ui/system@1.1.3(@emotion/react@11.8.2(@babel/core@7.17.8)(@types/react@17.0.0)(react@17.0.2))(@emotion/styled@11.8.1(@babel/core@7.17.8)(@emotion/react@11.8.2(@babel/core@7.17.8)(@types/react@17.0.0)(react@17.0.2))(@types/react@17.0.0)(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)
@@ -66,6 +74,9 @@ importers:
       '@fullcalendar/timegrid':
         specifier: 6.1.15
         version: 6.1.15(@fullcalendar/core@6.1.15)
+      '@tanstack/react-router':
+        specifier: 1.0.0
+        version: 1.0.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       antd:
         specifier: '3'
         version: 3.26.20(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
@@ -125,7 +136,7 @@ importers:
         version: 4.17.21
       lodestar-app-element:
         specifier: urfit-tech/lodestar-app-element#v1.95.5
-        version: https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/da7cd8930c76c1138aa32262f0c63e5de0f6c1ca(@chakra-ui/system@1.1.3(@emotion/react@11.8.2(@babel/core@7.17.8)(@types/react@17.0.0)(react@17.0.2))(@emotion/styled@11.8.1(@babel/core@7.17.8)(@emotion/react@11.8.2(@babel/core@7.17.8)(@types/react@17.0.0)(react@17.0.2))(@types/react@17.0.0)(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/webpack@4.41.32)(eslint@7.32.0)(prop-types@15.8.1)(sass@1.57.1)(sockjs-client@1.6.0)
+        version: https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/da7cd8930c76c1138aa32262f0c63e5de0f6c1ca(patch_hash=3tqrxe2ru32plshuke3yi55h6a)(@chakra-ui/system@1.1.3(@emotion/react@11.8.2(@babel/core@7.17.8)(@types/react@17.0.0)(react@17.0.2))(@emotion/styled@11.8.1(@babel/core@7.17.8)(@emotion/react@11.8.2(@babel/core@7.17.8)(@types/react@17.0.0)(react@17.0.2))(@types/react@17.0.0)(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/webpack@4.41.32)(eslint@7.32.0)(prop-types@15.8.1)(sass@1.57.1)(sockjs-client@1.6.0)
       marked:
         specifier: 4.3.0
         version: 4.3.0
@@ -2530,6 +2541,26 @@ packages:
   '@svgr/webpack@5.5.0':
     resolution: {integrity: sha512-DOBOK255wfQxguUta2INKkzPj6AIS6iafZYiYmHn6W3pHlycSRRlvWKCfLDG10fXfLWqE3DJHgRUOyJYmARa7g==}
     engines: {node: '>=10'}
+
+  '@tanstack/history@1.0.0':
+    resolution: {integrity: sha512-rjtAlYC/XfH0/nI9Cr/MX9thbajfOC97je36beXpzWDVQHpdyRUyrY1gdSjvT7DnfZyRB6l03cYDq3Dh2C4PKw==}
+    engines: {node: '>=12'}
+
+  '@tanstack/react-router@1.0.0':
+    resolution: {integrity: sha512-5cKpglER71r3Waqz29cheonLzUl7QZsrXhX7danj+/lY5VHnfKT28XV6xy2p8ffGM5F8iFnwFuBmdvGZTiKKGw==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+
+  '@tanstack/react-store@0.2.1':
+    resolution: {integrity: sha512-tEbMCQjbeVw9KOP/202LfqZMSNAVi6zYkkp1kBom8nFuMx/965Hzes3+6G6b/comCwVxoJU8Gg9IrcF8yRPthw==}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+
+  '@tanstack/store@0.1.3':
+    resolution: {integrity: sha512-GnolmC8Fr4mvsHE1fGQmR3Nm0eBO3KnZjDU0a+P3TeQNM/dDscFGxtA7p31NplQNW3KwBw4t1RVFmz0VeKLxcw==}
 
   '@tootallnate/once@1.1.2':
     resolution: {integrity: sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==}
@@ -8997,6 +9028,9 @@ packages:
   tiny-invariant@1.2.0:
     resolution: {integrity: sha512-1Uhn/aqw5C6RI4KejVeTg6mIS7IqxnLJ8Mv2tV5rTc0qWobay7pDUz6Wi392Cnc8ak1H0F2cjoRzb2/AW4+Fvg==}
 
+  tiny-invariant@1.3.3:
+    resolution: {integrity: sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==}
+
   tiny-warning@1.0.3:
     resolution: {integrity: sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==}
 
@@ -12853,6 +12887,28 @@ snapshots:
       loader-utils: 2.0.2
     transitivePeerDependencies:
       - supports-color
+
+  '@tanstack/history@1.0.0': {}
+
+  '@tanstack/react-router@1.0.0(react-dom@17.0.2(react@17.0.2))(react@17.0.2)':
+    dependencies:
+      '@babel/runtime': 7.25.6
+      '@tanstack/history': 1.0.0
+      '@tanstack/react-store': 0.2.1(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      '@tanstack/store': 0.1.3
+      react: 17.0.2
+      react-dom: 17.0.2(react@17.0.2)
+      tiny-invariant: 1.3.3
+      tiny-warning: 1.0.3
+
+  '@tanstack/react-store@0.2.1(react-dom@17.0.2(react@17.0.2))(react@17.0.2)':
+    dependencies:
+      '@tanstack/store': 0.1.3
+      react: 17.0.2
+      react-dom: 17.0.2(react@17.0.2)
+      use-sync-external-store: 1.2.2(react@17.0.2)
+
+  '@tanstack/store@0.1.3': {}
 
   '@tootallnate/once@1.1.2': {}
 
@@ -17776,7 +17832,7 @@ snapshots:
 
   lodash@4.17.21: {}
 
-  lodestar-app-element@https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/da7cd8930c76c1138aa32262f0c63e5de0f6c1ca(@chakra-ui/system@1.1.3(@emotion/react@11.8.2(@babel/core@7.17.8)(@types/react@17.0.0)(react@17.0.2))(@emotion/styled@11.8.1(@babel/core@7.17.8)(@emotion/react@11.8.2(@babel/core@7.17.8)(@types/react@17.0.0)(react@17.0.2))(@types/react@17.0.0)(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/webpack@4.41.32)(eslint@7.32.0)(prop-types@15.8.1)(sass@1.57.1)(sockjs-client@1.6.0):
+  lodestar-app-element@https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/da7cd8930c76c1138aa32262f0c63e5de0f6c1ca(patch_hash=3tqrxe2ru32plshuke3yi55h6a)(@chakra-ui/system@1.1.3(@emotion/react@11.8.2(@babel/core@7.17.8)(@types/react@17.0.0)(react@17.0.2))(@emotion/styled@11.8.1(@babel/core@7.17.8)(@emotion/react@11.8.2(@babel/core@7.17.8)(@types/react@17.0.0)(react@17.0.2))(@types/react@17.0.0)(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/webpack@4.41.32)(eslint@7.32.0)(prop-types@15.8.1)(sass@1.57.1)(sockjs-client@1.6.0):
     dependencies:
       '@apollo/client': 3.7.11(graphql-ws@5.12.1(graphql@16.6.0))(graphql@16.6.0)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       '@babel/cli': 7.17.6(@babel/core@7.17.8)
@@ -21311,6 +21367,8 @@ snapshots:
   timsort@0.3.0: {}
 
   tiny-invariant@1.2.0: {}
+
+  tiny-invariant@1.3.3: {}
 
   tiny-warning@1.0.3: {}
 

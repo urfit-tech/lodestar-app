@@ -126,23 +126,48 @@ const sectionConverter = {
   homeHaohaoming: HaohaomingSection,
 }
 
-const ContentWrapper = styled.div<{ isVip?: boolean; sidebarWidth: number }>`
-  margin-left: ${props => `${props.sidebarWidth}px`};
+const ContentWrapper = styled.div<{ $isVip?: boolean; $sidebarWidth: number }>`
+  margin-left: ${props => `${props.$sidebarWidth}px`};
   transition: margin-left 0.3s ease;
   position: relative;
-  background: ${props => (props.isVip ? '#2f387b' : 'transparent')};
+  background: ${props => (props.$isVip ? '#2f387b' : 'transparent')};
 
   &::before {
     content: '';
     position: absolute;
-    left: ${props => (props.isVip ? `-${props.sidebarWidth}px` : '0')};
+    left: ${props => (props.$isVip ? `-${props.$sidebarWidth}px` : '0')};
     top: 0;
-    width: ${props => (props.isVip ? `${props.sidebarWidth}px` : '0')};
+    width: ${props => (props.$isVip ? `${props.$sidebarWidth}px` : '0')};
     height: 100%;
-    background: ${props => (props.isVip ? '#2f387b' : 'transparent')};
+    background: ${props => (props.$isVip ? '#2f387b' : 'transparent')};
     z-index: -1;
   }
 `
+
+const routePathMatches = (routePath: string, pathname: string) => {
+  if (routePath === '/') {
+    return pathname === '/'
+  }
+
+  const routeSegments = routePath.replace(/^\/|\/$/g, '').split('/')
+  const pathnameSegments = pathname.replace(/^\/|\/$/g, '').split('/')
+
+  if (routeSegments.length !== pathnameSegments.length) {
+    return false
+  }
+
+  return routeSegments.every((segment, index) => {
+    const pathnameSegment = pathnameSegments[index]
+    if (segment.startsWith(':')) {
+      return Boolean(pathnameSegment)
+    }
+    if (segment.includes(':')) {
+      const pattern = new RegExp(`^${segment.replace(/:[^/]+/g, '[^/]+')}$`)
+      return pattern.test(pathnameSegment)
+    }
+    return segment === pathnameSegment
+  })
+}
 
 const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
@@ -155,7 +180,9 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
   const tracking = useTracking()
   const { formatMessage } = useIntl()
   const { isVip } = useVipTheme()
-  const { sidebarExpanded } = useAppRouter()
+  const { routesMap, sidebarExpanded } = useAppRouter()
+  const shouldRenderFallbackWhileLoading =
+    !!renderFallback && Object.values(routesMap).some(route => routePathMatches(route.path, location.pathname))
 
   const [utmQuery] = useQueryParams({
     utm_campaign: StringParam,
@@ -232,7 +259,7 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, currentMemberId])
 
-  if (loadingAppPages) {
+  if (loadingAppPages && !shouldRenderFallbackWhileLoading) {
     return <LoadingPage />
   }
 
@@ -247,7 +274,7 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
   return (
     <>
       {isVip && <VipSidebar />}
-      <ContentWrapper isVip={isVip} sidebarWidth={isVip ? (sidebarExpanded ? 200 : 64) : 0}>
+      <ContentWrapper $isVip={isVip} $sidebarWidth={isVip ? (sidebarExpanded ? 200 : 64) : 0}>
         {currentAppPage ? (
           <>
             {metaLoaded && <Tracking.View />}

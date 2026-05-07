@@ -5,8 +5,8 @@ import { desktopViewMixin } from '../../../helpers'
 import { BREAK_POINT } from '../../common/Responsive'
 
 interface StyledUsePrimaryColorProps {
-  usePrimaryColor?: boolean
-  isVip?: boolean
+  $usePrimaryColor?: boolean
+  $isVip?: boolean
 }
 
 const hasSvgExtension = (src?: string) => {
@@ -15,17 +15,18 @@ const hasSvgExtension = (src?: string) => {
   return pathname?.toLowerCase().endsWith('.svg') || false
 }
 
-export const StyledLayout = styled(Layout)<{ variant?: 'white'; header?: string }>`
-  ${props => (props.variant === 'white' ? 'background: white;' : '')}
-  ${props => (props.header === 'noHeader' ? ' .ant-layout-content { padding-top: 0px;}' : '')}
+export const StyledLayout = styled(Layout)<{ $variant?: 'white'; $header?: string }>`
+  ${props => (props.$variant === 'white' ? 'background: white;' : '')}
+  ${props => (props.$header === 'noHeader' ? ' .ant-layout-content { padding-top: 0px;}' : '')}
 `
 export const StyledLayoutHeader = styled(Layout.Header)<StyledUsePrimaryColorProps>`
   position: sticky;
   position: -webkit-sticky;
   height: 4rem;
   top: 0;
-  background: ${props => (props.isVip ? '#2F387B' : props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff')};
-  color: ${props => (props.isVip ? '#ffffff' : 'inherit')};
+  background: ${props =>
+    props.$isVip ? '#2F387B' : props.$usePrimaryColor ? props.theme['@primary-color'] : '#ffffff'};
+  color: ${props => (props.$isVip ? '#ffffff' : 'inherit')};
   z-index: 1000;
 
   &.hidden {
@@ -64,22 +65,22 @@ export const StyledNavTag = styled(Tag)`
 export const StyledNavButton = styled(Button)<StyledUsePrimaryColorProps>`
   &&& {
     background: ${props =>
-      props.isVip ? '#2F387B' : props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff'};
+      props.$isVip ? '#2F387B' : props.$usePrimaryColor ? props.theme['@primary-color'] : '#ffffff'};
     height: 4rem;
-    color: ${props => (props.isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
+    color: ${props => (props.$isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
     line-height: 1.5;
   }
 `
 export const StyledNavAnimationButton = styled(Button)<StyledUsePrimaryColorProps>`
   &&& {
     background: ${props =>
-      props.isVip ? '#2F387B' : props.usePrimaryColor ? props.theme['@primary-color'] : '#ffffff'};
+      props.$isVip ? '#2F387B' : props.$usePrimaryColor ? props.theme['@primary-color'] : '#ffffff'};
     height: 4rem;
-    color: ${props => (props.isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
+    color: ${props => (props.$isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
     line-height: 1.5;
     :hover {
-      background: ${props => (props.isVip ? '#2F387B' : '#ffffff')};
-      color: ${props => (props.isVip ? '#ffffff' : props.theme['@primary-color'])};
+      background: ${props => (props.$isVip ? '#2F387B' : '#ffffff')};
+      color: ${props => (props.$isVip ? '#ffffff' : props.theme['@primary-color'])};
     }
     :hover:after {
       width: 100%;
@@ -116,7 +117,7 @@ export const StyledMenuItem = styled(MenuItem)<StyledUsePrimaryColorProps>`
   && {
     position: relative;
     height: 3.5rem;
-    color: ${props => (props.isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
+    color: ${props => (props.$isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
     line-height: 1.5;
 
     > ${StyledNavTag} {
@@ -135,11 +136,11 @@ export const StyledLayoutContent = styled(Layout.Content)`
     height: 100vh;
   }
 `
-export const LayoutContentWrapper = styled.div<{ centeredBox?: boolean; footerHeight?: number }>`
-  min-height: calc(100vh - 4rem - ${props => props.footerHeight}px);
+export const LayoutContentWrapper = styled.div<{ $centeredBox?: boolean; $footerHeight?: number }>`
+  min-height: calc(100vh - 4rem - ${props => props.$footerHeight}px);
 
   ${props =>
-    props.centeredBox
+    props.$centeredBox
       ? css`
           display: flex;
           align-items: center;
@@ -174,6 +175,6 @@ export const StyledContainer = styled.div`
     padding: 4rem;
   }
 `
-export const EmptyBlock = styled.div<{ height?: string }>`
-  height: ${props => props.height};
+export const EmptyBlock = styled.div<{ $height?: string }>`
+  height: ${props => props.$height};
 `

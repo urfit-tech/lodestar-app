@@ -1,0 +1,342 @@
+diff --git a/src/components/cards/Card.tsx b/src/components/cards/Card.tsx
+index 1f7909fc90b2b5091509e845c94c0cc90bcae1e3..ffcab237265e8947e1ee1c38c3596051ec749278 100644
+--- a/src/components/cards/Card.tsx
++++ b/src/components/cards/Card.tsx
+@@ -13,7 +13,9 @@ export type CardProps = {
+   onClick?: () => void
+ }
+ 
+-const CardTitle = styled.h3<CardProps>`
++const CardTitle = styled.h3.withConfig({
++  shouldForwardProp: prop => prop !== 'darkMode',
++})<CardProps>`
+   font-family: NotoSansCJKtc;
+   font-size: 16px;
+   font-weight: bold;
+@@ -24,7 +26,7 @@ const CardContent = styled.div`
+   width: 100%;
+   padding: 1.25rem;
+ `
+-const CardDescription = styled.p`
++const CardDescription = styled.div`
+   ${MultiLineTruncationMixin}
+   margin-bottom: 12px;
+   height: 3em;
+@@ -38,7 +40,11 @@ const CardMetaBlock = styled.div`
+   line-height: 1.5rem;
+ `
+ 
+-const StyledCard = styled.div<CardProps>`
++const StyledCard = styled.div<{
++  $variant?: CardProps['variant']
++  $shadowed?: boolean
++  $horizontal?: boolean
++}>`
+   -webkit-transform: translate3d(0, 0, 0);
+   position: relative;
+   display: flex;
+@@ -48,24 +54,24 @@ const StyledCard = styled.div<CardProps>`
+   user-select: none;
+   align-items: center;
+   justify-content: center;
+-  flex-direction: ${props => (props.horizontal ? 'row' : 'column')};
+-  border: ${props => props.variant === 'outline' && '1px solid white'};
+-  filter: ${props => props.shadowed && 'drop-shadow(0 2px 12px rgba(0, 0, 0, 0.1))'};
++  flex-direction: ${props => (props.$horizontal ? 'row' : 'column')};
++  border: ${props => props.$variant === 'outline' && '1px solid white'};
++  filter: ${props => props.$shadowed && 'drop-shadow(0 2px 12px rgba(0, 0, 0, 0.1))'};
+ `
+ 
+-const StyledAvatarBlock = styled.div<{ direction?: 'row' | 'column' }>`
++const StyledAvatarBlock = styled.div<{ $direction?: 'row' | 'column' }>`
+   margin-top: 2rem;
+   display: flex;
+   align-items: center;
+   color: #585858;
+   font-size: 14px;
+-  ${props => props.direction === 'column' && 'flex-direction: column;'}
++  ${props => props.$direction === 'column' && 'flex-direction: column;'}
+ `
+-const AvatarImage = styled.div<{ src?: string }>`
++const AvatarImage = styled.div<{ $src?: string }>`
+   width: 2.5rem;
+   height: 2.5rem;
+   background-color: #ccc;
+-  background-image: url(${props => props.src || DefaultAvatar});
++  background-image: url(${props => props.$src || DefaultAvatar});
+   background-size: cover;
+   background-position: center;
+   border-radius: 50%;
+@@ -82,8 +88,8 @@ const CardAvatar: React.FC<{
+   withAvatarImage?: boolean
+   direction?: 'row' | 'column'
+ }> = ({ src, name, withName, withAvatarImage, direction = 'row' }) => (
+-  <StyledAvatarBlock direction={direction}>
+-    {withAvatarImage && <AvatarImage src={src} />}
++  <StyledAvatarBlock $direction={direction}>
++    {withAvatarImage && <AvatarImage $src={src} />}
+     {withName && (
+       <MemberName className={withAvatarImage ? (direction === 'row' ? 'ml-3' : 'mt-3') : ''}>{name}</MemberName>
+     )}
+@@ -98,9 +104,17 @@ const Card: ElementComponent<CardProps> & {
+   MetaBlock: typeof CardMetaBlock
+   Avatar: typeof CardAvatar
+ } = props => {
++  const { children, className, variant, darkMode, shadowed, horizontal, editing, loading, errors, ...restProps } = props
++
+   return (
+-    <StyledCard className={classNames('card', props.className)} {...props}>
+-      {props.children}
++    <StyledCard
++      className={classNames('card', className)}
++      $variant={variant}
++      $shadowed={shadowed}
++      $horizontal={horizontal}
++      {...restProps}
++    >
++      {children}
+     </StyledCard>
+   )
+ }
+diff --git a/src/components/collections/Collection.tsx b/src/components/collections/Collection.tsx
+index 2ea2932a77ce9e49f8c8d01dede02a722cd053a7..db936fcba822ac96e0deb5475851919b351c488a 100644
+--- a/src/components/collections/Collection.tsx
++++ b/src/components/collections/Collection.tsx
+@@ -1,4 +1,3 @@
+-import { repeat } from 'ramda'
+ import { useIntl } from 'react-intl'
+ import { useApp } from '../../contexts/AppContext'
+ import { ResourceType, useResourceCollection } from '../../hooks/resource'
+@@ -46,16 +45,17 @@ const Collection = <P extends object>(
+       <div style={{ display: 'flex', flexWrap: 'wrap', margin: `0 ${-(props.layout?.gutter || 16)}px` }}>
+         <Tracking.Impression collection={name} resources={resourceCollection} ignore={'CUSTOM'} />
+         {props.loading ? (
+-          repeat(
++          Array.from({ length: 4 }, (_, index) => (
+             <div
++              key={index}
+               style={{
+                 width,
+                 padding,
+               }}
+             >
+               <ElementComponent {...loadingProps} />
+-            </div>,
+-          )(4)
++            </div>
++          ))
+         ) : props.errors ? (
+           <div
+             style={{
+diff --git a/src/components/common/Section.tsx b/src/components/common/Section.tsx
+index 97c4dd713a82a33c99614df10d3994600d188c96..fdbf5b92df7bf1f97ed77a73f66bec7e5ecd47b3 100644
+--- a/src/components/common/Section.tsx
++++ b/src/components/common/Section.tsx
+@@ -19,15 +19,15 @@ export type SectionProps = {
+   }
+ }
+ 
+-const StyledSection = styled.section<SectionProps>`
++const StyledSection = styled.section<{ $horizontal?: boolean; $darkMode?: boolean }>`
+   width: 100%;
+   position: relative;
+   background-size: cover;
+   background-position: center;
+-  flex-direction: ${props => (props.horizontal ? 'row' : 'column')};
++  flex-direction: ${props => (props.$horizontal ? 'row' : 'column')};
+ 
+   ${props =>
+-    props.darkMode
++    props.$darkMode
+       ? css`
+           color: white;
+           &::after {
+@@ -62,56 +62,68 @@ const StyledSection = styled.section<SectionProps>`
+ const Section: ElementComponent<SectionProps> = props => {
+   const history = useHistory()
+   const { currentMemberId } = useAuth()
++  const {
++    backgroundImages,
++    children,
++    className,
++    darkMode,
++    display,
++    editing,
++    errors,
++    horizontal,
++    id,
++    link,
++    loading,
++    openTab,
++  } = props
+ 
+   const getBackgroundImage = () => {
+     const width = window.innerWidth
+     if (width >= DESKTOP_BREAK_POINT) {
+-      return (
+-        props.backgroundImages?.desktop || props.backgroundImages?.tablet || props.backgroundImages?.mobile || undefined
+-      )
++      return backgroundImages?.desktop || backgroundImages?.tablet || backgroundImages?.mobile || undefined
+     }
+ 
+     if (width >= TABLET_BREAK_POINT) {
+-      return (
+-        props.backgroundImages?.tablet || props.backgroundImages?.mobile || props.backgroundImages?.desktop || undefined
+-      )
++      return backgroundImages?.tablet || backgroundImages?.mobile || backgroundImages?.desktop || undefined
+     }
+ 
+-    return props.backgroundImages?.mobile || props.backgroundImages?.tablet || props.backgroundImages?.desktop || undefined
++    return backgroundImages?.mobile || backgroundImages?.tablet || backgroundImages?.desktop || undefined
+   }
+ 
+-  if (props.loading || props.errors) {
++  if (loading || errors) {
+     return null
+   }
+ 
+   return (
+     <StyledSection
+-      {...props}
++      id={id}
++      $horizontal={horizontal}
++      $darkMode={darkMode}
+       style={{
+         display:
+-          props.display === 'hide'
++          display === 'hide'
+             ? 'none'
+-            : props.display === 'appearAfterLogin' && !currentMemberId
++            : display === 'appearAfterLogin' && !currentMemberId
+             ? 'none'
+-            : props.display === 'disappearAfterLogin' && currentMemberId
++            : display === 'disappearAfterLogin' && currentMemberId
+             ? 'none'
+             : 'flex',
+         backgroundImage: getBackgroundImage(),
+       }}
+-      className={classNames(props.className, { 'cursor-pointer': props.link })}
++      className={classNames(className, { 'cursor-pointer': link })}
+       onClick={e =>
+-        props.editing || !props.link
++        editing || !link
+           ? e.preventDefault()
+-          : props.link.startsWith('http')
+-          ? props.openTab
+-            ? window.open(props.link)
+-            : window.location.assign(props.link)
+-          : props.openTab
+-          ? window.open(window.location.origin + props.link)
+-          : history.push(props.link)
++          : link.startsWith('http')
++          ? openTab
++            ? window.open(link)
++            : window.location.assign(link)
++          : openTab
++          ? window.open(window.location.origin + link)
++          : history.push(link)
+       }
+     >
+-      {props.children}
++      {children}
+     </StyledSection>
+   )
+ }
+diff --git a/src/contexts/AuthContext.tsx b/src/contexts/AuthContext.tsx
+index a0956a57d15905d6ea0e22c7579e4759c10c1cf5..776862d4709af294340c22bfc383313fdcc7ca7f 100644
+--- a/src/contexts/AuthContext.tsx
++++ b/src/contexts/AuthContext.tsx
+@@ -91,27 +91,33 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
+ 
+   const refreshToken = useCallback(async () => {
+     setIsAuthenticating(true)
+-    const fingerPrintId = await getFingerPrintId()
+-    const { ip, country, countryCode } = await fetchCurrentGeolocation()
+-    const {
+-      data: { code, result },
+-    } = await Axios.post(
+-      `${process.env.REACT_APP_API_BASE_ROOT}/auth/refresh-token`,
+-      { appId, fingerPrintId, geoLocation: { ip, country, countryCode } },
+-      {
+-        method: 'POST',
+-        withCredentials: true,
+-      },
+-    )
+-    if (code === 'SUCCESS') {
+-      setAuthToken(result.authToken)
+-    } else if (code === 'E_NO_DEVICE') {
+-      setAuthToken(null)
+-      alert('您已被登出，目前有其他裝置登入這組帳號')
+-    } else {
++    try {
++      const fingerPrintId = await getFingerPrintId()
++      const { ip, country, countryCode } = await fetchCurrentGeolocation()
++      const {
++        data: { code, result },
++      } = await Axios.post(
++        `${process.env.REACT_APP_API_BASE_ROOT}/auth/refresh-token`,
++        { appId, fingerPrintId, geoLocation: { ip, country, countryCode } },
++        {
++          method: 'POST',
++          withCredentials: true,
++        },
++      )
++      if (code === 'SUCCESS') {
++        setAuthToken(result.authToken)
++      } else if (code === 'E_NO_DEVICE') {
++        setAuthToken(null)
++        alert('您已被登出，目前有其他裝置登入這組帳號')
++      } else {
++        setAuthToken(null)
++      }
++    } catch (error) {
+       setAuthToken(null)
++      process.env.NODE_ENV === 'development' && console.error(error)
++    } finally {
++      setIsAuthenticating(false)
+     }
+-    setIsAuthenticating(false)
+   }, [appId])
+ 
+   const currentMember = payload && {
+diff --git a/src/hooks/giftPlan.ts b/src/hooks/giftPlan.ts
+index 16ac3fe53f36bdd4e67ba10378bad81720f85022..e958c4d65ebd40541191f2bf8894e13fae7ee60b 100644
+--- a/src/hooks/giftPlan.ts
++++ b/src/hooks/giftPlan.ts
+@@ -1,6 +1,11 @@
+ import { gql, useMutation, useQuery } from '@apollo/client'
+ import hasura from '../hasura'
+ 
++const UUID_PATTERN = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
++const normalizeUuid = (value?: string | null) => {
++  return value?.match?.(UUID_PATTERN)?.[0] || ''
++}
++
+ export const useGiftPlanMutation = () => {
+   const [upsertProductGiftPlan] = useMutation<
+     hasura.UPSERT_PRODUCT_GIFT_PLAN,
+@@ -74,7 +79,9 @@ export const useProductGiftPlan = (productId: string) => {
+     },
+   })
+ 
+-  const giftId = !loading ? data?.product_gift_plan[0]?.gift_plan?.gift_plan_products[0].product.target || '' : ''
++  const giftId = !loading
++    ? normalizeUuid(data?.product_gift_plan[0]?.gift_plan?.gift_plan_products[0].product.target)
++    : ''
+   const { gift } = useGift(giftId)
+ 
+   const productGiftPlan = {
+@@ -111,10 +118,12 @@ const GET_PRODUCT_GIFT_PLAN = gql`
+ `
+ 
+ export const useGift = (giftId: string) => {
++  const normalizedGiftId = normalizeUuid(giftId)
+   const { loading, data, error, refetch } = useQuery<hasura.GET_GIFT, hasura.GET_GIFTVariables>(GET_GIFT, {
+     variables: {
+-      giftId,
++      giftId: normalizedGiftId,
+     },
++    skip: !normalizedGiftId,
+   })
+ 
+   const gift = {

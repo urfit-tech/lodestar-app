@@ -34,17 +34,20 @@ const PageHelmet: React.FC<
     ? `${props.keywords}${keywordsConcat ? `,${app.settings['keywords']}` : ''}`
     : app.settings['keywords']
 
-  const prefetchingList = [
-    'https://cdnjs.cloudflare.com',
-    'https://fonts.googleapis.com',
-    `https://${window.location.host}/api/v1/`,
-    `https://${window.location.host}/api/v2/`,
-    `https://${window.location.host}/api/v2/`,
-    `https://${window.location.host}/api/enterprise`,
-    import.meta.env.VITE_S3_BUCKET,
-    import.meta.env.VITE_GRAPHQL_PH_ENDPOINT,
-    import.meta.env.VITE_GRAPHQL_RH_ENDPOINT,
-  ]
+  const prefetchingList = Array.from(
+    new Set(
+      [
+        'https://cdnjs.cloudflare.com',
+        'https://fonts.googleapis.com',
+        `https://${window.location.host}/api/v1/`,
+        `https://${window.location.host}/api/v2/`,
+        `https://${window.location.host}/api/enterprise`,
+        import.meta.env.VITE_S3_BUCKET,
+        import.meta.env.VITE_GRAPHQL_PH_ENDPOINT,
+        import.meta.env.VITE_GRAPHQL_RH_ENDPOINT,
+      ].filter(Boolean),
+    ),
+  )
 
   const defaultOpenGraph = [
     { property: 'fb:app_id', content: app.settings['auth.facebook_app_id'] },
@@ -80,7 +83,7 @@ const PageHelmet: React.FC<
       <meta key="keywords" name="keywords" content={xss(keywords)} />
       <meta http-equiv="x-dns-prefetch-control" content="on" />
       {prefetchingList.map(url => (
-        <link rel="dns-prefetch" href={url} />
+        <link key={url} rel="dns-prefetch" href={url} />
       ))}
       {props.jsonLd && <script type="application/ld+json">{xss(JSON.stringify(props.jsonLd))}</script>}
       {props.isNoIndex ? <meta name="robots" content="noindex,nofollow" /> : null}

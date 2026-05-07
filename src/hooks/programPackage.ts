@@ -215,6 +215,7 @@ export const useEnrolledProgramPackage = (
         programPackagePlanId: options?.programPackagePlanId,
         programId: options?.programId,
       },
+      skip: !memberId,
     },
   )
 

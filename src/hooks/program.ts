@@ -20,6 +20,11 @@ import {
   ProgramRoleName,
 } from '../types/program'
 
+const UUID_PATTERN = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+const normalizeUuid = (value?: string | null) => {
+  return value?.match?.(UUID_PATTERN)?.[0] || ''
+}
+
 export const usePublishedProgramCollection = (options?: {
   instructorId?: string
   isPrivate?: boolean
@@ -247,7 +252,7 @@ export const useLatestProgramIds = ({ limit, language }: { limit?: number; langu
 }
 
 export const useProgram = (programId: string) => {
-  const { loading, data, error, refetch } = useQuery<hasura.GetProgram, hasura.GetProgramVariables>(
+  const { loading, data, error, refetch, previousData } = useQuery<hasura.GetProgram, hasura.GetProgramVariables>(
     gql`
       query GetProgram($programId: uuid!) {
         program_by_pk(id: $programId) {
@@ -383,7 +388,7 @@ export const useProgram = (programId: string) => {
     { skip: !programId, variables: { programId }, fetchPolicy: 'no-cache' },
   )
 
-  const { loading: loadingProgramPlans, data: programPlans } = useQuery<
+  const { loading: loadingProgramPlans, data: programPlans, previousData: previousProgramPlans } = useQuery<
     hasura.GetProgramPlans,
     hasura.GetProgramPlansVariables
   >(
@@ -426,45 +431,62 @@ export const useProgram = (programId: string) => {
     { skip: !programId, variables: { programId } },
   )
 
+  const [cachedProgramData, setCachedProgramData] = useState<hasura.GetProgram>()
+  const [cachedProgramPlanData, setCachedProgramPlanData] = useState<hasura.GetProgramPlans>()
+
+  useEffect(() => {
+    if (data?.program_by_pk) {
+      setCachedProgramData(data)
+    }
+  }, [data])
+
+  useEffect(() => {
+    if (programPlans) {
+      setCachedProgramPlanData(programPlans)
+    }
+  }, [programPlans])
+
+  const programData = data?.program_by_pk ? data : previousData?.program_by_pk ? previousData : cachedProgramData
+  const programPlanData = programPlans || previousProgramPlans || cachedProgramPlanData
   const program: Program | null = useMemo(() => {
     return {
-      id: data?.program_by_pk?.id,
-      coverType: data?.program_by_pk?.cover_type || 'image',
-      mobileCoverType: data?.program_by_pk?.mobile_cover_type || 'image',
-      coverUrl: data?.program_by_pk?.cover_url || null,
-      coverMobileUrl: data?.program_by_pk?.cover_mobile_url || null,
-      coverThumbnailUrl: data?.program_by_pk?.cover_thumbnail_url || null,
-      title: data?.program_by_pk?.title || '',
-      abstract: data?.program_by_pk?.abstract || '',
-      publishedAt: data?.program_by_pk?.published_at ? new Date(data?.program_by_pk?.published_at) : null,
-      isSoldOut: data?.program_by_pk?.is_sold_out || false,
-      description: data?.program_by_pk?.description || '',
-      coverVideoUrl: data?.program_by_pk?.cover_video_url || null,
-      metaTag: data?.program_by_pk?.meta_tag,
-      label: data?.program_by_pk?.label || '',
-      labelColorType: data?.program_by_pk?.label_color_type || '',
-      isIssuesOpen: data?.program_by_pk?.is_issues_open === false ? false : true,
-      isEnrolledCountVisible: data?.program_by_pk?.is_enrolled_count_visible,
-      isPrivate: data?.program_by_pk?.is_private || false,
-      isCountdownTimerVisible: data?.program_by_pk?.is_countdown_timer_visible,
-      isIntroductionSectionVisible: data?.program_by_pk?.is_introduction_section_visible,
-      tags: data?.program_by_pk?.program_tags.map(programTag => programTag.tag.name) || [],
-      editors: data?.program_by_pk?.editors.map(v => v?.member_id || ''),
-      displayHeader: data?.program_by_pk?.display_header ?? true,
-      displayFooter: data?.program_by_pk?.display_footer ?? true,
-      supportLocale: data?.program_by_pk?.support_locales,
+      id: programData?.program_by_pk?.id,
+      coverType: programData?.program_by_pk?.cover_type || 'image',
+      mobileCoverType: programData?.program_by_pk?.mobile_cover_type || 'image',
+      coverUrl: programData?.program_by_pk?.cover_url || null,
+      coverMobileUrl: programData?.program_by_pk?.cover_mobile_url || null,
+      coverThumbnailUrl: programData?.program_by_pk?.cover_thumbnail_url || null,
+      title: programData?.program_by_pk?.title || '',
+      abstract: programData?.program_by_pk?.abstract || '',
+      publishedAt: programData?.program_by_pk?.published_at ? new Date(programData?.program_by_pk?.published_at) : null,
+      isSoldOut: programData?.program_by_pk?.is_sold_out || false,
+      description: programData?.program_by_pk?.description || '',
+      coverVideoUrl: programData?.program_by_pk?.cover_video_url || null,
+      metaTag: programData?.program_by_pk?.meta_tag,
+      label: programData?.program_by_pk?.label || '',
+      labelColorType: programData?.program_by_pk?.label_color_type || '',
+      isIssuesOpen: programData?.program_by_pk?.is_issues_open === false ? false : true,
+      isEnrolledCountVisible: programData?.program_by_pk?.is_enrolled_count_visible,
+      isPrivate: programData?.program_by_pk?.is_private || false,
+      isCountdownTimerVisible: programData?.program_by_pk?.is_countdown_timer_visible,
+      isIntroductionSectionVisible: programData?.program_by_pk?.is_introduction_section_visible,
+      tags: programData?.program_by_pk?.program_tags.map(programTag => programTag.tag.name) || [],
+      editors: programData?.program_by_pk?.editors.map(v => v?.member_id || ''),
+      displayHeader: programData?.program_by_pk?.display_header ?? true,
+      displayFooter: programData?.program_by_pk?.display_footer ?? true,
+      supportLocale: programData?.program_by_pk?.support_locales,
       programLayoutTemplateId:
-        data?.program_by_pk?.program_layout_template_config?.program_layout_template_id || undefined,
-      moduleData: data?.program_by_pk?.program_layout_template_config?.module_data,
+        programData?.program_by_pk?.program_layout_template_config?.program_layout_template_id || undefined,
+      moduleData: programData?.program_by_pk?.program_layout_template_config?.module_data,
       programLayoutTemplateVariant:
-        data?.program_by_pk?.program_layout_template_config?.program_layout_template?.variant,
+        programData?.program_by_pk?.program_layout_template_config?.program_layout_template?.variant,
       categories:
-        data?.program_by_pk?.program_categories.map(programCategory => ({
+        programData?.program_by_pk?.program_categories.map(programCategory => ({
           id: programCategory.category.id,
           name: programCategory.category.name,
         })) || [],
       roles:
-        data?.program_by_pk?.program_roles.map(programRole => ({
+        programData?.program_by_pk?.program_roles.map(programRole => ({
           id: programRole.id,
           name: programRole.name as ProgramRoleName,
           memberId: programRole.member_id,
@@ -474,7 +496,7 @@ export const useProgram = (programId: string) => {
           description: programRole?.member?.description || '',
         })) || [],
       plans:
-        programPlans?.program_plan.map(programPlan => ({
+        programPlanData?.program_plan.map(programPlan => ({
           id: programPlan.id,
           position: programPlan.position ?? 0,
           type: programPlan.type === 1 ? 'subscribeFromNow' : programPlan.type === 2 ? 'subscribeAll' : 'unknown',
@@ -509,10 +531,10 @@ export const useProgram = (programId: string) => {
           //   programPlanEnrollmentsAggregateData?.program_plan.find(v => v.id === programPlan.id)
           //     ?.program_plan_enrollments_aggregate.aggregate?.count || 0,
         })) || [],
-      duration: data?.program_by_pk?.program_duration?.duration,
-      score: data?.program_by_pk?.program_review_score?.score,
+      duration: programData?.program_by_pk?.program_duration?.duration,
+      score: programData?.program_by_pk?.program_review_score?.score,
       contentSections:
-        data?.program_by_pk?.program_content_sections.map(programContentSection => ({
+        programData?.program_by_pk?.program_content_sections.map(programContentSection => ({
           id: programContentSection.id,
           title: programContentSection.title,
           description: programContentSection.description || '',
@@ -520,7 +542,7 @@ export const useProgram = (programId: string) => {
           contents: programContentSection.program_contents.map(programContent => ({
             id: programContent.id,
             title: programContent.title,
-            programId: data?.program_by_pk?.id,
+            programId: programData?.program_by_pk?.id,
             contentSectionTitle: programContentSection.title,
             abstract: programContent.abstract || '',
             metadata: programContent.metadata,
@@ -565,7 +587,7 @@ export const useProgram = (programId: string) => {
           })),
         })) || [],
     }
-  }, [data, programPlans])
+  }, [programData, programPlanData])
 
   const [addProgramViewsHandler] = useMutation<hasura.ADD_PROGRAM_VIEWS, hasura.ADD_PROGRAM_VIEWSVariables>(gql`
     mutation ADD_PROGRAM_VIEWS($programId: uuid!) {
@@ -590,6 +612,7 @@ export const useProgram = (programId: string) => {
 }
 
 export const useProgramPlansEnrollmentsAggregateList = (programPlanIds: string[]) => {
+  const validProgramPlanIds = useMemo(() => programPlanIds.map(normalizeUuid).filter(Boolean), [programPlanIds])
   const { loading, data } = useQuery<
     hasura.GetProgramPlansEnrollmentsAggregate,
     hasura.GetProgramPlansEnrollmentsAggregateVariables
@@ -606,7 +629,7 @@ export const useProgramPlansEnrollmentsAggregateList = (programPlanIds: string[]
         }
       }
     `,
-    { variables: { programPlanIds } },
+    { variables: { programPlanIds: validProgramPlanIds }, skip: !validProgramPlanIds.length },
   )
   const programPlansEnrollmentsAggregateList: {
     id: string
@@ -750,7 +773,7 @@ export const useEnrolledPlanIds = () => {
         }
       }
     `,
-    { variables: { memberId: currentMemberId || '' } },
+    { variables: { memberId: currentMemberId || '' }, skip: !currentMemberId },
   )
 
   const programPlanIds: string[] =

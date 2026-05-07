@@ -7,8 +7,7 @@ import { Redirect, useParams } from 'react-router-dom'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import LocaleContext from '../../contexts/LocaleContext'
-import { useEquityProgramByProgramId, useProgram, useProgramPlansEnrollmentsAggregateList } from '../../hooks/program'
-import { useEnrolledProgramPackage } from '../../hooks/programPackage'
+import { useEquityProgramByProgramId, useProgram } from '../../hooks/program'
 import ForbiddenPage from '../ForbiddenPage'
 import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
@@ -31,10 +30,6 @@ const ProgramPage: React.FC = () => {
     true,
   )
   const { isEquityProgram, loadingEquityProgram } = useEquityProgramByProgramId(programId)
-  const enrolledProgramPackages = useEnrolledProgramPackage(currentMemberId || '', { programId })
-  const { loading: loadingProgramPlansEnrollmentsAggregateList } = useProgramPlansEnrollmentsAggregateList(
-    program?.plans.map(plan => plan.id) || [],
-  )
   const { currentLocale } = useContext(LocaleContext)
 
   useEffect(() => {
@@ -48,12 +43,7 @@ const ProgramPage: React.FC = () => {
     return <Redirect to={`/programs/${programId}/contents?back=${previousPage || `programs_${programId}`}`} />
   }
 
-  if (
-    loadingProgram ||
-    enrolledProgramPackages.loading ||
-    loadingEquityProgram ||
-    loadingProgramPlansEnrollmentsAggregateList
-  ) {
+  if ((loadingProgram && !program?.id) || loadingEquityProgram) {
     return <LoadingPage />
   }
 
@@ -61,7 +51,7 @@ const ProgramPage: React.FC = () => {
     return <ForbiddenPage />
   }
 
-  if (program?.supportLocale !== null && !program.supportLocale?.some(locale => locale === currentLocale)) {
+  if (Array.isArray(program.supportLocale) && !program.supportLocale.some(locale => locale === currentLocale)) {
     return <NotFoundPage />
   }
 
@@ -69,8 +59,8 @@ const ProgramPage: React.FC = () => {
     <DefaultLayout
       white
       footerBottomSpace={program.plans.length > 1 ? '60px' : '132px'}
-      noHeader={loadingProgram ? true : !program.displayHeader}
-      noFooter={loadingProgram ? true : !program.displayFooter}
+      noHeader={!program.displayHeader}
+      noFooter={!program.displayFooter}
     >
       {!loadingApp && <ProgramPageHelmet program={program} />}
 

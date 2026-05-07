@@ -1,10 +1,20 @@
-import React, { useContext, useState } from 'react'
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
+import React, { useContext, useMemo, useState } from 'react'
 import { QueryParamProvider } from 'use-query-params'
 import LoadablePage from '../../LoadablePage'
 import AppPage from '../../pages/AppPage'
 import LoadingPage from '../../pages/LoadingPage'
 import NotFoundPage from '../../pages/NotFoundPage'
+import { Redirect } from '../../router/reactRouterCompat'
+import {
+  Outlet,
+  RootRoute,
+  Route,
+  Router,
+  RouterProvider,
+  useRouter,
+  useRouterState,
+} from '../../router/tanstackRuntime'
+import { isProfilePathname, isProfileRoutePath, toTanStackRoutePath } from './routerPath'
 
 export type RouteProps = {
   path: string
@@ -392,44 +402,107 @@ const AppRouterContext = React.createContext<{
   sidebarExpanded: false,
   setSidebarExpanded: () => {},
 })
+
+const renderRoutePage = (routeMap: RouteProps) =>
+  typeof routeMap.pageName === 'string' ? <LoadablePage pageName={routeMap.pageName} /> : routeMap.pageName
+
+const toQueryParamLocation = (location: { pathname: string; searchStr: string; hash: string; state?: unknown }) => ({
+  pathname: location.pathname,
+  search: location.searchStr,
+  hash: location.hash,
+  state: location.state,
+})
+
+const QueryParamRouterBridge: React.FC = ({ children }) => {
+  const router = useRouter()
+  const location = useRouterState({
+    select: state => state.location,
+  })
+
+  const queryParamHistory = useMemo(
+    () => ({
+      get location() {
+        return toQueryParamLocation(router.state.location)
+      },
+      push: (nextLocation: { pathname: string; search?: string; hash?: string; state?: unknown }) => {
+        router.history.push(
+          `${nextLocation.pathname}${nextLocation.search || ''}${nextLocation.hash || ''}`,
+          nextLocation.state,
+        )
+      },
+      replace: (nextLocation: { pathname: string; search?: string; hash?: string; state?: unknown }) => {
+        router.history.replace(
+          `${nextLocation.pathname}${nextLocation.search || ''}${nextLocation.hash || ''}`,
+          nextLocation.state,
+        )
+      },
+    }),
+    [router],
+  )
+
+  return (
+    <QueryParamProvider history={queryParamHistory as any} location={toQueryParamLocation(location) as any}>
+      {children}
+    </QueryParamProvider>
+  )
+}
+
+const CatchAllRoutePage: React.FC = () => {
+  const pathname = useRouterState({
+    select: state => state.location.pathname,
+  })
+
+  return isProfilePathname(pathname) ? <LoadablePage pageName="ProfilePage" /> : <NotFoundPage />
+}
+
 const AppRouter: React.FC<{ extra?: RoutesMap }> = ({ children, extra }) => {
   const [sidebarExpanded, setSidebarExpanded] = useState(false)
-  const routesMap: RoutesMap = {
-    ...defaultRoutesMap,
-    ...extra,
-  }
-  return (
-    <AppRouterContext.Provider value={{ routesMap, sidebarExpanded, setSidebarExpanded }}>
-      <BrowserRouter>
-        <QueryParamProvider ReactRouterRoute={Route}>
+  const routesMap: RoutesMap = useMemo(
+    () => ({
+      ...defaultRoutesMap,
+      ...extra,
+    }),
+    [extra],
+  )
+  const router = useMemo(() => {
+    const rootRoute = new RootRoute({
+      component: () => (
+        <QueryParamRouterBridge>
           <AppPage
-            renderFallback={() => {
-              return (
-                <React.Suspense fallback={<LoadingPage />}>
-                  <Switch>
-                    {Object.values(routesMap).map(routeMap => (
-                      <Route
-                        exact
-                        key={routeMap.path}
-                        path={routeMap.path}
-                        render={() =>
-                          typeof routeMap.pageName === 'string' ? (
-                            <LoadablePage pageName={routeMap.pageName} />
-                          ) : (
-                            routeMap.pageName
-                          )
-                        }
-                      />
-                    ))}
-                    <Route component={NotFoundPage} />
-                  </Switch>
-                </React.Suspense>
-              )
-            }}
+            renderFallback={() => (
+              <React.Suspense fallback={<LoadingPage />}>
+                <Outlet />
+              </React.Suspense>
+            )}
           />
           {children}
-        </QueryParamProvider>
-      </BrowserRouter>
+        </QueryParamRouterBridge>
+      ),
+    })
+    const routes = Object.values(routesMap)
+      .filter(routeMap => !isProfileRoutePath(routeMap.path))
+      .map(
+        routeMap =>
+          new Route({
+            getParentRoute: () => rootRoute,
+            path: toTanStackRoutePath(routeMap.path),
+            component: () => renderRoutePage(routeMap),
+          }),
+      )
+    const notFoundRoute = new Route({
+      getParentRoute: () => rootRoute,
+      path: '$',
+      component: CatchAllRoutePage,
+    })
+
+    return new Router({
+      routeTree: rootRoute.addChildren([...routes, notFoundRoute]),
+    })
+  }, [children, routesMap])
+
+  return (
+    <AppRouterContext.Provider value={{ routesMap, sidebarExpanded, setSidebarExpanded }}>
+      <RouterProvider router={router as any} />
     </AppRouterContext.Provider>
   )
 }

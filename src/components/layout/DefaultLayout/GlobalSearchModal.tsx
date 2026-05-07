@@ -49,24 +49,24 @@ const StyledContent = styled(ModalContent)`
   }
 `
 
-const StyleSearchIcon = styled.div<{ isVip?: boolean }>`
+const StyleSearchIcon = styled.div<{ $isVip?: boolean }>`
   display: grid;
   place-items: center;
   width: 48px;
   height: 48px;
   cursor: pointer;
-  color: ${props => (props.isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
+  color: ${props => (props.$isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
 `
 
-const StyledClearButton = styled.span<{ isVip?: boolean }>`
+const StyledClearButton = styled.span<{ $isVip?: boolean }>`
   font-size: 16px;
   font-weight: 500;
   letter-spacing: 0.2px;
-  color: ${props => (props.isVip ? '#ffffff' : props.theme['@primary-color'])};
+  color: ${props => (props.$isVip ? '#ffffff' : props.theme['@primary-color'])};
   cursor: pointer;
 
   &:hover: {
-    color: ${props => (props.isVip ? '#ffffff' : props.theme['@primary-color'])}33;
+    color: ${props => (props.$isVip ? '#ffffff' : props.theme['@primary-color'])}33;
   }
 `
 
@@ -100,7 +100,7 @@ const GlobalSearchModal: React.FC = () => {
 
   return (
     <>
-      <StyleSearchIcon isVip={isVip} onClick={() => setIsModalOpen(true)}>
+      <StyleSearchIcon $isVip={isVip} onClick={() => setIsModalOpen(true)}>
         <Icon as={SearchIcon} />
       </StyleSearchIcon>
       <Modal isOpen={isOpen} onClose={() => setIsModalOpen(false)}>
@@ -123,7 +123,7 @@ const GlobalSearchModal: React.FC = () => {
                     className="mr-3"
                     children={
                       <StyledClearButton
-                        isVip={isVip}
+                        $isVip={isVip}
                         onClick={() => {
                           setKeyword('')
                           setFilter({

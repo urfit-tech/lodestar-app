@@ -45,12 +45,12 @@ const StyledBadge = styled(Badge)`
     right: 4px;
   }
 `
-const StyledButton = styled(Button)<{ isVip?: boolean }>`
+const StyledButton = styled(Button)<{ $isVip?: boolean }>`
   &&,
   &&:hover,
   &&:active,
   &&:focus {
-    color: ${props => (props.isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
+    color: ${props => (props.$isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
   }
 `
 
@@ -120,7 +120,7 @@ const CartDropdown: React.FC = () => {
       content={content}
     >
       <StyledBadge count={cartProducts.length} className="mr-2">
-        <StyledButton isVip={isVip} variant="ghost">
+        <StyledButton $isVip={isVip} variant="ghost">
           <Icon as={AiOutlineShoppingCart} />
         </StyledButton>
       </StyledBadge>

@@ -56,13 +56,13 @@ const StyledNotificationBar = styled.div<{ variant?: string }>`
   font-weight: 500;
   font-size: 14px;
 `
-const StyledButton = styled.span<{ isVip?: boolean }>`
+const StyledButton = styled.span<{ $isVip?: boolean }>`
   &&,
   &&:hover,
   &&:active,
   &&:focus {
     background: transparent;
-    color: ${props => (props.isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
+    color: ${props => (props.$isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
   }
 
   display: inline-flex;
@@ -125,14 +125,14 @@ const DefaultLayout: React.FC<{
 
       <StyledLayoutWrapper
         className="layout-wrapper"
-        variant={white ? 'white' : undefined}
-        header={noHeader ? 'noHeader' : '' /* for remove blank on the top */}
+        $variant={white ? 'white' : undefined}
+        $header={noHeader ? 'noHeader' : '' /* for remove blank on the top */}
       >
         {!noHeader ? (
           <StyledLayoutHeader
             className={`d-flex align-items-center justify-content-between ${noHeader ? 'hidden' : ''}`}
-            usePrimaryColor={isPrimaryColorEnabled}
-            isVip={isVip}
+            $usePrimaryColor={isPrimaryColorEnabled}
+            $isVip={isVip}
           >
             <div className="d-flex align-items-center">
               <LogoBlock className="mr-4">
@@ -156,8 +156,8 @@ const DefaultLayout: React.FC<{
                               ? StyledNavAnimationButton
                               : StyledNavButton
                           }
-                          usePrimaryColor={isPrimaryColorEnabled}
-                          isVip={isVip}
+                          $usePrimaryColor={isPrimaryColorEnabled}
+                          $isVip={isVip}
                           onClick={() => {
                             nav.href && window.open(nav.href, '_blank', 'noopener=yes,noreferrer=yes')
                           }}
@@ -178,8 +178,8 @@ const DefaultLayout: React.FC<{
                               ? StyledNavAnimationButton
                               : StyledNavButton
                           }
-                          usePrimaryColor={isPrimaryColorEnabled}
-                          isVip={isVip}
+                          $usePrimaryColor={isPrimaryColorEnabled}
+                          $isVip={isVip}
                           onClick={e => {
                             if (nav.href) {
                               if (nav.href[0] === '/') {
@@ -203,7 +203,7 @@ const DefaultLayout: React.FC<{
                               subNav.external ? (
                                 <StyledMenuItem
                                   key={idx}
-                                  isVip={isVip}
+                                  $isVip={isVip}
                                   _focus={{
                                     bg: isVip ? '#2F387B' : '#fff',
                                     color: isVip ? '#ffffff' : theme?.colors?.primary?.[500],
@@ -217,7 +217,7 @@ const DefaultLayout: React.FC<{
                               ) : (
                                 <StyledMenuItem
                                   key={idx}
-                                  isVip={isVip}
+                                  $isVip={isVip}
                                   _focus={{
                                     bg: isVip ? '#2F387B' : '#fff',
                                     color: isVip ? '#ffffff' : theme?.colors?.primary?.[500],
@@ -254,8 +254,8 @@ const DefaultLayout: React.FC<{
                               ? StyledNavAnimationButton
                               : StyledNavButton
                           }
-                          usePrimaryColor={isPrimaryColorEnabled}
-                          isVip={isVip}
+                          $usePrimaryColor={isPrimaryColorEnabled}
+                          $isVip={isVip}
                           onClick={() => history.push(`/creators/${currentMemberId}`)}
                         >
                           <Link to={`/creators/${currentMemberId}`}>
@@ -277,8 +277,8 @@ const DefaultLayout: React.FC<{
                               ? StyledNavAnimationButton
                               : StyledNavButton
                           }
-                          usePrimaryColor={isPrimaryColorEnabled}
-                          isVip={isVip}
+                          $usePrimaryColor={isPrimaryColorEnabled}
+                          $isVip={isVip}
                           onClick={() => history.push(`/members/${currentMemberId}`)}
                         >
                           <Link to={`/members/${currentMemberId}`}>
@@ -300,8 +300,8 @@ const DefaultLayout: React.FC<{
                               ? StyledNavAnimationButton
                               : StyledNavButton
                           }
-                          usePrimaryColor={isPrimaryColorEnabled}
-                          isVip={isVip}
+                          $usePrimaryColor={isPrimaryColorEnabled}
+                          $isVip={isVip}
                           onClick={() => history.push(`/members/${currentMemberId}/class`)}
                         >
                           <Link to={`/members/${currentMemberId}/class`}>
@@ -316,7 +316,7 @@ const DefaultLayout: React.FC<{
                 <Responsive.Desktop>
                   <Menu>
                     <MenuButton p="1rem">
-                      <StyledButton isVip={isVip}>
+                      <StyledButton $isVip={isVip}>
                         <EarthGlobalIcon height="24px" width="24px" />
                       </StyledButton>
                     </MenuButton>
@@ -368,8 +368,8 @@ const DefaultLayout: React.FC<{
           )}
 
           <LayoutContentWrapper
-            footerHeight={noFooter ? 0 : settings['footer.type'] === 'multiline' ? 108 : 65}
-            centeredBox={centeredBox}
+            $footerHeight={noFooter ? 0 : settings['footer.type'] === 'multiline' ? 108 : 65}
+            $centeredBox={centeredBox}
           >
             {centeredBox ? <CenteredBox>{children}</CenteredBox> : children}
           </LayoutContentWrapper>
@@ -377,9 +377,9 @@ const DefaultLayout: React.FC<{
           {!noFooter ? renderFooter?.({ DefaultFooter: Footer }) || <Footer /> : null}
           {/* more space for fixed blocks */}
           <Responsive.Default>
-            {typeof footerBottomSpace === 'string' && <EmptyBlock height={footerBottomSpace} />}
+            {typeof footerBottomSpace === 'string' && <EmptyBlock $height={footerBottomSpace} />}
           </Responsive.Default>
-          {(podcastPlayerVisible || mediaPlayerVisible) && <EmptyBlock height="76px" />}
+          {(podcastPlayerVisible || mediaPlayerVisible) && <EmptyBlock $height="76px" />}
         </StyledLayoutContent>
       </StyledLayoutWrapper>
     </AuthModalContext.Provider>
