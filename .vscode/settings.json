@@ -73,6 +73,5 @@
     "YOTTA",
     "youtube",
     "zhuyin"
-  ],
-  "typescript.tsdk": "node_modules/typescript/lib"
+  ]
 }
