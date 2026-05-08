@@ -20,5 +20,5 @@ jobs:
         env:
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         run: |
-          git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.com/urfit/lodestar/app.git
+          git remote add gitlab https://gitlab+deploy-token-13469759:${GITLAB_TOKEN}@gitlab.com/urfit/lodestar/app.git
           git push gitlab HEAD:${GITHUB_REF_NAME}
