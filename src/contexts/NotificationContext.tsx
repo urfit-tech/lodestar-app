@@ -1,5 +1,5 @@
 import { ApolloError } from '@apollo/client'
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useEffect, useMemo, useState } from 'react'
 import { useNotifications } from '../hooks/data'
 
 export type NotificationProps = {
@@ -38,20 +38,21 @@ export const NotificationProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     isNotificationInitRequired && refetchNotifications()
-  }, [isNotificationInitRequired])
+  }, [isNotificationInitRequired, refetchNotifications])
+
+  const contextValue = useMemo(
+    () => ({
+      loadingNotifications,
+      errorNotifications,
+      notifications,
+      unreadCount,
+      refetchNotifications: refetchNotifications,
+    }),
+    [errorNotifications, loadingNotifications, notifications, refetchNotifications, unreadCount],
+  )
 
   return (
-    <NotificationContext.Provider
-      value={{
-        loadingNotifications,
-        errorNotifications,
-        notifications,
-        unreadCount,
-        refetchNotifications: refetchNotifications,
-      }}
-    >
-      {children}
-    </NotificationContext.Provider>
+    <NotificationContext.Provider value={contextValue}>{children}</NotificationContext.Provider>
   )
 }
 

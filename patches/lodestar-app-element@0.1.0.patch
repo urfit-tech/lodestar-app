@@ -128,6 +128,53 @@ index 2ea2932a77ce9e49f8c8d01dede02a722cd053a7..db936fcba822ac96e0deb5475851919b
          ) : props.errors ? (
            <div
              style={{
+diff --git a/src/contexts/AppContext.tsx b/src/contexts/AppContext.tsx
+index 2ae70013546175fc92ef983e9f202c0c6602e6e5..b1148d7edbe7c5db9d8a8221b908d0b6f0632d14 100644
+--- a/src/contexts/AppContext.tsx
++++ b/src/contexts/AppContext.tsx
+@@ -1,5 +1,5 @@
+ import { gql, useQuery } from '@apollo/client'
+-import { createContext, useContext, useEffect, useMemo } from 'react'
++import { createContext, useContext, useEffect, useMemo, useRef } from 'react'
+ import hasura from '../hasura'
+ import { AppProps, NavProps } from '../types/app'
+ import { useAuth } from './AuthContext'
+@@ -39,5 +39,6 @@ export const useApp = () => useContext(AppContext)
+ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) => {
+   const { authToken, refreshToken } = useAuth()
++  const lastLoadedAppRef = useRef<AppContextProps | null>(null)
+   const { data, loading, error, refetch } = useQuery<hasura.GET_APP, hasura.GET_APPVariables>(
+     gql`
+       query GET_APP($appId: String!) {
+@@ -174,11 +175,25 @@ export const AppProvider: React.FC<{ appId: string }> = ({ appId, children }) =>
+     [data?.app_by_pk, data?.currency, error, loading, refetch, secrets, settings],
+   )
+-
++
++  if (app.id) {
++    lastLoadedAppRef.current = app
++  }
++
++  const appContextValue =
++    !app.id && loading && lastLoadedAppRef.current?.id === appId
++      ? {
++          ...lastLoadedAppRef.current,
++          loading,
++          error,
++          refetch,
++        }
++      : app
++
+   useEffect(() => {
+     if (!authToken) {
+       refreshToken?.()
+     }
+   }, [appId, authToken, refreshToken])
+-
++
+-  return <AppContext.Provider value={app}>{children}</AppContext.Provider>
++  return <AppContext.Provider value={appContextValue}>{children}</AppContext.Provider>
+ }
 diff --git a/src/components/common/Section.tsx b/src/components/common/Section.tsx
 index 97c4dd713a82a33c99614df10d3994600d188c96..fdbf5b92df7bf1f97ed77a73f66bec7e5ecd47b3 100644
 --- a/src/components/common/Section.tsx
@@ -246,7 +293,18 @@ diff --git a/src/contexts/AuthContext.tsx b/src/contexts/AuthContext.tsx
 index a0956a57d15905d6ea0e22c7579e4759c10c1cf5..776862d4709af294340c22bfc383313fdcc7ca7f 100644
 --- a/src/contexts/AuthContext.tsx
 +++ b/src/contexts/AuthContext.tsx
-@@ -91,27 +91,33 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
+@@ -82,7 +82,9 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
+             email_optin: true,
+           },
+         }
+-        ReactGA.set({ userId: payload.sub })
++        if (typeof (window as any).ga === 'function') {
++          ReactGA.set({ userId: payload.sub })
++        }
+       } catch (error) {
+         process.env.NODE_ENV === 'development' && console.error(error)
+       }
+@@ -91,27 +93,33 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
  
    const refreshToken = useCallback(async () => {
      setIsAuthenticating(true)

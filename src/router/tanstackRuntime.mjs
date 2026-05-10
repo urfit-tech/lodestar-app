@@ -1,7 +1,7 @@
 import React from 'react'
 import {
-  Matches,
-  Outlet,
+  CatchBoundary,
+  ErrorComponent,
   RootRoute,
   Route,
   Router,
@@ -12,6 +12,8 @@ import {
   useRouter,
   useRouterState,
 } from '@tanstack/react-router'
+
+const matchContext = React.createContext(undefined)
 
 const useTransitionCompat = () => {
   if (typeof React.useTransition === 'function') {
@@ -125,6 +127,115 @@ function Transitioner() {
   return null
 }
 
+const getRenderedMatches = state =>
+  state.pendingMatches?.some(match => match.showPending) ? state.pendingMatches : state.matches
+
+function SafeFragment(props) {
+  return React.createElement(React.Fragment, null, props.children)
+}
+
+function Match({ matchId }) {
+  const router = useRouter()
+  const match = useRouterState({
+    select: state => getRenderedMatches(state).find(renderedMatch => renderedMatch.id === matchId),
+  })
+
+  if (!match) {
+    return null
+  }
+
+  const route = router.routesById[match.routeId]
+
+  if (!route) {
+    return null
+  }
+
+  const PendingComponent = route.options.pendingComponent ?? router.options.defaultPendingComponent
+  const pendingElement = PendingComponent ? React.createElement(PendingComponent) : null
+  const routeErrorComponent = route.options.errorComponent ?? router.options.defaultErrorComponent ?? ErrorComponent
+  const shouldUseSuspense =
+    route.options.wrapInSuspense ??
+    PendingComponent ??
+    route.options.component?.preload ??
+    route.options.pendingComponent?.preload ??
+    route.options.errorComponent?.preload
+  const ResolvedSuspenseBoundary = shouldUseSuspense ? React.Suspense : SafeFragment
+  const ResolvedCatchBoundary = routeErrorComponent ? CatchBoundary : SafeFragment
+
+  return React.createElement(
+    matchContext.Provider,
+    { value: matchId },
+    React.createElement(
+      ResolvedSuspenseBoundary,
+      { fallback: pendingElement },
+      React.createElement(
+        ResolvedCatchBoundary,
+        {
+          getResetKey: () => router.state.resolvedLocation.state?.key,
+          errorComponent: routeErrorComponent,
+        },
+        React.createElement(MatchInner, { match, route, router, pendingElement }),
+      ),
+    ),
+  )
+}
+
+function MatchInner({ match, route, router, pendingElement }) {
+  if (match.status === 'error') {
+    throw match.error
+  }
+
+  if (match.status === 'pending') {
+    if (match.showPending) {
+      return pendingElement
+    }
+
+    throw match.loadPromise
+  }
+
+  if (match.status === 'success') {
+    const Comp = route.options.component ?? router.options.defaultComponent
+
+    return Comp ? React.createElement(Comp) : React.createElement(Outlet)
+  }
+
+  throw new Error('Idle routeMatch status encountered during rendering.')
+}
+
+export const Outlet = React.memo(function Outlet() {
+  const matchId = React.useContext(matchContext)
+  const childMatchId = useRouterState({
+    select: state => {
+      const matches = getRenderedMatches(state)
+      const index = matches.findIndex(match => match.id === matchId)
+
+      return matches[index + 1]?.id
+    },
+  })
+
+  return childMatchId ? React.createElement(Match, { matchId: childMatchId }) : null
+})
+
+function Matches() {
+  const router = useRouter()
+  const matchId = useRouterState({
+    select: state => getRenderedMatches(state)[0]?.id,
+  })
+
+  return React.createElement(
+    matchContext.Provider,
+    { value: matchId },
+    React.createElement(
+      CatchBoundary,
+      {
+        getResetKey: () => router.state.resolvedLocation.state?.key,
+        errorComponent: ErrorComponent,
+      },
+      matchId ? React.createElement(Match, { matchId }) : null,
+    ),
+  )
+}
+
 export function RouterProvider({ router, ...rest }) {
   router.update({
     ...router.options,
@@ -152,4 +263,4 @@ export function RouterProvider({ router, ...rest }) {
   return provider
 }
 
-export { Outlet, RootRoute, Route, Router, useParams, useRouter, useRouterState } from '@tanstack/react-router'
+export { RootRoute, Route, Router, useParams, useRouter, useRouterState } from '@tanstack/react-router'

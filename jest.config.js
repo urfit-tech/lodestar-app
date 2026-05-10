@@ -1,7 +1,7 @@
 module.exports = {
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(ts|tsx|js|jsx)$': [
+    '^.+\\.(ts|tsx|js|jsx|mjs)$': [
       'babel-jest',
       {
         presets: [
@@ -16,5 +16,6 @@ module.exports = {
     '^react-router$': '<rootDir>/src/router/reactRouterCompat.tsx',
     '^react-router-dom$': '<rootDir>/src/router/reactRouterCompat.tsx',
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+  transformIgnorePatterns: ['/node_modules/(?!\\.pnpm/lodestar-app-element|lodestar-app-element)'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'mjs', 'json'],
 }

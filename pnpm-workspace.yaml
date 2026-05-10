@@ -2,11 +2,14 @@ packages:
   - .
 
 allowBuilds:
-  '@parcel/watcher': set this to true or false
-  core-js: set this to true or false
-  core-js-pure: set this to true or false
-  ejs: set this to true or false
-  es5-ext: set this to true or false
-  esbuild: set this to true or false
-  fsevents: set this to true or false
-  husky: set this to true or false
+  '@parcel/watcher': true
+  core-js: true
+  core-js-pure: true
+  ejs: true
+  es5-ext: true
+  esbuild: true
+  fsevents: true
+  husky: true
+
+patchedDependencies:
+  lodestar-app-element@0.1.0: patches/lodestar-app-element@0.1.0.patch

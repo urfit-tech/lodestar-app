@@ -41,16 +41,16 @@ const StyledBadge = styled(Badge)`
     padding: 0 0.25rem;
   }
 `
-const StyledButton = styled(Button)<{ isVip?: boolean }>`
+const StyledButton = styled(Button)<{ $isVip?: boolean }>`
   &&,
   &&:hover,
   &&:active,
   &&:focus {
-    color: ${props => (props.isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
+    color: ${props => (props.$isVip ? '#ffffff' : props.theme['@nav-color'] || '#585858')};
   }
 `
-const StyledReadAllButton = styled(Button)<{ isVip?: boolean }>`
-  color: ${props => (props.isVip ? '#ffffff' : 'var(--gray-dark)')};
+const StyledReadAllButton = styled(Button)<{ $isVip?: boolean }>`
+  color: ${props => (props.$isVip ? '#ffffff' : 'var(--gray-dark)')};
 `
 
 const NotificationDropdown: React.FC = () => {
@@ -97,7 +97,7 @@ const NotificationDropdown: React.FC = () => {
         <div className="d-flex align-items-center justify-content-between">
           <span>{formatMessage(commonMessages.content.notification)}</span>
           <StyledReadAllButton
-            isVip={isVip}
+            $isVip={isVip}
             variant="ghost"
             size="sm"
             onClick={() =>
@@ -113,7 +113,7 @@ const NotificationDropdown: React.FC = () => {
       content={content}
     >
       <StyledBadge count={unreadCount && unreadCount > 15 ? '15+' : unreadCount} className="mr-2">
-        <StyledButton isVip={isVip} variant="ghost">
+        <StyledButton $isVip={isVip} variant="ghost">
           <Icon as={AiOutlineBell} />
         </StyledButton>
       </StyledBadge>

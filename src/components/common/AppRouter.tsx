@@ -499,9 +499,13 @@ const AppRouter: React.FC<{ extra?: RoutesMap }> = ({ children, extra }) => {
       routeTree: rootRoute.addChildren([...routes, notFoundRoute]),
     })
   }, [children, routesMap])
+  const routerContextValue = useMemo(
+    () => ({ routesMap, sidebarExpanded, setSidebarExpanded }),
+    [routesMap, sidebarExpanded],
+  )
 
   return (
-    <AppRouterContext.Provider value={{ routesMap, sidebarExpanded, setSidebarExpanded }}>
+    <AppRouterContext.Provider value={routerContextValue}>
       <RouterProvider router={router as any} />
     </AppRouterContext.Provider>
   )

@@ -188,6 +188,6 @@ export const useGetEbookTrialPercentage = (programContentId: string) => {
     },
   )
 
-  const ebookTrialPercentage = data?.program_content_ebook[0].trial_percentage || 0
+  const ebookTrialPercentage = data?.program_content_ebook[0]?.trial_percentage || 0
   return ebookTrialPercentage
 }

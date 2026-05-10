@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useContext, useMemo } from 'react'
 import { RenderMemberAdminMenuProps } from '../components/common/AdminMenu'
 
 export type CustomRendererProps = {
@@ -26,13 +26,15 @@ export type CustomRendererProps = {
 }
 
 const CustomRendererContext = createContext<CustomRendererProps>({})
+const emptyRenderer: CustomRendererProps = {}
 
 export const CustomRendererProvider: React.FC<{
   renderer?: CustomRendererProps
-}> = ({ renderer = {}, children }) => {
+}> = ({ renderer = emptyRenderer, children }) => {
   const { Provider } = CustomRendererContext
+  const value = useMemo(() => renderer, [renderer])
 
-  return <Provider value={renderer}>{children}</Provider>
+  return <Provider value={value}>{children}</Provider>
 }
 
 export const useCustomRenderer = () => useContext(CustomRendererContext)

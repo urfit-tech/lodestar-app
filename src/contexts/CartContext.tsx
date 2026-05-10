@@ -3,7 +3,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { getConversionApiData } from 'lodestar-app-element/src/helpers/conversionApi'
 import { ConversionApiContent, ConversionApiEvent } from 'lodestar-app-element/src/types/conversionApi'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import hasura from '../hasura'
 import { getTrackingCookie } from '../helpers'
 import { useMember } from '../hooks/member'
@@ -12,7 +12,7 @@ import { CreateCartOperationContextFactory } from '../services/cart/CreateCartOp
 import { CartProductProps } from '../types/checkout'
 import { ProductType } from '../types/product'
 
-const CartContext = React.createContext<{
+type CartContextValue = {
   cartProducts: CartProductProps[]
   setIsCartInitRequired?: React.Dispatch<React.SetStateAction<boolean>>
   isProductInCart?: (productType: ProductType, productTarget: string) => boolean
@@ -25,7 +25,9 @@ const CartContext = React.createContext<{
   updatePluralCartProductQuantity?: (productId: string, quantity: number) => Promise<void>
   removeCartProducts?: (productIds: string[]) => Promise<void>
   clearCart?: () => Promise<void>
-}>({
+}
+
+const CartContext = React.createContext<CartContextValue>({
   cartProducts: [],
 })
 
@@ -67,65 +69,97 @@ export const CartProvider: React.FC = ({ children }) => {
     if (isCartInitRequired && appId && currentMemberId) operator.operation()
   }, [isCartInitRequired, appId, currentMemberId])
 
+  const isProductInCart = useCallback(
+    (productType: ProductType, productTarget: string) =>
+      cartProducts.some(cartProduct => cartProduct.productId === `${productType}_${productTarget}`),
+    [cartProducts],
+  )
+
+  const getCartProduct = useCallback(
+    (productId: string) => {
+      const targetCartProduct = cartProducts.find(cartProduct => cartProduct.productId === productId)
+      return targetCartProduct || null
+    },
+    [cartProducts],
+  )
+
+  const addCartProduct = useCallback(
+    async (productType: ProductType, productTarget: string, productOptions?: { [key: string]: any }) => {
+      const trackingCookie = getTrackingCookie()
+      const trackingOptions = { ...trackingCookie }
+      const contents: ConversionApiContent[] = [{ id: `${productType}_${productTarget}`, quantity: 1 }]
+      const event: ConversionApiEvent = {
+        sourceUrl: window.location.href,
+        purchaseData: {
+          currency: 'TWD',
+        },
+      }
+      const { conversionApi, conversionApiData } = getConversionApiData(member, { contents, event })
+      if (
+        settings['tracking.fb_conversion_api.pixel_id'] &&
+        settings['tracking.fb_conversion_api.access_token'] &&
+        enabledModules.fb_conversion_api
+      ) {
+        if (authToken) await conversionApi(authToken, 'AddToCart').catch(error => console.log(error))
+        Object.assign(trackingOptions, { fb: conversionApiData })
+      }
+      const addCartOperator = cartOperationFactory.createOperator(CartOperatorEnum.ADD_CART_PRODUCT)
+      await addCartOperator.operation(
+        productType,
+        productTarget,
+        !!settings['feature.cart.disable'],
+        trackingOptions,
+        productOptions,
+      )
+    },
+    [authToken, cartOperationFactory, enabledModules.fb_conversion_api, member, settings],
+  )
+
+  const updatePluralCartProductQuantity = useCallback(
+    async (productId: string, quantity: number) => {
+      const operator = cartOperationFactory.createOperator(CartOperatorEnum.UPDATE_PLURAL_CART_PRODUCT_QUANTITY)
+      await operator.operation(productId, quantity)
+    },
+    [cartOperationFactory],
+  )
+
+  const removeCartProducts = useCallback(
+    async (productIds: string[]) => {
+      const operator = cartOperationFactory.createOperator(CartOperatorEnum.REMOVE_CART_PRODUCTS)
+      await operator.operation(productIds)
+    },
+    [cartOperationFactory],
+  )
+
+  const clearCart = useCallback(async () => {
+    const operator = cartOperationFactory.createOperator(CartOperatorEnum.CLEAR_CART)
+    await operator.operation(currentMemberId)
+  }, [cartOperationFactory, currentMemberId])
+
+  const contextValue = useMemo<CartContextValue>(
+    () => ({
+      setIsCartInitRequired,
+      cartProducts,
+      isProductInCart,
+      getCartProduct,
+      addCartProduct,
+      updatePluralCartProductQuantity,
+      removeCartProducts,
+      clearCart,
+    }),
+    [
+      addCartProduct,
+      cartProducts,
+      clearCart,
+      getCartProduct,
+      isProductInCart,
+      removeCartProducts,
+      updatePluralCartProductQuantity,
+    ],
+  )
+
   return (
-    <CartContext.Provider
-      value={{
-        setIsCartInitRequired,
-        cartProducts,
-        isProductInCart: (productType: ProductType, productTarget: string) =>
-          cartProducts.some(cartProduct => cartProduct.productId === `${productType}_${productTarget}`),
-        getCartProduct: (productId: string) => {
-          const targetCartProduct = cartProducts.find(cartProduct => cartProduct.productId === productId)
-          return targetCartProduct || null
-        },
-        addCartProduct: async (
-          productType: ProductType,
-          productTarget: string,
-          productOptions?: { [key: string]: any },
-        ) => {
-          const trackingCookie = getTrackingCookie()
-          const trackingOptions = { ...trackingCookie }
-          const contents: ConversionApiContent[] = [{ id: `${productType}_${productTarget}`, quantity: 1 }]
-          const event: ConversionApiEvent = {
-            sourceUrl: window.location.href,
-            purchaseData: {
-              currency: 'TWD',
-            },
-          }
-          const { conversionApi, conversionApiData } = getConversionApiData(member, { contents, event })
-          if (
-            settings['tracking.fb_conversion_api.pixel_id'] &&
-            settings['tracking.fb_conversion_api.access_token'] &&
-            enabledModules.fb_conversion_api
-          ) {
-            if (authToken) await conversionApi(authToken, 'AddToCart').catch(error => console.log(error))
-            Object.assign(trackingOptions, { fb: conversionApiData })
-          }
-          const addCartOperator = cartOperationFactory.createOperator(CartOperatorEnum.ADD_CART_PRODUCT)
-          await addCartOperator.operation(
-            productType,
-            productTarget,
-            !!settings['feature.cart.disable'],
-            trackingOptions,
-            productOptions,
-          )
-        },
-        updatePluralCartProductQuantity: async (productId: string, quantity: number) => {
-          const operator = cartOperationFactory.createOperator(CartOperatorEnum.UPDATE_PLURAL_CART_PRODUCT_QUANTITY)
-          await operator.operation(productId, quantity)
-        },
-        removeCartProducts: async (productIds: string[]) => {
-          const operator = cartOperationFactory.createOperator(CartOperatorEnum.REMOVE_CART_PRODUCTS)
-          await operator.operation(productIds)
-        },
-        clearCart: async () => {
-          const operator = cartOperationFactory.createOperator(CartOperatorEnum.CLEAR_CART)
-          await operator.operation(currentMemberId)
-        },
-      }}
-    >
-      {children}
-    </CartContext.Provider>
+    <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>
   )
 }
 

@@ -2,7 +2,7 @@ import { gql, useQuery } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import moment from 'moment'
 import 'moment/locale/zh-tw'
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 import { IntlProvider } from 'react-intl'
 import hasura from '../hasura'
 import defaultLocaleMessages from '../translations/locales/en-us.json'
@@ -57,22 +57,24 @@ export const LocaleProvider: React.FC = ({ children }) => {
   const [currentLocale, setCurrentLocale] = useState(defaultLocaleContextValue.currentLocale || defaultLocale)
   const layoutLanguageSortedListSettings = settings['layout.language_sorted_list']
 
-  let sortedLanguagesList: SupportedLocales = []
+  const languagesList = useMemo(() => {
+    if (!layoutLanguageSortedListSettings) {
+      return SUPPORTED_LOCALES
+    }
 
-  if (!!layoutLanguageSortedListSettings) {
     try {
       const settingLanguageList = JSON.parse(layoutLanguageSortedListSettings)
-      sortedLanguagesList = SUPPORTED_LOCALES.filter(language => settingLanguageList.includes(language.label)).sort(
+      const sortedLanguagesList = SUPPORTED_LOCALES.filter(language => settingLanguageList.includes(language.label)).sort(
         (a, b) => {
           return settingLanguageList.indexOf(a.label) - settingLanguageList.indexOf(b.label)
         },
       )
+      return sortedLanguagesList.length > 0 ? sortedLanguagesList : SUPPORTED_LOCALES
     } catch (err) {
       console.log(err)
+      return SUPPORTED_LOCALES
     }
-  }
-
-  const languagesList = sortedLanguagesList.length > 0 ? sortedLanguagesList : SUPPORTED_LOCALES
+  }, [layoutLanguageSortedListSettings])
 
   const { data } = useQuery<hasura.GetAppLanguage, hasura.GetAppLanguageVariables>(
     gql`
@@ -119,20 +121,25 @@ export const LocaleProvider: React.FC = ({ children }) => {
   }
   const messages = { ...elementMessages, ...localeMessages, ...appLocaleMessages }
 
+  const updateCurrentLocale = useCallback((newLocale: string) => {
+    if (SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === newLocale)) {
+      localStorage.setItem('kolable.app.language', newLocale)
+      setCurrentLocale(newLocale)
+    }
+  }, [])
+
+  const contextValue = useMemo(
+    () => ({
+      defaultLocale,
+      currentLocale,
+      setCurrentLocale: updateCurrentLocale,
+      languagesList,
+    }),
+    [currentLocale, defaultLocale, languagesList, updateCurrentLocale],
+  )
+
   return (
-    <LocaleContext.Provider
-      value={{
-        defaultLocale,
-        currentLocale,
-        setCurrentLocale: (newLocale: string) => {
-          if (SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === newLocale)) {
-            localStorage.setItem('kolable.app.language', newLocale)
-            setCurrentLocale(newLocale)
-          }
-        },
-        languagesList,
-      }}
-    >
+    <LocaleContext.Provider value={contextValue}>
       <IntlProvider defaultLocale="zh" locale={currentLocale} messages={messages}>
         {children}
       </IntlProvider>

@@ -55,6 +55,7 @@ import LoadingPage from '../LoadingPage'
 import NotFoundPage from '../NotFoundPage'
 import pageMessages from '../translation'
 import CraftBlock from './CraftBlock'
+import { shouldRenderRouteFallbackWhileLoading } from '../../components/common/routeFallback'
 
 const craftElementResolver = { ...CraftElement }
 
@@ -144,31 +145,6 @@ const ContentWrapper = styled.div<{ $isVip?: boolean; $sidebarWidth: number }>`
   }
 `
 
-const routePathMatches = (routePath: string, pathname: string) => {
-  if (routePath === '/') {
-    return pathname === '/'
-  }
-
-  const routeSegments = routePath.replace(/^\/|\/$/g, '').split('/')
-  const pathnameSegments = pathname.replace(/^\/|\/$/g, '').split('/')
-
-  if (routeSegments.length !== pathnameSegments.length) {
-    return false
-  }
-
-  return routeSegments.every((segment, index) => {
-    const pathnameSegment = pathnameSegments[index]
-    if (segment.startsWith(':')) {
-      return Boolean(pathnameSegment)
-    }
-    if (segment.includes(':')) {
-      const pattern = new RegExp(`^${segment.replace(/:[^/]+/g, '[^/]+')}$`)
-      return pattern.test(pathnameSegment)
-    }
-    return segment === pathnameSegment
-  })
-}
-
 const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
   const { settings, id: appId, enabledModules } = useApp()
@@ -182,7 +158,7 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
   const { isVip } = useVipTheme()
   const { routesMap, sidebarExpanded } = useAppRouter()
   const shouldRenderFallbackWhileLoading =
-    !!renderFallback && Object.values(routesMap).some(route => routePathMatches(route.path, location.pathname))
+    !!renderFallback && shouldRenderRouteFallbackWhileLoading(routesMap, location.pathname)
 
   const [utmQuery] = useQueryParams({
     utm_campaign: StringParam,
