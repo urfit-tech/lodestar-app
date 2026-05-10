@@ -1,7 +1,7 @@
 import react from '@vitejs/plugin-react'
 import { readFile } from 'fs/promises'
 import path from 'path'
-import { defineConfig, loadEnv, transformWithEsbuild } from 'vite'
+import { defineConfig, loadEnv, transformWithOxc } from 'vite'
 import type { Plugin } from 'vite'
 import { AntdResolve, createStyleImportPlugin } from 'vite-plugin-style-import'
 import svgr from '@svgr/core'
@@ -39,9 +39,24 @@ const craSvgComponentPlugin = (): Plugin => ({
       },
     )
 
-    return transformWithEsbuild(`import __svgUrl from ${JSON.stringify(`${filePath}?url`)}\n${componentCode}`, id, {
-      loader: 'jsx',
+    return transformWithOxc(`import __svgUrl from ${JSON.stringify(`${filePath}?url`)}\n${componentCode}`, id, {
+      lang: 'jsx',
     })
+  },
+})
+
+const chakraStyledSystemCompatPlugin = (): Plugin => ({
+  name: 'vite:chakra-styled-system-compat',
+  enforce: 'pre',
+  transform(code, id) {
+    if (id.includes('@chakra-ui/styled-system/dist/esm/core/index.js')) {
+      return {
+        code: code.replace('export { Config, PropConfig, Parser } from "./types";', ''),
+        map: null,
+      }
+    }
+
+    return null
   },
 })
 
@@ -100,6 +115,7 @@ export default defineConfig(({ command, mode }) => {
         },
       }),
       craSvgComponentPlugin(),
+      chakraStyledSystemCompatPlugin(),
       lodestarAppElementCompatPlugin(),
       createStyleImportPlugin({
         include: ['**/*.{ts,tsx,js,jsx}'],
@@ -126,6 +142,7 @@ export default defineConfig(({ command, mode }) => {
       preprocessorOptions: {
         less: {
           javascriptEnabled: true,
+          math: 'always',
           modifyVars: themeVars,
         },
       },
@@ -147,6 +164,7 @@ export default defineConfig(({ command, mode }) => {
     },
     define: {
       ...getLegacyReactAppEnv(env),
+      __DEV__: JSON.stringify(nodeEnv !== 'production'),
       global: 'globalThis',
       'process.env.NODE_ENV': JSON.stringify(nodeEnv),
       'process.env': {},
@@ -168,6 +186,9 @@ export default defineConfig(({ command, mode }) => {
         'react-simplemde-editor',
         'react-style-editor',
       ],
+      rolldownOptions: {
+        plugins: [chakraStyledSystemCompatPlugin()],
+      },
     },
   }
 })
