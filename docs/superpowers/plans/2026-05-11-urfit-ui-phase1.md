@@ -413,10 +413,13 @@ git commit -m "feat: add shadcn init and Chakra v1 token CSS"
 
 ---
 
-## Task 3: Vite lib mode build pipeline
+## Task 3: Vite lib mode build pipeline + shadcn CLI 偵測修補
 
 **Files:**
 - Create: `packages/ui/vite.config.ts`
+- Create: `packages/ui/index.html`（dummy，僅為 satisfy shadcn CLI framework detection）
+
+**為什麼需要 `index.html`：** 新版 shadcn CLI（`pnpm dlx shadcn@latest add`）在執行前會驗證專案是否為支援的 framework，會檢查 `vite.config.ts` + `index.html` 是否存在。我們的套件是 library mode，本來不需要 HTML 入口，但加一個 dummy 檔可以讓 `shadcn add` 命令正常運作（Task 5-11 都會用到）。
 
 - [ ] **Step 1: 建立 vite.config.ts**
 
@@ -465,7 +468,25 @@ export default defineConfig({
 })
 ```
 
-- [ ] **Step 2: 執行 build 確認成功**
+- [ ] **Step 2: 建立 dummy index.html（給 shadcn CLI 看的）**
+
+建立 `packages/ui/index.html`：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>@urfit/ui (library — not served)</title>
+  </head>
+  <body>
+    <!-- This file exists only to satisfy shadcn CLI's framework detection.
+         @urfit/ui is built as a library via Vite lib mode; this HTML is never served. -->
+  </body>
+</html>
+```
+
+- [ ] **Step 3: 執行 build 確認成功**
 
 ```bash
 cd /Users/eddy/urfit/urfit-ui/packages/ui
@@ -481,12 +502,30 @@ dist/index.d.ts
 
 若有 TypeScript 或 vite 錯誤，根據訊息修正後再試。
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 4: 驗證 shadcn CLI 偵測通過**
+
+```bash
+cd /Users/eddy/urfit/urfit-ui/packages/ui
+pnpm dlx shadcn@latest add button --yes
+```
+
+Expected：CLI 成功偵測 framework 並開始下載 button component（會跳出 prompts 詢問安裝位置等，先讓它跑完或 Ctrl+C 都行，目的只是驗證偵測通過）。
+
+若 shadcn add 真的下載了 button.tsx 到 `src/components/ui/button.tsx`，可以：
+1. 刪除 `src/components/ui/` 目錄（Task 5 會重新加，且要做 Chakra v1 改寫）
+2. 復原 components.json 等其他被 CLI 改動的檔案
+
+```bash
+rm -rf /Users/eddy/urfit/urfit-ui/packages/ui/src/components/ui
+git checkout -- /Users/eddy/urfit/urfit-ui/packages/ui/components.json /Users/eddy/urfit/urfit-ui/packages/ui/package.json 2>/dev/null || true
+```
+
+- [ ] **Step 5: Commit**
 
 ```bash
 cd /Users/eddy/urfit/urfit-ui
 git add .
-git commit -m "chore: configure Vite lib mode build"
+git commit -m "chore: configure Vite lib mode build and shadcn CLI compatibility"
 ```
 
 ---
