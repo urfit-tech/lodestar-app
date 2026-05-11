@@ -751,12 +751,7 @@ cd /Users/eddy/urfit/urfit-ui/packages/ui
 pnpm dlx shadcn@latest add button
 ```
 
-這會建立 `src/components/button.tsx`（或 `src/components/ui/button.tsx`）。若放在 `ui/` 子目錄，將其移到 `src/components/button.tsx`：
-
-```bash
-mv src/components/ui/button.tsx src/components/button.tsx
-rmdir src/components/ui 2>/dev/null || true
-```
+這會直接建立 `src/components/button.tsx`（因為 components.json 的 alias 是 `"ui": "@/components"`，shadcn 會用扁平結構，不會放在 `ui/` 子目錄）。
 
 - [ ] **Step 4: 修改 button.tsx 加入 Chakra v1 相容的 variant**
 
@@ -900,10 +895,14 @@ export { IconButton }
 將 `packages/ui/src/index.ts` 替換成：
 
 ```ts
+import './styles/globals.css'
+
 export { Button, buttonVariants, type ButtonProps } from './components/button'
 export { ButtonGroup, type ButtonGroupProps } from './components/button-group'
 export { IconButton, type IconButtonProps } from './components/icon-button'
 ```
+
+**注意：** 第一行 `import './styles/globals.css'` 是必要的。沒有這行，Vite lib mode 不會輸出 `dist/index.css`（因為沒有任何模組 import CSS），下游就拿不到 Chakra v1 token。
 
 - [ ] **Step 8: 先 build packages/ui，再啟動 Storybook 驗證**
 
@@ -979,12 +978,7 @@ cd /Users/eddy/urfit/urfit-ui/packages/ui
 pnpm dlx shadcn@latest add skeleton
 ```
 
-若產生在 `src/components/ui/skeleton.tsx`，移動：
-
-```bash
-mv src/components/ui/skeleton.tsx src/components/skeleton.tsx
-rmdir src/components/ui 2>/dev/null || true
-```
+會直接建立 `src/components/skeleton.tsx`（扁平結構）。
 
 - [ ] **Step 3: 修改 skeleton.tsx 加入 SkeletonText 和 SkeletonCircle**
 
@@ -1241,7 +1235,7 @@ cd /Users/eddy/urfit/urfit-ui/packages/ui
 pnpm dlx shadcn@latest add separator
 ```
 
-若在 `src/components/ui/separator.tsx`，移動到 `src/components/separator.tsx`。
+會直接建立 `src/components/separator.tsx`（扁平結構）。
 
 - [ ] **Step 3: 修改 separator.tsx，加入 Divider alias 及 margin props**
 
@@ -1870,6 +1864,8 @@ pnpm build
 `packages/ui/src/index.ts` 完整內容應為：
 
 ```ts
+import './styles/globals.css'
+
 export { Button, buttonVariants, type ButtonProps } from './components/button'
 export { ButtonGroup, type ButtonGroupProps } from './components/button-group'
 export { IconButton, type IconButtonProps } from './components/icon-button'
