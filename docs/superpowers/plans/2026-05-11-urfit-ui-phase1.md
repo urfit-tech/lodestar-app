@@ -6,7 +6,7 @@
 
 **Architecture:** 新 git repo 位於 `/Users/eddy/urfit/urfit-ui/`，使用 pnpm workspaces。`packages/ui` 以 shadcn（Tailwind v4 CSS-first）開發元件，透過 Vite lib mode 編譯成 `dist/index.js` + `dist/index.css`。`apps/storybook` 用 Storybook 8 + Vite 提供視覺驗證環境。Chakra v1 design tokens 透過 CSS `@theme` directive 覆寫 shadcn 預設值。
 
-**Tech Stack:** pnpm 11、Node 22、shadcn latest（Tailwind v4）、`@tailwindcss/vite`、Vite 6、Storybook 8、lucide-react、TypeScript 5、React 17 peer
+**Tech Stack:** pnpm 11、Node 22、shadcn latest（Tailwind v4.3）、`@tailwindcss/vite` 4.3、Vite 8、Storybook 10.3（v10 核心 addon 內建，無 addon-essentials）、lucide-react 1.x、TypeScript 5、React 17 peer
 
 ---
 
@@ -171,22 +171,22 @@ mkdir -p /Users/eddy/urfit/urfit-ui/packages/ui/src/components
     "react-dom": "^17.0.0 || ^18.0.0"
   },
   "dependencies": {
-    "@radix-ui/react-separator": "^1.1.0",
-    "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-separator": "^1.1.8",
+    "@radix-ui/react-slot": "^1.2.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.511.0",
-    "tailwind-merge": "^3.3.0"
+    "lucide-react": "^1.14.0",
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.1.0",
+    "@tailwindcss/vite": "^4.3.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
-    "@vitejs/plugin-react": "^4.4.1",
-    "tailwindcss": "^4.1.0",
+    "@vitejs/plugin-react": "^6.0.1",
+    "tailwindcss": "^4.3.0",
     "typescript": "^5.8.0",
-    "vite": "^6.3.0",
-    "vite-plugin-dts": "^4.5.0"
+    "vite": "^8.0.0",
+    "vite-plugin-dts": "^5.0.0"
   }
 }
 ```
@@ -491,12 +491,17 @@ git commit -m "chore: configure Vite lib mode build"
 
 ---
 
-## Task 4: 設定 Storybook 8
+## Task 4: 設定 Storybook 10
 
 **Files:**
 - Create: `apps/storybook/package.json`
 - Create: `apps/storybook/.storybook/main.ts`
 - Create: `apps/storybook/.storybook/preview.ts`
+
+**Storybook v10 重要改變：**
+- `@storybook/addon-essentials` 已移除 — 核心 addon（actions、controls、viewport、backgrounds、toolbars 等）內建於 storybook core
+- 只需三個主要套件：`storybook`、`@storybook/react-vite`、`@storybook/addon-docs`（可選）
+- main.ts 的 `addons` array 可留空（核心 addon 自動載入）
 
 - [ ] **Step 1: 建立 apps/storybook 目錄**
 
@@ -517,23 +522,18 @@ mkdir -p /Users/eddy/urfit/urfit-ui/apps/storybook/stories
     "build": "storybook build"
   },
   "dependencies": {
-    "@urfit/ui": "workspace:*"
+    "@urfit/ui": "workspace:*",
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^3.0.0",
-    "@storybook/addon-essentials": "^8.6.0",
-    "@storybook/addon-onboarding": "^8.6.0",
-    "@storybook/blocks": "^8.6.0",
-    "@storybook/react": "^8.6.0",
-    "@storybook/react-vite": "^8.6.0",
-    "@storybook/test": "^8.6.0",
+    "@storybook/addon-docs": "^10.3.0",
+    "@storybook/react-vite": "^10.3.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
-    "@vitejs/plugin-react": "^4.4.1",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "storybook": "^8.6.0",
-    "vite": "^6.3.0"
+    "@vitejs/plugin-react": "^6.0.1",
+    "storybook": "^10.3.0",
+    "vite": "^8.0.0"
   }
 }
 ```
@@ -547,10 +547,7 @@ import type { StorybookConfig } from '@storybook/react-vite'
 
 const config: StorybookConfig = {
   stories: ['../stories/**/*.stories.@(ts|tsx)'],
-  addons: [
-    '@storybook/addon-essentials',
-    '@storybook/addon-onboarding',
-  ],
+  addons: ['@storybook/addon-docs'],
   framework: {
     name: '@storybook/react-vite',
     options: {},
@@ -565,8 +562,8 @@ export default config
 建立 `apps/storybook/.storybook/preview.ts`：
 
 ```ts
+import type { Preview } from '@storybook/react-vite'
 import '@urfit/ui/dist/index.css'
-import type { Preview } from '@storybook/react'
 
 const preview: Preview = {
   parameters: {
@@ -594,11 +591,16 @@ pnpm install
 先建立一個暫時 story 確認設定正確。建立 `apps/storybook/stories/placeholder.stories.tsx`：
 
 ```tsx
-export default {
+import type { Meta, StoryObj } from '@storybook/react-vite'
+
+const meta: Meta = {
   title: 'Setup/Placeholder',
 }
+export default meta
 
-export const Ready = () => <div style={{ padding: 16 }}>Storybook is working ✓</div>
+export const Ready: StoryObj = {
+  render: () => <div style={{ padding: 16 }}>Storybook is working ✓</div>,
+}
 ```
 
 ```bash
@@ -614,7 +616,7 @@ pnpm dev
 rm /Users/eddy/urfit/urfit-ui/apps/storybook/stories/placeholder.stories.tsx
 cd /Users/eddy/urfit/urfit-ui
 git add .
-git commit -m "chore: set up Storybook 8 with Vite"
+git commit -m "chore: set up Storybook 10 with Vite"
 ```
 
 ---
@@ -633,7 +635,7 @@ git commit -m "chore: set up Storybook 8 with Vite"
 建立 `apps/storybook/stories/button.stories.tsx`：
 
 ```tsx
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Button, ButtonGroup, IconButton } from '@urfit/ui'
 import { SearchIcon } from 'lucide-react'
 
@@ -905,7 +907,7 @@ git commit -m "feat(ui): add Button, ButtonGroup, IconButton"
 建立 `apps/storybook/stories/skeleton.stories.tsx`：
 
 ```tsx
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-vite'
 import { Skeleton, SkeletonCircle, SkeletonText } from '@urfit/ui'
 
 const meta: Meta = { title: 'Components/Skeleton' }
@@ -1039,7 +1041,7 @@ git commit -m "feat(ui): add Skeleton, SkeletonText, SkeletonCircle"
 建立 `apps/storybook/stories/spinner.stories.tsx`：
 
 ```tsx
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-vite'
 import { Spinner } from '@urfit/ui'
 
 const meta: Meta = { title: 'Components/Spinner' }
@@ -1170,7 +1172,7 @@ git commit -m "feat(ui): add Spinner"
 建立 `apps/storybook/stories/separator.stories.tsx`：
 
 ```tsx
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-vite'
 import { Divider } from '@urfit/ui'
 
 const meta: Meta = { title: 'Components/Divider' }
@@ -1285,7 +1287,7 @@ git commit -m "feat(ui): add Divider (Separator)"
 建立 `apps/storybook/stories/typography.stories.tsx`：
 
 ```tsx
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-vite'
 import { Heading, Text } from '@urfit/ui'
 
 const meta: Meta = { title: 'Components/Typography' }
@@ -1413,7 +1415,7 @@ git commit -m "feat(ui): add Text and Heading"
 建立 `apps/storybook/stories/layout.stories.tsx`：
 
 ```tsx
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-vite'
 import { Box, Center, Container, Flex, HStack, Spacer, Stack } from '@urfit/ui'
 
 const meta: Meta = { title: 'Components/Layout' }
@@ -1701,7 +1703,7 @@ git commit -m "feat(ui): add layout wrappers (Box, Flex, HStack, Stack, Spacer, 
 建立 `apps/storybook/stories/icon.stories.tsx`：
 
 ```tsx
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-vite'
 import { Icon } from '@urfit/ui'
 import {
   AlertCircle,
