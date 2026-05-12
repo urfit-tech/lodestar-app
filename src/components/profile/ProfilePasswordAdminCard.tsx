@@ -2,8 +2,8 @@ import { Button } from '@chakra-ui/react'
 import { Form, message, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { FormEvent, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { handleError } from '../../helpers'
@@ -29,9 +29,9 @@ const ProfilePasswordAdminCard: React.FC<ProfilePasswordAdminCardProps> = ({ for
     form.validateFields((error, values) => {
       if (!error) {
         setLoading(true)
-        axios
-          .post(
-            `${import.meta.env.VITE_API_BASE_ROOT}/auth/change-password`,
+        createAppBackendClient()
+          .post<{ code: string }>(
+            '/auth/change-password',
             {
               password: values.password,
               newPassword: values.newPassword,
@@ -40,7 +40,7 @@ const ProfilePasswordAdminCard: React.FC<ProfilePasswordAdminCardProps> = ({ for
               headers: { authorization: `Bearer ${authToken}` },
             },
           )
-          .then(({ data: { code } }) => {
+          .then(({ code }) => {
             if (code === 'SUCCESS') {
               message.success(formatMessage(commonMessages.message.success.passwordUpdate))
             } else {

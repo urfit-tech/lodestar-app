@@ -1,9 +1,9 @@
 import { gql, useQuery } from '@apollo/client'
-import axios from 'axios'
 import { max, min } from 'lodash'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createLodestarServerClient } from 'lodestar-app-element/src/services/http'
 import { flatten, uniq } from 'ramda'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import hasura from '../hasura'
 import {
   MerchandiseBriefProps,
@@ -133,6 +133,7 @@ export const useMerchandiseCollection = (options?: {
 
 export const useMerchandiseSpecQuantity = (merchandiseSpecId: string) => {
   const { authToken } = useAuth()
+  const lodestarServerClient = useMemo(() => createLodestarServerClient(), [])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<any>()
   const [data, setData] = useState<MerchandiseSpecProps | null>(null)
@@ -141,7 +142,7 @@ export const useMerchandiseSpecQuantity = (merchandiseSpecId: string) => {
     const route = `/merchandise-spec/${merchandiseSpecId}/inventory/status`
     setLoading(true)
     try {
-      const { data } = await axios.get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`, {
+      const data = await lodestarServerClient.get<{ result?: any }>(route, {
         headers: { authorization: `Bearer ${authToken}` },
       })
 
@@ -163,7 +164,7 @@ export const useMerchandiseSpecQuantity = (merchandiseSpecId: string) => {
     } finally {
       setLoading(false)
     }
-  }, [merchandiseSpecId])
+  }, [authToken, lodestarServerClient, merchandiseSpecId])
 
   useEffect(() => {
     refetchMerchandiseSpec()

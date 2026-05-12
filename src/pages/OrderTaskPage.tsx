@@ -1,7 +1,7 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button, message } from 'antd'
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { Link, useHistory, useParams } from 'react-router-dom'
@@ -62,13 +62,12 @@ const OrderTaskPage: React.FC = () => {
       } else {
         const search = window.location.search
         const clientBackUrl = search.substring(1, search.length).split('&')[0].split('=')[1]
-        axios
-          .post(
-            `${import.meta.env.VITE_API_BASE_ROOT}/tasks/payment/`,
-            { orderId: task.returnvalue.orderId, clientBackUrl: clientBackUrl || window.location.origin },
-            { headers: { authorization: `Bearer ${authToken}` } },
-          )
-          .then(({ data: { code, result } }) => {
+        createAppBackendClient({ getAuthToken: () => authToken })
+          .post<{ code: string; result: { id: string } }>('/tasks/payment/', {
+            orderId: task.returnvalue.orderId,
+            clientBackUrl: clientBackUrl || window.location.origin,
+          })
+          .then(({ code, result }) => {
             if (code === 'SUCCESS') {
               history.push(`/tasks/payment/${result.id}`)
             } else {

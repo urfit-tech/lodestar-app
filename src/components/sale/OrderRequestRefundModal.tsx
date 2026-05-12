@@ -19,11 +19,11 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
-import axios from 'axios'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import ProductTypeLabel from 'lodestar-app-element/src/components/labels/ProductTypeLabel'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import { sum } from 'ramda'
 import { useEffect, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
@@ -86,7 +86,7 @@ const OrderRequestRefundModal: React.FC<{
       return
     }
     setRefundableChecking(true)
-    axios
+    createAppBackendClient({ getAuthToken: () => authToken })
       .get<{
         code: string
         message: string
@@ -99,10 +99,8 @@ const OrderRequestRefundModal: React.FC<{
             message?: string
           }[]
         }
-      }>(`${import.meta.env.VITE_API_BASE_ROOT}/order/detail/${orderId}`, {
-        headers: { authorization: `Bearer ${authToken}` },
-      })
-      .then(({ data: { code, message, result } }) => {
+      }>(`/order/detail/${orderId}`)
+      .then(({ code, message, result }) => {
         if (code === 'SUCCESS') {
           setRefundableProducts(
             result.orderProducts
@@ -127,22 +125,16 @@ const OrderRequestRefundModal: React.FC<{
       return
     }
     setRefunding(true)
-    axios
+    createAppBackendClient({ getAuthToken: () => authToken })
       .post<{
         code: string
         message: string
         result: string
-      }>(
-        `${import.meta.env.VITE_API_BASE_ROOT}/payment/refund`,
-        {
-          orderId,
-          refundOrderProducts: refundableProducts.filter(product => refundIds.includes(product.id)),
-        },
-        {
-          headers: { authorization: `Bearer ${authToken}` },
-        },
-      )
-      .then(({ data: { code } }) => {
+      }>('/payment/refund', {
+        orderId,
+        refundOrderProducts: refundableProducts.filter(product => refundIds.includes(product.id)),
+      })
+      .then(({ code }) => {
         if (code === 'SUCCESS') {
           onRefetch?.()
           onClose()

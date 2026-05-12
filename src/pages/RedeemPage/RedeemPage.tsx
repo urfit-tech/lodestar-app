@@ -1,6 +1,6 @@
 import { Button, Icon as ChakraIcon } from '@chakra-ui/react'
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
@@ -96,15 +96,11 @@ const RedeemPage: React.FC = () => {
 
   const handleSubmit = () => {
     setSendingState('loading')
-    axios
-      .post<ApiResponse>(
-        `${import.meta.env.VITE_API_BASE_ROOT}/discount/redeem`,
-        {
-          token,
-        },
-        { headers: { authorization: `Bearer ${authToken}` } },
-      )
-      .then(({ data: { code } }) => {
+    createAppBackendClient({ getAuthToken: () => authToken })
+      .post<ApiResponse>('/discount/redeem', {
+        token,
+      })
+      .then(({ code }) => {
         if (code === 'SUCCESS') {
           setSendingState('success')
         } else {

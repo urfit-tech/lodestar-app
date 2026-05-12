@@ -1,12 +1,12 @@
 import { LockIcon } from '@chakra-ui/icons'
 import { SkeletonText } from '@chakra-ui/react'
-import axios from 'axios'
 import BraftEditor from 'braft-editor'
 import 'braft-editor/dist/index.css'
 import 'braft-editor/dist/output.css'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import { flatten, includes } from 'ramda'
 import React, { ReactElement, useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
@@ -120,14 +120,12 @@ const ProgramCustomContentBlock: React.FC<{
     progress: number
   }) => {
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_ROOT}/tasks/player-event-logs/`,
-        {
-          programContentId,
-          data,
-        },
-        { headers: { authorization: `Bearer ${authToken}` } },
-      )
+      await createAppBackendClient({
+        getAuthToken: () => authToken,
+      }).post('/tasks/player-event-logs/', {
+        programContentId,
+        data,
+      })
     } catch (error) {
       console.error(`Failed to insert player event log`, error)
     }

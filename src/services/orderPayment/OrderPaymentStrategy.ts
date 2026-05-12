@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 
 type RecordType = {
   orderLogId: string
@@ -87,16 +87,17 @@ abstract class BasePaymentStrategy implements PaymentStrategy {
 
 export class OrderSplitPaymentStrategy extends BasePaymentStrategy {
   protected async makeRequest(record: RecordType): Promise<StandardApiResponse> {
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_BASE_ROOT}/order/${record.orderLogId}/payment/link`,
-      { appId: record.appId },
-    )
+    const data = await createAppBackendClient().post<{
+      code: string
+      message: string
+      result: { link: string }
+    }>(`/order/${record.orderLogId}/payment/link`, { appId: record.appId })
 
     const {
       code,
       message,
       result: { link },
-    } = response.data
+    } = data
 
     return {
       code,
@@ -111,21 +112,17 @@ export class OrderSplitPaymentStrategy extends BasePaymentStrategy {
 
 export class OrderDefaultPaymentStrategy extends BasePaymentStrategy {
   protected async makeRequest(record: RecordType): Promise<StandardApiResponse> {
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_BASE_ROOT}/tasks/payment/`,
-      {
-        orderId: record.orderLogId,
-        clientBackUrl: record.clientBackUrl,
-        invoiceGatewayId: record.invoiceGatewayId,
-      },
-      {
-        headers: {
-          authorization: `Bearer ${record.authToken}`,
-        },
-      },
-    )
+    const data = await createAppBackendClient({ getAuthToken: () => record.authToken }).post<{
+      code: string
+      message: string
+      result: { id: string }
+    }>('/tasks/payment/', {
+      orderId: record.orderLogId,
+      clientBackUrl: record.clientBackUrl,
+      invoiceGatewayId: record.invoiceGatewayId,
+    })
 
-    const { code, result, message } = response.data
+    const { code, result, message } = data
 
     return {
       code,

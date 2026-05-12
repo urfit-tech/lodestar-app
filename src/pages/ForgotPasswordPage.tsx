@@ -1,7 +1,7 @@
 import { Button, Form, Icon, message } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
-import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
@@ -49,12 +49,12 @@ const ForgotPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
 
       setLoading(true)
       const trimedEmail = values.email.trim()
-      axios
-        .post(`${import.meta.env.VITE_API_BASE_ROOT}/auth/forgot-password`, {
+      createAppBackendClient()
+        .post<{ code: string }>('/auth/forgot-password', {
           appId,
           account: trimedEmail,
         })
-        .then(({ data: { code } }) => {
+        .then(({ code }) => {
           if (code === 'SUCCESS') {
             history.push(`/check-email?email=${trimedEmail}&type=forgot-password`)
           } else {

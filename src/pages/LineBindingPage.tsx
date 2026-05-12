@@ -1,7 +1,7 @@
 import { Button, Icon } from '@chakra-ui/react'
-import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router-dom'
@@ -50,16 +50,16 @@ const LineBindingPage: React.FC = () => {
 
   const handleAccountLink = async (appId: String, accountLinkToken: String, authToken: String) => {
     setBinding(true)
-    await axios
-      .post(
-        `${import.meta.env.VITE_API_BASE_ROOT}/line/generate-nonce`,
+    await createAppBackendClient()
+      .post<{ code: string; result: { lineNonce: string } }>(
+        '/line/generate-nonce',
         { appId, memberId: currentMemberId },
         {
           headers: { authorization: `Bearer ${authToken}` },
           withCredentials: true,
         },
       )
-      .then(async ({ data: { code, message, result } }) => {
+      .then(async ({ code, result }) => {
         if (code !== 'SUCCESS') {
           throw new Error(code)
         }

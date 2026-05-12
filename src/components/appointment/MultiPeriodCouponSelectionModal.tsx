@@ -1,5 +1,4 @@
 import { Button, Input, Spinner } from '@chakra-ui/react'
-import axios from 'axios'
 import CouponCard from 'lodestar-app-element/src/components/cards/CouponCard'
 import Divider from 'lodestar-app-element/src/components/common/Divider'
 import CommonModal from 'lodestar-app-element/src/components/modals/CommonModal'
@@ -7,6 +6,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import { checkoutMessages, commonMessages } from 'lodestar-app-element/src/helpers/translation'
 import { useToastMessage } from 'lodestar-app-element/src/hooks/util'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import { CouponProps, OrderDiscountProps, OrderProductProps } from 'lodestar-app-element/src/types/checkout'
 import { always, complement, equals, filter, head, ifElse, includes, isEmpty, map, pipe, prop, sum } from 'ramda'
 import React, { useState } from 'react'
@@ -62,18 +62,12 @@ const MultiPeriodCouponSelectionModal: React.FC<{
 
   const handleCouponInsert = () => {
     setInserting(true)
-    axios
-      .post(
-        `${import.meta.env.VITE_API_BASE_ROOT}/payment/exchange`,
-        {
-          code: code.trim(),
-          type: 'Coupon',
-        },
-        {
-          headers: { authorization: `Bearer ${authToken}` },
-        },
-      )
-      .then(({ data }) => {
+    createAppBackendClient({ getAuthToken: () => authToken })
+      .post<{ code: string }>('/payment/exchange', {
+        code: code.trim(),
+        type: 'Coupon',
+      })
+      .then(data => {
         if (data.code === 'SUCCESS') {
           refetchCoupons()
           setCode('')

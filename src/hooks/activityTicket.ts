@@ -1,6 +1,6 @@
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useCallback, useEffect, useState } from 'react'
+import { createLodestarServerClient } from 'lodestar-app-element/src/services/http'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MemberRightActivityTicket } from '../types/activity'
 
 export const useMemberRightActivityTicket = (
@@ -9,6 +9,7 @@ export const useMemberRightActivityTicket = (
   memberId: string | undefined | null,
 ) => {
   const { currentMemberId, authToken } = useAuth()
+  const lodestarServerClient = useMemo(() => createLodestarServerClient(), [])
   const [data, setData] = useState<MemberRightActivityTicket | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
 
@@ -53,7 +54,7 @@ export const useMemberRightActivityTicket = (
 
         setLoading(true)
         try {
-          const response = await axios.get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`, {
+          const data = await lodestarServerClient.get<any>(route, {
             params: {
               activityTicketId: activityTicketId,
               ...(memberId ? { memberId: memberId } : {}),
@@ -62,8 +63,8 @@ export const useMemberRightActivityTicket = (
             headers: { authorization: `Bearer ${authToken}` },
           })
 
-          if (response.status === 200 && response.data) {
-            const convertedData = convertToMemberRightActivityTicket(response.data)
+          if (data) {
+            const convertedData = convertToMemberRightActivityTicket(data)
             setData(convertedData)
           } else {
             console.error('No data returned or status code is not 200.')
@@ -77,7 +78,7 @@ export const useMemberRightActivityTicket = (
         }
       }
     },
-    [currentMemberId, sessionId, authToken, memberId],
+    [authToken, currentMemberId, lodestarServerClient, memberId, sessionId],
   )
 
   useEffect(() => {

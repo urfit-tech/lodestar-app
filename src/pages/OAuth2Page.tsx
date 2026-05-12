@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { BackendServerError, BindDeviceError, LoginDeviceError } from 'lodestar-app-element/src/helpers/error'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
@@ -214,9 +215,9 @@ const Oauth2Section: React.FC = () => {
   useEffect(() => {
     if (!isAuthenticating && !currentMemberId && appId && code) {
       const redirectUri = `${host}/oauth2/${provider}`
-      axios
-        .post(
-          `${import.meta.env.VITE_API_BASE_ROOT}/auth/get-oauth-token`,
+      createAppBackendClient()
+        .post<{ code: string; result: { token: string } }>(
+          '/auth/get-oauth-token',
           {
             appId,
             provider,
@@ -225,7 +226,7 @@ const Oauth2Section: React.FC = () => {
           },
           { withCredentials: true },
         )
-        .then(({ data: { code, message, result } }) => {
+        .then(({ code, result }) => {
           if (code === 'SUCCESS') {
             return socialLogin?.({
               provider,

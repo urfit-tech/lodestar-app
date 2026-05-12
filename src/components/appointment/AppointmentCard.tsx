@@ -3,11 +3,11 @@ import { Icon } from '@chakra-ui/icons'
 import { Button, ButtonGroup, SkeletonCircle, SkeletonText, Spinner, Textarea } from '@chakra-ui/react'
 import { Divider, Dropdown, Form, Icon as AntdIcon, Menu, message, Modal } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
-import axios from 'axios'
 import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient, createKolableServerClient } from 'lodestar-app-element/src/services/http'
 import moment from 'moment'
 import React, { Suspense, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -246,20 +246,14 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
 
     try {
       if (rescheduleAppointment) {
-        await axios
-          .post(
-            `${import.meta.env.VITE_API_BASE_ROOT}/product/${orderProductId}/reschedule`,
-            {
-              meetId: orderProduct.options?.['meetId'],
-              memberId,
-              appointmentPlanId: appointmentPlanId,
-              startedAt: rescheduleAppointment.periodStartedAt,
-              endedAt: rescheduleAppointment.periodEndedAt,
-            },
-            {
-              headers: { authorization: `Bearer ${authToken}` },
-            },
-          )
+        await createAppBackendClient({ getAuthToken: () => authToken })
+          .post(`/product/${orderProductId}/reschedule`, {
+            meetId: orderProduct.options?.['meetId'],
+            memberId,
+            appointmentPlanId: appointmentPlanId,
+            startedAt: rescheduleAppointment.periodStartedAt,
+            endedAt: rescheduleAppointment.periodEndedAt,
+          })
           .then(() => {
             onRefetch?.()
             refetchAppointmentPlan()
@@ -295,26 +289,24 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
     } else if (enabledModules.meet_service && appointmentPlan.defaultMeetGateway === 'zoom') {
       // create zoom meeting than get joinUrl
       try {
-        const { data: createMeetData } = await axios.post(
-          `${import.meta.env.VITE_KOLABLE_SERVER_ENDPOINT}/kolable/meets`,
-          {
-            memberId: currentMemberId,
-            startedAt: orderProduct.startedAt,
-            endedAt: orderProduct.endedAt,
-            autoRecording: true,
-            nbfAt: orderProduct.startedAt,
-            expAt: orderProduct.endedAt,
-            service: 'zoom',
-            target: appointmentPlanId,
-            hostMemberId: appointmentPlan.creator.id,
-            type: 'appointmentPlan',
-          },
-          {
-            headers: {
-              authorization: `Bearer ${authToken}`,
-            },
-          },
-        )
+        const createMeetData = await createKolableServerClient({ getAuthToken: () => authToken }).post<{
+          data?: {
+            options?: {
+              joinUrl?: string
+            }
+          }
+        }>('/kolable/meets', {
+          memberId: currentMemberId,
+          startedAt: orderProduct.startedAt,
+          endedAt: orderProduct.endedAt,
+          autoRecording: true,
+          nbfAt: orderProduct.startedAt,
+          expAt: orderProduct.endedAt,
+          service: 'zoom',
+          target: appointmentPlanId,
+          hostMemberId: appointmentPlan.creator.id,
+          type: 'appointmentPlan',
+        })
         joinUrl = createMeetData.data?.options?.joinUrl
       } catch (error) {
         handleError(error)

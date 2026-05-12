@@ -1,6 +1,6 @@
 import { useInterval } from '@chakra-ui/react'
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { createContext, useEffect, useRef, useState } from 'react'
 import { usePodcastProgramContent } from '../hooks/podcast'
 import { PodcastProgramContent } from '../types/podcast'
@@ -103,17 +103,15 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
 
   useInterval(() => {
     if (playing && podcastProgramIds[currentIndex] && currentMemberId && authToken) {
-      axios.post(
-        `${import.meta.env.VITE_API_BASE_ROOT}/tasks/podcast-program-progress`,
-        {
-          podcastProgramId: podcastProgramIds[currentIndex],
-          memberId: currentMemberId,
-          progress: progress, // TODO: changed if progress more than before
-          lastProgress: progress,
-          podcastAlbumId: podcastAlbumId,
-        },
-        { headers: { authorization: `Bearer ${authToken}` } },
-      )
+      void createAppBackendClient({
+        getAuthToken: () => authToken,
+      }).post('/tasks/podcast-program-progress', {
+        podcastProgramId: podcastProgramIds[currentIndex],
+        memberId: currentMemberId,
+        progress: progress, // TODO: changed if progress more than before
+        lastProgress: progress,
+        podcastAlbumId: podcastAlbumId,
+      })
     }
   }, 5000)
   return (

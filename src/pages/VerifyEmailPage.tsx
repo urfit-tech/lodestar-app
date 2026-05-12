@@ -1,7 +1,7 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button, message as antdMessage } from 'antd'
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
@@ -48,13 +48,13 @@ const VerifyEmailPage: React.FC = () => {
 
   const verifyEmail = useCallback(() => {
     if (authToken && token && memberId === member?.id && member?.email) {
-      axios
-        .post(
-          `${import.meta.env.VITE_API_BASE_ROOT}/auth/verify-email`,
+      createAppBackendClient()
+        .post<{ code: string; message: string }>(
+          '/auth/verify-email',
           { memberId, email: member.email, token },
           { headers: { authorization: `Bearer ${authToken}` } },
         )
-        .then(({ data: { code, message, result } }) => {
+        .then(({ code, message }) => {
           if (code === 'SUCCESS') {
             window.location.replace(`/settings/profile?verified=1`)
           } else {

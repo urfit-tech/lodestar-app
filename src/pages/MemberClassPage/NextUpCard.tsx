@@ -1,6 +1,6 @@
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useCallback, useEffect, useState } from 'react'
+import { createKolableServerClient } from 'lodestar-app-element/src/services/http'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { CalendarEvent, CourseType, ViewAs } from './types'
@@ -118,6 +118,7 @@ interface NextUpCardProps {
 const NextUpCard: React.FC<NextUpCardProps> = ({ event, viewAs }) => {
   const { formatMessage } = useIntl()
   const { authToken, currentMemberId } = useAuth()
+  const kolableServerClient = useMemo(() => createKolableServerClient(), [])
   const [isZoomActive, setIsZoomActive] = useState(false)
   const [zoomHint, setZoomHint] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -157,13 +158,15 @@ const NextUpCard: React.FC<NextUpCardProps> = ({ event, viewAs }) => {
 
     try {
       setIsLoading(true)
-      const kolableEndpoint = import.meta.env.VITE_KOLABLE_SERVER_ENDPOINT
 
       const startedAt = new Date(`${event.date}T${event.startTime}`).toISOString()
       const endedAt = new Date(`${event.date}T${event.endTime}`).toISOString()
 
-      const response = await axios.post(
-        `${kolableEndpoint}/kolable/meets/by-time`,
+      const data = await kolableServerClient.post<{
+        code?: string
+        data?: { options?: { startUrl?: string; joinUrl?: string } }
+      }>(
+        '/kolable/meets/by-time',
         {
           startedAt,
           endedAt,
@@ -179,21 +182,21 @@ const NextUpCard: React.FC<NextUpCardProps> = ({ event, viewAs }) => {
         },
       )
 
-      const meeting = response.data?.data
+      const meeting = data?.data
       const isHost = !!currentMemberId && currentMemberId === event.hostMemberId
       const meetingUrl = isHost ? meeting?.options?.startUrl : meeting?.options?.joinUrl
 
-      if (response.data?.code === 'SUCCESS' && meetingUrl) {
+      if (data?.code === 'SUCCESS' && meetingUrl) {
         window.open(meetingUrl, '_blank', 'noopener,noreferrer')
       } else {
-        console.error('Failed to get Zoom link:', response.data)
+        console.error('Failed to get Zoom link:', data)
       }
     } catch (err) {
       console.error('Failed to create meeting:', err)
     } finally {
       setIsLoading(false)
     }
-  }, [event, isZoomActive, isLoading, authToken, currentMemberId])
+  }, [authToken, currentMemberId, event, isLoading, isZoomActive, kolableServerClient])
 
   if (!event) {
     return (

@@ -1,10 +1,11 @@
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { useCallback, useEffect, useState } from 'react'
+import { createLodestarServerClient } from 'lodestar-app-element/src/services/http'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { VoucherFromAPI, VoucherProps } from '../types/vouchers'
 
 export const useEnrolledVoucherCollection = (memberId: string) => {
   const { authToken } = useAuth()
+  const lodestarServerClient = useMemo(() => createLodestarServerClient(), [])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<any>()
   const [data, setData] = useState<
@@ -19,7 +20,7 @@ export const useEnrolledVoucherCollection = (memberId: string) => {
       const route = '/vouchers'
       try {
         setLoading(true)
-        const { data } = await axios.get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`, {
+        const data = await lodestarServerClient.get<VoucherFromAPI[]>(route, {
           params: { memberId, includeDeleted: false },
           headers: { authorization: `Bearer ${authToken}` },
         })
@@ -56,7 +57,7 @@ export const useEnrolledVoucherCollection = (memberId: string) => {
         setLoading(false)
       }
     }
-  }, [authToken])
+  }, [authToken, lodestarServerClient, memberId])
 
   useEffect(() => {
     fetch()

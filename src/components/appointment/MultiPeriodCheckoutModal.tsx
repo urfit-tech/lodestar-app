@@ -11,7 +11,6 @@ import {
   Stack,
   useToast,
 } from '@chakra-ui/react'
-import axios from 'axios'
 import { camelCase } from 'lodash'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import ProductItem from 'lodestar-app-element/src/components/common/ProductItem'
@@ -43,6 +42,7 @@ import { useMember, useUpdateMemberMetadata } from 'lodestar-app-element/src/hoo
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { getResourceByProductId, useTappay } from 'lodestar-app-element/src/hooks/util'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import {
   CheckProps,
   ContactInfo,
@@ -616,22 +616,27 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
         clientBackUrl.searchParams.append('checkoutProductId', productId)
 
         TPDirect.card.getPrime(({ status, card: { prime } }: { status: number; card: { prime: string } }) => {
-          axios({
-            method: 'POST',
-            url: `${import.meta.env.VITE_API_BASE_ROOT}/payment/credit-cards`,
-            withCredentials: true,
-            data: {
-              prime,
-              cardHolder: {
-                name: currentMember.name,
-                email: currentMember.email,
-                phoneNumber: currentMember.phone || '0987654321',
+          createAppBackendClient({ getAuthToken: () => authToken })
+            .request<{
+              code: string
+              result: {
+                memberCreditCardId: string
+              }
+            }>({
+              method: 'POST',
+              url: '/payment/credit-cards',
+              withCredentials: true,
+              data: {
+                prime,
+                cardHolder: {
+                  name: currentMember.name,
+                  email: currentMember.email,
+                  phoneNumber: currentMember.phone || '0987654321',
+                },
+                clientBackUrl,
               },
-              clientBackUrl,
-            },
-            headers: { authorization: `Bearer ${authToken}` },
-          })
-            .then(({ data: { code, result } }) => {
+            })
+            .then(({ code, result }) => {
               if (code === 'SUCCESS') {
                 resolve(result.memberCreditCardId)
               } else if (code === 'REDIRECT') {
@@ -654,7 +659,7 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
       setOrderPlacing(true)
       const trackingCookie = getTrackingCookie()
       const trackingOptions = { ...trackingCookie }
-      return axios
+      return createAppBackendClient({ getAuthToken: () => authToken })
         .post<{
           code: string
           message: string
@@ -666,23 +671,17 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
             products: { name: string; price: number }[]
             discounts: { name: string; price: number }[]
           }
-        }>(
-          `${import.meta.env.VITE_API_BASE_ROOT}/order/create`,
-          {
-            clientBackUrl: window.location.origin,
-            paymentModel: { type: paymentType, gateway: payment?.gateway, method: payment?.method },
-            productIds: [productId],
-            discountId,
-            shipping: shippingForSubmit,
-            invoice,
-            options,
-            tracking: trackingOptions,
-          },
-          {
-            headers: { authorization: `Bearer ${authToken}` },
-          },
-        )
-        .then(({ data: { code, result, message } }) => {
+        }>('/order/create', {
+          clientBackUrl: window.location.origin,
+          paymentModel: { type: paymentType, gateway: payment?.gateway, method: payment?.method },
+          productIds: [productId],
+          discountId,
+          shipping: shippingForSubmit,
+          invoice,
+          options,
+          tracking: trackingOptions,
+        })
+        .then(({ code, result, message }) => {
           if (code === 'SUCCESS') {
             ReactGA.plugin.execute('ec', 'setAction', 'checkout', { step: 4 })
             ReactGA.ga('send', 'pageview')

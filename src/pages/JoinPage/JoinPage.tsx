@@ -1,6 +1,6 @@
-import axios from 'axios'
 import Cookies from 'js-cookie'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import { useEffect } from 'react'
 import { useHistory } from 'react-router'
 import { StringParam, useQueryParam } from 'use-query-params'
@@ -18,13 +18,13 @@ const JoinPage: React.FC = () => {
       history.push('/auth')
     }
     if (permissionGroupId && authToken && currentUsername) {
-      axios
-        .post(
-          `${import.meta.env.VITE_API_BASE_ROOT}/sys/attach-permission-group`,
+      createAppBackendClient()
+        .post<{ code: string; message?: string }>(
+          '/sys/attach-permission-group',
           { permissionGroupId },
           { headers: { authorization: `Bearer ${authToken}` } },
         )
-        .then(({ data }) => {
+        .then(data => {
           if (data.code === 'SUCCESS') {
             history.push(`/@${currentUsername}`)
           } else {

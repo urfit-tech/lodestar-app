@@ -2,6 +2,7 @@ import { message } from 'antd'
 import { RcFile } from 'antd/lib/upload'
 import axios, { AxiosRequestConfig } from 'axios'
 import Cookies from 'js-cookie'
+import { createAppBackendClient, createLodestarServerClient } from 'lodestar-app-element/src/services/http'
 import moment from 'moment'
 import queryString from 'query-string'
 import { useEffect, useRef, useState } from 'react'
@@ -44,52 +45,41 @@ export const uploadFile = async (
   config?: AxiosRequestConfig,
 ) => {
   let signedUrl = ''
-  file &&
-    (await axios
-      .post(
-        `${import.meta.env.VITE_API_BASE_ROOT}/sys/sign-url`,
-        {
-          operation: 'putObject',
-          params: {
-            Key: key,
-            ContentType: file.type,
-          },
+  if (file) {
+    const data = await createAppBackendClient({ getAuthToken: () => authToken }).post<ApiResponse<string>>(
+      '/sys/sign-url',
+      {
+        operation: 'putObject',
+        params: {
+          Key: key,
+          ContentType: file.type,
         },
-        {
-          headers: { authorization: `Bearer ${authToken}` },
-        },
-      )
-      .then(res => {
-        signedUrl = res.data.result
-        return res.data.result
-      })
-      .then(url => {
-        const { query } = queryString.parseUrl(url)
-        return axios.put<{ status: number; data: string }>(url, file, {
-          ...config,
-          headers: {
-            ...query,
-            'Content-Type': file.type,
-          },
-        })
-      }))
+      },
+    )
+    signedUrl = data.result
+    const { query } = queryString.parseUrl(signedUrl)
+    await axios.put<{ status: number; data: string }>(signedUrl, file, {
+      ...config,
+      headers: {
+        ...query,
+        'Content-Type': file.type,
+      },
+    })
+  }
   return signedUrl
 }
 
 export const getFileDownloadableLink = async (key: string, authToken: string | null) => {
-  const { data } = await axios.post(
-    `${import.meta.env.VITE_API_BASE_ROOT}/sys/sign-url`,
+  const data = await createAppBackendClient({ getAuthToken: () => authToken }).post<ApiResponse<string>>(
+    '/sys/sign-url',
     {
       operation: 'getObject',
       params: {
         Key: key,
       },
     },
-    {
-      headers: { authorization: `Bearer ${authToken}` },
-    },
   )
-  return data.result as string
+  return data.result
 }
 
 export const downloadFile = async (fileName: string, config: AxiosRequestConfig) =>
@@ -423,17 +413,18 @@ export const getRedeemLink = async (
   target: string,
   authToken: string | null,
   config?: AxiosRequestConfig,
-) =>
-  await axios.request<ApiResponse<{ link: string }>>({
+) => {
+  const data = await createAppBackendClient({ getAuthToken: () => authToken }).request<ApiResponse<{ link: string }>>({
     ...config,
     method: 'POST',
-    url: `${import.meta.env.VITE_API_BASE_ROOT}/discount/get-redeem-link`,
+    url: '/discount/get-redeem-link',
     data: {
       type,
       target,
     },
-    headers: { authorization: `Bearer ${authToken}` },
   })
+  return { data }
+}
 
 export const getInfinityDate = () => {
   const MAX_TIMESTAMP = 8640000000000000
@@ -509,11 +500,8 @@ export const getProductEnrollmentFromLodestar = async (
 ) => {
   const route = getLodestarRoute(product)
   if (route) {
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}${memberId ? `/?memberId=${memberId}` : ''}`,
-      {
-        headers: { authorization: `Bearer ${authToken}` },
-      },
+    const data = await createLodestarServerClient({ getAuthToken: () => authToken }).get(
+      `${route}${memberId ? `/?memberId=${memberId}` : ''}`,
     )
 
     return data

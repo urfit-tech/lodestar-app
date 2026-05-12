@@ -1,7 +1,7 @@
 import { Icon } from '@chakra-ui/icons'
 import { Button, message } from 'antd'
-import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -48,12 +48,12 @@ const CheckEmailPage: React.FC = () => {
       }, 3000)
       return
     }
-    axios
-      .post(`${import.meta.env.VITE_API_BASE_ROOT}/auth/forgot-password`, {
+    createAppBackendClient()
+      .post<{ code: string }>('/auth/forgot-password', {
         appId,
         account: email,
       })
-      .then(({ data: { code } }) => {
+      .then(({ code }) => {
         if (code === 'SUCCESS') {
           message.success(formatMessage(usersMessages.messages.resetPassword))
         } else {

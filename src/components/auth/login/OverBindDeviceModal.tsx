@@ -1,15 +1,15 @@
+import { Box, Button, Flex, Input, Text, useToast } from '@chakra-ui/react'
+import Cookies from 'js-cookie'
+import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { createLodestarServerClient } from 'lodestar-app-element/src/services/http'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { handleError } from '../../../helpers'
+import { fetchCurrentGeolocation } from '../../../hooks/util'
+import { EventType } from '../../../types/mailVerificationCode'
+import { AuthModalContext } from '../AuthModal'
 import authMessages, * as localAuthMessages from '../translation'
 import { StyledModal, StyledModalTitle } from './LoginSection'
-import { Input, Text, Flex, Box, Button, useToast } from '@chakra-ui/react'
-import { useContext, useState } from 'react'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { handleError } from '../../../helpers'
-import { AuthModalContext } from '../AuthModal'
-import axios from 'axios'
-import { fetchCurrentGeolocation } from '../../../hooks/util'
-import Cookies from 'js-cookie'
-import { EventType } from '../../../types/mailVerificationCode'
 
 const OverBindDeviceModal: React.FC<{
   visible: boolean
@@ -32,15 +32,15 @@ const OverBindDeviceModal: React.FC<{
 
   const handleConfirm = async () => {
     try {
-      await axios
-        .post(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/mail-verification-code/verify`, {
+      await createLodestarServerClient()
+        .post<{ code: string }>('/mail-verification-code/verify', {
           appId,
           email: member.email,
           memberId: member.id,
           type: eventType,
           code: currentCode,
         })
-        .then(({ data: { code, result } }) => {
+        .then(({ code }) => {
           if (code !== 'SUCCESS') {
             toast({
               title: formatMessage(authMessages.OverBindDeviceModal.validationFailed),
@@ -72,14 +72,14 @@ const OverBindDeviceModal: React.FC<{
   const handleReSend = async () => {
     try {
       const { ip } = await fetchCurrentGeolocation()
-      await axios
-        .post(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/mail-verification-code/send`, {
+      await createLodestarServerClient()
+        .post<{ code: string }>('/mail-verification-code/send', {
           appId,
           email: member.email,
           type: eventType,
           ip,
         })
-        .then(({ data: { code, result } }) => {
+        .then(({ code }) => {
           if (code === 'SUCCESS') {
             toast({
               title: formatMessage(authMessages.OverBindDeviceModal.sentSuccessfully),

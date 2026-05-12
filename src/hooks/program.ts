@@ -1,6 +1,6 @@
 import { gql, QueryHookOptions, useMutation, useQuery } from '@apollo/client'
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createLodestarServerClient } from 'lodestar-app-element/src/services/http'
 import { sum } from 'ramda'
 import { useEffect, useMemo, useState } from 'react'
 import hasura from '../hasura'
@@ -388,10 +388,11 @@ export const useProgram = (programId: string) => {
     { skip: !programId, variables: { programId }, fetchPolicy: 'no-cache' },
   )
 
-  const { loading: loadingProgramPlans, data: programPlans, previousData: previousProgramPlans } = useQuery<
-    hasura.GetProgramPlans,
-    hasura.GetProgramPlansVariables
-  >(
+  const {
+    loading: loadingProgramPlans,
+    data: programPlans,
+    previousData: previousProgramPlans,
+  } = useQuery<hasura.GetProgramPlans, hasura.GetProgramPlansVariables>(
     gql`
       query GetProgramPlans($programId: uuid!) {
         program_plan(where: { program_id: { _eq: $programId } }, order_by: [{ position: asc }, { created_at: asc }]) {
@@ -652,35 +653,27 @@ export const useProgramContentById = (programId: string, contentId: string) => {
   const [programContent, setProgramContent] = useState<ProgramContentResponse>()
 
   useEffect(() => {
-    // TODO: Axios staring from v0.22.0 CancelToken deprecated
-    const CancelToken = axios.CancelToken
-    const source = CancelToken.source()
+    const controller = new AbortController()
     setLoadingProgramContent(true)
     const route = `/programs/${programId}/contents/${contentId}`
     const getProgramContent = async () => {
       if (programId && contentId) {
         try {
-          const { data } = await axios.get<ProgramContentResponse>(
-            `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`,
-            {
-              cancelToken: source.token,
-              headers: authToken ? { authorization: `Bearer ${authToken}` } : null,
-            },
-          )
+          const data = await createLodestarServerClient({
+            getAuthToken: () => authToken,
+          }).get<ProgramContentResponse>(route, { signal: controller.signal })
           setLoadingProgramContent(false)
           setProgramContent(data)
-        } catch (thrown) {
-          if (axios.isCancel(thrown)) {
-            //TODO: This helps prevent axios cancel messages from appearing in devtool
-          } else {
-            console.error(thrown)
+        } catch (error) {
+          if (!controller.signal.aborted) {
+            console.error(error)
           }
         }
       }
     }
     getProgramContent()
     return () => {
-      source.cancel()
+      controller.abort()
     }
   }, [authToken, contentId, programId])
 
@@ -703,12 +696,9 @@ export const useEquityPrograms = () => {
       const route = `/equity/programs`
       const getEquityPrograms = async () => {
         try {
-          const { data } = await axios.get<EquityPrograms>(
-            `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`,
-            {
-              headers: { authorization: `Bearer ${authToken}` },
-            },
-          )
+          const data = await createLodestarServerClient({
+            getAuthToken: () => authToken,
+          }).get<EquityPrograms>(route)
           setLoadingEquityPrograms(false)
           setEquityPrograms(data)
         } catch (err) {
@@ -738,12 +728,9 @@ export const useEquityProgramByProgramId = (programId: string) => {
       const route = `/programs/${programId}`
       const getEquityProgram = async () => {
         try {
-          const { data } = await axios.get<EquityProgram[]>(
-            `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`,
-            {
-              headers: { authorization: `Bearer ${authToken}` },
-            },
-          )
+          const data = await createLodestarServerClient({
+            getAuthToken: () => authToken,
+          }).get<EquityProgram[]>(route)
           setLoadingEquityProgram(false)
           setIsEquityProgram(Object.keys(data).length !== 0)
         } catch (err) {
@@ -826,12 +813,9 @@ export const useProgramContentMaterial = (programId: string) => {
 
       const getProgramContentMaterialByProgramId = async () => {
         try {
-          const { data } = await axios.get<ProgramContentMaterial[]>(
-            `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`,
-            {
-              headers: { authorization: `Bearer ${authToken}` },
-            },
-          )
+          const data = await createLodestarServerClient({
+            getAuthToken: () => authToken,
+          }).get<ProgramContentMaterial[]>(route)
           setProgramContentMaterials(data)
           setLoadingProgramContentMaterials(false)
         } catch (err) {
@@ -1106,9 +1090,10 @@ export const useProgramContentEnrollment = (programId: string) => {
       const route = `/programs/${programId}/contents`
       setIsLoading(true)
       try {
-        const { data } = await axios.get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`, {
+        const data = await createLodestarServerClient({
+          getAuthToken: () => authToken,
+        }).get<{ programContentId: string; displayMode: DisplayMode }[]>(route, {
           params: { memberId: currentMemberId },
-          headers: { authorization: `Bearer ${authToken}` },
         })
 
         setData(data)

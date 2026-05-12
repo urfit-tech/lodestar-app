@@ -11,9 +11,9 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react'
-import axios from 'axios'
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -88,18 +88,12 @@ const GroupBuyingDeliverModal: React.FC<{
         .catch(handleError)
         .finally(() => setLoading(false))
     } else {
-      axios
-        .post<ApiResponse>(
-          `${import.meta.env.VITE_API_BASE_ROOT}/order/send-group-buying-mail`,
-          {
-            orderId,
-            ownerId: currentMemberId,
-            partnerMemberEmail: email,
-          },
-          {
-            headers: { authorization: `Bearer ${authToken}` },
-          },
-        )
+      createAppBackendClient({ getAuthToken: () => authToken })
+        .post<ApiResponse>('/order/send-group-buying-mail', {
+          orderId,
+          ownerId: currentMemberId,
+          partnerMemberEmail: email,
+        })
         .then(() => {
           onRefetch?.()
           toast({

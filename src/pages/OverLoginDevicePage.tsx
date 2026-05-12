@@ -1,9 +1,9 @@
+import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { getFingerPrintId } from 'lodestar-app-element/src/hooks/util'
+import { createLodestarServerClient } from 'lodestar-app-element/src/services/http'
 import OverLoginDeviceModal from '../components/auth/login/OverLoginDeviceModal'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import axios from 'axios'
-import Cookies from 'js-cookie'
-import { getFingerPrintId } from 'lodestar-app-element/src/hooks/util'
 import { handleError } from '../helpers'
 
 const OverLoginDevicePage: React.FC = () => {
@@ -17,18 +17,12 @@ const OverLoginDevicePage: React.FC = () => {
 
   const handleForceLogin = async () => {
     const fingerPrintId = await getFingerPrintId()
-    await axios
-      .post(
-        `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/device/manage-logged-in-limit`,
-        {
-          appId,
-          memberId: member.id,
-          fingerPrintId,
-        },
-        {
-          withCredentials: true,
-        },
-      )
+    await createLodestarServerClient({ withCredentials: true })
+      .post('/device/manage-logged-in-limit', {
+        appId,
+        memberId: member.id,
+        fingerPrintId,
+      })
       .then(() => (window.location.href = '/'))
       .catch(error => handleError(error))
       .finally(() => Cookies.remove('member'))

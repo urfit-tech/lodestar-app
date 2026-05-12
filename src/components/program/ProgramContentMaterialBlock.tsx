@@ -89,6 +89,9 @@ const ProgramContentMaterialBlock: React.FC<{
             responseType: 'blob',
             onDownloadProgress: progressEvent => {
               const { loaded, total } = progressEvent
+              if (!total) {
+                return
+              }
               setDownloadProgress(prev => ({
                 ...prev,
                 [material.id]: Math.floor((loaded / total) * 100),

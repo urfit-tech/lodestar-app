@@ -1,10 +1,9 @@
 import { gql, useQuery } from '@apollo/client'
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createLodestarServerClient } from 'lodestar-app-element/src/services/http'
 import { flatten, sum } from 'ramda'
 import React, { createContext, useMemo } from 'react'
 import hasura from '../hasura'
-import { max } from 'ramda'
 
 type ProgressProps = {
   loadingProgress?: boolean
@@ -58,17 +57,13 @@ export const useInsertProgress = (memberId: string) => {
     { progress, lastProgress },
   ) => {
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/programs/${programId}/content/${programContentId}/track-process`,
-        {
-          progress,
-          lastProgress,
-        },
-        {
-          headers: { authorization: `Bearer ${authToken}` },
-        },
-      )
-      return response.data
+      const data = await createLodestarServerClient({
+        getAuthToken: () => authToken,
+      }).post(`/programs/${programId}/content/${programContentId}/track-process`, {
+        progress,
+        lastProgress,
+      })
+      return data
     } catch (error) {
       console.error('Failed to insert progress:', error)
       throw error

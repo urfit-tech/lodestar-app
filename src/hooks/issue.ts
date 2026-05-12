@@ -1,7 +1,8 @@
 import { gql, useMutation, useQuery } from '@apollo/client'
-import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createLodestarServerClient } from 'lodestar-app-element/src/services/http'
+import { useMemo } from 'react'
 import useSWR from 'swr'
 import hasura from '../hasura'
 import type { EditorState } from 'braft-editor'
@@ -329,6 +330,7 @@ const DELETE_ISSUE_REPLY = gql`
 
 const useIsIssueModuleAllowedForMember = () => {
   const { authToken } = useAuth()
+  const lodestarServerClient = useMemo(() => createLodestarServerClient(), [])
   const isIssueModuleAllowedForMemberFetcher = async (url: string) => {
     const payload = {
       event: {
@@ -345,17 +347,15 @@ const useIsIssueModuleAllowedForMember = () => {
       Authorization: `Bearer ${authToken}`,
     }
 
-    return await axios.post(url, payload, { headers })
+    const data = await lodestarServerClient.post(url, payload, { headers })
+    return { data }
   }
 
   const {
     data: rawIsIssueModuleAllowedForMember,
     isLoading: isIssueModuleAllowedForMemberLoading,
     error: isIssueModuleAllowedForMemberError,
-  } = useSWR(
-    `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/trigger-switchboard/outsourcing`,
-    isIssueModuleAllowedForMemberFetcher,
-  )
+  } = useSWR('/trigger-switchboard/outsourcing', isIssueModuleAllowedForMemberFetcher)
   return { rawIsIssueModuleAllowedForMember, isIssueModuleAllowedForMemberLoading, isIssueModuleAllowedForMemberError }
 }
 

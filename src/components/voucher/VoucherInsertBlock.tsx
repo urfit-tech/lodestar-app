@@ -1,8 +1,8 @@
 import { Button, Form, Input, message } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -70,18 +70,12 @@ const VoucherInsertBlock: React.FC<VoucherInsertBlockProps> = ({
     }
 
     onChangeLoading(true)
-    axios
-      .post(
-        `${import.meta.env.VITE_API_BASE_ROOT}/payment/exchange`,
-        {
-          code: voucherCode.trim(),
-          type: 'Voucher',
-        },
-        {
-          headers: { authorization: `Bearer ${authToken}` },
-        },
-      )
-      .then(({ data: { code, result } }) => {
+    createAppBackendClient({ getAuthToken: () => authToken })
+      .post<{ code: string; result: VoucherFromAPI }>('/payment/exchange', {
+        code: voucherCode.trim(),
+        type: 'Voucher',
+      })
+      .then(({ code, result }) => {
         if (code === 'SUCCESS') {
           afterInsert(result)
           message.success(formatMessage(voucherMessages.messages.addVoucher))

@@ -1,8 +1,8 @@
 import { gql, useQuery } from '@apollo/client'
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createLodestarServerClient } from 'lodestar-app-element/src/services/http'
 import { sum, uniqBy } from 'ramda'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import hasura from '../hasura'
 import { PeriodType } from '../types/program'
 import { ProgramPackage, ProgramPackageProgram, ProgramPackageProps } from '../types/programPackage'
@@ -256,6 +256,7 @@ export const useEnrolledProgramPackage = (
 
 export const useProgramPackage = (programPackageId: string, memberId: string | null) => {
   const { authToken } = useAuth()
+  const lodestarServerClient = useMemo(() => createLodestarServerClient(), [])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<any>()
   const [data, setData] = useState<
@@ -269,7 +270,11 @@ export const useProgramPackage = (programPackageId: string, memberId: string | n
     try {
       const route = `/program-packages/${programPackageId}`
       setLoading(true)
-      const { data } = await axios.get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`, {
+      const data = await lodestarServerClient.get<
+        Pick<ProgramPackageProps, 'id' | 'coverUrl' | 'title'> & {
+          programs: ProgramPackageProgram[]
+        }
+      >(route, {
         params: { memberId },
         headers: { authorization: `Bearer ${authToken}` },
       })
@@ -282,7 +287,7 @@ export const useProgramPackage = (programPackageId: string, memberId: string | n
       setLoading(false)
     }
     // }
-  }, [authToken])
+  }, [authToken, lodestarServerClient, memberId, programPackageId])
 
   useEffect(() => {
     fetch()

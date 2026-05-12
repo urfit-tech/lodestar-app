@@ -1,6 +1,5 @@
 import { Button, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react'
 import { message, Modal } from 'antd'
-import { AxiosError } from 'axios'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
@@ -21,6 +20,7 @@ import { FacebookLoginButton, GoogleLoginButton, LineLoginButton, ParentingLogin
 import * as localAuthMessages from '../translation'
 import OverBindDeviceModal from './OverBindDeviceModal'
 import OverLoginDeviceModal from './OverLoginDeviceModal'
+import type { AxiosError } from 'axios'
 
 const ForgetPassword = styled.div`
   margin-bottom: 1.5rem;
@@ -127,9 +127,9 @@ const LoginSection: React.FC<{
           returnTo && history.push(returnTo)
           message.success(formatMessage(localAuthMessages.default.LoginSection.loginSuccess))
         })
-        .catch((error: AxiosError) => {
+        .catch((error: AxiosError<{ code: keyof typeof codeMessages }>) => {
           if (error.isAxiosError && error.response) {
-            const code = error.response.data.code as keyof typeof codeMessages
+            const code = error.response.data.code
             message.error(formatMessage(codeMessages[code]))
           } else {
             message.error(error.message)

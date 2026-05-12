@@ -1,6 +1,6 @@
-import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient, createLodestarServerClient } from 'lodestar-app-element/src/services/http'
 import React, { createContext, useEffect, useState } from 'react'
 import { getFileDownloadableLink } from '../helpers'
 
@@ -97,13 +97,19 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
       }
 
       if (cloudfrontPath) {
-        axios
-          .get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/videos/${videoId}/sign`, {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          })
-          .then(({ data }) => {
+        createLodestarServerClient({
+          getAuthToken: () => authToken,
+        })
+          .get<{
+            result: {
+              videoSignedPaths: {
+                hlsPath?: string
+                dashPath?: string
+                cloudfrontMigratedHlsPath?: string
+              }
+            }
+          }>(`/videos/${videoId}/sign`)
+          .then(data => {
             const {
               videoSignedPaths: { hlsPath, dashPath, cloudfrontMigratedHlsPath },
             } = data.result
@@ -120,17 +126,14 @@ export const AudioPlayerProvider: React.FC = ({ children }) => {
       }
 
       if (source === 'cloudflare') {
-        axios
-          .post(
-            `${import.meta.env.VITE_API_BASE_ROOT}/videos/${videoId}/token`,
-            {},
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-              },
-            },
-          )
-          .then(({ data }) => {
+        createAppBackendClient({
+          getAuthToken: () => authToken,
+        })
+          .post<{
+            code: string
+            result: { token: string }
+          }>(`/videos/${videoId}/token`, {})
+          .then(data => {
             if (data.code === 'SUCCESS') {
               setMimeType('application/x-mpegURL')
               setAudioUrl(`https://cloudflarestream.com/${data.result.token}/manifest/video.m3u8`)

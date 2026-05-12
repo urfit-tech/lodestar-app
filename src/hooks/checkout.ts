@@ -1,15 +1,15 @@
 import { gql, useQuery } from '@apollo/client'
-import Axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { notEmpty } from 'lodestar-app-element/src/helpers'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { getResourceByProductId } from 'lodestar-app-element/src/hooks/util'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import { PaymentProps } from 'lodestar-app-element/src/types/checkout'
 import { ConversionApiData } from 'lodestar-app-element/src/types/conversionApi'
 import { sum } from 'ramda'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import ReactGA from 'react-ga'
 import hasura from '../hasura'
 import { getTrackingCookie } from '../helpers'
@@ -53,6 +53,7 @@ export const useCheck = ({
   const [orderChecking, setOrderChecking] = useState(false)
   const [orderPlacing, setOrderPlacing] = useState(false)
   const [checkError, setCheckError] = useState<Error | null>(null)
+  const appBackendClient = useMemo(() => createAppBackendClient({ getAuthToken: () => authToken }), [authToken])
   const { resourceCollection } = useResourceCollection(
     productIds.map(
       productId => `${appId}:${getResourceByProductId(productId).type}:${getResourceByProductId(productId).target}`,
@@ -63,28 +64,23 @@ export const useCheck = ({
 
   useEffect(() => {
     setOrderChecking(true)
-    Axios.post<{
-      code: string
-      message: string
-      result: {
-        orderProducts: OrderProductProps[]
-        orderDiscounts: EnhancedOrderDiscount[]
-        shippingOption: ShippingOptionProps
-      }
-    }>(
-      `${import.meta.env.VITE_API_BASE_ROOT}/payment/checkout-order`,
-      {
+    appBackendClient
+      .post<{
+        code: string
+        message: string
+        result: {
+          orderProducts: OrderProductProps[]
+          orderDiscounts: EnhancedOrderDiscount[]
+          shippingOption: ShippingOptionProps
+        }
+      }>('/payment/checkout-order', {
         appId,
         productIds,
         discountId,
         shipping,
         options,
-      },
-      {
-        headers: { authorization: `Bearer ${authToken}` },
-      },
-    )
-      .then(({ data: { code, message, result } }) => {
+      })
+      .then(({ code, message, result }) => {
         if (code === 'SUCCESS') {
           setCheck(result)
         } else {
@@ -95,8 +91,8 @@ export const useCheck = ({
       .finally(() => setOrderChecking(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    appBackendClient,
     appId,
-    authToken,
     discountId,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     JSON.stringify(options),
@@ -125,9 +121,7 @@ export const useCheck = ({
 
     ReactGA.plugin.execute('ec', 'setAction', 'checkout', { step: 4 })
     tracking.checkout(resourceCollection.filter(notEmpty), coupon)
-    const {
-      data: { code, message, result },
-    } = await Axios.post<{
+    const { code, message, result } = await appBackendClient.post<{
       code: string
       message: string
       result: {
@@ -138,24 +132,18 @@ export const useCheck = ({
         products: { name: string; price: number }[]
         discounts: { name: string; price: number }[]
       }
-    }>(
-      `${import.meta.env.VITE_API_BASE_ROOT}/order/create`,
-      {
-        clientBackUrl: window.location.origin,
-        paymentModel: { type: paymentType, gateway: payment?.gateway, method: payment?.method },
-        productIds,
-        discountId,
-        shipping,
-        invoice,
-        geolocation: { ip: ip || '', country: country || '', countryCode: countryCode || '' },
-        options,
-        tracking: trackingOptions,
-        invoiceGatewayId: invoice?.invoiceGatewayId,
-      },
-      {
-        headers: { authorization: `Bearer ${authToken}` },
-      },
-    )
+    }>('/order/create', {
+      clientBackUrl: window.location.origin,
+      paymentModel: { type: paymentType, gateway: payment?.gateway, method: payment?.method },
+      productIds,
+      discountId,
+      shipping,
+      invoice,
+      geolocation: { ip: ip || '', country: country || '', countryCode: countryCode || '' },
+      options,
+      tracking: trackingOptions,
+      invoiceGatewayId: invoice?.invoiceGatewayId,
+    })
     if (code === 'SUCCESS') {
       return result
     } else {

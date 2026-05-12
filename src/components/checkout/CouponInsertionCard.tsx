@@ -1,8 +1,8 @@
 import { Button, Form, Input, message } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -58,18 +58,12 @@ const CouponInsertionCard: React.FC<CouponInsertionCardProps> = ({ form, onInser
     form.validateFields((error, values) => {
       if (!error) {
         setLoading(true)
-        axios
-          .post(
-            `${import.meta.env.VITE_API_BASE_ROOT}/payment/exchange`,
-            {
-              code: values.code.trim(),
-              type: 'Coupon',
-            },
-            {
-              headers: { authorization: `Bearer ${authToken}` },
-            },
-          )
-          .then(({ data: { code } }) => {
+        createAppBackendClient({ getAuthToken: () => authToken })
+          .post<{ code: string }>('/payment/exchange', {
+            code: values.code.trim(),
+            type: 'Coupon',
+          })
+          .then(({ code }) => {
             if (code === 'SUCCESS') {
               setCouponCode(null)
               message.success(formatMessage(messages.CouponInsertionCard.addSuccess))

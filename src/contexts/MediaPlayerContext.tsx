@@ -1,7 +1,7 @@
-import axios from 'axios'
 import { throttle } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { Suspense, useEffect, useRef, useState } from 'react'
 import 'video.js/dist/video-js.css'
 import { getFileDownloadableLink } from '../helpers'
@@ -80,17 +80,14 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
           setMimeType('application/x-mpegURL')
           setSourceUrl(`${currentResource?.options?.sourceUrl}(format=m3u8-cmaf)`)
         } else if (currentResource?.options?.source === 'cloudflare') {
-          axios
-            .post(
-              `${import.meta.env.VITE_API_BASE_ROOT}/videos/${currentResource.options.videoId}/token`,
-              {},
-              {
-                headers: {
-                  Authorization: `Bearer ${authToken}`,
-                },
-              },
-            )
-            .then(({ data }) => {
+          createAppBackendClient({
+            getAuthToken: () => authToken,
+          })
+            .post<{
+              code: string
+              result: { token: string }
+            }>(`/videos/${currentResource.options.videoId}/token`, {})
+            .then(data => {
               if (data.code === 'SUCCESS') {
                 setMimeType('application/x-mpegURL')
                 setSourceUrl(`https://cloudflarestream.com/${data.result.token}/manifest/video.m3u8`)
@@ -110,14 +107,12 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
   }) => {
     try {
       currentResource &&
-        (await axios.post(
-          `${import.meta.env.VITE_API_BASE_ROOT}/tasks/player-event-logs/`,
-          {
-            programContentId: currentResource.target,
-            data,
-          },
-          { headers: { authorization: `Bearer ${authToken}` } },
-        ))
+        (await createAppBackendClient({
+          getAuthToken: () => authToken,
+        }).post('/tasks/player-event-logs/', {
+          programContentId: currentResource.target,
+          data,
+        }))
     } catch (error) {
       console.error(`Failed to insert player event log`, error)
     }

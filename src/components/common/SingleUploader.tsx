@@ -2,7 +2,6 @@ import { Spinner } from '@chakra-ui/spinner'
 import { Button, message, Upload } from 'antd'
 import { UploadProps } from 'antd/lib/upload'
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface'
-import axios, { Canceler } from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -39,7 +38,7 @@ const SingleUploader: React.FC<
 }) => {
   const { formatMessage } = useIntl()
   const { authToken } = useAuth()
-  const uploadCanceler = useRef<Canceler>()
+  const uploadAbortController = useRef<AbortController>()
   const [loading, setLoading] = useState(false)
 
   const props: UploadProps = {
@@ -66,24 +65,35 @@ const SingleUploader: React.FC<
       setLoading(false)
       onCancel && onCancel()
       onChange && onChange(undefined)
-      uploadCanceler.current && uploadCanceler.current()
+      uploadAbortController.current?.abort()
+      uploadAbortController.current = undefined
     },
     customRequest: (option: any) => {
       const { file, onProgress, onError, onSuccess } = option
+      const abortController = new AbortController()
+      uploadAbortController.current = abortController
       setLoading(true)
       onChange && onChange(file)
       uploadFile(path, file, authToken, {
         onUploadProgress: progressEvent => {
+          const total = progressEvent.total || file.size || 0
           onProgress({
-            percent: (progressEvent.loaded / progressEvent.total) * 100,
+            percent: total ? (progressEvent.loaded / total) * 100 : 0,
           })
         },
-        cancelToken: new axios.CancelToken(canceler => {
-          uploadCanceler.current = canceler
-        }),
+        signal: abortController.signal,
       })
         .then(onSuccess)
-        .catch(onError)
+        .catch((error: Error) => {
+          if (!abortController.signal.aborted) {
+            onError(error)
+          }
+        })
+        .finally(() => {
+          if (uploadAbortController.current === abortController) {
+            uploadAbortController.current = undefined
+          }
+        })
     },
   }
   return (

@@ -1,12 +1,12 @@
 import { gql, useQuery } from '@apollo/client'
 import { Spinner } from '@chakra-ui/react'
-import Axios from 'axios'
 import Cookies from 'js-cookie'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { fetchCurrentGeolocation, getFingerPrintId } from 'lodestar-app-element/src/hooks/util'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { Suspense, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Redirect, useLocation } from 'react-router-dom'
@@ -103,13 +103,10 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
         const fingerPrintId = await getFingerPrintId()
         const { ip, country, countryCode } = await fetchCurrentGeolocation()
 
-        const {
-          data: { code },
-        } = await Axios.post(
-          `${import.meta.env.VITE_API_BASE_ROOT}/auth/refresh-token`,
+        const { code } = await createAppBackendClient().post<{ code: string }>(
+          '/auth/refresh-token',
           { appId, fingerPrintId, geoLocation: { ip, country, countryCode } },
           {
-            method: 'POST',
             withCredentials: true,
           },
         )

@@ -2,10 +2,10 @@ import { gql, useApolloClient, useQuery } from '@apollo/client'
 import { Icon } from '@chakra-ui/react'
 import { Button, Form, message, Spin } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
-import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { useEffect, useState } from 'react'
 import { AiOutlineLock, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -66,9 +66,9 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
       if (!error && login) {
         setLoading(true)
         if (isProjectPortfolioParticipant) {
-          axios
-            .post(
-              `${import.meta.env.VITE_API_BASE_ROOT}/auth/set-participant-password`,
+          createAppBackendClient()
+            .post<{ code: string }>(
+              '/auth/set-participant-password',
               {
                 appId,
                 name: values.name,
@@ -77,7 +77,7 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
               },
               { headers: { Authorization: `Bearer ${token}` } },
             )
-            .then(({ data: { code } }) => {
+            .then(({ code }) => {
               if (code === 'SUCCESS') {
                 tracking.login()
                 login({
@@ -108,9 +108,9 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
             .catch(handleError)
             .finally(() => setLoading(false))
         } else {
-          axios
-            .post(
-              `${import.meta.env.VITE_API_BASE_ROOT}/auth/reset-password`,
+          createAppBackendClient()
+            .post<{ code: string }>(
+              '/auth/reset-password',
               {
                 appId,
                 memberId,
@@ -118,7 +118,7 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
               },
               { headers: { Authorization: `Bearer ${token}` } },
             )
-            .then(({ data: { code } }) => {
+            .then(({ code }) => {
               if (code === 'SUCCESS') {
                 history.push('/reset-password-success')
               } else {

@@ -1,6 +1,6 @@
 import { CircularProgress, Icon, Spinner } from '@chakra-ui/react'
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient, createLodestarServerClient } from 'lodestar-app-element/src/services/http'
 import React, { lazy, Suspense, useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import ReactPlayer, { ReactPlayerProps } from 'react-player'
@@ -447,13 +447,20 @@ const ProgramContentPlayerWrapper = (props: {
     }
     if (props.options?.cloudfront) {
       setLoading(true)
-      axios
-        .get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/videos/${props.videoId}/sign`, {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        })
-        .then(({ data }) => {
+      createLodestarServerClient({
+        getAuthToken: () => authToken,
+      })
+        .get<{
+          result: {
+            videoSignedPaths: {
+              hlsPath?: string
+              dashPath?: string
+              cloudfrontMigratedHlsPath?: string
+            }
+            captionSignedUrls: string[]
+          }
+        }>(`/videos/${props.videoId}/sign`)
+        .then(data => {
           const {
             videoSignedPaths: { hlsPath, dashPath, cloudfrontMigratedHlsPath },
             captionSignedUrls,
@@ -487,17 +494,15 @@ const ProgramContentPlayerWrapper = (props: {
 
     if (props.options?.cloudflare) {
       setLoading(true)
-      axios
-        .post(
-          `${import.meta.env.VITE_API_BASE_ROOT}/videos/${props.videoId}/token`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          },
-        )
-        .then(({ data }) => {
+      createAppBackendClient({
+        getAuthToken: () => authToken,
+      })
+        .post<{
+          code: string
+          error?: string
+          result: { token: string }
+        }>(`/videos/${props.videoId}/token`, {})
+        .then(data => {
           if (data.code === 'SUCCESS') {
             setSources([
               {

@@ -4,10 +4,10 @@ import { Button } from '@chakra-ui/react'
 import { Form, message, Typography } from 'antd'
 import { CardProps } from 'antd/lib/card'
 import { FormComponentProps } from 'antd/lib/form'
-import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
@@ -127,9 +127,9 @@ const CountDownText: React.FC<{ email: string; memberId: string }> = ({ email, m
   const handleClick = () => {
     const currentTime = Math.round(new Date().getTime() / 1000)
     localStorage.setItem('verifyTime', currentTime.toString())
-    axios
-      .post(
-        `${import.meta.env.VITE_API_BASE_ROOT}/auth/request-email-verification`,
+    createAppBackendClient()
+      .post<{ code: string }>(
+        '/auth/request-email-verification',
         {
           appId,
           memberId,
@@ -137,7 +137,7 @@ const CountDownText: React.FC<{ email: string; memberId: string }> = ({ email, m
         },
         { headers: { Authorization: `Bearer ${authToken}` } },
       )
-      .then(({ data: { code } }) => {
+      .then(() => {
         message.success(formatMessage(localProfileMessages.ProfileAccountAdminCard.sendVerifiedEmailSuccessfully))
         setShowButton(false)
 

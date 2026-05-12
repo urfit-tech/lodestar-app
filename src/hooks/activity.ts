@@ -1,7 +1,7 @@
 import { gql, useMutation, useQuery } from '@apollo/client'
-import axios from 'axios'
+import { createLodestarServerClient } from 'lodestar-app-element/src/services/http'
 import { flatten, prop, sum, uniqBy } from 'ramda'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DeepPick } from 'ts-deep-pick/lib'
 import hasura from '../hasura'
 import {
@@ -193,6 +193,7 @@ export const useEnrolledActivityTickets = (memberId: string) => {
 }
 
 export const useEnrolledActivityTicket = (memberId: string) => {
+  const lodestarServerClient = useMemo(() => createLodestarServerClient(), [])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<any>()
   const [data, setData] = useState<ActivitySessionTicketEnrollment[]>([])
@@ -202,7 +203,7 @@ export const useEnrolledActivityTicket = (memberId: string) => {
       const route = `/activity/`
       try {
         setLoading(true)
-        const { data } = await axios.get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`, {
+        const data = await lodestarServerClient.get<ActivitySessionTicketEnrollment[]>(route, {
           params: { memberId },
         })
 
@@ -214,7 +215,7 @@ export const useEnrolledActivityTicket = (memberId: string) => {
         setLoading(false)
       }
     }
-  }, [memberId])
+  }, [lodestarServerClient, memberId])
 
   useEffect(() => {
     fetch()
@@ -229,6 +230,7 @@ export const useEnrolledActivityTicket = (memberId: string) => {
 }
 
 export const useEnrolledActivity = (activityId: string, memberId: string) => {
+  const lodestarServerClient = useMemo(() => createLodestarServerClient(), [])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<any>()
   const [data, setData] = useState<ActivityFromLodestarAPI>()
@@ -238,7 +240,7 @@ export const useEnrolledActivity = (activityId: string, memberId: string) => {
       const route = `/activity/${activityId}`
       setLoading(true)
       try {
-        const { data } = await axios.get(`${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}${route}`, {
+        const data = await lodestarServerClient.get<ActivityFromLodestarAPI>(route, {
           params: { memberId },
         })
 
@@ -250,7 +252,7 @@ export const useEnrolledActivity = (activityId: string, memberId: string) => {
         setLoading(false)
       }
     }
-  }, [activityId, memberId])
+  }, [activityId, lodestarServerClient, memberId])
 
   useEffect(() => {
     fetch()

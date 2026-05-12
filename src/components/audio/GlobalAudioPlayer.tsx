@@ -1,7 +1,7 @@
-import axios from 'axios'
 import dayjs from 'dayjs'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import AudioPlayerContext, { AudioPlayerMode } from '../../contexts/AudioPlayerContext'
@@ -200,14 +200,12 @@ const GlobalAudioPlayer: React.FC = () => {
     }
   }) => {
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_ROOT}/tasks/player-event-logs/`,
-        {
-          programContentId,
-          data,
-        },
-        { headers: { authorization: `Bearer ${authToken}` } },
-      )
+      await createAppBackendClient({
+        getAuthToken: () => authToken,
+      }).post('/tasks/player-event-logs/', {
+        programContentId,
+        data,
+      })
     } catch (error) {
       console.error(`Failed to insert player event log`, error)
     }

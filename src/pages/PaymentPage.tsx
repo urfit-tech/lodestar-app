@@ -1,10 +1,10 @@
 import { gql, useQuery } from '@apollo/client'
 import { Button, Icon, Input, message, Typography } from 'antd'
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
@@ -138,18 +138,14 @@ const PaymentPage: React.FC = () => {
                       className="mt-3"
                       disabled={bankCode.length !== 5}
                       onClick={() => {
-                        axios
-                          .put(
-                            `${import.meta.env.VITE_API_BASE_ROOT}/payment/bank-code/${paymentNo}`,
-                            { bankCode },
-                            {
-                              headers: {
-                                Authorization: `Bearer ${authToken}`,
-                              },
-                            },
-                          )
-                          .then(r => {
-                            if (r.data.code === 'SUCCESS') {
+                        createAppBackendClient({ getAuthToken: () => authToken })
+                          .request<{ code: string }>({
+                            method: 'PUT',
+                            url: `/payment/bank-code/${paymentNo}`,
+                            data: { bankCode },
+                          })
+                          .then(({ code }) => {
+                            if (code === 'SUCCESS') {
                               message.success(formatMessage(messages.notifyCustomerService))
                             }
                           })

@@ -1,10 +1,10 @@
 import { Button } from '@chakra-ui/react'
 import { message } from 'antd'
-import axios from 'axios'
 import TapPayForm, { TPCreditCard } from 'lodestar-app-element/src/components/forms/TapPayForm'
 import CreditCardSelector from 'lodestar-app-element/src/components/selectors/CreditCardSelector'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useTappay } from 'lodestar-app-element/src/hooks/util'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { useCallback, useState } from 'react'
 import { defineMessages, useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
@@ -119,20 +119,16 @@ const usePayment = (paymentNo: string) => {
         }
         // pay by card token
         if (memberCreditCardId) {
-          axios
-            .post(
-              `${import.meta.env.VITE_API_BASE_ROOT}/payment/pay/${paymentNo}`,
-              {
-                memberCreditCardId,
-                cardHolder: {
-                  phoneNumber: member?.phone || '0987654321',
-                  name: member?.name || 'test',
-                  email: member?.email || 'test@gmail.com',
-                },
+          createAppBackendClient({ getAuthToken: () => authToken })
+            .post<{ code: string; result: string }>(`/payment/pay/${paymentNo}`, {
+              memberCreditCardId,
+              cardHolder: {
+                phoneNumber: member?.phone || '0987654321',
+                name: member?.name || 'test',
+                email: member?.email || 'test@gmail.com',
               },
-              { headers: { authorization: `Bearer ${authToken}` } },
-            )
-            .then(({ data: { code, result } }) => {
+            })
+            .then(({ code, result }) => {
               if (code === 'SUCCESS') {
                 resolve(`/orders/${orderId}?tracking=1`)
               } else if (code === 'REDIRECT') {
@@ -146,22 +142,16 @@ const usePayment = (paymentNo: string) => {
         // pay by prime
         else {
           TPDirect.card.getPrime(({ status, card, msg }: { status: number; card: { prime: string }; msg: string }) => {
-            axios
-              .post(
-                `${import.meta.env.VITE_API_BASE_ROOT}/payment/pay/${paymentNo}`,
-                {
-                  prime: card.prime,
-                  cardHolder: {
-                    phoneNumber: member?.phone || '0987654321',
-                    name: member?.name || 'test',
-                    email: member?.email || 'test@gmail.com',
-                  },
+            createAppBackendClient({ getAuthToken: () => authToken })
+              .post<{ code: string; result: string }>(`/payment/pay/${paymentNo}`, {
+                prime: card.prime,
+                cardHolder: {
+                  phoneNumber: member?.phone || '0987654321',
+                  name: member?.name || 'test',
+                  email: member?.email || 'test@gmail.com',
                 },
-                {
-                  headers: { authorization: `Bearer ${authToken}` },
-                },
-              )
-              .then(({ data: { code, result } }) => {
+              })
+              .then(({ code, result }) => {
                 if (code === 'SUCCESS') {
                   resolve(`/orders/${orderId}?tracking=1`)
                 } else if (code === 'REDIRECT') {

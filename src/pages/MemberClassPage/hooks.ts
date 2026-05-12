@@ -1,6 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
-import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createLodestarServerClient } from 'lodestar-app-element/src/services/http'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CalendarEvent, CalendarEventStatus, CoursePackageSummary, CourseType, TeachingCourseSummary } from './types'
 
@@ -162,6 +162,7 @@ const transformToCalendarEvent = (event: any, classroomMap: Map<string, string>)
 // Fetch all events for a member once, then split by role client-side
 export const useMemberClassEvents = (memberId: string) => {
   const { authToken } = useAuth()
+  const lodestarServerClient = useMemo(() => createLodestarServerClient(), [])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
   const [rawEvents, setRawEvents] = useState<any[]>([])
@@ -176,17 +177,14 @@ export const useMemberClassEvents = (memberId: string) => {
       setLoading(true)
       setError(null)
 
-      const baseEndpoint = import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT
-
-      const resourceResponse = await axios.post(
-        `${baseEndpoint}/temporally-exclusive-resource/batch/get/member`,
+      const resourceData = await lodestarServerClient.post<Array<{ temporally_exclusive_resource_id: string }>>(
+        '/temporally-exclusive-resource/batch/get/member',
         [memberId],
         {
           headers: { authorization: `Bearer ${authToken}` },
         },
       )
 
-      const resourceData = resourceResponse.data
       if (!resourceData || resourceData.length === 0) {
         setRawEvents([])
         setLoading(false)
@@ -200,7 +198,7 @@ export const useMemberClassEvents = (memberId: string) => {
       const endDate = new Date()
       endDate.setFullYear(endDate.getFullYear() + 1)
 
-      const eventsResponse = await axios.post(`${baseEndpoint}/event/batch/get`, [resourceId], {
+      const eventsData = await lodestarServerClient.post<any[]>('/event/batch/get', [resourceId], {
         params: {
           started_at: startDate.toISOString(),
           until: endDate.toISOString(),
@@ -208,14 +206,14 @@ export const useMemberClassEvents = (memberId: string) => {
         headers: { authorization: `Bearer ${authToken}` },
       })
 
-      setRawEvents(eventsResponse.data || [])
+      setRawEvents(eventsData || [])
     } catch (err) {
       console.error('Failed to fetch class events:', err)
       setError(err as Error)
     } finally {
       setLoading(false)
     }
-  }, [authToken, memberId])
+  }, [authToken, lodestarServerClient, memberId])
 
   useEffect(() => {
     fetchEvents()

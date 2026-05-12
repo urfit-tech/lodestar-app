@@ -1,9 +1,9 @@
 import { Button, Icon as ChakraIcon } from '@chakra-ui/react'
 import { Spin } from 'antd'
-import axios from 'axios'
 import dayjs from 'dayjs'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { handleError } from 'lodestar-app-element/src/helpers'
+import { createLodestarServerClient } from 'lodestar-app-element/src/services/http'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
@@ -145,16 +145,16 @@ const GroupBuyingReceivedContainer: React.FC = () => {
   const handleSubmit = () => {
     setSendingState('loading')
     if (currentMemberId) {
-      axios
-        .put<ApiResponse>(
-          `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/orders/transfer-received-order`,
-          {
+      createLodestarServerClient({ getAuthToken: () => authToken })
+        .request<ApiResponse>({
+          method: 'PUT',
+          url: '/orders/transfer-received-order',
+          data: {
             token,
             memberId: currentMemberId,
           },
-          { headers: { authorization: `Bearer ${authToken}` } },
-        )
-        .then(({ data: { code } }) => {
+        })
+        .then(({ code }) => {
           if (code === 'SUCCESS') {
             setSendingState('success')
           } else {
@@ -281,13 +281,10 @@ const useGetOrderLog = (orderId: string | undefined, authToken: string) => {
     setLoading(true)
     ;(async () => {
       try {
-        const response = await axios.get<ApiResponse>(
-          `${import.meta.env.VITE_LODESTAR_SERVER_ENDPOINT}/orders/${orderId}`,
-          {
-            headers: { authorization: `Bearer ${authToken}` },
-          },
+        const response = await createLodestarServerClient({ getAuthToken: () => authToken }).get<ApiResponse>(
+          `/orders/${orderId}`,
         )
-        setOrderLog(() => response.data.result)
+        setOrderLog(() => response.result)
       } catch (error) {
         setError(error)
       } finally {

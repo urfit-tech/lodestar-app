@@ -12,10 +12,10 @@ import {
   RadioGroup,
   Stack,
 } from '@chakra-ui/react'
-import axios from 'axios'
 import gql from 'graphql-tag'
 import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
@@ -201,8 +201,8 @@ const MeetingPage = () => {
     }
     // This API includes an update event
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_ROOT}/sys/create-lead`,
+      const res = await createAppBackendClient({ withCredentials: true }).post<{ code: string; message?: string }>(
+        '/sys/create-lead',
         {
           phone,
           email,
@@ -232,13 +232,12 @@ const MeetingPage = () => {
           ],
         },
         {
-          withCredentials: true, // To include credentials in the request
           headers: {
             'Content-Type': 'application/json',
           },
         },
       )
-      const { code, message } = res.data
+      const { code, message } = res
 
       if (code === 'SUCCESS') {
         Cookies.remove('utm')

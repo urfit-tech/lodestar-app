@@ -1,10 +1,11 @@
-import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
+import { useEffect, useMemo, useState } from 'react'
 
 export const useFetchPayFormToken = (paymentNo?: string, cacheToken?: string | null | undefined) => {
   const [result, setResult] = useState<any | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
+  const appBackendClient = useMemo(() => createAppBackendClient(), [])
 
   useEffect(() => {
     if (!paymentNo || !cacheToken) return
@@ -12,15 +13,17 @@ export const useFetchPayFormToken = (paymentNo?: string, cacheToken?: string | n
     const fetchPayFormToken = async () => {
       setLoading(true)
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_ROOT}/payment/${paymentNo}/pay-form-token/${cacheToken}`,
-        )
-        if (response.data.code === 'SUCCESS') {
+        const data = await appBackendClient.get<{
+          code: string
+          message: string
+          result: { payFormToken: string | number }
+        }>(`/payment/${paymentNo}/pay-form-token/${cacheToken}`)
+        if (data.code === 'SUCCESS') {
           setResult({
-            token: response.data.result.payFormToken.toString(),
+            token: data.result.payFormToken.toString(),
           })
         } else {
-          setError(new Error(response.data.message))
+          setError(new Error(data.message))
         }
       } catch (err) {
         setError(err as Error)
@@ -30,7 +33,7 @@ export const useFetchPayFormToken = (paymentNo?: string, cacheToken?: string | n
     }
 
     fetchPayFormToken()
-  }, [paymentNo, cacheToken])
+  }, [appBackendClient, paymentNo, cacheToken])
 
   return { result, loading, error }
 }

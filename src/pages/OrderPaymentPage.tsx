@@ -1,11 +1,11 @@
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button } from '@chakra-ui/react'
 import { Divider, Icon as AntdIcon, List, Skeleton, Typography } from 'antd'
-import axios from 'axios'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { checkoutMessages } from 'lodestar-app-element/src/helpers/translation'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import { PaymentGatewayType, PaymentMethodType } from 'lodestar-app-element/src/types/checkout'
 import { evolve, map, pick, pipe, props, split, transpose, zipObj } from 'ramda'
 import { Fragment, useContext, useEffect, useState } from 'react'
@@ -129,14 +129,11 @@ const OrderPaymentPage = () => {
 
   useEffect(() => {
     setLoading(true)
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_ROOT}/order/${orderId}/payment`, {
+    createAppBackendClient({ getAuthToken: () => token })
+      .get<{ code: string; result: Order }>(`/order/${orderId}/payment`, {
         params: { appId },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       })
-      .then(({ data }) => {
+      .then(data => {
         if (data.code === 'SUCCESS') {
           setOrder(data.result)
         }
@@ -371,17 +368,21 @@ const PaymentBlock: React.FC<{
             loading={false}
             onCheckout={() => {
               if (exemptMember(memberType) ? false : !memberContract?.agreedAt) return
-              axios
-                .post(
-                  `${import.meta.env.VITE_API_BASE_ROOT}/order/${order.id}/pay`,
-                  {
-                    appId,
-                    paymentNo: payment.no,
-                    memberContractId,
-                  },
-                  { headers: { authorization: `Bearer ${token}` } },
-                )
-                .then(({ data: { code, result } }) => {
+              createAppBackendClient({ getAuthToken: () => token })
+                .post<{
+                  code: string
+                  result: {
+                    payForm?: {
+                      url?: string
+                      html?: string
+                    }
+                  }
+                }>(`/order/${order.id}/pay`, {
+                  appId,
+                  paymentNo: payment.no,
+                  memberContractId,
+                })
+                .then(({ code, result }) => {
                   if (code === 'SUCCESS') {
                     if (result.payForm?.url) {
                       window.location.assign(result.payForm.url)

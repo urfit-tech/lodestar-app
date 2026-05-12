@@ -1,10 +1,10 @@
 import { ApolloError, gql, useQuery } from '@apollo/client'
 import { Box, Button, Divider, Icon, Input, Spinner, Text } from '@chakra-ui/react'
 import { Checkbox, message, Modal } from 'antd'
-import axios from 'axios'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common/index'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
+import { createAppBackendClient } from 'lodestar-app-element/src/services/http'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router'
@@ -86,22 +86,16 @@ const VoucherExchangeModalBlock: React.FC<{
 
     const { ip, country, countryCode } = await fetchCurrentGeolocation()
     message.info(formatMessage(voucherMessages.VoucherExchangeModal.exchangingInfo))
-    await axios
-      .post(
-        `${import.meta.env.VITE_API_BASE_ROOT}/order/create`,
-        {
-          paymentModel: { type: 'perpetual' },
-          discountId: `Voucher_${voucherId}`,
-          productIds: selectedProductIds,
-          invoice: {},
-          geolocation: { ip: ip || '', country: country || '', countryCode: countryCode || '' },
-        },
-        {
-          headers: { authorization: `Bearer ${authToken}` },
-        },
-      )
-      .then(res => {
-        if (res.data.code.split('_')[0] === 'E') {
+    await createAppBackendClient({ getAuthToken: () => authToken })
+      .post<{ code: string }>('/order/create', {
+        paymentModel: { type: 'perpetual' },
+        discountId: `Voucher_${voucherId}`,
+        productIds: selectedProductIds,
+        invoice: {},
+        geolocation: { ip: ip || '', country: country || '', countryCode: countryCode || '' },
+      })
+      .then(({ code }) => {
+        if (code.split('_')[0] === 'E') {
           message.error(formatMessage(voucherMessages.VoucherExchangeModal.exchangingError))
         } else {
           setMessageModalStatus('success')
@@ -124,13 +118,11 @@ const VoucherExchangeModalBlock: React.FC<{
       return
     }
 
-    await axios
-      .get(`${import.meta.env.VITE_API_BASE_ROOT}/voucher/pin-code/${voucherPlanId}`, {
-        headers: { authorization: `Bearer ${authToken}` },
-      })
-      .then(res => {
-        if (res.data.result.hasPinCode) {
-          setHasPinCode(res.data.result.hasPinCode)
+    await createAppBackendClient({ getAuthToken: () => authToken })
+      .get<{ result: { hasPinCode: boolean } }>(`/voucher/pin-code/${voucherPlanId}`)
+      .then(({ result }) => {
+        if (result.hasPinCode) {
+          setHasPinCode(result.hasPinCode)
           onLoading?.(false)
           setExchanging(false)
           return
@@ -149,18 +141,12 @@ const VoucherExchangeModalBlock: React.FC<{
       return message.info(formatMessage(voucherMessages.VoucherExchangeModal.pleaseEnterPinCode))
     }
 
-    await axios
-      .post(
-        `${import.meta.env.VITE_API_BASE_ROOT}/voucher/pin-code/${voucherPlanId}`,
-        {
-          pinCode,
-        },
-        {
-          headers: { authorization: `Bearer ${authToken}` },
-        },
-      )
-      .then(res => {
-        if (res.data.result.pinCodeCorrect) {
+    await createAppBackendClient({ getAuthToken: () => authToken })
+      .post<{ result: { pinCodeCorrect: boolean } }>(`/voucher/pin-code/${voucherPlanId}`, {
+        pinCode,
+      })
+      .then(({ result }) => {
+        if (result.pinCodeCorrect) {
           exchangeVoucher(selectedProductIds, voucherId)
         } else {
           onLoading?.(false)

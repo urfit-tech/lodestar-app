@@ -108,8 +108,8 @@ importers:
         specifier: ^2.711.0
         version: 2.1693.0
       axios:
-        specifier: 0.21.4
-        version: 0.21.4
+        specifier: 1.16.0
+        version: 1.16.0
       braft-editor:
         specifier: ^2.3.9
         version: 2.3.9(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
@@ -168,8 +168,8 @@ importers:
         specifier: ^4.17.15
         version: 4.18.1
       lodestar-app-element:
-        specifier: urfit-tech/lodestar-app-element#v1.95.7
-        version: https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/0fa284e8dbc0b2ebf662b62bc7d5a33fca0aebe8(@chakra-ui/system@1.1.3(@emotion/react@11.14.0(@types/react@17.0.0)(react@17.0.2))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@17.0.0)(react@17.0.2))(@types/react@17.0.0)(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/webpack@4.41.40)(eslint@7.32.0)(prop-types@15.8.1)(sass@1.99.0)(sockjs-client@1.6.1)
+        specifier: urfit-tech/lodestar-app-element#v1.95.9
+        version: https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/c4707e8d9c3ecbacfad1ec8376cb5352110c6238(@chakra-ui/system@1.1.3(@emotion/react@11.14.0(@types/react@17.0.0)(react@17.0.2))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@17.0.0)(react@17.0.2))(@types/react@17.0.0)(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/webpack@4.41.40)(eslint@7.32.0)(prop-types@15.8.1)(sass@1.99.0)(sockjs-client@1.6.1)
       marked:
         specifier: 4.3.0
         version: 4.3.0
@@ -3508,8 +3508,8 @@ packages:
     resolution: {integrity: sha512-KunSNx+TVpkAw/6ULfhnx+HWRecjqZGTOyquAoWHYLRSdK1tB5Ihce1ZW+UY3fj33bYAFWPu7W/GRSmmrCGuxA==}
     engines: {node: '>=4'}
 
-  axios@0.21.4:
-    resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
+  axios@1.16.0:
+    resolution: {integrity: sha512-6hp5CwvTPlN2A31g5dxnwAX0orzM7pmCRDLnZSX772mv8WDqICwFjowHuPs04Mc8deIld1+ejhtaMn5vp6b+1w==}
 
   axobject-query@4.1.0:
     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
@@ -5393,6 +5393,10 @@ packages:
     resolution: {integrity: sha512-f0cRzm6dkyVYV3nPoooP8XlccPQukegwhAnpoLcXy+X+A8KfpGOoXwDr9FLZd3wzgLaBGQBE3lY93Zm/i1JvIQ==}
     engines: {node: '>= 6'}
 
+  form-data@4.0.5:
+    resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
+    engines: {node: '>= 6'}
+
   forwarded@0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
@@ -6932,8 +6936,8 @@ packages:
   lodash@4.18.1:
     resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
-  lodestar-app-element@https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/0fa284e8dbc0b2ebf662b62bc7d5a33fca0aebe8:
-    resolution: {gitHosted: true, integrity: sha512-W3O55BQ9DlH8jhIsP6NTVjjo/uFZMjsa05X5KeU+oo0q8f39TiT5fh5G3vjz1vg9faJtDv49rC5LOoXLmiZG/Q==, tarball: https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/0fa284e8dbc0b2ebf662b62bc7d5a33fca0aebe8}
+  lodestar-app-element@https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/c4707e8d9c3ecbacfad1ec8376cb5352110c6238:
+    resolution: {gitHosted: true, integrity: sha512-9cspXPcvUk6Gz6jSA5Krs1erYbc93FdYJvWJxEpWAWy/LR2TFsxJYdgCT6A5ooncjO4GWXHJNQajZaKL5ydnHA==, tarball: https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/c4707e8d9c3ecbacfad1ec8376cb5352110c6238}
     version: 0.1.0
 
   log-symbols@4.1.0:
@@ -8113,6 +8117,10 @@ packages:
   proxy-addr@2.0.7:
     resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
     engines: {node: '>= 0.10'}
+
+  proxy-from-env@2.1.0:
+    resolution: {integrity: sha512-cJ+oHTW1VAEa8cJslgmUZrc+sjRKgAKl3Zyse6+PV38hZe/V6Z14TbCuXcan9F9ghlz4QrFr2c92TNF82UkYHA==}
+    engines: {node: '>=10'}
 
   prr@1.0.1:
     resolution: {integrity: sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw==}
@@ -14918,9 +14926,11 @@ snapshots:
 
   axe-core@4.11.4: {}
 
-  axios@0.21.4:
+  axios@1.16.0:
     dependencies:
       follow-redirects: 1.16.0(debug@4.4.3(supports-color@6.1.0))
+      form-data: 4.0.5
+      proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
 
@@ -17426,6 +17436,14 @@ snapshots:
       hasown: 2.0.3
       mime-types: 2.1.35
 
+  form-data@4.0.5:
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      es-set-tostringtag: 2.1.0
+      hasown: 2.0.3
+      mime-types: 2.1.35
+
   forwarded@0.2.0: {}
 
   fragment-cache@0.2.1:
@@ -19323,7 +19341,7 @@ snapshots:
 
   lodash@4.18.1: {}
 
-  lodestar-app-element@https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/0fa284e8dbc0b2ebf662b62bc7d5a33fca0aebe8(@chakra-ui/system@1.1.3(@emotion/react@11.14.0(@types/react@17.0.0)(react@17.0.2))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@17.0.0)(react@17.0.2))(@types/react@17.0.0)(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/webpack@4.41.40)(eslint@7.32.0)(prop-types@15.8.1)(sass@1.99.0)(sockjs-client@1.6.1):
+  lodestar-app-element@https://codeload.github.com/urfit-tech/lodestar-app-element/tar.gz/c4707e8d9c3ecbacfad1ec8376cb5352110c6238(@chakra-ui/system@1.1.3(@emotion/react@11.14.0(@types/react@17.0.0)(react@17.0.2))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@17.0.0)(react@17.0.2))(@types/react@17.0.0)(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/webpack@4.41.40)(eslint@7.32.0)(prop-types@15.8.1)(sass@1.99.0)(sockjs-client@1.6.1):
     dependencies:
       '@apollo/client': 3.14.1(@types/react@17.0.0)(graphql-ws@5.16.2(graphql@16.6.0))(graphql@16.6.0)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       '@babel/cli': 7.28.6(@babel/core@7.17.8)
@@ -19359,7 +19377,7 @@ snapshots:
       '@types/uuid': 8.3.1
       ajv: 8.20.0
       antd: 3.26.20(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
-      axios: 0.21.4
+      axios: 1.16.0
       babel-plugin-import: 1.13.8
       babel-plugin-react-intl: 7.9.4
       braft-editor: 2.3.9(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
@@ -20813,6 +20831,8 @@ snapshots:
     dependencies:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1
+
+  proxy-from-env@2.1.0: {}
 
   prr@1.0.1: {}
 
