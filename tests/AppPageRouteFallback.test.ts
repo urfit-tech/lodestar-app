@@ -1,4 +1,4 @@
-import { shouldRenderRouteFallbackWhileLoading } from '../components/common/routeFallback'
+import { shouldRenderRouteFallbackWhileLoading } from '@/components/common/routeFallback'
 
 const routesMap = {
   home: {
