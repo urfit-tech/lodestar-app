@@ -103,9 +103,28 @@ const getLegacyReactAppEnv = (env: Record<string, string>) =>
       .map(([key, value]) => [`process.env.REACT_APP_${key.slice('VITE_'.length)}`, JSON.stringify(value)]),
   )
 
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(async ({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const nodeEnv = command === 'build' ? 'production' : 'development'
+
+  const shouldAnalyze = command === 'build' && env.ANALYZE === 'true'
+  const analyzerPlugins: Plugin[] = []
+  if (shouldAnalyze) {
+    const { visualizer } = await import('rollup-plugin-visualizer')
+    analyzerPlugins.push(
+      visualizer({
+        filename: 'build/stats.html',
+        template: 'treemap',
+        gzipSize: true,
+        brotliSize: true,
+      }) as Plugin,
+      visualizer({
+        filename: 'build/stats.json',
+        template: 'raw-data',
+        gzipSize: true,
+      }) as Plugin,
+    )
+  }
 
   return {
     plugins: [
@@ -129,6 +148,7 @@ export default defineConfig(({ command, mode }) => {
           },
         ],
       }),
+      ...analyzerPlugins,
     ],
     resolve: {
       alias: {
@@ -154,11 +174,18 @@ export default defineConfig(({ command, mode }) => {
       commonjsOptions: {
         transformMixedEsModules: true,
       },
-      rollupOptions: {
+      rolldownOptions: {
         output: {
-          manualChunks: id => {
-            if (id.includes('node_modules/antd/')) return 'antd'
-            if (id.includes('node_modules/')) return 'vendors'
+          advancedChunks: {
+            groups: [
+              { name: 'antd', test: /node_modules[\\/]antd[\\/]/, priority: 30 },
+              { name: 'react-core', test: /node_modules[\\/](react|react-dom|scheduler|react-router|react-router-dom|history)[\\/]/, priority: 25 },
+              { name: 'apollo', test: /node_modules[\\/](@apollo[\\/]|graphql[\\/]|graphql-tag[\\/]|@graphql)/, priority: 25 },
+              { name: 'chakra', test: /node_modules[\\/](@chakra-ui[\\/]|@emotion[\\/]|framer-motion[\\/])/, priority: 25 },
+              { name: 'date', test: /node_modules[\\/](moment|dayjs|date-fns)[\\/]/, priority: 25 },
+              { name: 'utils', test: /node_modules[\\/](lodash|lodash-es|ramda)[\\/]/, priority: 25 },
+              { name: 'vendors', test: /node_modules[\\/]/, priority: 10 },
+            ],
           },
         },
       },

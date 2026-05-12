@@ -1,1 +1,10 @@
+# Ignore artifacts:
+build
+coverage
+
+# Ignore generated files:
 hasura.d.ts
+
+# Ignore YAML and Markdown config files:
+**/*.yaml
+**/*.md
