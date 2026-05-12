@@ -90,10 +90,10 @@ export const useVipTheme = () => {
   useEffect(() => {
     // 創建唯一的腳本標識符（基於腳本內容和用戶ID）
     const scriptKey = `${currentMemberId || ''}_${vipLaunchScript}`
-    
+
     if (isVip && vipLaunchScript && !scriptExecutedRef.current && !executedScripts.has(scriptKey)) {
       try {
-        eval(vipLaunchScript)
+        ;(0, eval)(vipLaunchScript)
         executedScripts.add(scriptKey)
         scriptExecutedRef.current = true
       } catch (error) {
