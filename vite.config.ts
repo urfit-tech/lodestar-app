@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react'
+import fs from 'fs'
 import { readFile } from 'fs/promises'
 import path from 'path'
 import { defineConfig, loadEnv, transformWithOxc } from 'vite'
@@ -106,6 +107,32 @@ const getLegacyReactAppEnv = (env: Record<string, string>) =>
 export default defineConfig(async ({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const nodeEnv = command === 'build' ? 'production' : 'development'
+
+  const SUPPORTED_LOCALES_FOR_BUILD = [
+    'zh-cn', 'zh-tw', 'en-us', 'vi', 'id', 'ja', 'ko', 'de-de',
+  ] as const
+  const requestedDefaultLocale = env.VITE_DEFAULT_LOCALE || 'zh-tw'
+  const resolvedDefaultLocale = (SUPPORTED_LOCALES_FOR_BUILD as readonly string[]).includes(
+    requestedDefaultLocale,
+  )
+    ? requestedDefaultLocale
+    : 'zh-tw'
+  if (resolvedDefaultLocale !== requestedDefaultLocale) {
+    console.warn(
+      `[vite] VITE_DEFAULT_LOCALE="${requestedDefaultLocale}" not in SUPPORTED_LOCALES, using "zh-tw"`,
+    )
+  }
+  const defaultAppMessagesJson = fs.readFileSync(
+    path.resolve(__dirname, `src/translations/locales/${resolvedDefaultLocale}.json`),
+    'utf8',
+  )
+  const defaultElementMessagesJson = fs.readFileSync(
+    path.resolve(
+      __dirname,
+      `node_modules/lodestar-app-element/src/translations/locales/${resolvedDefaultLocale}.json`,
+    ),
+    'utf8',
+  )
 
   const shouldAnalyze = command === 'build' && env.ANALYZE === 'true'
   const analyzerPlugins: Plugin[] = []
@@ -220,6 +247,9 @@ export default defineConfig(async ({ command, mode }) => {
       global: 'globalThis',
       'process.env.NODE_ENV': JSON.stringify(nodeEnv),
       'process.env': {},
+      __DEFAULT_LOCALE__: JSON.stringify(resolvedDefaultLocale),
+      __DEFAULT_APP_MESSAGES__: defaultAppMessagesJson,
+      __DEFAULT_ELEMENT_MESSAGES__: defaultElementMessagesJson,
     },
     server: {
       port: 3333,

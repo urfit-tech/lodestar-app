@@ -5,21 +5,24 @@ import 'moment/locale/zh-tw'
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 import { IntlProvider } from 'react-intl'
 import hasura from '../hasura'
-import defaultLocaleMessages from '../translations/locales/en-us.json'
 
 type LocaleMessages = Record<string, string>
 
-const localeMessageModules = import.meta.glob('../translations/locales/*.json', {
-  eager: true,
+declare const __DEFAULT_LOCALE__: string
+declare const __DEFAULT_APP_MESSAGES__: LocaleMessages
+declare const __DEFAULT_ELEMENT_MESSAGES__: LocaleMessages
+
+const appLocaleLoaders = import.meta.glob('../translations/locales/*.json', {
   import: 'default',
-}) as Record<string, LocaleMessages>
-const elementMessageModules = import.meta.glob(
+}) as Record<string, () => Promise<LocaleMessages>>
+const elementLocaleLoaders = import.meta.glob(
   '../../node_modules/lodestar-app-element/src/translations/locales/*.json',
-  {
-    eager: true,
-    import: 'default',
-  },
-) as Record<string, LocaleMessages>
+  { import: 'default' },
+) as Record<string, () => Promise<LocaleMessages>>
+
+const buildAppLoaderKey = (locale: string) => `../translations/locales/${locale}.json`
+const buildElementLoaderKey = (locale: string) =>
+  `../../node_modules/lodestar-app-element/src/translations/locales/${locale}.json`
 
 export const SUPPORTED_LOCALES = [
   { locale: 'zh-cn', label: '简体中文' },
@@ -53,8 +56,15 @@ export const LocaleContext = createContext<LocaleContextProps>(defaultLocaleCont
 
 export const LocaleProvider: React.FC = ({ children }) => {
   const { enabledModules, settings, id: appId } = useApp()
-  const defaultLocale = settings['language'] || 'zh-tw'
-  const [currentLocale, setCurrentLocale] = useState(defaultLocaleContextValue.currentLocale || defaultLocale)
+  const settingsDefaultLocale = settings['language'] || 'zh-tw'
+  const [currentLocale, setCurrentLocale] = useState<string>(__DEFAULT_LOCALE__)
+  const [messagesState, setMessagesState] = useState<{
+    appMessages: LocaleMessages
+    elementMessages: LocaleMessages
+  }>({
+    appMessages: __DEFAULT_APP_MESSAGES__,
+    elementMessages: __DEFAULT_ELEMENT_MESSAGES__,
+  })
   const layoutLanguageSortedListSettings = settings['layout.language_sorted_list']
 
   const languagesList = useMemo(() => {
@@ -64,11 +74,11 @@ export const LocaleProvider: React.FC = ({ children }) => {
 
     try {
       const settingLanguageList = JSON.parse(layoutLanguageSortedListSettings)
-      const sortedLanguagesList = SUPPORTED_LOCALES.filter(language => settingLanguageList.includes(language.label)).sort(
-        (a, b) => {
-          return settingLanguageList.indexOf(a.label) - settingLanguageList.indexOf(b.label)
-        },
-      )
+      const sortedLanguagesList = SUPPORTED_LOCALES.filter(language =>
+        settingLanguageList.includes(language.label),
+      ).sort((a, b) => {
+        return settingLanguageList.indexOf(a.label) - settingLanguageList.indexOf(b.label)
+      })
       return sortedLanguagesList.length > 0 ? sortedLanguagesList : SUPPORTED_LOCALES
     } catch (err) {
       console.log(err)
@@ -90,52 +100,85 @@ export const LocaleProvider: React.FC = ({ children }) => {
   )
   const appLocaleMessages = data?.app_language.find(v => v.language === currentLocale)?.data || {}
 
+  const loadLocaleMessages = useCallback(async (locale: string) => {
+    const appLoader = appLocaleLoaders[buildAppLoaderKey(locale)]
+    const elementLoader = elementLocaleLoaders[buildElementLoaderKey(locale)]
+    if (!appLoader && !elementLoader) {
+      console.warn(`[locale] no messages for "${locale}"`)
+      return null
+    }
+    const [appMessages, elementMessages] = await Promise.all([
+      appLoader ? appLoader() : Promise.resolve({} as LocaleMessages),
+      elementLoader ? elementLoader() : Promise.resolve({} as LocaleMessages),
+    ])
+    return { appMessages, elementMessages }
+  }, [])
+
   useEffect(() => {
-    let currentLocale = defaultLocaleContextValue.currentLocale || defaultLocale
+    let detected = settingsDefaultLocale
     const cachedLocale = localStorage.getItem('kolable.app.language')?.toLowerCase()
     if (
       cachedLocale &&
       SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === cachedLocale.toLowerCase())
     ) {
-      currentLocale = cachedLocale
+      detected = cachedLocale
     } else if (Boolean(settings['language'])) {
-      currentLocale = settings['language']
+      detected = settings['language']
     } else if (
       enabledModules.locale &&
       navigator.language &&
       SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === navigator.language.toLowerCase())
     ) {
-      currentLocale = navigator.language.toLowerCase()
+      detected = navigator.language.toLowerCase()
     }
-    setCurrentLocale(currentLocale)
-  }, [defaultLocale, enabledModules, settings])
 
-  moment.locale(currentLocale)
-  const localeMessages = localeMessageModules[`../translations/locales/${currentLocale}.json`] || defaultLocaleMessages
-  const elementMessages =
-    elementMessageModules[`../../node_modules/lodestar-app-element/src/translations/locales/${currentLocale}.json`] ||
-    {}
+    if (detected === currentLocale) return
 
-  if (!localeMessages && !elementMessages) {
-    console.warn('cannot load the locale:', currentLocale)
-  }
-  const messages = { ...elementMessages, ...localeMessages, ...appLocaleMessages }
+    let cancelled = false
+    ;(async () => {
+      const next = await loadLocaleMessages(detected)
+      if (!next || cancelled) return
+      setMessagesState(next)
+      setCurrentLocale(detected)
+      moment.locale(detected)
+    })()
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settingsDefaultLocale, enabledModules, settings])
 
-  const updateCurrentLocale = useCallback((newLocale: string) => {
-    if (SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === newLocale)) {
-      localStorage.setItem('kolable.app.language', newLocale)
+  const updateCurrentLocale = useCallback(
+    async (newLocale: string) => {
+      if (!SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === newLocale)) return
+      if (newLocale === currentLocale) return
+      const next = await loadLocaleMessages(newLocale)
+      if (!next) return
+      setMessagesState(next)
       setCurrentLocale(newLocale)
-    }
-  }, [])
+      localStorage.setItem('kolable.app.language', newLocale)
+      moment.locale(newLocale)
+    },
+    [currentLocale, loadLocaleMessages],
+  )
+
+  const messages = useMemo(
+    () => ({
+      ...messagesState.elementMessages,
+      ...messagesState.appMessages,
+      ...appLocaleMessages,
+    }),
+    [messagesState, appLocaleMessages],
+  )
 
   const contextValue = useMemo(
     () => ({
-      defaultLocale,
+      defaultLocale: settingsDefaultLocale,
       currentLocale,
       setCurrentLocale: updateCurrentLocale,
       languagesList,
     }),
-    [currentLocale, defaultLocale, languagesList, updateCurrentLocale],
+    [currentLocale, settingsDefaultLocale, languagesList, updateCurrentLocale],
   )
 
   return (
