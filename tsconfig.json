@@ -12,6 +12,7 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
+      "@/*": ["src/*"],
       "react-router": ["src/router/reactRouterCompat.tsx"],
       "react-router-dom": ["src/router/reactRouterCompat.tsx"]
     },

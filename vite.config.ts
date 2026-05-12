@@ -132,6 +132,7 @@ export default defineConfig(({ command, mode }) => {
     ],
     resolve: {
       alias: {
+        '@': path.resolve(__dirname, 'src'),
         ajv: path.resolve(__dirname, 'src/vite-compat/ajv.ts'),
         jsonwebtoken: path.resolve(__dirname, 'src/vite-compat/jsonwebtoken.ts'),
         'react-router': path.resolve(__dirname, 'src/router/reactRouterCompat.tsx'),
