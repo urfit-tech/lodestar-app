@@ -34,7 +34,7 @@ const CraftFallback = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 64px);
+  min-height: 60vh;
 `
 
 const ContentWrapper = styled.div<{ $isVip?: boolean; $sidebarWidth: number }>`
