@@ -1,52 +1,23 @@
 import { gql, useQuery } from '@apollo/client'
-import { Editor, Frame } from '@craftjs/core'
 import Axios from 'axios'
 import Cookies from 'js-cookie'
-import * as CraftElement from 'lodestar-app-element/src/components/common/CraftElement'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { fetchCurrentGeolocation, getFingerPrintId } from 'lodestar-app-element/src/hooks/util'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { Suspense, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParams } from 'use-query-params'
 import { useAppRouter } from '../../components/common/AppRouter'
 import LoadingPage from '../../components/common/LoadingView'
-import MessengerChat from '../../components/common/MessengerChat'
 import NotFoundPage from '../../components/common/NotFoundView'
 import PageHelmet from '../../components/common/PageHelmet'
 import { shouldRenderRouteFallbackWhileLoading } from '../../components/common/routeFallback'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import VipSidebar from '../../components/layout/VipSidebar'
-import {
-  ActivityIntroSection,
-  ActivitySection,
-  BlndCTASection,
-  BlndPostSection,
-  CoverSection,
-  CreatorListSection,
-  CreatorSection,
-  CustomCoverSection,
-  IntroSection,
-  LittlestarFeaturedPodcastSection,
-  LittlestarLastTimePodcastSection,
-  MisaFeatureSection,
-  MisaNavigationBar,
-  NavSection,
-  PodcastAlbumCollectionSection,
-  PostSection,
-  ProgramIntroSection,
-  ProgramSection,
-  ReferrerSection,
-  StaticBlock,
-  StaticCoverSection,
-  TableListSection,
-  TeacherSection,
-} from '../../components/page'
-import HaohaomingSection from '../../components/page/HaohaomingSection'
 import LocaleContext from '../../contexts/LocaleContext'
 import hasura from '../../hasura'
 import { getBraftContent, getOgLocale } from '../../helpers'
@@ -54,49 +25,9 @@ import { useVipTheme } from '../../hooks/member'
 import { MetaTag } from '../../types/general'
 import { TrackingEvent } from '../../types/tracking'
 import pageMessages from '../translation'
-import CraftBlock from './CraftBlock'
+import type { SectionType } from './AppCraftRenderer'
 
-const craftElementResolver = { ...CraftElement }
-
-type SectionType =
-  | 'homeCover'
-  | 'homeActivity'
-  | 'homeCreator'
-  | 'homePost'
-  | 'homeProgram'
-  | 'homeProgramCategory'
-  | 'messenger'
-
-const sectionConverter = {
-  // general
-  homeActivity: ActivitySection,
-  homeActivityIntro: ActivityIntroSection,
-  homeCreator: CreatorSection,
-  homeCreatorList: CreatorListSection,
-  homeCover: CoverSection,
-  homeCustomCover: CustomCoverSection,
-  homeStaticCover: StaticCoverSection,
-  homeNav: NavSection,
-  homePost: PostSection,
-  homeProgram: ProgramSection,
-  homeProgramCategory: ProgramSection,
-  homeProgramIntro: ProgramIntroSection,
-  homePodcastCollection: PodcastAlbumCollectionSection,
-  homeReferrer: ReferrerSection,
-  homeStatic: StaticBlock,
-  homeTeacher: TeacherSection,
-  homeIntro: IntroSection,
-  messenger: MessengerChat,
-  homeTableList: TableListSection,
-  // custom
-  homeBlndPost: BlndPostSection,
-  homeBlndCTA: BlndCTASection,
-  homeMisaFeature: MisaFeatureSection,
-  homeMisaNav: MisaNavigationBar,
-  homeLittlestarLastTimePodcast: LittlestarLastTimePodcastSection,
-  homeLittlestarFeaturedPodcast: LittlestarFeaturedPodcastSection,
-  homeHaohaoming: HaohaomingSection,
-}
+const AppCraftRenderer = React.lazy(() => import('./AppCraftRenderer'))
 
 const ContentWrapper = styled.div<{ $isVip?: boolean; $sidebarWidth: number }>`
   margin-left: ${props => `${props.$sidebarWidth}px`};
@@ -270,25 +201,12 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
               onLoaded={() => setMetaLoaded(true)}
             />
             <DefaultLayout {...currentAppPage.options}>
-              {currentAppPage.craftData ? (
-                <Editor enabled={false} resolver={craftElementResolver}>
-                  <CraftBlock craftData={currentAppPage.craftData} />
-                </Editor>
-              ) : (
-                <Editor enabled={false} resolver={craftElementResolver}>
-                  <Frame>
-                    <>
-                      {currentAppPage.appPageSections.map(section => {
-                        const Section = sectionConverter[section.type]
-                        if (!sectionConverter[section.type]) {
-                          return null
-                        }
-                        return <Section key={section.id} options={section.options} />
-                      })}
-                    </>
-                  </Frame>
-                </Editor>
-              )}
+              <Suspense fallback={<LoadingPage />}>
+                <AppCraftRenderer
+                  craftData={currentAppPage.craftData}
+                  appPageSections={currentAppPage.appPageSections}
+                />
+              </Suspense>
             </DefaultLayout>
           </>
         ) : renderFallback ? (
