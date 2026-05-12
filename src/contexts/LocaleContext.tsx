@@ -2,7 +2,7 @@ import { gql, useQuery } from '@apollo/client'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import moment from 'moment'
 import 'moment/locale/zh-tw'
-import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { IntlProvider } from 'react-intl'
 import hasura from '../hasura'
 
@@ -11,6 +11,8 @@ type LocaleMessages = Record<string, string>
 declare const __DEFAULT_LOCALE__: string
 declare const __DEFAULT_APP_MESSAGES__: LocaleMessages
 declare const __DEFAULT_ELEMENT_MESSAGES__: LocaleMessages
+
+moment.locale(__DEFAULT_LOCALE__)
 
 const appLocaleLoaders = import.meta.glob('../translations/locales/*.json', {
   import: 'default',
@@ -65,6 +67,7 @@ export const LocaleProvider: React.FC = ({ children }) => {
     appMessages: __DEFAULT_APP_MESSAGES__,
     elementMessages: __DEFAULT_ELEMENT_MESSAGES__,
   })
+  const latestLocaleRef = useRef<string | null>(null)
   const layoutLanguageSortedListSettings = settings['layout.language_sorted_list']
 
   const languagesList = useMemo(() => {
@@ -152,8 +155,9 @@ export const LocaleProvider: React.FC = ({ children }) => {
     async (newLocale: string) => {
       if (!SUPPORTED_LOCALES.find(supportedLocale => supportedLocale.locale === newLocale)) return
       if (newLocale === currentLocale) return
+      latestLocaleRef.current = newLocale
       const next = await loadLocaleMessages(newLocale)
-      if (!next) return
+      if (!next || latestLocaleRef.current !== newLocale) return
       setMessagesState(next)
       setCurrentLocale(newLocale)
       localStorage.setItem('kolable.app.language', newLocale)
