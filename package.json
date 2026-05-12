@@ -7,7 +7,7 @@
     "start": "vite",
     "build": "vite build --mode ${NODE_ENV:-production}",
     "preview": "vite preview",
-    "test": "jest --passWithNoTests --watchAll=false",
+    "test": "vitest run --passWithNoTests",
     "typegen": "graphql-codegen",
     "format:organize-imports": "organize-imports-cli ./src/**/*.ts[x]",
     "format:prettier": "prettier --write \"./src/**/*.ts[x]\"",
