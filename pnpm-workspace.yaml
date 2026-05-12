@@ -3,6 +3,7 @@ packages:
 
 allowBuilds:
   '@parcel/watcher': true
+  aws-sdk: true
   core-js: true
   core-js-pure: true
   ejs: true
@@ -10,6 +11,3 @@ allowBuilds:
   esbuild: true
   fsevents: true
   husky: true
-
-patchedDependencies:
-  lodestar-app-element@0.1.0: patches/lodestar-app-element@0.1.0.patch

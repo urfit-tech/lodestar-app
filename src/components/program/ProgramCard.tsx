@@ -3,7 +3,6 @@ import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/co
 import ReviewScoreStarRow from 'lodestar-app-element/src/components/common/ReviewScoreStarRow'
 import PriceLabel from 'lodestar-app-element/src/components/labels/PriceLabel'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { useAdaptedReviewable } from 'lodestar-app-element/src/hooks/review'
 import React from 'react'
 import { AiOutlineClockCircle, AiOutlineUser } from 'react-icons/ai'
 import { useIntl } from 'react-intl'
@@ -160,7 +159,6 @@ const PrimaryCard: React.FC<ProgramCardProps & SharedProps> = ({
 
   const { id: appId } = useApp()
   const path = `/programs/${program.id}`
-  const { data: reviewable, loading: reviewableLoading } = useAdaptedReviewable(path, appId)
   const { data: enrolledCount } = useProgramEnrollmentAggregate(program.id, { skip: !program.isEnrolledCountVisible })
 
   const programSalePriceColorSetting = settings['program_card.sale_price.color']?.trim()
@@ -192,8 +190,6 @@ const PrimaryCard: React.FC<ProgramCardProps & SharedProps> = ({
     backgroundColor: '#ececec',
     textColor: '#585858',
   }
-
-  if (reviewableLoading) return <></>
 
   return (
     <>
