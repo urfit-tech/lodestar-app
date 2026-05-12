@@ -2,7 +2,7 @@ import React from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import { createMemoryHistory } from '@tanstack/react-router'
-import { Outlet, RootRoute, Route, Router, RouterProvider, useRouter } from './tanstackRuntime.mjs'
+import { Outlet, RootRoute, Route, Router, RouterProvider, useRouter } from '@/router/tanstackRuntime.mjs'
 
 const HomePage = () => {
   const router = useRouter()
