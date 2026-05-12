@@ -7,6 +7,7 @@ import NotificationContext from './contexts/NotificationContext'
 
 const folderModules = import.meta.glob(['./pages/*/index.{ts,tsx}', '!./pages/AppPage/index.{ts,tsx}'])
 const flatModules = import.meta.glob('./pages/*.{ts,tsx}')
+const nestedModules = import.meta.glob(['./pages/*/*.{ts,tsx}', '!./pages/AppPage/*.{ts,tsx}'])
 const pageComponentCache = new Map<string, React.LazyExoticComponent<React.ComponentType>>()
 let initializedGaId: string | null = null
 
@@ -16,6 +17,8 @@ const loadPageModule = (pageName: string) => {
     folderModules[`./pages/${pageName}/index.ts`],
     flatModules[`./pages/${pageName}.tsx`],
     flatModules[`./pages/${pageName}.ts`],
+    nestedModules[`./pages/${pageName}.tsx`],
+    nestedModules[`./pages/${pageName}.ts`],
   ]
   const loader = pageLoaders.find(Boolean)
   if (!loader) {
