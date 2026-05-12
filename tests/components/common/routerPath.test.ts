@@ -1,4 +1,4 @@
-import { isProfilePathname, isProfileRoutePath, PROFILE_ROUTE_PATH, toTanStackRoutePath } from './routerPath'
+import { isProfilePathname, isProfileRoutePath, PROFILE_ROUTE_PATH, toTanStackRoutePath } from '@/components/common/routerPath'
 
 describe('toTanStackRoutePath', () => {
   it('converts React Router params to TanStack Router params', () => {
