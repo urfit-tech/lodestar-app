@@ -1,5 +1,5 @@
 import { SearchIcon } from '@chakra-ui/icons'
-import { Box, Button, Icon } from '@chakra-ui/react'
+import { Box, Button, Icon, Skeleton, Spinner } from '@chakra-ui/react'
 import { Layout } from 'antd'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
@@ -13,7 +13,6 @@ import { defineMessage, useIntl } from 'react-intl'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
-import LoadingPage from '../../components/common/LoadingView'
 import NotFoundPage from '../../components/common/NotFoundView'
 import { BREAK_POINT } from '../../components/common/Responsive'
 import { StyledPageHeader } from '../../components/common/StyledPageHeader'
@@ -36,6 +35,13 @@ const StyledLink = styled(Link)`
       color: white;
     }
   }
+`
+
+const StyledLoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 64px);
 `
 
 const ProgramContentPage: React.FC = () => {
@@ -64,17 +70,15 @@ const ProgramContentPage: React.FC = () => {
     ebook && setMenuVisible(false)
   }, [ebook])
 
-  if (isAuthenticating || loadingProgram) {
-    return <LoadingPage />
-  }
+  const isLoading = isAuthenticating || loadingProgram
 
-  if (!program) {
+  if (!isLoading && !program) {
     return <NotFoundPage />
   }
 
   return (
     <Layout>
-      {resourceCollection?.[0] && <Tracking.Detail resource={resourceCollection[0]} />}
+      {!isLoading && resourceCollection?.[0] && <Tracking.Detail resource={resourceCollection[0]} />}
       {settings['hubspot.portal_id'] ? (
         <Helmet>
           <script
@@ -86,10 +90,12 @@ const ProgramContentPage: React.FC = () => {
           />
         </Helmet>
       ) : null}
-      {!loadingApp && <ProgramContentPageHelmet program={program!} contentId={programContentId} />}
+      {!loadingApp && !isLoading && program && (
+        <ProgramContentPageHelmet program={program} contentId={programContentId} />
+      )}
       <StyledPageHeader
         isVip={isVip}
-        title={program?.title || programId}
+        title={isLoading ? <Skeleton height="20px" width="180px" /> : program?.title}
         extra={
           <div>
             {ebook ? (
@@ -186,7 +192,11 @@ const ProgramContentPage: React.FC = () => {
       />
 
       <StyledLayoutContent>
-        {program ? (
+        {isLoading ? (
+          <StyledLoadingContainer>
+            <Spinner size="lg" />
+          </StyledLoadingContainer>
+        ) : program ? (
           <ProgressProvider programId={program.id} memberId={currentMemberId || ''}>
             {settings['layout.program_content'] ? (
               <div className="no-gutters">
