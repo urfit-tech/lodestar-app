@@ -205,6 +205,11 @@ export default defineConfig(async ({ command, mode }) => {
         output: {
           codeSplitting: {
             groups: [
+              {
+                name: 'antd-core',
+                test: /node_modules[\\/]antd[\\/](es|lib)[\\/](_util|style|locale|locale-provider|badge|button|checkbox|col|config-provider|divider|dropdown|form|grid|icon|input|layout|list|menu|message|modal|popover|row|select|skeleton|typography)[\\/]/,
+                priority: 35,
+              },
               { name: 'antd', test: /node_modules[\\/]antd[\\/]/, priority: 30 },
               {
                 name: 'react-core',
