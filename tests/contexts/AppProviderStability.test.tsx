@@ -1,20 +1,21 @@
 import React from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'
 import { act } from 'react-dom/test-utils'
+import type { Mock } from 'vitest'
 import { AppProvider, useApp } from 'lodestar-app-element/src/contexts/AppContext'
 
 type QueryResult = {
   data?: any
   loading: boolean
   error?: Error
-  refetch: jest.Mock
+  refetch: Mock
 }
 
-const mockRefetch = jest.fn()
+const mockRefetch = vi.fn()
 let mockQueryResult: QueryResult
 
-jest.mock('@apollo/client', () => ({
-  gql: jest.fn((strings: TemplateStringsArray) => strings.join('')),
+vi.mock('@apollo/client', () => ({
+  gql: vi.fn((strings: TemplateStringsArray) => strings.join('')),
   useQuery: () => mockQueryResult,
 }))
 
