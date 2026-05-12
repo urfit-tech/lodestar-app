@@ -22,13 +22,13 @@ import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import ActivityBanner from '../components/activity/ActivityBanner'
 import ActivitySessionItem from '../components/activity/ActivitySessionItem'
+import NotFoundPage from '../components/common/NotFoundView'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { handleError } from '../helpers'
 import { activityMessages, commonMessages, productMessages } from '../helpers/translation'
 import { useActivityAttendance, useAttendSession } from '../hooks/activity'
 import { useMemberRightActivityTicket } from '../hooks/activityTicket'
 import { MapOIcon, TimesIcon, VideoIcon } from '../images'
-import NotFoundPage from './NotFoundPage'
 
 const StyledContainer = styled.div`
   padding: 2.5rem 15px 5rem;

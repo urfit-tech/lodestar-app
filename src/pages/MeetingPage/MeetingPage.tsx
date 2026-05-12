@@ -22,10 +22,10 @@ import { useHistory, useParams } from 'react-router-dom'
 import { BooleanParam } from 'serialize-query-params'
 import styled from 'styled-components'
 import { useQueryParams } from 'use-query-params'
+import LoadingPage from '../../components/common/LoadingView'
+import NotFoundPage from '../../components/common/NotFoundView'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import hasura from '../../hasura'
-import LoadingPage from '../LoadingPage'
-import NotFoundPage from '../NotFoundPage'
 import MeetingPageMessages from './translation'
 
 type CategoryCheckboxes = {

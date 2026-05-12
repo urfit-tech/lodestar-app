@@ -2,8 +2,6 @@ import React, { useContext, useMemo, useState } from 'react'
 import { QueryParamProvider } from 'use-query-params'
 import LoadablePage from '../../LoadablePage'
 import AppPage from '../../pages/AppPage'
-import LoadingPage from '../../pages/LoadingPage'
-import NotFoundPage from '../../pages/NotFoundPage'
 import { Redirect } from '../../router/reactRouterCompat'
 import {
   Outlet,
@@ -14,6 +12,8 @@ import {
   useRouter,
   useRouterState,
 } from '../../router/tanstackRuntime'
+import LoadingPage from './LoadingView'
+import NotFoundPage from './NotFoundView'
 import { isProfilePathname, isProfileRoutePath, toTanStackRoutePath } from './routerPath'
 
 export type RouteProps = {

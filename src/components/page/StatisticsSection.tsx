@@ -2,7 +2,7 @@ import { CraftParagraph, CraftSection } from 'lodestar-app-element/src/component
 import Stat from 'lodestar-app-element/src/components/common/Stat'
 import React from 'react'
 import styled from 'styled-components'
-import { SectionTitle } from '../../pages/AppPage'
+import { SectionTitle } from './styled'
 
 const StyledGrid = styled.div<{ colCount: number }>`
   display: grid;

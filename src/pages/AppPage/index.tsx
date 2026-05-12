@@ -10,12 +10,15 @@ import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import { fetchCurrentGeolocation, getFingerPrintId } from 'lodestar-app-element/src/hooks/util'
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Link, Redirect, useLocation } from 'react-router-dom'
+import { Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParams } from 'use-query-params'
 import { useAppRouter } from '../../components/common/AppRouter'
+import LoadingPage from '../../components/common/LoadingView'
 import MessengerChat from '../../components/common/MessengerChat'
+import NotFoundPage from '../../components/common/NotFoundView'
 import PageHelmet from '../../components/common/PageHelmet'
+import { shouldRenderRouteFallbackWhileLoading } from '../../components/common/routeFallback'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import VipSidebar from '../../components/layout/VipSidebar'
 import {
@@ -48,14 +51,10 @@ import LocaleContext from '../../contexts/LocaleContext'
 import hasura from '../../hasura'
 import { getBraftContent, getOgLocale } from '../../helpers'
 import { useVipTheme } from '../../hooks/member'
-import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { MetaTag } from '../../types/general'
 import { TrackingEvent } from '../../types/tracking'
-import LoadingPage from '../LoadingPage'
-import NotFoundPage from '../NotFoundPage'
 import pageMessages from '../translation'
 import CraftBlock from './CraftBlock'
-import { shouldRenderRouteFallbackWhileLoading } from '../../components/common/routeFallback'
 
 const craftElementResolver = { ...CraftElement }
 
@@ -67,34 +66,6 @@ type SectionType =
   | 'homeProgram'
   | 'homeProgramCategory'
   | 'messenger'
-
-export const SectionTitle = styled.div<{ white?: boolean }>`
-  margin: 0 auto;
-  margin-bottom: 40px;
-  font-weight: bold;
-  font-size: 28px;
-  letter-spacing: 0.23px;
-  text-align: center;
-  color: var(--gray-color);
-`
-export const StyledLink = styled(Link)<{ $backgroundActive?: string }>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  & .ant-btn-primary:active {
-    background: ${props =>
-      props.$backgroundActive ? props.$backgroundActive : props.theme['@primary-color']} !important;
-  }
-  margin-top: 56px;
-`
-export const StyledAngleRightIcon = styled(AngleRightIcon)`
-  transform: translateY(-0.5px);
-`
-
-export const StyledSection = styled.section`
-  padding: 64px 0;
-  background: white;
-`
 
 const sectionConverter = {
   // general

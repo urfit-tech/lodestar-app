@@ -9,9 +9,9 @@ import { useHistory, useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
 import OverBindDeviceModal from '../components/auth/login/OverBindDeviceModal'
 import OverLoginDeviceModal from '../components/auth/login/OverLoginDeviceModal'
+import LoadingPage from '../components/common/LoadingView'
 import { handleError } from '../helpers'
 import { codeMessages } from '../helpers/translation'
-import LoadingPage from '../pages/LoadingPage'
 
 export type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth' | 'cw'
 

@@ -11,6 +11,7 @@ import { defineMessages, useIntl } from 'react-intl'
 import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
+import NotFoundPage from '../../components/common/NotFoundView'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ProgramCollection from '../../components/package/ProgramCollection'
 import ProgramPackageBanner from '../../components/package/ProgramPackageBanner'
@@ -20,7 +21,6 @@ import { ProgramDisplayedListItem } from '../../components/program/ProgramDispla
 import { desktopViewMixin } from '../../helpers'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledProgramPackagePlanIds, useProgramPackageIntroduction } from '../../hooks/programPackage'
-import NotFoundPage from '../NotFoundPage'
 import ProgramPackagePageHelmet from './ProgramPackagePageHelmet'
 
 const StyledTitle = styled.h2`

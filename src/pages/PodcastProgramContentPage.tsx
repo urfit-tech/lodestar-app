@@ -7,6 +7,7 @@ import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
+import NotFoundPage from '../components/common/NotFoundView'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import PodcastProgramCover from '../components/podcast/PodcastProgramCover'
@@ -14,7 +15,6 @@ import CreatorCard from '../containers/common/CreatorCard'
 import LocaleContext from '../contexts/LocaleContext'
 import { usePodcastProgramContent } from '../hooks/podcast'
 import { usePodcastAlbumPreview } from '../hooks/podcastAlbum'
-import NotFoundPage from './NotFoundPage'
 
 const StyledContentWrapper = styled.div`
   padding: 2.5rem 1rem 4rem;

@@ -3,7 +3,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { SectionTitle } from '../../pages/AppPage'
+import { SectionTitle } from './styled'
 import pageComponentsMessages from './translation'
 
 const StyledContainer = styled.div`

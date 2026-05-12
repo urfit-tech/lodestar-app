@@ -8,10 +8,10 @@ import { StyledPostTitle } from '../components/blog'
 import { PopularPostCollection } from '../components/blog/PostLinkCollection'
 import PostPreviewCover from '../components/blog/PostPreviewCover'
 import PostPreviewMeta from '../components/blog/PostPreviewMeta'
+import NotFoundPage from '../components/common/NotFoundView'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { desktopViewMixin } from '../helpers'
 import { usePostPreviewCollection } from '../hooks/blog'
-import NotFoundPage from './NotFoundPage'
 
 const StyledBanner = styled.div`
   display: flex;

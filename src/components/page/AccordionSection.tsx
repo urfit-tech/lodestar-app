@@ -1,6 +1,6 @@
 import { CraftCollapse, CraftSection } from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
-import { SectionTitle } from '../../pages/AppPage'
+import { SectionTitle } from './styled'
 
 const AccordionSection: React.FC<{
   options: {

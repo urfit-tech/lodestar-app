@@ -2,7 +2,7 @@ import { CraftLayout, CraftSection } from 'lodestar-app-element/src/components/c
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { commonMessages } from '../../helpers/translation'
-import { SectionTitle, StyledAngleRightIcon, StyledLink } from '../../pages/AppPage'
+import { SectionTitle, StyledAngleRightIcon, StyledLink } from './styled'
 
 const PodcastProgramSection: React.FC<{ options: { title?: string; colAmount?: number; categoryId?: string } }> = ({
   options,

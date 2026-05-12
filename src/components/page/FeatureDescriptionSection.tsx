@@ -1,7 +1,7 @@
 import Card from 'lodestar-app-element/src/components/cards/Card'
 import { CraftCard, CraftImage, CraftSection } from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
-import { SectionTitle } from '../../pages/AppPage'
+import { SectionTitle } from './styled'
 
 const FeatureDescriptionSection: React.FC<{
   options: {

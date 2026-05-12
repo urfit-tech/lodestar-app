@@ -9,8 +9,8 @@ import styled from 'styled-components'
 import { commonMessages } from '../../helpers/translation'
 import { usePublishedActivityCollection } from '../../hooks/activity'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
-import { SectionTitle, StyledLink, StyledSection } from '../../pages/AppPage'
 import ActivityBlock from '../activity/ActivityBlock'
+import { SectionTitle, StyledLink, StyledSection } from './styled'
 import pageComponentsMessages from './translation'
 
 const StyledAngleRightIcon = styled(AngleRightIcon)`

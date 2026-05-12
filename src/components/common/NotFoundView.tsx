@@ -3,17 +3,20 @@ import { Button, Stack } from '@chakra-ui/react'
 import { Icon as AntdIcon } from 'antd'
 import React from 'react'
 import { Helmet } from 'react-helmet'
-import { useIntl } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
-import DefaultLayout from '../components/layout/DefaultLayout'
-import { CenteredBox } from '../components/layout/DefaultLayout/DefaultLayout.styled'
-import { commonMessages } from '../helpers/translation'
-import { ReactComponent as routeErrorIcon } from '../images/404.svg'
-import { ReactComponent as error2Icon } from '../images/error-2.svg'
-import { ReactComponent as errorIcon } from '../images/error.svg'
-import { messages } from './OrderPage'
+import { commonMessages } from '../../helpers/translation'
+import { ReactComponent as routeErrorIcon } from '../../images/404.svg'
+import { ReactComponent as error2Icon } from '../../images/error-2.svg'
+import { ReactComponent as errorIcon } from '../../images/error.svg'
+import DefaultLayout from '../layout/DefaultLayout'
+import { CenteredBox } from '../layout/DefaultLayout/DefaultLayout.styled'
+
+const messages = defineMessages({
+  orderTracking: { id: 'common.text.orderTracking', defaultMessage: '訂單查詢' },
+})
 
 const StyledWrapper = styled.div`
   padding: 5rem 1rem;
@@ -56,7 +59,7 @@ const StyledButton = styled(props => <Button {...props} />)`
   }
 `
 
-const NotFoundPage: React.FC<{
+const NotFoundView: React.FC<{
   variant?: 'error' | 'repairing'
 }> = ({ variant }) => {
   const { formatMessage } = useIntl()
@@ -153,4 +156,4 @@ const NotFoundPage: React.FC<{
   )
 }
 
-export default NotFoundPage
+export default NotFoundView

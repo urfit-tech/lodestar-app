@@ -3,7 +3,7 @@ import { Project } from 'lodestar-app-element/src/types/data'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { commonMessages } from '../../helpers/translation'
-import { SectionTitle, StyledAngleRightIcon, StyledLink } from '../../pages/AppPage'
+import { SectionTitle, StyledAngleRightIcon, StyledLink } from './styled'
 
 const ProjectSection: React.FC<{
   options: {

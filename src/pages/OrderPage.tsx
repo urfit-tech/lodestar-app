@@ -13,13 +13,13 @@ import { defineMessages, useIntl } from 'react-intl'
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
+import LoadingPage from '../components/common/LoadingView'
+import NotFoundPage from '../components/common/NotFoundView'
 import PageHelmet from '../components/common/PageHelmet'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
 import { commonMessages } from '../helpers/translation'
 import { OpenPageMethod, OrderPaymentStrategyContext, PaymentMode } from '../services/orderPayment/OrderPaymentStrategy'
-import LoadingPage from './LoadingPage'
-import NotFoundPage from './NotFoundPage'
 
 export const messages = defineMessages({
   orderSuccessHint: {

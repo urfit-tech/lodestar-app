@@ -16,9 +16,9 @@ import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
 import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.svg'
 import EmptyCover from '../../images/empty-cover.png'
 import { ReactComponent as PlayCircleIcon } from '../../images/play-circle.svg'
-import { SectionTitle, StyledLink, StyledSection } from '../../pages/AppPage'
 import { StyledPostTitle } from '../blog'
 import { BREAK_POINT } from '../common/Responsive'
+import { SectionTitle, StyledLink, StyledSection } from './styled'
 import pageComponentsMessages from './translation'
 
 const StyledCustomRatioImage = styled(CustomRatioImage)`

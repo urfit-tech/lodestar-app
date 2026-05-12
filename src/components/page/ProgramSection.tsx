@@ -9,8 +9,8 @@ import styled from 'styled-components'
 import { commonMessages, productMessages } from '../../helpers/translation'
 import { usePublishedProgramCollection } from '../../hooks/program'
 import { ReactComponent as AngleRightIcon } from '../../images/angle-right.svg'
-import { SectionTitle, StyledLink, StyledSection } from '../../pages/AppPage'
 import ProgramCard from '../program/ProgramCard'
+import { SectionTitle, StyledLink, StyledSection } from './styled'
 
 const StyledAngleRightIcon = styled(AngleRightIcon)`
   display: inline-block;

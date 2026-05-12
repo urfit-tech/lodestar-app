@@ -2,6 +2,7 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React, { useEffect, useState } from 'react'
 import ModularBriefFooter from '../../components/common/Footer/ModularBriefFooter'
 import MessengerChat from '../../components/common/MessengerChat'
+import NotFoundPage from '../../components/common/NotFoundView'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import ProjectBannerSection from '../../components/project/ProjectBannerSection'
 import ProjectCalloutSection from '../../components/project/ProjectCalloutSection'
@@ -18,7 +19,6 @@ import ProjectSwitchDisplaySection from '../../components/project/ProjectSwitchD
 import ProjectTourSection from '../../components/project/ProjectTourSection'
 import { useProject } from '../../hooks/project'
 import EmptyCover from '../../images/empty-cover.png'
-import NotFoundPage from '../NotFoundPage'
 
 const ModularPage: React.FC<{
   projectId: string

@@ -8,8 +8,8 @@ import { useHistory, useParams } from 'react-router-dom'
 import { BooleanParam } from 'serialize-query-params'
 import styled from 'styled-components'
 import { useQueryParams } from 'use-query-params'
+import LoadingPage from '../../components/common/LoadingView'
 import DefaultLayout from '../../components/layout/DefaultLayout'
-import LoadingPage from '../LoadingPage'
 import NewMeetingPageMessages from './translation'
 
 const StyledForm = styled.form`

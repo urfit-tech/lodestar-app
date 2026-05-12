@@ -7,8 +7,8 @@ import Slider from 'react-slick'
 import styled from 'styled-components'
 import { useLatestCreator } from '../../hooks/member'
 import DefaultAvatar from '../../images/avatar.svg'
-import { SectionTitle } from '../../pages/AppPage'
 import { BREAK_POINT } from '../common/Responsive'
+import { SectionTitle } from './styled'
 import pageComponentsMessages from './translation'
 
 const StyledSection = styled.section`

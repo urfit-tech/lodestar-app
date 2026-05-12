@@ -15,6 +15,8 @@ import PostCover from '../../components/blog/PostCover'
 import { RelativePostCollection } from '../../components/blog/PostLinkCollection'
 import CreatorCard from '../../components/common/CreatorCard'
 import LikesCountButton from '../../components/common/LikedCountButton'
+import LoadingPage from '../../components/common/LoadingView'
+import NotFoundPage from '../../components/common/NotFoundView'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import MessageSuggestItem from '../../components/practice/MessageSuggestItem'
@@ -24,8 +26,6 @@ import { ReactComponent as CalendarAltOIcon } from '../../images/calendar-alt-o.
 import { ReactComponent as EyeIcon } from '../../images/eye.svg'
 import { ReactComponent as UserOIcon } from '../../images/user-o.svg'
 import ForbiddenPage from '../ForbiddenPage'
-import LoadingPage from '../LoadingPage'
-import NotFoundPage from '../NotFoundPage'
 import BlogPostPageHelmet from './BlogPostPageHelmet'
 
 const messages = defineMessages({

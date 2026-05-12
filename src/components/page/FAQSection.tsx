@@ -1,7 +1,7 @@
 import Article from 'lodestar-app-element/src/components/common/Article'
 import React from 'react'
 import styled from 'styled-components'
-import { SectionTitle, StyledSection } from '../../pages/AppPage'
+import { SectionTitle, StyledSection } from './styled'
 
 const StyledContainer = styled.div`
   margin: 0 auto;

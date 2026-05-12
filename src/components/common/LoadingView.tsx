@@ -2,7 +2,7 @@ import { Spinner } from '@chakra-ui/react'
 import React from 'react'
 import styled from 'styled-components'
 import { BooleanParam, useQueryParams } from 'use-query-params'
-import DefaultLayout from '../components/layout/DefaultLayout'
+import DefaultLayout from '../layout/DefaultLayout'
 
 const StyledDiv = styled.div`
   display: flex;
@@ -11,7 +11,7 @@ const StyledDiv = styled.div`
   height: calc(100vh - 64px);
 `
 
-const LoadingPage: React.FC = () => {
+const LoadingView: React.FC = () => {
   const [{ noHeader }] = useQueryParams({
     noHeader: BooleanParam,
   })
@@ -25,4 +25,4 @@ const LoadingPage: React.FC = () => {
   )
 }
 
-export default LoadingPage
+export default LoadingView

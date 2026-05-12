@@ -2,7 +2,7 @@ import Card from 'lodestar-app-element/src/components/cards/Card'
 import { CraftCard, CraftSection } from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
 import styled from 'styled-components'
-import { SectionTitle } from '../../pages/AppPage'
+import { SectionTitle } from './styled'
 
 const StyledImage = styled.img`
   width: 40px;

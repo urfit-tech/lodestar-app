@@ -4,7 +4,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useEffect } from 'react'
 import { useHistory } from 'react-router'
 import { StringParam, useQueryParam } from 'use-query-params'
-import LoadingPage from '../LoadingPage'
+import LoadingPage from '../../components/common/LoadingView'
 
 const JoinPage: React.FC = () => {
   const history = useHistory()

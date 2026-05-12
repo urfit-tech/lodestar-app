@@ -5,8 +5,8 @@ import ReactPixel from 'react-facebook-pixel'
 import ReactGA from 'react-ga'
 import NotificationContext from './contexts/NotificationContext'
 
-const folderModules = import.meta.glob('./pages/**/index.{ts,tsx}')
-const flatModules = import.meta.glob('./pages/**/*.{ts,tsx}')
+const folderModules = import.meta.glob(['./pages/*/index.{ts,tsx}', '!./pages/AppPage/index.{ts,tsx}'])
+const flatModules = import.meta.glob('./pages/*.{ts,tsx}')
 const pageComponentCache = new Map<string, React.LazyExoticComponent<React.ComponentType>>()
 let initializedGaId: string | null = null
 

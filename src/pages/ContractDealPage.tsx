@@ -1,9 +1,9 @@
 import { Skeleton } from 'antd'
 import { useEffect } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
+import NotFoundPage from '../components/common/NotFoundView'
 import { useCheck } from '../hooks/checkout'
 import { useMemberContract } from '../hooks/data'
-import NotFoundPage from './NotFoundPage'
 
 const ContractDealPage: React.FC = () => {
   const { memberContractId } = useParams<{ memberId: string; memberContractId: string }>()

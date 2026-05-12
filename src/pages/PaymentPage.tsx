@@ -10,12 +10,12 @@ import { defineMessages, useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
 import AdminCard from '../components/common/AdminCard'
+import LoadingPage from '../components/common/LoadingView'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import hasura from '../hasura'
 import { decodeJwtPayload } from '../helpers/jwt'
 import { commonMessages } from '../helpers/translation'
 import { useFetchPayFormToken } from '../hooks/payment'
-import LoadingPage from './LoadingPage'
 
 const messages = defineMessages({
   bankCodeMessage: {

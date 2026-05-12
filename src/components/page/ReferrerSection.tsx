@@ -7,7 +7,7 @@ import {
 } from 'lodestar-app-element/src/components/common/CraftElement'
 import React from 'react'
 import styled from 'styled-components'
-import { StyledSection } from '../../pages/AppPage'
+import { StyledSection } from './styled'
 
 type Info = {
   imgSrc: string

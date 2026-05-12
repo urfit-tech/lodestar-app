@@ -18,6 +18,7 @@ import { AuthModalContext } from '../components/auth/AuthModal'
 import PostItemCollection from '../components/blog/PostItemCollection'
 import CheckoutPodcastPlanModal from '../components/checkout/CheckoutPodcastPlanModal'
 import CreatorIntroBlock from '../components/common/CreatorIntroBlock'
+import NotFoundPage from '../components/common/NotFoundView'
 import OverviewBlock from '../components/common/OverviewBlock'
 import PageHelmet from '../components/common/PageHelmet'
 import DefaultLayout from '../components/layout/DefaultLayout'
@@ -39,7 +40,6 @@ import { usePodcastProgramCollection } from '../hooks/podcast'
 import { usePublishedProgramCollection } from '../hooks/program'
 import { useMemberProjectCollection } from '../hooks/project'
 import { MemberPublicProps } from '../types/member'
-import NotFoundPage from './NotFoundPage'
 const StyledDescription = styled.div`
   color: var(--gray-dark);
   font-size: 14px;
