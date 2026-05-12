@@ -1,4 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
+import { Spinner } from '@chakra-ui/react'
 import Axios from 'axios'
 import Cookies from 'js-cookie'
 import Tracking from 'lodestar-app-element/src/components/common/Tracking'
@@ -28,6 +29,13 @@ import pageMessages from '../translation'
 import type { SectionType } from './AppCraftRenderer'
 
 const AppCraftRenderer = React.lazy(() => import('./AppCraftRenderer'))
+
+const CraftFallback = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 64px);
+`
 
 const ContentWrapper = styled.div<{ $isVip?: boolean; $sidebarWidth: number }>`
   margin-left: ${props => `${props.$sidebarWidth}px`};
@@ -201,7 +209,13 @@ const AppPage: React.FC<{ renderFallback?: (path: string) => React.ReactElement 
               onLoaded={() => setMetaLoaded(true)}
             />
             <DefaultLayout {...currentAppPage.options}>
-              <Suspense fallback={<LoadingPage />}>
+              <Suspense
+                fallback={
+                  <CraftFallback>
+                    <Spinner size="lg" />
+                  </CraftFallback>
+                }
+              >
                 <AppCraftRenderer
                   craftData={currentAppPage.craftData}
                   appPageSections={currentAppPage.appPageSections}
