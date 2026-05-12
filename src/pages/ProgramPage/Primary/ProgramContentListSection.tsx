@@ -3,7 +3,7 @@ import { Divider, Icon, Tag, Typography } from 'antd'
 import Cookies from 'js-cookie'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import moment from 'moment-timezone'
+import moment from 'moment'
 import React, { useContext, useEffect, useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
 import { useIntl } from 'react-intl'
@@ -17,7 +17,7 @@ import { useEquityProgramByProgramId } from '../../../hooks/program'
 import { BookIcon, MicrophoneIcon } from '../../../images'
 import PinIcon from '../../../images/pin-v-2.svg'
 import { DisplayModeEnum, Program, ProgramContent, ProgramContentSection } from '../../../types/program'
-import { TrackingEvent,Method } from '../../../types/tracking'
+import { Method, TrackingEvent } from '../../../types/tracking'
 
 const StyledTitle = styled.h2`
   display: flex;

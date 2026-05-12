@@ -1,7 +1,7 @@
 import { Icon } from '@chakra-ui/icons'
 import { Skeleton } from '@chakra-ui/react'
 import { usePublicMember } from 'lodestar-app-element/src/hooks/data'
-import moment from 'moment-timezone'
+import moment from 'moment'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { StyledPostMeta } from '.'

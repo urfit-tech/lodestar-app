@@ -23,7 +23,7 @@ import {
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/react'
-import moment from 'moment-timezone'
+import dayjs from 'dayjs'
 import { useState } from 'react'
 import { FaQuoteLeft } from 'react-icons/fa'
 import { HiDotsVertical } from 'react-icons/hi'
@@ -258,7 +258,7 @@ const HighlightRow: React.FC<{
   const { formatMessage } = useIntl()
   const [isDeleting, setDeleting] = useState<boolean>(false)
 
-  const formattedCreatedAt = moment(highlight.createdAt).tz('Asia/Taipei').format('YYYY-MM-DD HH:mm')
+  const formattedCreatedAt = dayjs(highlight.createdAt).tz('Asia/Taipei').format('YYYY-MM-DD HH:mm')
 
   const handleDeleteHighlight = async (id: string) => {
     try {

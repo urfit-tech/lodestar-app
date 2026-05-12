@@ -176,9 +176,6 @@ importers:
       moment:
         specifier: ^2.30.1
         version: 2.30.1
-      moment-timezone:
-        specifier: ^0.5.31
-        version: 0.5.48
       mustache:
         specifier: ^4.2.0
         version: 4.2.0
@@ -369,9 +366,6 @@ importers:
       '@types/lodash':
         specifier: ^4.14.157
         version: 4.17.24
-      '@types/moment-timezone':
-        specifier: ^0.5.13
-        version: 0.5.30
       '@types/mustache':
         specifier: ^4.0.1
         version: 4.2.6
@@ -2802,10 +2796,6 @@ packages:
   '@types/minimatch@6.0.0':
     resolution: {integrity: sha512-zmPitbQ8+6zNutpwgcQuLcsEpn/Cj54Kbn7L5pX0Os5kdWplB7xPgEh/g+SWOB/qmows2gpuCaPyduq8ZZRnxA==}
     deprecated: This is a stub types definition. minimatch provides its own type definitions, so you do not need this installed.
-
-  '@types/moment-timezone@0.5.30':
-    resolution: {integrity: sha512-aDVfCsjYnAQaV/E9Qc24C5Njx1CoDjXsEgkxtp9NyXDpYu4CCbmclb6QhWloS9UTU/8YROUEEdEkWI0D7DxnKg==}
-    deprecated: This is a stub types definition. moment-timezone provides its own type definitions, so you do not need this installed.
 
   '@types/mustache@4.0.1':
     resolution: {integrity: sha512-wH6Tu9mbiOt0n5EvdoWy0VGQaJMHfLIxY/6wS0xLC7CV1taM6gESEzcYy0ZlWvxxiiljYvfDIvz4hHbUUDRlhw==}
@@ -7220,9 +7210,6 @@ packages:
     resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
     engines: {node: '>=10'}
     hasBin: true
-
-  moment-timezone@0.5.48:
-    resolution: {integrity: sha512-f22b8LV1gbTO2ms2j2z13MuPogNoh5UzxL3nzNAYKGraILnbGc9NEE6dyiiiLv46DGRb8A4kg8UKWLjPthxBHw==}
 
   moment@2.30.1:
     resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
@@ -14056,10 +14043,6 @@ snapshots:
     dependencies:
       minimatch: 10.2.5
 
-  '@types/moment-timezone@0.5.30':
-    dependencies:
-      moment-timezone: 0.5.48
-
   '@types/mustache@4.0.1': {}
 
   '@types/mustache@4.2.6': {}
@@ -19729,10 +19712,6 @@ snapshots:
       minimist: 1.2.8
 
   mkdirp@1.0.4: {}
-
-  moment-timezone@0.5.48:
-    dependencies:
-      moment: 2.30.1
 
   moment@2.30.1: {}
 

@@ -1,5 +1,5 @@
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
-import moment from 'moment-timezone'
+import moment from 'moment'
 import { useIntl } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'

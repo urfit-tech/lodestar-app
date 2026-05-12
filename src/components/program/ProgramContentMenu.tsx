@@ -4,7 +4,7 @@ import { Box, Flex, Input, InputGroup, InputRightElement, Select } from '@chakra
 import { Card } from 'antd'
 import { useAppTheme } from 'lodestar-app-element/src/contexts/AppThemeContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import moment from 'moment-timezone'
+import moment from 'moment'
 import { flatten, sum } from 'ramda'
 import React, { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import { AiOutlineCalendar, AiOutlineFileText, AiOutlineVideoCamera } from 'react-icons/ai'
@@ -23,6 +23,7 @@ import { MicrophoneIcon } from '../../images'
 import { ReactComponent as LockIcon } from '../../images/icon-lock.svg'
 import { ReactComponent as PracticeIcon } from '../../images/practice-icon.svg'
 import { ReactComponent as QuizIcon } from '../../images/quiz.svg'
+import { Book } from '../../types/epub'
 import {
   DisplayMode,
   DisplayModeEnum,
@@ -33,7 +34,6 @@ import {
 } from '../../types/program'
 import { getChapter } from './ProgramContentEbookReader'
 import programMessages from './translation'
-import { Book } from '../../types/epub'
 
 const StyledIcon = styled(Icon)`
   font-size: 16px;

@@ -13,8 +13,6 @@ import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useResourceCollection } from 'lodestar-app-element/src/hooks/resource'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
-import moment from 'moment'
-import momentTz from 'moment-timezone'
 import {
   always,
   append,
@@ -432,8 +430,11 @@ export const AppointmentPlanCollection: React.FC<{
           )}
           <StyledTimeStandardBlock className="mb-4">
             {formatMessage(appointmentMessages.AppointmentCollectionTabs.timezone, {
-              city: momentTz.tz.guess().split('/')[1],
-              timezone: moment().zone(momentTz.tz.guess()).format('Z'),
+              city: (() => {
+                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+                return tz.split('/')[1] || tz
+              })(),
+              timezone: dayjs().tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format('Z'),
             })}
           </StyledTimeStandardBlock>
           <AppointmentPeriodCollection
