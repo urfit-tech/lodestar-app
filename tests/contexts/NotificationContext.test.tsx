@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'
 import { act } from 'react-dom/test-utils'
-import NotificationContext, { NotificationProvider } from './NotificationContext'
+import NotificationContext, { NotificationProvider } from '@/contexts/NotificationContext'
 
-const mockRefetchNotifications = jest.fn(() => Promise.resolve())
+const mockRefetchNotifications = vi.fn(() => Promise.resolve())
 const mockNotifications: [] = []
 
-jest.mock('../hooks/data', () => ({
+vi.mock('@/hooks/data', () => ({
   useNotifications: () => ({
     loadingNotifications: false,
     errorNotifications: undefined,
@@ -20,7 +20,7 @@ describe('NotificationProvider', () => {
   let container: HTMLDivElement
 
   beforeEach(() => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
     mockRefetchNotifications.mockClear()
     container = document.createElement('div')
     document.body.appendChild(container)
@@ -29,7 +29,7 @@ describe('NotificationProvider', () => {
   afterEach(() => {
     unmountComponentAtNode(container)
     container.remove()
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   it('keeps the context value stable when only internal initialization state changes', () => {
@@ -53,7 +53,7 @@ describe('NotificationProvider', () => {
     expect(renderCount).toBe(1)
 
     act(() => {
-      jest.advanceTimersByTime(2000)
+      vi.advanceTimersByTime(2000)
     })
 
     expect(mockRefetchNotifications).toHaveBeenCalledTimes(1)
