@@ -1,12 +1,12 @@
 import React from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'
 import { act } from 'react-dom/test-utils'
-import { useGetEbookTrialPercentage } from './ebook'
+import { useGetEbookTrialPercentage } from '@/hooks/ebook'
 
 let mockQueryData: any
 
-jest.mock('@apollo/client', () => ({
-  gql: jest.fn((strings: TemplateStringsArray) => strings.join('')),
+vi.mock('@apollo/client', () => ({
+  gql: vi.fn((strings: TemplateStringsArray) => strings.join('')),
   useQuery: () => ({
     data: mockQueryData,
   }),
