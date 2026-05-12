@@ -1,3 +1,4 @@
+// eslint-disable-next-line simple-import-sort/imports
 import React from 'react'
 import { render } from 'react-dom'
 import App from './Application'

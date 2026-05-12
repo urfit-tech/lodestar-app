@@ -418,6 +418,8 @@ export const AppointmentPlanCollection: React.FC<{
     true,
   )
 
+  const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone
+
   return (
     <>
       <Tracking.Impression resources={resourceCollection} />
@@ -430,11 +432,8 @@ export const AppointmentPlanCollection: React.FC<{
           )}
           <StyledTimeStandardBlock className="mb-4">
             {formatMessage(appointmentMessages.AppointmentCollectionTabs.timezone, {
-              city: (() => {
-                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-                return tz.split('/')[1] || tz
-              })(),
-              timezone: dayjs().tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format('Z'),
+              city: userTz.split('/')[1] || userTz,
+              timezone: dayjs().tz(userTz).format('Z'),
             })}
           </StyledTimeStandardBlock>
           <AppointmentPeriodCollection
