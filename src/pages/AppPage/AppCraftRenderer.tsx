@@ -30,15 +30,6 @@ import {
 import HaohaomingSection from '../../components/page/HaohaomingSection'
 import CraftBlock from './CraftBlock'
 
-export type SectionType =
-  | 'homeCover'
-  | 'homeActivity'
-  | 'homeCreator'
-  | 'homePost'
-  | 'homeProgram'
-  | 'homeProgramCategory'
-  | 'messenger'
-
 const craftElementResolver = { ...CraftElement }
 
 const sectionConverter = {
@@ -70,6 +61,8 @@ const sectionConverter = {
   homeHaohaoming: HaohaomingSection,
 }
 
+export type SectionType = keyof typeof sectionConverter
+
 type Props = {
   craftData: { [key: string]: any } | null
   appPageSections: { id: string; options: any; type: SectionType }[]
@@ -88,7 +81,7 @@ const AppCraftRenderer: React.FC<Props> = ({ craftData, appPageSections }) => {
       <Frame>
         <>
           {appPageSections.map(section => {
-            const Section = sectionConverter[section.type as keyof typeof sectionConverter]
+            const Section = sectionConverter[section.type]
             if (!Section) {
               return null
             }
