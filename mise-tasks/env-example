@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#MISE description="Regenerate .env.example from local .env.* files"
+set -euo pipefail
+
+files=()
+for f in .env.development .env.production .env.staging; do
+  [ -f "$f" ] && files+=("$f")
+done
+
+if [ ${#files[@]} -eq 0 ]; then
+  echo "No .env.* source files found" >&2
+  exit 1
+fi
+
+awk -F= '
+  /^[[:space:]]*$/ { if (FILENAME == ARGV[1]) print; next }
+  /^[[:space:]]*#/ { if (FILENAME == ARGV[1]) print; next }
+  /=/ { if (!seen[$1]++) print $1 "="; next }
+' "${files[@]}" > .env.example
+
+echo "Wrote .env.example from: ${files[*]}"
