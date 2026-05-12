@@ -238,7 +238,7 @@ export default defineConfig(async ({ command, mode }) => {
               { name: 'screenshot', test: /node_modules[\\/]html2canvas/, priority: 25 },
               { name: 'router', test: /node_modules[\\/]@tanstack[\\/]/, priority: 25 },
               { name: 'craft', test: /node_modules[\\/]@craftjs[\\/]/, priority: 25 },
-              { name: 'forms', test: /node_modules[\\/](react-hook-form|@hookform[\\/])/, priority: 25 },
+              { name: 'forms', test: /node_modules[\\/](react-hook-form|@hookform)[\\/]/, priority: 25 },
               { name: 'carousel', test: /node_modules[\\/](react-slick|slick-carousel)[\\/]/, priority: 25 },
               { name: 'messenger', test: /node_modules[\\/]react-messenger-customer-chat[\\/]/, priority: 25 },
             ],
