@@ -1,8 +1,7 @@
 import { ConfigProvider } from 'antd'
 import zhTW from 'antd/lib/locale-provider/zh_TW'
-import React from 'react'
+import React, { Suspense } from 'react'
 import { StyleSheetManager } from 'styled-components'
-import GlobalAudioPlayer from './components/audio/GlobalAudioPlayer'
 import AppRouter, { RouteProps } from './components/common/AppRouter'
 import InAppBrowserWarningModal from './components/common/InAppBrowserWarningModal'
 import SignupPropertyModal from './components/common/SignupPropertyModal'
@@ -17,6 +16,8 @@ import { MediaPlayerProvider } from './contexts/MediaPlayerContext'
 import { NotificationProvider } from './contexts/NotificationContext'
 import { PodcastPlayerProvider } from './contexts/PodcastPlayerContext'
 import './styles.scss'
+
+const GlobalAudioPlayer = React.lazy(() => import('./components/audio/GlobalAudioPlayer'))
 
 const Application: React.FC<{
   appId: string
@@ -37,7 +38,9 @@ const Application: React.FC<{
                         <CustomRendererProvider renderer={customRender}>
                           <AppRouter extra={extraRouteProps}>
                             <GlobalPodcastPlayer />
-                            <GlobalAudioPlayer />
+                            <Suspense fallback={null}>
+                              <GlobalAudioPlayer />
+                            </Suspense>
                             <SignupPropertyModal key={document.location.href} />
                             <InAppBrowserWarningModal />
                           </AppRouter>

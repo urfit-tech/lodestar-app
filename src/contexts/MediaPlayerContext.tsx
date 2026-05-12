@@ -2,11 +2,12 @@ import axios from 'axios'
 import { throttle } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { Suspense, useEffect, useRef, useState } from 'react'
 import 'video.js/dist/video-js.css'
-import AudioPlayer from '../components/common/AudioPlayer'
 import { getFileDownloadableLink } from '../helpers'
 import { useInsertProgress, useProgramContentProgress } from './ProgressContext'
+
+const AudioPlayer = React.lazy(() => import('../components/common/AudioPlayer'))
 
 type MediaResource = {
   title: string
@@ -148,51 +149,53 @@ export const MediaPlayerProvider: React.FC = ({ children }) => {
             width: '100%',
           }}
         >
-          <AudioPlayer
-            title={currentResource.title}
-            mimeType={mimeType}
-            audioUrl={sourceUrl}
-            lastProgress={lastProgress}
-            onPrev={
-              currentIndex !== 0
-                ? () => {
-                    setCurrentIndex(index => (index === undefined ? undefined : index - 1))
+          <Suspense fallback={null}>
+            <AudioPlayer
+              title={currentResource.title}
+              mimeType={mimeType}
+              audioUrl={sourceUrl}
+              lastProgress={lastProgress}
+              onPrev={
+                currentIndex !== 0
+                  ? () => {
+                      setCurrentIndex(index => (index === undefined ? undefined : index - 1))
+                    }
+                  : undefined
+              }
+              onNext={
+                currentIndex !== resourceList.length - 1
+                  ? () => {
+                      setCurrentIndex(index => (index === undefined ? undefined : index + 1))
+                    }
+                  : undefined
+              }
+              onAudioEvent={e => {
+                if (Math.abs(e.audioState.endedAt - endedAtRef.current) >= 5) {
+                  insertPlayerEventLog({
+                    ...e.audioState,
+                    startedAt: endedAtRef.current || e.audioState.startedAt,
+                    progress: e.progress,
+                  })
+                  if (e.type === 'progress') {
+                    insertProgramProgress(e.progress)
                   }
-                : undefined
-            }
-            onNext={
-              currentIndex !== resourceList.length - 1
-                ? () => {
-                    setCurrentIndex(index => (index === undefined ? undefined : index + 1))
-                  }
-                : undefined
-            }
-            onAudioEvent={e => {
-              if (Math.abs(e.audioState.endedAt - endedAtRef.current) >= 5) {
-                insertPlayerEventLog({
-                  ...e.audioState,
-                  startedAt: endedAtRef.current || e.audioState.startedAt,
-                  progress: e.progress,
-                })
-                if (e.type === 'progress') {
-                  insertProgramProgress(e.progress)
+                  endedAtRef.current = e.audioState.endedAt
                 }
-                endedAtRef.current = e.audioState.endedAt
-              }
-              if (e.type === 'ended') {
-                insertPlayerEventLog({
-                  ...e.audioState,
-                  startedAt: endedAtRef.current || e.audioState.startedAt,
-                  progress: e.progress,
-                })
-                insertProgramProgress(1)?.then(() => refetchProgress())
-              }
-            }}
-            onClose={() => {
-              setSourceList([])
-              setVisible(false)
-            }}
-          />
+                if (e.type === 'ended') {
+                  insertPlayerEventLog({
+                    ...e.audioState,
+                    startedAt: endedAtRef.current || e.audioState.startedAt,
+                    progress: e.progress,
+                  })
+                  insertProgramProgress(1)?.then(() => refetchProgress())
+                }
+              }}
+              onClose={() => {
+                setSourceList([])
+                setVisible(false)
+              }}
+            />
+          </Suspense>
         </div>
       )}
     </MediaPlayerContext.Provider>
