@@ -4,20 +4,16 @@ import { Button, ButtonGroup, SkeletonCircle, SkeletonText, Spinner, Textarea } 
 import { Divider, Dropdown, Form, Icon as AntdIcon, Menu, message, Modal } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
-import BraftEditor from 'braft-editor'
-import 'braft-editor/dist/index.css'
-import 'braft-editor/dist/output.css'
 import dayjs from 'dayjs'
 import { CommonTitleMixin, MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
-import StyledBraftEditor, { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import hasura from '../../hasura'
-import { createUploadFn, dateRangeFormatter, downloadFile, getFileDownloadableLink, handleError } from '../../helpers'
+import { dateRangeFormatter, downloadFile, getFileDownloadableLink, handleError } from '../../helpers'
 import { useAppointmentPlan, useCancelAppointment, useUpdateAppointmentIssue } from '../../hooks/appointment'
 import { useGetMeetByTargetAndPeriodAndSpecifyMember } from '../../hooks/meet'
 import { useService } from '../../hooks/service'
@@ -29,6 +25,8 @@ import { CustomRatioImage } from '../common/Image'
 import { BREAK_POINT } from '../common/Responsive'
 import AppointmentItem from './AppointmentItem'
 import appointmentMessages from './translation'
+
+const AppointmentIssueModal = React.lazy(() => import('./AppointmentIssueModal'))
 
 const StyledCard = styled.div`
   background-color: white;
@@ -89,12 +87,6 @@ const StyledModalSubTitle = styled.div`
   font-size: 14px;
   letter-spacing: 0.4px;
 `
-const StyledModalMetaBlock = styled.div`
-  padding: 0.75rem;
-  background-color: var(--gray-lighter);
-  border-radius: 4px;
-`
-
 const StyledLabel = styled.div`
   color: var(--gray-darker);
   font-size: 14px;
@@ -187,6 +179,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   const { formatMessage } = useIntl()
   const { authToken, currentMemberId, currentMember } = useAuth()
   const [issueModalVisible, setIssueModalVisible] = useState(false)
+  const [hasOpenedIssueModal, setHasOpenedIssueModal] = useState(false)
   const [cancelModalVisible, setCancelModalVisible] = useState(false)
   const [canceledReason, setCanceledReason] = useState('')
   const [rescheduleModalVisible, setRescheduleModalVisible] = useState(false)
@@ -212,6 +205,12 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   const cancelAppointment = useCancelAppointment(orderProductId, orderProduct.options)
 
   const disableAppointmentIssueButton = Boolean(Number(settings['appointment_card.appointment_Issue_button.disabled']))
+
+  useEffect(() => {
+    if (issueModalVisible && !hasOpenedIssueModal) {
+      setHasOpenedIssueModal(true)
+    }
+  }, [issueModalVisible, hasOpenedIssueModal])
 
   const handleSubmit = () => {
     form.validateFields((errors, values) => {
@@ -499,77 +498,23 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
       </StyledStatusBar>
 
       {/* issue modal */}
-      <Modal width={660} visible={issueModalVisible} footer={null} onCancel={() => setIssueModalVisible(false)}>
-        <StyledModalTitle className="mb-3">
-          {formatMessage(appointmentMessages.AppointmentCard.appointmentIssue)}
-        </StyledModalTitle>
-        <StyledModalMetaBlock className="mb-3">
-          <span className="mr-2">{formatMessage(appointmentMessages.AppointmentCard.appointmentDate)}</span>
-          {orderProduct.startedAt && orderProduct.endedAt ? (
-            <span>
-              {dateRangeFormatter({
-                startedAt: orderProduct.startedAt,
-                endedAt: orderProduct.endedAt,
-                dateFormat: 'MM/DD(dd)',
-              })}
-            </span>
-          ) : null}
-        </StyledModalMetaBlock>
-        <div className="mb-3">
-          <strong className="mb-2">{formatMessage(appointmentMessages.AppointmentCard.createAppointmentIssue)}</strong>
-          <div>{formatMessage(appointmentMessages.AppointmentCard.appointmentIssueDescription)}</div>
-        </div>
-
-        <Form colon={false} className={isFinished || isCanceled ? 'd-none' : ''}>
-          <Form.Item>
-            {form.getFieldDecorator('appointmentIssue', {
-              initialValue: BraftEditor.createEditorState(orderProduct.appointmentIssue),
-            })(
-              <StyledBraftEditor
-                language="zh-hant"
-                contentClassName="short-bf-content"
-                controls={[
-                  'headings',
-                  'bold',
-                  'italic',
-                  'underline',
-                  'strike-through',
-                  'remove-styles',
-                  'separator',
-                  'text-align',
-                  'separator',
-                  'list-ul',
-                  'list-ol',
-                  'blockquote',
-                  'code',
-                  'separator',
-                  'link',
-                  'hr',
-                  'media',
-                ]}
-                media={{
-                  uploadFn: createUploadFn(appId, authToken),
-                  accepts: { video: false, audio: false },
-                  externals: { image: true, video: false, audio: false, embed: true },
-                }}
-              />,
-            )}
-          </Form.Item>
-        </Form>
-
-        {isFinished && <BraftContent>{orderProduct.appointmentIssue}</BraftContent>}
-        {isCanceled && <BraftContent>{orderProduct.appointmentIssue}</BraftContent>}
-        {!isFinished && !isCanceled && (
-          <ButtonGroup display="flex" marginTop="24px" justifyContent="flex-end">
-            <Button variant="outline" marginRight="8px" onClick={() => setIssueModalVisible(false)}>
-              {formatMessage(appointmentMessages['*'].cancel)}
-            </Button>
-            <Button isLoading={loading} colorScheme="primary" onClick={handleSubmit}>
-              {formatMessage(appointmentMessages['*'].save)}
-            </Button>
-          </ButtonGroup>
-        )}
-      </Modal>
+      {hasOpenedIssueModal && (
+        <Suspense fallback={null}>
+          <AppointmentIssueModal
+            visible={issueModalVisible}
+            onClose={() => setIssueModalVisible(false)}
+            loading={loading}
+            isFinished={isFinished}
+            isCanceled={isCanceled}
+            form={form}
+            appointmentIssue={orderProduct.appointmentIssue}
+            orderProduct={{ startedAt: orderProduct.startedAt, endedAt: orderProduct.endedAt }}
+            appId={appId}
+            authToken={authToken}
+            onSubmit={handleSubmit}
+          />
+        </Suspense>
+      )}
 
       {/* cancel modal */}
       <Modal
