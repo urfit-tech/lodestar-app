@@ -1,10 +1,10 @@
 import { gql, useMutation, useQuery } from '@apollo/client'
 import axios from 'axios'
-import { EditorState } from 'braft-editor'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import useSWR from 'swr'
 import hasura from '../hasura'
+import type { EditorState } from 'braft-editor'
 
 const useIssue = (threadId: string) => {
   const { id: appId } = useApp()

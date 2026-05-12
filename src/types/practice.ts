@@ -1,4 +1,4 @@
-import { EditorState } from 'braft-editor'
+import type { EditorState } from 'braft-editor'
 import { ProgramRole } from '../types/program'
 export type PracticePreviewProps = {
   id: string

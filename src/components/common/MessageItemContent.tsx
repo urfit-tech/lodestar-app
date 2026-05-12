@@ -1,11 +1,11 @@
 import { Dropdown, Icon, Typography } from 'antd'
-import { EditorState } from 'braft-editor'
 import { BraftContent } from 'lodestar-app-element/src/components/common/StyledBraftEditor'
 import { StyledMarkdownDiv } from 'lodestar-app-element/src/components/common/StyledMarkdownEditor'
 import { marked } from 'marked'
 import React, { useState } from 'react'
 import styled, { css } from 'styled-components'
 import MessageItemForm from './MessageItemForm'
+import type { EditorState } from 'braft-editor'
 
 const StyledMessageContentBlock = styled.div<{ firstLayer?: boolean; customizedStyle?: string }>`
   ${props =>

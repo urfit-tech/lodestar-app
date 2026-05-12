@@ -225,8 +225,13 @@ export default defineConfig(async ({ command, mode }) => {
               { name: 'utils', test: /node_modules[\\/](lodash|lodash-es|ramda)[\\/]/, priority: 25 },
               {
                 name: 'editor',
-                test: /node_modules[\\/](braft-[^/]+|draft-js|draft-convert|draftjs-utils)[\\/]/,
+                test: /node_modules[\\/]braft-[^/]+[\\/]/,
                 priority: 25,
+              },
+              {
+                name: 'draft',
+                test: /node_modules[\\/](draft-js|draft-convert|draftjs-utils)[\\/]/,
+                priority: 30,
               },
               { name: 'fullcalendar', test: /node_modules[\\/]@fullcalendar[\\/]/, priority: 25 },
               {
