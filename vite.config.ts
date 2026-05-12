@@ -176,12 +176,24 @@ export default defineConfig(async ({ command, mode }) => {
       },
       rolldownOptions: {
         output: {
-          advancedChunks: {
+          codeSplitting: {
             groups: [
               { name: 'antd', test: /node_modules[\\/]antd[\\/]/, priority: 30 },
-              { name: 'react-core', test: /node_modules[\\/](react|react-dom|scheduler|react-router|react-router-dom|history)[\\/]/, priority: 25 },
-              { name: 'apollo', test: /node_modules[\\/](@apollo[\\/]|graphql[\\/]|graphql-tag[\\/]|@graphql)/, priority: 25 },
-              { name: 'chakra', test: /node_modules[\\/](@chakra-ui[\\/]|@emotion[\\/]|framer-motion[\\/])/, priority: 25 },
+              {
+                name: 'react-core',
+                test: /node_modules[\\/](react|react-dom|scheduler|react-router|react-router-dom|history)[\\/]/,
+                priority: 25,
+              },
+              {
+                name: 'apollo',
+                test: /node_modules[\\/](@apollo[\\/]|graphql[\\/]|graphql-tag[\\/]|@graphql)/,
+                priority: 25,
+              },
+              {
+                name: 'chakra',
+                test: /node_modules[\\/](@chakra-ui[\\/]|@emotion[\\/]|framer-motion[\\/])/,
+                priority: 25,
+              },
               { name: 'date', test: /node_modules[\\/](moment|dayjs|date-fns)[\\/]/, priority: 25 },
               { name: 'utils', test: /node_modules[\\/](lodash|lodash-es|ramda)[\\/]/, priority: 25 },
               { name: 'vendors', test: /node_modules[\\/]/, priority: 10 },
