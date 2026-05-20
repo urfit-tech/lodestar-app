@@ -20,10 +20,6 @@ const HaohaomingSectionMessages = {
       id: 'cover.Cover.exploreCourses',
       defaultMessage: '探索課程',
     },
-    getOffer: {
-      id: 'cover.Cover.getOffer',
-      defaultMessage: '領取優惠',
-    },
   }),
 }
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Courses from './Courses'
-import CoverBanner from './CoverBanner'
+import Cover from './Cover'
 import FAQs from './FAQs'
 import Philosophy from './Philosophy'
 import Recommend from './Recommend'
@@ -40,7 +40,7 @@ const HomePage: React.FC<{
   }
 }> = ({ options }) => (
   <StyleOverrideBlock>
-    <CoverBanner />
+    <Cover {...options.cover} />
     <Courses />
     <Philosophy {...options.philosophy} />
     <TeacherIntroduction {...options.teacherIntroduction} />
