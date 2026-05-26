@@ -127,8 +127,15 @@ const formatDate = (isoString: string): string => {
   return date.toISOString().split('T')[0]
 }
 
-const transformToCalendarEvent = (event: any, classroomMap: Map<string, string>): CalendarEvent => {
+const transformToCalendarEvent = (
+  event: any,
+  classroomMap: Map<string, string>,
+  memberMap: Map<string, string>,
+): CalendarEvent => {
   const metadata = parseEventMetadata(event.event_metadata)
+  const resolvedStudents = (metadata.studentIds || [])
+    .map(id => memberMap.get(id))
+    .filter((name): name is string => Boolean(name))
   return {
     id: event.event_id,
     title: event.title || metadata.title || '課程',
@@ -137,7 +144,7 @@ const transformToCalendarEvent = (event: any, classroomMap: Map<string, string>)
     endTime: formatTime(event.ended_at),
     date: formatDate(event.started_at),
     teacher: '',
-    students: undefined,
+    students: resolvedStudents.length > 0 ? resolvedStudents : undefined,
     location: resolveEventLocation(metadata, classroomMap),
     isExternal: metadata.isExternal,
     status: event.source_target ? CalendarEventStatus.Published : CalendarEventStatus.Scheduled,
@@ -258,6 +265,39 @@ export const useMemberClassEvents = (memberId: string) => {
     return map
   }, [teacherData])
 
+  const allStudentIds = useMemo(() => {
+    const ids = new Set<string>()
+    rawEvents.forEach((e: any) => {
+      const meta = parseEventMetadata(e.event_metadata)
+      meta.studentIds?.forEach(id => ids.add(id))
+    })
+    return Array.from(ids)
+  }, [rawEvents])
+
+  const { data: studentData } = useQuery<{
+    member_public: Array<{ id: string; name: string; username: string }>
+  }>(
+    gql`
+      query GetStudentNamesByIds($memberIds: [String!]!) {
+        member_public(where: { id: { _in: $memberIds } }) {
+          id
+          name
+          username
+        }
+      }
+    `,
+    {
+      variables: { memberIds: allStudentIds },
+      skip: allStudentIds.length === 0,
+    },
+  )
+
+  const studentMap = useMemo(() => {
+    const map = new Map<string, string>()
+    studentData?.member_public.forEach(m => map.set(m.id, m.name || m.username || m.id))
+    return map
+  }, [studentData])
+
   const allClassroomIds = useMemo(() => {
     const ids = new Set<string>()
     rawEvents.forEach((event: any) => {
@@ -299,13 +339,13 @@ export const useMemberClassEvents = (memberId: string) => {
       rawEvents
         .filter((event: any) => event.role === role && !event.event_deleted_at && !event.event_resource_deleted_at)
         .map((event: any) => {
-          const calendarEvent = transformToCalendarEvent(event, classroomMap)
+          const calendarEvent = transformToCalendarEvent(event, classroomMap, studentMap)
           if (calendarEvent.teacherId) {
             calendarEvent.teacher = teacherMap.get(calendarEvent.teacherId) || ''
           }
           return calendarEvent
         }),
-    [rawEvents, teacherMap, classroomMap],
+    [rawEvents, teacherMap, classroomMap, studentMap],
   )
 
   const studentEvents = useMemo(() => filterByRole('participant'), [filterByRole])
