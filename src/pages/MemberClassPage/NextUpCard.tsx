@@ -17,6 +17,9 @@ const messages = defineMessages({
   connecting: { id: 'memberClass.card.connecting', defaultMessage: '連線中...' },
   zoomWillOpenBefore15Min: { id: 'memberClass.card.zoomWillOpenBefore15Min', defaultMessage: '連結將於課前15分鐘開放' },
   classEnded: { id: 'memberClass.card.classEnded', defaultMessage: '課程已結束' },
+  groupClass: { id: 'memberClass.courseType.group', defaultMessage: '團體班' },
+  termClass: { id: 'memberClass.courseType.term', defaultMessage: '學期班' },
+  notSpecified: { id: 'memberClass.card.notSpecified', defaultMessage: '未指定' },
 })
 
 const getCourseColor = (type: CourseType) => {
@@ -215,12 +218,17 @@ const NextUpCard: React.FC<NextUpCardProps> = ({ event, viewAs }) => {
   }
 
   const courseColors = getCourseColor(event.courseType)
-  const rolePerson =
-    viewAs === 'teacher'
-      ? event.students && event.students.length > 0
-        ? event.students.join(', ')
-        : '團體班'
-      : event.teacher
+  const rolePerson = (() => {
+    if (viewAs !== 'teacher') return event.teacher
+    const names = event.students ?? []
+    if (event.courseType === CourseType.Private) {
+      return names[0] || formatMessage(messages.notSpecified)
+    }
+    if (names.length > 0) return names.join(', ')
+    return event.courseType === CourseType.Term
+      ? formatMessage(messages.termClass)
+      : formatMessage(messages.groupClass)
+  })()
   const material = event.material || event.materialName
 
   return (

@@ -2,6 +2,7 @@ import { gql, useQuery } from '@apollo/client'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { buildStudentSummaries, buildTeacherSummaries, scheduleTypeToCourseType } from './hooks.helpers'
 import { CalendarEvent, CalendarEventStatus, CoursePackageSummary, CourseType, TeachingCourseSummary } from './types'
 
 const isUuid = (value?: string) =>
@@ -126,8 +127,15 @@ const formatDate = (isoString: string): string => {
   return date.toISOString().split('T')[0]
 }
 
-const transformToCalendarEvent = (event: any, classroomMap: Map<string, string>): CalendarEvent => {
+const transformToCalendarEvent = (
+  event: any,
+  classroomMap: Map<string, string>,
+  memberMap: Map<string, string>,
+): CalendarEvent => {
   const metadata = parseEventMetadata(event.event_metadata)
+  const resolvedStudents = (metadata.studentIds || [])
+    .map(id => memberMap.get(id))
+    .filter((name): name is string => Boolean(name))
   return {
     id: event.event_id,
     title: event.title || metadata.title || '課程',
@@ -136,11 +144,13 @@ const transformToCalendarEvent = (event: any, classroomMap: Map<string, string>)
     endTime: formatTime(event.ended_at),
     date: formatDate(event.started_at),
     teacher: '',
-    students: undefined,
+    students: resolvedStudents.length > 0 ? resolvedStudents : undefined,
     location: resolveEventLocation(metadata, classroomMap),
     isExternal: metadata.isExternal,
     status: event.source_target ? CalendarEventStatus.Published : CalendarEventStatus.Scheduled,
-    courseType: determineCourseType(event.event_metadata, event.title),
+    courseType:
+      scheduleTypeToCourseType(metadata.scheduleType) ??
+      determineCourseType(event.event_metadata, event.title),
     needOnlineRoom: metadata.needOnlineRoom,
     hostMemberId: event.host_member_id,
     materialName: metadata.material || metadata.materialName,
@@ -255,6 +265,39 @@ export const useMemberClassEvents = (memberId: string) => {
     return map
   }, [teacherData])
 
+  const allStudentIds = useMemo(() => {
+    const ids = new Set<string>()
+    rawEvents.forEach((e: any) => {
+      const meta = parseEventMetadata(e.event_metadata)
+      meta.studentIds?.forEach(id => ids.add(id))
+    })
+    return Array.from(ids)
+  }, [rawEvents])
+
+  const { data: studentData } = useQuery<{
+    member_public: Array<{ id: string; name: string; username: string }>
+  }>(
+    gql`
+      query GetStudentNamesByIds($memberIds: [String!]!) {
+        member_public(where: { id: { _in: $memberIds } }) {
+          id
+          name
+          username
+        }
+      }
+    `,
+    {
+      variables: { memberIds: allStudentIds },
+      skip: allStudentIds.length === 0,
+    },
+  )
+
+  const studentMap = useMemo(() => {
+    const map = new Map<string, string>()
+    studentData?.member_public.forEach(m => map.set(m.id, m.name || m.username || m.id))
+    return map
+  }, [studentData])
+
   const allClassroomIds = useMemo(() => {
     const ids = new Set<string>()
     rawEvents.forEach((event: any) => {
@@ -296,13 +339,13 @@ export const useMemberClassEvents = (memberId: string) => {
       rawEvents
         .filter((event: any) => event.role === role && !event.event_deleted_at && !event.event_resource_deleted_at)
         .map((event: any) => {
-          const calendarEvent = transformToCalendarEvent(event, classroomMap)
+          const calendarEvent = transformToCalendarEvent(event, classroomMap, studentMap)
           if (calendarEvent.teacherId) {
             calendarEvent.teacher = teacherMap.get(calendarEvent.teacherId) || ''
           }
           return calendarEvent
         }),
-    [rawEvents, teacherMap, classroomMap],
+    [rawEvents, teacherMap, classroomMap, studentMap],
   )
 
   const studentEvents = useMemo(() => filterByRole('participant'), [filterByRole])
@@ -319,26 +362,12 @@ export const useMemberClassEvents = (memberId: string) => {
 
 // Hook to get course package summaries for students
 export const useStudentCourseSummaries = (events: CalendarEvent[]) => {
-  // Group events by classGroupId
-  const grouped = useMemo(() => {
-    const map = new Map<string, CalendarEvent[]>()
-    events.forEach(e => {
-      const key = e.classGroupId || 'unknown'
-      const arr = map.get(key) || []
-      arr.push(e)
-      map.set(key, arr)
-    })
-    return map
-  }, [events])
-
-  // Collect all unique orderIds
   const allOrderIds = useMemo(() => {
     const ids = new Set<string>()
     events.forEach(e => e.orderIds?.forEach(id => ids.add(id)))
     return Array.from(ids)
   }, [events])
 
-  // Query order_log for expiry and status
   const { data: orderData, loading } = useQuery<{
     order_log: Array<{ id: string; status: string; expired_at: string | null }>
   }>(
@@ -360,126 +389,17 @@ export const useStudentCourseSummaries = (events: CalendarEvent[]) => {
   const summaries = useMemo<CoursePackageSummary[]>(() => {
     const orderMap = new Map<string, { status: string; expired_at: string | null }>()
     orderData?.order_log.forEach(o => orderMap.set(o.id, { status: o.status, expired_at: o.expired_at }))
-
-    const now = new Date()
-    const result: CoursePackageSummary[] = []
-
-    grouped.forEach((groupEvents, classGroupId) => {
-      const first = groupEvents[0]
-      // Find the order info for this group
-      const groupOrderIds = first.orderIds || []
-      const order = groupOrderIds.map(id => orderMap.get(id)).find(Boolean)
-
-      const completedLessons = groupEvents.filter(e => e.startedAt && new Date(e.startedAt) < now).length
-
-      let paymentStatus: CoursePackageSummary['paymentStatus'] = 'Pending'
-      if (order) {
-        paymentStatus = order.status === 'SUCCESS' ? 'Paid' : order.status === 'UNPAID' ? 'Unpaid' : 'Pending'
-      }
-
-      result.push({
-        id: classGroupId,
-        name: first.title,
-        language: first.language || '',
-        totalLessons: groupEvents.length,
-        completedLessons,
-        expiryDate: order?.expired_at || '',
-        paymentStatus,
-      })
-    })
-
-    return result
-  }, [grouped, orderData])
+    return buildStudentSummaries({ events, orderMap })
+  }, [events, orderData])
 
   return { summaries, loading }
 }
 
 // Hook to get teaching course summaries for teachers
 export const useTeacherCourseSummaries = (events: CalendarEvent[]) => {
-  // Group events by classGroupId
-  const grouped = useMemo(() => {
-    const map = new Map<string, CalendarEvent[]>()
-    events.forEach(e => {
-      const key = e.classGroupId || 'unknown'
-      const arr = map.get(key) || []
-      arr.push(e)
-      map.set(key, arr)
-    })
-    return map
-  }, [events])
-
-  // Collect all unique studentIds
-  const allStudentIds = useMemo(() => {
-    const ids = new Set<string>()
-    events.forEach(e => e.studentIds?.forEach(id => ids.add(id)))
-    return Array.from(ids)
-  }, [events])
-
-  // Query member_public for student names
-  const { data: memberData, loading } = useQuery<{
-    member_public: Array<{ id: string; name: string; username: string }>
-  }>(
-    gql`
-      query GetMemberNamesByIds($memberIds: [String!]!) {
-        member_public(where: { id: { _in: $memberIds } }) {
-          id
-          name
-          username
-        }
-      }
-    `,
-    {
-      variables: { memberIds: allStudentIds },
-      skip: allStudentIds.length === 0,
-    },
+  const summaries = useMemo<TeachingCourseSummary[]>(
+    () => buildTeacherSummaries({ events }),
+    [events],
   )
-
-  const summaries = useMemo<TeachingCourseSummary[]>(() => {
-    const memberMap = new Map<string, string>()
-    memberData?.member_public.forEach(m => memberMap.set(m.id, m.name || m.username || m.id))
-
-    const now = new Date()
-    const result: TeachingCourseSummary[] = []
-
-    grouped.forEach((groupEvents, classGroupId) => {
-      const first = groupEvents[0]
-
-      const completedLessons = groupEvents.filter(e => e.startedAt && new Date(e.startedAt) < now).length
-
-      // Resolve student names
-      const studentIdSet = new Set<string>()
-      groupEvents.forEach(e => e.studentIds?.forEach(id => studentIdSet.add(id)))
-      const students = Array.from(studentIdSet).map(id => memberMap.get(id) || id)
-
-      // Find most common material
-      const materialCounts = new Map<string, number>()
-      groupEvents.forEach(e => {
-        if (e.material) {
-          materialCounts.set(e.material, (materialCounts.get(e.material) || 0) + 1)
-        }
-      })
-      let primaryMaterial = ''
-      let maxCount = 0
-      materialCounts.forEach((count, mat) => {
-        if (count > maxCount) {
-          maxCount = count
-          primaryMaterial = mat
-        }
-      })
-
-      result.push({
-        id: classGroupId,
-        name: first.title,
-        language: first.language || '',
-        students,
-        completedLessons,
-        totalScheduledLessons: groupEvents.length,
-        primaryMaterial,
-      })
-    })
-
-    return result
-  }, [grouped, memberData])
-
-  return { summaries, loading }
+  return { summaries, loading: false }
 }

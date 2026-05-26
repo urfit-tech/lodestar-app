@@ -76,6 +76,58 @@ describe('NextUpCard', () => {
     document.body.innerHTML = ''
   })
 
+  const renderCardAs = (event: CalendarEvent, viewAs: 'student' | 'teacher') => {
+    const root = document.createElement('div')
+    document.body.appendChild(root)
+    act(() => {
+      ReactDOM.render(<NextUpCard event={event} viewAs={viewAs} />, root)
+    })
+    return root
+  }
+
+  const findStudentRow = (root: HTMLElement) =>
+    Array.from(root.querySelectorAll('span')).find(s => s.textContent?.startsWith('學生：'))
+
+  it('shows the student name for a personal class in teacher view', () => {
+    const event: CalendarEvent = {
+      ...makeUpcomingOnlineEvent(),
+      courseType: CourseType.Private,
+      students: ['小明'],
+    }
+    const root = renderCardAs(event, 'teacher')
+    expect(findStudentRow(root)?.textContent).toBe('學生：小明')
+  })
+
+  it('shows comma-separated names for a semester class in teacher view', () => {
+    const event: CalendarEvent = {
+      ...makeUpcomingOnlineEvent(),
+      courseType: CourseType.Term,
+      students: ['A', 'B'],
+    }
+    const root = renderCardAs(event, 'teacher')
+    expect(findStudentRow(root)?.textContent).toBe('學生：A, B')
+  })
+
+  it('falls back to "團體班" when a group class has no student names', () => {
+    const event: CalendarEvent = {
+      ...makeUpcomingOnlineEvent(),
+      courseType: CourseType.Group,
+      students: undefined,
+    }
+    const root = renderCardAs(event, 'teacher')
+    expect(findStudentRow(root)?.textContent).toBe('學生：團體班')
+  })
+
+  it('falls back to "學期班" when a term class has no student names', () => {
+    const event: CalendarEvent = {
+      ...makeUpcomingOnlineEvent(),
+      courseType: CourseType.Term,
+      students: undefined,
+    }
+    const root = renderCardAs(event, 'teacher')
+    expect(findStudentRow(root)?.textContent).toBe('學生：學期班')
+  })
+
   it('keeps the Zoom button visible when theme primary color is unavailable', () => {
     const root = renderCard()
 

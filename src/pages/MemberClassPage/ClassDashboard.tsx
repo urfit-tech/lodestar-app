@@ -264,13 +264,10 @@ const ClassDashboard: React.FC<ClassDashboardProps> = ({ summaries, events, view
   const roleLabel = viewAs === 'teacher' ? formatMessage(messages.students) : formatMessage(messages.teacher)
   const roleValue = useMemo(() => {
     if (!selectedEvent) return ''
-
     if (viewAs === 'teacher') {
       if (selectedEvent.students?.length) return selectedEvent.students.join('、')
-      if (selectedEvent.studentIds?.length) return `${selectedEvent.studentIds.length} 位`
       return formatMessage(messages.notSpecified)
     }
-
     return selectedEvent.teacher || formatMessage(messages.notSpecified)
   }, [selectedEvent, viewAs, formatMessage])
 
