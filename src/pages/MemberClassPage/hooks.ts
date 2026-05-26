@@ -2,6 +2,7 @@ import { gql, useQuery } from '@apollo/client'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { scheduleTypeToCourseType } from './hooks.helpers'
 import { CalendarEvent, CalendarEventStatus, CoursePackageSummary, CourseType, TeachingCourseSummary } from './types'
 
 const isUuid = (value?: string) =>
@@ -140,7 +141,9 @@ const transformToCalendarEvent = (event: any, classroomMap: Map<string, string>)
     location: resolveEventLocation(metadata, classroomMap),
     isExternal: metadata.isExternal,
     status: event.source_target ? CalendarEventStatus.Published : CalendarEventStatus.Scheduled,
-    courseType: determineCourseType(event.event_metadata, event.title),
+    courseType:
+      scheduleTypeToCourseType(metadata.scheduleType) ??
+      determineCourseType(event.event_metadata, event.title),
     needOnlineRoom: metadata.needOnlineRoom,
     hostMemberId: event.host_member_id,
     materialName: metadata.material || metadata.materialName,
