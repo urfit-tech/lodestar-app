@@ -1,5 +1,10 @@
 import { CalendarEvent, CalendarEventStatus, CourseType } from './types'
-import { buildStudentSummaries, getSummaryGroupKey, scheduleTypeToCourseType } from './hooks.helpers'
+import {
+  buildStudentSummaries,
+  buildTeacherSummaries,
+  getSummaryGroupKey,
+  scheduleTypeToCourseType,
+} from './hooks.helpers'
 
 describe('scheduleTypeToCourseType', () => {
   it('maps "personal" to CourseType.Private', () => {
@@ -134,5 +139,64 @@ describe('buildStudentSummaries', () => {
     expect(paid?.paymentStatus).toBe('Paid')
     expect(paid?.expiryDate).toBe('2026-12-31')
     expect(unpaid?.paymentStatus).toBe('Unpaid')
+  })
+})
+
+describe('buildTeacherSummaries', () => {
+  const now = new Date('2026-05-26T12:00:00Z')
+
+  it('keeps different students personal classes separated', () => {
+    const events = [
+      makeEvent({
+        id: 'a',
+        scheduleType: 'personal',
+        orderIds: ['ord-A'],
+        students: ['小明'],
+        language: '中文',
+        title: '小明的中文課',
+        material: 'BookZ',
+      }),
+      makeEvent({
+        id: 'b',
+        scheduleType: 'personal',
+        orderIds: ['ord-B'],
+        students: ['小華'],
+        language: '日文',
+        title: '小華的日文課',
+        material: 'BookY',
+      }),
+    ]
+
+    const summaries = buildTeacherSummaries({ events, now })
+
+    expect(summaries).toHaveLength(2)
+    const a = summaries.find(s => s.id === 'personal:ord-A')
+    const b = summaries.find(s => s.id === 'personal:ord-B')
+    expect(a).toMatchObject({ students: ['小明'], language: '中文', primaryMaterial: 'BookZ' })
+    expect(b).toMatchObject({ students: ['小華'], language: '日文', primaryMaterial: 'BookY' })
+  })
+
+  it('deduplicates student names across multiple events in same group', () => {
+    const events = [
+      makeEvent({ id: 'a', scheduleType: 'semester', classGroupId: 'cg-1', students: ['A', 'B'] }),
+      makeEvent({ id: 'b', scheduleType: 'semester', classGroupId: 'cg-1', students: ['B', 'C'] }),
+    ]
+
+    const summaries = buildTeacherSummaries({ events, now })
+
+    expect(summaries).toHaveLength(1)
+    expect(summaries[0].students.sort()).toEqual(['A', 'B', 'C'])
+  })
+
+  it('picks most-common material as primaryMaterial', () => {
+    const events = [
+      makeEvent({ id: 'a', scheduleType: 'group', classGroupId: 'cg-2', material: 'X' }),
+      makeEvent({ id: 'b', scheduleType: 'group', classGroupId: 'cg-2', material: 'Y' }),
+      makeEvent({ id: 'c', scheduleType: 'group', classGroupId: 'cg-2', material: 'Y' }),
+    ]
+
+    const summaries = buildTeacherSummaries({ events, now })
+
+    expect(summaries[0].primaryMaterial).toBe('Y')
   })
 })
