@@ -1,4 +1,4 @@
-import { CourseType } from './types'
+import { CalendarEvent, CourseType } from './types'
 
 export const scheduleTypeToCourseType = (scheduleType?: string): CourseType | null => {
   switch (scheduleType) {
@@ -11,4 +11,12 @@ export const scheduleTypeToCourseType = (scheduleType?: string): CourseType | nu
     default:
       return null
   }
+}
+
+export const getSummaryGroupKey = (e: CalendarEvent): string => {
+  if (e.scheduleType === 'personal') {
+    const orderId = e.orderIds?.[0]
+    return orderId ? `personal:${orderId}` : `personal:unknown:${e.id}`
+  }
+  return e.classGroupId || `unknown:${e.id}`
 }
