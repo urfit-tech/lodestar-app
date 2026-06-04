@@ -153,42 +153,30 @@ const ReviewCollectionBlock: React.FC<{
 }
 
 const useIsCurrentMemberEnrollment = (targetId: string, memberId: string | null) => {
+  // 改用 program-first 的 current_member_program_enrollment function:
+  // 等價於原本 program_enrollment / program_plan_enrollment / program_package_plan_enrollment
+  // 三段查詢的 OR 結果,但以 program 為起點做存在性檢查,避免掃描整個 member 的訂單歷史。
+  // member_id 與 app_id 由 Hasura 從 session(X-Hasura-User-Id / X-Hasura-App-Id)注入,
+  // 前端只需傳 targetId;未登入(無 memberId)時直接 skip,結果為未報名。
   const { loading, error, data } = useQuery<
     hasura.GetCurrentMemberEnrollment,
     hasura.GetCurrentMemberEnrollmentVariables
   >(
     gql`
-      query GetCurrentMemberEnrollment($targetId: uuid!, $memberId: String) {
-        program_enrollment(where: { program_id: { _eq: $targetId }, member_id: { _eq: $memberId } }) {
-          member_id
-        }
-        program_plan_enrollment(
-          where: { program_plan: { program_id: { _eq: $targetId } }, member_id: { _eq: $memberId } }
-        ) {
-          member_id
-        }
-        program_package_plan_enrollment(
-          where: {
-            member_id: { _eq: $memberId }
-            program_package_plan: { program_package: { program_package_programs: { program_id: { _eq: $targetId } } } }
-          }
-        ) {
-          member_id
+      query GetCurrentMemberEnrollment($targetId: uuid!) {
+        current_member_program_enrollment(args: { p_program_id: $targetId }) {
+          is_enrolled
         }
       }
     `,
-    { variables: { targetId, memberId } },
+    { variables: { targetId }, skip: !memberId },
   )
-  const enrolledMembers: (string | null)[] = [
-    ...(data?.program_enrollment?.map(v => v.member_id || null) || []),
-    ...(data?.program_plan_enrollment?.map(v => v.member_id || null) || []),
-    ...(data?.program_package_plan_enrollment?.map(v => v.member_id || null) || []),
-  ]
 
   return {
     loadingIsCurrentMemberEnrollment: loading,
     errorIsCurrentMemberEnrollment: error,
-    isCurrentMemberEnrollment: enrolledMembers.length > 0,
+    // function 回傳 SETOF result table,固定 1 列;取 [0].is_enrolled
+    isCurrentMemberEnrollment: !!data?.current_member_program_enrollment?.[0]?.is_enrolled,
   }
 }
 
