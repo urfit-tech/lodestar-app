@@ -226,7 +226,7 @@ export const useSpecifyExamExercise = (exerciseId?: string | null) => {
         }
       }
     `,
-    { skip: Boolean(exerciseId), variables: { exerciseId } },
+    { skip: !exerciseId, variables: { exerciseId } },
   )
 
   const passingScore = data?.exercise_by_pk?.exam?.passing_score || 0
