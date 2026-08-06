@@ -9,7 +9,7 @@ import pageComponentsMessages from './translation'
 
 const StyledSection = styled.section`
   &.cta {
-    background-image: url('https://static.kolable.com/images/blnd/bg@3x.png');
+    background-image: url('/files/images/blnd/bg@3x.png');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

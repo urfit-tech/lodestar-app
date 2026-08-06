@@ -11,7 +11,7 @@ const StyledSection = styled.section`
   height: 41.4583vw;
   min-height: 420px;
   background-color: #ffdfdf;
-  background-image: url('https://static.kolable.com/images/haohaoming/cloud.png');
+  background-image: url('/files/images/haohaoming/cloud.png');
   background-repeat: no-repeat;
   background-size: cover;
 
@@ -27,7 +27,7 @@ const StyledContainer = styled.div`
   padding: 8vw 0;
   width: 100%;
   height: 100%;
-  background-image: url('https://static.kolable.com/images/haohaoming/master20240326.png');
+  background-image: url('/files/images/haohaoming/master20240326.png');
   background-size: 40vw auto;
   background-repeat: no-repeat;
   background-position: bottom right;

@@ -87,14 +87,14 @@ const StyledCol = styled.div`
       position: absolute;
       top: -15px;
       right: 10px;
-      content: url('https://static.kolable.com/images/xuemi/thumb.svg');
+      content: url('/files/images/xuemi/thumb.svg');
     }
     h5::after {
       display: none;
       position: absolute;
       top: -15px;
       right: -75px;
-      content: url('https://static.kolable.com/images/xuemi/thumb.svg');
+      content: url('/files/images/xuemi/thumb.svg');
     }
   }
 

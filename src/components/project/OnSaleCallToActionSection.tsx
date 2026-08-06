@@ -29,14 +29,14 @@ const StyledJoin = styled.div`
       position: absolute;
       bottom: 0px;
       left: -15px;
-      content: url('https://static.kolable.com/images/xuemi/shine-01.svg');
+      content: url('/files/images/xuemi/shine-01.svg');
     }
 
     &::after {
       position: absolute;
       bottom: -130px;
       right: -10px;
-      content: url('https://static.kolable.com/images/xuemi/shine-02.svg');
+      content: url('/files/images/xuemi/shine-02.svg');
     }
   }
 
