@@ -209,7 +209,7 @@ const OnSaleCoverSection: React.FC<OnSaleCoverSectionProps> = ({ cover, header, 
   const { formatMessage } = useIntl()
   return (
     <StyledSection>
-      <img src={`https://static.kolable.com/images/xuemi/bg-zero.png`} alt="background" />
+      <img src={`/files/images/xuemi/bg-zero.png`} alt="background" />
       <div className="container pt-5">
         <div className="row flex-row-reverse">
           <StyledCountDownBlock className="col-12 col-lg-4">
@@ -233,7 +233,7 @@ const OnSaleCoverSection: React.FC<OnSaleCoverSectionProps> = ({ cover, header, 
                 <div key={description}>{description}</div>
               ))}
             </StyledDescription>
-            <img src={`https://static.kolable.com/images/xuemi/quote.svg`} alt="quote" />
+            <img src={`/files/images/xuemi/quote.svg`} alt="quote" />
           </div>
           <div className="col-12 col-lg-7">
             <FundingCoverBlock coverType={cover.type} coverUrl={cover.url} />
@@ -241,7 +241,7 @@ const OnSaleCoverSection: React.FC<OnSaleCoverSectionProps> = ({ cover, header, 
         </div>
       </StyledCover>
       <StyledSlogan className="d-flex">
-        <img src={`https://static.kolable.com/images/xuemi/teachers-2.png`} alt="teachers" />
+        <img src={`/files/images/xuemi/teachers-2.png`} alt="teachers" />
         <div className="container">
           <StyledHeader>
             <h3>{header.title}</h3>
@@ -259,8 +259,8 @@ const OnSaleCoverSection: React.FC<OnSaleCoverSectionProps> = ({ cover, header, 
             ))}
           </StyleStatistics>
         </div>
-        <img src={`https://static.kolable.com/images/xuemi/teachers-1.png`} alt="teachers" />
-        <img src={`https://static.kolable.com/images/xuemi/teachers-m.png`} alt="teachers" />
+        <img src={`/files/images/xuemi/teachers-1.png`} alt="teachers" />
+        <img src={`/files/images/xuemi/teachers-m.png`} alt="teachers" />
       </StyledSlogan>
     </StyledSection>
   )

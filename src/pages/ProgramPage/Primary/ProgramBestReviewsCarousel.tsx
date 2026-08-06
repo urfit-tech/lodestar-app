@@ -68,8 +68,8 @@ const ProgramBestReviewsCarousel: React.FC<{ pathname: string; onReviewBlockScro
         <Carousel
           arrows={isArrowShow}
           dots={false}
-          prevArrow={<StyledPrevArrow src={`https://static.kolable.com/images/xuemi/angle-thin-left.svg`} />}
-          nextArrow={<StyledNextArrow src={`https://static.kolable.com/images/xuemi/angle-thin-right.svg`} />}
+          prevArrow={<StyledPrevArrow src={`/files/images/xuemi/angle-thin-left.svg`} />}
+          nextArrow={<StyledNextArrow src={`/files/images/xuemi/angle-thin-right.svg`} />}
         >
           {reviews.map(review => (
             <ReviewCarouselItem

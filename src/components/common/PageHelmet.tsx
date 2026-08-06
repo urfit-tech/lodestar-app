@@ -34,16 +34,14 @@ const PageHelmet: React.FC<
     ? `${props.keywords}${keywordsConcat ? `,${app.settings['keywords']}` : ''}`
     : app.settings['keywords']
 
+  // single-domain policy: GraphQL/static endpoints are same-origin paths now,
+  // so only genuinely cross-origin hosts are worth a preconnect hint
   const prefetchingList = [
     'https://cdnjs.cloudflare.com',
     'https://fonts.googleapis.com',
     `https://${window.location.host}/api/v1/`,
     `https://${window.location.host}/api/v2/`,
-    `https://${window.location.host}/api/v2/`,
     `https://${window.location.host}/api/enterprise`,
-    process.env.REACT_APP_S3_BUCKET,
-    process.env.REACT_APP_GRAPHQL_PH_ENDPOINT,
-    process.env.REACT_APP_GRAPHQL_RH_ENDPOINT,
   ]
 
   const defaultOpenGraph = [

@@ -73,8 +73,8 @@ const OnSaleTrialSection: React.FC<OnSaleTrialSectionProps> = ({ title, videos }
           slidesToShow={2}
           dots={false}
           slidesToScroll={1}
-          prevArrow={<StyledImage src={`https://static.kolable.com/images/xuemi/angle-thin-left.svg`} />}
-          nextArrow={<StyledImage src={`https://static.kolable.com/images/xuemi/angle-thin-right.svg`} />}
+          prevArrow={<StyledImage src={`/files/images/xuemi/angle-thin-left.svg`} />}
+          nextArrow={<StyledImage src={`/files/images/xuemi/angle-thin-right.svg`} />}
           responsive={[
             {
               breakpoint: BREAK_POINT,
