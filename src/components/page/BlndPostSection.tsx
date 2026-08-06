@@ -33,11 +33,11 @@ const StyledDecoration = styled.div`
   height: 50%;
   background-size: contain;
   background-repeat: no-repeat;
-  background-image: url('https://static.kolable.com/images/blnd/deco2-m.png');
+  background-image: url('/files/images/blnd/deco2-m.png');
 
   @media (min-width: ${BREAK_POINT}px) {
     width: 55vw;
-    background-image: url('https://static.kolable.com/images/blnd/deco2.png');
+    background-image: url('/files/images/blnd/deco2.png');
   }
 `
 const StyledCustomRatioImage = styled(CustomRatioImage)`

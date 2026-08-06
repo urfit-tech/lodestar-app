@@ -315,7 +315,7 @@ const strategyProductMap: {
       targetId: v.id,
       productType: 'PodcastPlan',
       title: `${product.options?.podcastSubscription || ''} - ${v.creator?.name || v.creator?.username || ''}`,
-      coverUrl: 'https://static.kolable.com/images/reservation.svg',
+      coverUrl: '/files/images/reservation.svg',
       isSubscription: v.is_subscription,
     }))
   },

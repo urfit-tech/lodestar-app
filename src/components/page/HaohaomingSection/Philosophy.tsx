@@ -12,7 +12,7 @@ const StyledSection = styled.section`
 
   &::after {
     content: ' ';
-    background-image: url(https://static.kolable.com/images/haohaoming/section3_BGIcon.png);
+    background-image: url(/files/images/haohaoming/section3_BGIcon.png);
     background-size: 100% 100%;
     position: absolute;
     width: 83px;
@@ -31,7 +31,7 @@ const StyledSection = styled.section`
   .feature-image {
     width: 100%;
     min-height: 320px;
-    background-image: url(https://static.kolable.com/images/haohaoming/philosophy-feature.png);
+    background-image: url(/files/images/haohaoming/philosophy-feature.png);
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center top;

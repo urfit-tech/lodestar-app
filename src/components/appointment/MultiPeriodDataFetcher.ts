@@ -277,7 +277,7 @@ export const useMultiPeriodProduct = ({ id, startedAts }: { id: string; startedA
         title: `${formatMessage(commonMessages.title.podcastSubscription)} - ${
           data.podcast_plan_by_pk.creator.name || data.podcast_plan_by_pk.creator.username
         }`,
-        coverUrl: 'https://static.kolable.com/images/reservation.svg',
+        coverUrl: '/files/images/reservation.svg',
         isSubscription: data.podcast_plan_by_pk.is_subscription,
       }
     : data?.appointment_plan_by_pk

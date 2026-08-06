@@ -14,7 +14,7 @@ const StyledSection = styled.section`
 
   &::after {
     content: ' ';
-    background-image: url(https://static.kolable.com/images/haohaoming/section2_BGIcon.png);
+    background-image: url(/files/images/haohaoming/section2_BGIcon.png);
     background-size: 100% 100%;
     position: absolute;
     width: 168px;
