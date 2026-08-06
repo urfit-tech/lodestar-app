@@ -7,18 +7,9 @@ body {
   outline: none;
 }
 
-@font-face {
-  font-family: 'BpmfGenSenRounded';
-  src: url('/files/public/fonts/BpmfGenSenRounded/BpmfGenSenRounded-R.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'BpmfGenSenRounded';
-  src: url('/files/public/fonts/BpmfGenSenRounded/BpmfGenSenRounded-B.ttf') format('truetype');
-  font-weight: bold;
-  font-style: normal;
-}
+// BpmfGenSenRounded @font-face lives in public/static/vendor/fonts.css —
+// webpack resolves url() in SCSS at build time and would try to bundle the
+// ~7.8MB TTFs, which are served from the bucket via /files instead.
 // ant design
 .ant-btn {
   span {

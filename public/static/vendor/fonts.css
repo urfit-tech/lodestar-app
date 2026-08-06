@@ -1,0 +1,15 @@
+/* Kept out of src/styles.scss on purpose: webpack resolves url() in SCSS at build
+   time, and these ~7.8MB TTFs live in the bucket rather than the bundle. Served
+   same-origin through the backend's /files route (single-domain policy). */
+@font-face {
+  font-family: 'BpmfGenSenRounded';
+  src: url('/files/public/fonts/BpmfGenSenRounded/BpmfGenSenRounded-R.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'BpmfGenSenRounded';
+  src: url('/files/public/fonts/BpmfGenSenRounded/BpmfGenSenRounded-B.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
