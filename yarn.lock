@@ -15959,7 +15959,7 @@ __metadata:
 
 "lodestar-app-element@urfit-tech/lodestar-app-element#v1.95.14":
   version: 0.1.0
-  resolution: "lodestar-app-element@https://github.com/urfit-tech/lodestar-app-element.git#commit=894565565b59218ca840e37f3a22ea2b955877db"
+  resolution: "lodestar-app-element@https://github.com/urfit-tech/lodestar-app-element.git#commit=c44a0ae2cb5ac3707d641002ccc8af1e921b17b7"
   dependencies:
     "@apollo/client": "npm:^3.7.11"
     "@babel/cli": "npm:^7.13.16"
@@ -16039,7 +16039,7 @@ __metadata:
     use-tw-zipcode: "npm:^2.0.4"
     uuid: "npm:8.3.2"
     xss: "npm:^1.0.10"
-  checksum: 10c0/77be810c814b0b853cd17898a74f4781d8f94fb62b4ef9225611d1988b20042801e21955da1a0fa2ba5dba0e2e7fe854cf20d6e36b0dcd590a8130d1f2d73824
+  checksum: 10c0/0bf6c067d58aba39f5a21790dc7fac15be22907c79e750e032710432b33eeea0a10cb81aa635feb3f92700490639a5e9d621c9b11f8bf9a366e94b98768b7803
   languageName: node
   linkType: hard
 
