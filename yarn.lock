@@ -15957,7 +15957,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodestar-app-element@urfit-tech/lodestar-app-element#v1.95.13":
+"lodestar-app-element@urfit-tech/lodestar-app-element#v1.95.14":
   version: 0.1.0
   resolution: "lodestar-app-element@https://github.com/urfit-tech/lodestar-app-element.git#commit=894565565b59218ca840e37f3a22ea2b955877db"
   dependencies:
@@ -16039,7 +16039,7 @@ __metadata:
     use-tw-zipcode: "npm:^2.0.4"
     uuid: "npm:8.3.2"
     xss: "npm:^1.0.10"
-  checksum: 10c0/b8fd3b105b9402b30959b75aba1514bad5f68d907855f28b4be8d8fda0793621ae19b259efb90cbd12750b0db31a612df211162732935ca02d9fce03bbeac9cb
+  checksum: 10c0/77be810c814b0b853cd17898a74f4781d8f94fb62b4ef9225611d1988b20042801e21955da1a0fa2ba5dba0e2e7fe854cf20d6e36b0dcd590a8130d1f2d73824
   languageName: node
   linkType: hard
 
@@ -16130,7 +16130,7 @@ __metadata:
     libphonenumber-js: "npm:1.9.34"
     lint-staged: "npm:10.5.4"
     lodash: "npm:^4.17.15"
-    lodestar-app-element: "urfit-tech/lodestar-app-element#v1.95.13"
+    lodestar-app-element: "urfit-tech/lodestar-app-element#v1.95.14"
     marked: "npm:4.3.0"
     moment: "npm:^2.30.1"
     moment-timezone: "npm:^0.5.31"
