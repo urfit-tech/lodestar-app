@@ -15957,7 +15957,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodestar-app-element@urfit-tech/lodestar-app-element#v1.95.13":
+"lodestar-app-element@urfit-tech/lodestar-app-element#v1.95.14":
   version: 0.1.0
   resolution: "lodestar-app-element@https://github.com/urfit-tech/lodestar-app-element.git#commit=894565565b59218ca840e37f3a22ea2b955877db"
   dependencies:
@@ -16130,7 +16130,7 @@ __metadata:
     libphonenumber-js: "npm:1.9.34"
     lint-staged: "npm:10.5.4"
     lodash: "npm:^4.17.15"
-    lodestar-app-element: "urfit-tech/lodestar-app-element#v1.95.13"
+    lodestar-app-element: "urfit-tech/lodestar-app-element#v1.95.14"
     marked: "npm:4.3.0"
     moment: "npm:^2.30.1"
     moment-timezone: "npm:^0.5.31"
