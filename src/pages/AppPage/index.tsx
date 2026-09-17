@@ -122,6 +122,11 @@ const sectionConverter = {
   homeHaohaoming: HaohaomingSection,
 }
 
+// a published app_page with this literal path replaces the built-in member page (my page) for self-view,
+// like an app_page with path "/" replaces the built-in home page
+const MEMBER_PAGE_CANONICAL_PATH = '/members/:memberId'
+const memberPagePathPattern = /^\/members\/([^/]+)\/?$/
+
 const ContentWrapper = styled.div<{ isVip?: boolean; sidebarWidth: number }>`
   margin-left: ${props => `${props.sidebarWidth}px`};
   transition: margin-left 0.3s ease;
@@ -143,10 +148,11 @@ const ContentWrapper = styled.div<{ isVip?: boolean; sidebarWidth: number }>`
 const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement }> = ({ renderFallback }) => {
   const location = useLocation()
   const { settings, id: appId, enabledModules } = useApp()
-  const { updateAuthToken, currentMemberId } = useAuth()
+  const { updateAuthToken, currentMemberId, isAuthenticating } = useAuth()
   const { defaultLocale, currentLocale } = useContext(LocaleContext)
   const [metaLoaded, setMetaLoaded] = useState<boolean>(false)
-  const { loadingAppPages, appPages } = usePage(location.pathname)
+  const memberPageMatch = location.pathname.match(memberPagePathPattern)
+  const { loadingAppPages, appPages } = usePage(memberPageMatch ? MEMBER_PAGE_CANONICAL_PATH : location.pathname)
   const ogLocale = getOgLocale(defaultLocale)
 
   const { formatMessage } = useIntl()
@@ -209,7 +215,7 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, currentMemberId])
 
-  if (loadingAppPages) {
+  if (loadingAppPages || (memberPageMatch && isAuthenticating)) {
     return <LoadingPage />
   }
 
@@ -217,9 +223,13 @@ const AppPage: React.VFC<{ renderFallback?: (path: string) => React.ReactElement
     return <Redirect to="/repairing" />
   }
 
-  const currentAppPage = enabledModules.locale
+  const matchedAppPage = enabledModules.locale
     ? appPages.find(appPage => appPage.language === currentLocale) || appPages.find(appPage => !appPage.language)
     : appPages.find(appPage => !appPage.language) || appPages[0]
+
+  // the custom member page only replaces the member's own view;
+  // visiting other members (e.g. staff with CHECK_MEMBER_PAGE_* permissions) keeps the built-in page
+  const currentAppPage = memberPageMatch && memberPageMatch[1] !== currentMemberId ? undefined : matchedAppPage
 
   return (
     <>
