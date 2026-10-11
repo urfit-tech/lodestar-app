@@ -1,0 +1,82 @@
+{
+  "description": "Shared OAuth state nonce cookie contract for the storefronts, the admin apps and the xuemi questionnaire (S4b2-a). Emitters append the page nonce; only the storefront /oauth2 page reads it (S4b2-a: check only, no enforcement).",
+  "cookie": {
+    "name": "__Host-oauth_state_nonce",
+    "attributes": {
+      "secure": true,
+      "path": "/",
+      "sameSite": "Lax",
+      "domain": null,
+      "maxAgeSeconds": 600
+    },
+    "writeOnlyOnHttps": true
+  },
+  "nonceFormat": "^[0-9a-f]{32}$",
+  "valueFormat": "^[0-9a-f]{32}(\\.[0-9a-f]{32}){0,4}$",
+  "separator": ".",
+  "maxEntries": 5,
+  "appendRule": "newest first; remove an existing equal entry before prepending; keep at most maxEntries; ignore malformed existing entries; every write refreshes maxAge",
+  "appendExamples": [
+    {
+      "before": null,
+      "add": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "after": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "add": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "after": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "before": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "add": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "after": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    {
+      "before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccc.dddddddddddddddddddddddddddddddd.eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "add": "ffffffffffffffffffffffffffffffff",
+      "after": "ffffffffffffffffffffffffffffffff.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccc.dddddddddddddddddddddddddddddddd"
+    },
+    {
+      "before": "not-hex.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "add": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "after": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "checkResults": [
+    "match",
+    "mismatch",
+    "no_state_nonce",
+    "no_cookie"
+  ],
+  "checkExamples": [
+    {
+      "cookie": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "stateNonce": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "result": "match"
+    },
+    {
+      "cookie": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "stateNonce": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "result": "mismatch"
+    },
+    {
+      "cookie": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "stateNonce": null,
+      "result": "no_state_nonce"
+    },
+    {
+      "cookie": null,
+      "stateNonce": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "result": "no_cookie"
+    }
+  ],
+  "telemetry": {
+    "endpoint": "POST /api/v1/auth/oauth-callback-check",
+    "body": {
+      "provider": "facebook|google|line|parenting|cw|commonhealth",
+      "result": "match|mismatch|no_state_nonce|no_cookie"
+    },
+    "response": 204
+  }
+}
