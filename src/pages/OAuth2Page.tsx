@@ -10,7 +10,7 @@ import { StringParam, useQueryParam } from 'use-query-params'
 import OverBindDeviceModal from '../components/auth/login/OverBindDeviceModal'
 import OverLoginDeviceModal from '../components/auth/login/OverLoginDeviceModal'
 import { handleError } from '../helpers'
-import { decodeOauthState, normalizeRedirect } from '../helpers/oauthState'
+import { checkOauthNonce, decodeOauthState, normalizeRedirect, OauthNonceCheckResult } from '../helpers/oauthState'
 import { codeMessages } from '../helpers/translation'
 import LoadingPage from '../pages/LoadingPage'
 
@@ -28,7 +28,37 @@ const parseOauthState = (rawState: string | null | undefined) => {
     provider,
     redirect: normalizeRedirect(state.redirect ?? '/'),
     accountLinkToken: typeof state.accountLinkToken === 'string' ? state.accountLinkToken : '',
+    nonce: state.nonce,
   }
+}
+
+const reportOauthCallbackCheck = (provider: ProviderType, result: OauthNonceCheckResult) => {
+  try {
+    axios
+      .post(
+        `${process.env.REACT_APP_API_BASE_ROOT}/auth/oauth-callback-check`,
+        { provider, result },
+        { withCredentials: true },
+      )
+      .catch(() => {
+        // telemetry only
+      })
+  } catch {
+    // telemetry only
+  }
+}
+
+// Compares the state nonce with the cookie list once per mount and reports the result.
+// Telemetry only: the login flow does not wait for it and nothing is rejected.
+const useOauthCallbackCheck = (provider: ProviderType | null, stateNonce: unknown) => {
+  const reportedRef = useRef(false)
+  useEffect(() => {
+    if (reportedRef.current || !provider) {
+      return
+    }
+    reportedRef.current = true
+    reportOauthCallbackCheck(provider, checkOauthNonce(stateNonce))
+  }, [provider, stateNonce])
 }
 
 const OAuth2Page: React.FC = () => {
@@ -59,7 +89,8 @@ const DefaultOauth2Section: React.FC = () => {
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const accessToken = params.get('access_token')
 
-  const { provider, redirect, accountLinkToken } = parseOauthState(state || params.get('state'))
+  const { provider, redirect, accountLinkToken, nonce: stateNonce } = parseOauthState(state || params.get('state'))
+  useOauthCallbackCheck(provider, stateNonce)
 
   const showSocialLoginError = useCallback(
     (error: any) => {
@@ -243,7 +274,8 @@ const Oauth2Section: React.FC = () => {
   const accountLinkToken = sessionStorage.getItem('accountLinkToken') || ''
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
-  const { redirect } = parseOauthState(state || params.get('state'))
+  const { redirect, nonce: stateNonce } = parseOauthState(state || params.get('state'))
+  useOauthCallbackCheck(providerTypes.includes(provider) ? provider : null, stateNonce)
 
   useEffect(() => {
     if (!isAuthenticating && !currentMemberId && appId && code) {

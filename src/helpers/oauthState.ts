@@ -1,10 +1,16 @@
 import Cookies from 'js-cookie'
 
 // OAuth state helpers shared by the social login buttons and the /oauth2 callback page.
-// The nonce is only emitted here (state + __Host- cookie); it is not checked yet.
+// Each page puts its nonce in the state and appends it to the __Host- cookie list
+// (see oauthNonce.fixture.json). The callback page only reports the comparison; nothing is rejected.
 
 export const OAUTH_STATE_NONCE_COOKIE = '__Host-oauth_state_nonce'
 const OAUTH_STATE_NONCE_TTL_MS = 10 * 60 * 1000
+const OAUTH_STATE_NONCE_MAX_ENTRIES = 5
+const OAUTH_STATE_NONCE_SEPARATOR = '.'
+const OAUTH_STATE_NONCE_PATTERN = /^[0-9a-f]{32}$/
+
+export type OauthNonceCheckResult = 'match' | 'mismatch' | 'no_state_nonce' | 'no_cookie'
 
 // eslint-disable-next-line no-control-regex
 const CONTROL_CHARACTERS = /[\u0000-\u001f\u007f]/
@@ -120,16 +126,76 @@ export const createOauthState = (payload: Record<string, unknown>): string => {
   return encodeOauthState(nonce ? { ...payload, nonce } : payload)
 }
 
-/** Stores this page's nonce in a host-only __Host- cookie (https only). */
-export const rememberOauthNonce = (): void => {
-  const nonce = getPageNonce()
-  if (!nonce || window.location.protocol !== 'https:') {
-    return
+const parseOauthNonceList = (value: unknown): string[] => {
+  if (typeof value !== 'string' || !value) {
+    return []
   }
-  Cookies.set(OAUTH_STATE_NONCE_COOKIE, nonce, {
-    path: '/',
-    secure: true,
-    sameSite: 'lax',
-    expires: new Date(Date.now() + OAUTH_STATE_NONCE_TTL_MS),
+  const nonces: string[] = []
+  value.split(OAUTH_STATE_NONCE_SEPARATOR).forEach(entry => {
+    if (OAUTH_STATE_NONCE_PATTERN.test(entry) && !nonces.includes(entry)) {
+      nonces.push(entry)
+    }
   })
+  return nonces
+}
+
+/** Cookie value after adding `nonce`: newest first, no duplicates, malformed entries dropped, at most 5 entries. */
+export const appendOauthNonce = (current: string | null | undefined, nonce: string): string =>
+  [nonce, ...parseOauthNonceList(current).filter(entry => entry !== nonce)]
+    .slice(0, OAUTH_STATE_NONCE_MAX_ENTRIES)
+    .join(OAUTH_STATE_NONCE_SEPARATOR)
+
+/**
+ * Compares the nonce carried in the OAuth state with a cookie value; pure, used by checkOauthNonce.
+ * Same precedence as the backend /oauth2/:provider check: a missing or malformed state nonce is
+ * 'no_state_nonce' (even without a cookie), then a cookie without well-formed entries is 'no_cookie',
+ * otherwise the state nonce is looked up in the first 5 well-formed entries.
+ */
+export const compareOauthNonce = (
+  cookieValue: string | null | undefined,
+  stateNonce: unknown,
+): OauthNonceCheckResult => {
+  if (typeof stateNonce !== 'string' || !OAUTH_STATE_NONCE_PATTERN.test(stateNonce)) {
+    return 'no_state_nonce'
+  }
+  const nonces =
+    typeof cookieValue === 'string'
+      ? cookieValue
+          .split(OAUTH_STATE_NONCE_SEPARATOR)
+          .filter(entry => OAUTH_STATE_NONCE_PATTERN.test(entry))
+          .slice(0, OAUTH_STATE_NONCE_MAX_ENTRIES)
+      : []
+  if (nonces.length === 0) {
+    return 'no_cookie'
+  }
+  return nonces.includes(stateNonce) ? 'match' : 'mismatch'
+}
+
+/** Appends this page's nonce to the host-only __Host- cookie list (https only) and refreshes its 10-minute lifetime. */
+export const rememberOauthNonce = (): void => {
+  try {
+    const nonce = getPageNonce()
+    if (!nonce || window.location.protocol !== 'https:') {
+      return
+    }
+    Cookies.set(OAUTH_STATE_NONCE_COOKIE, appendOauthNonce(Cookies.get(OAUTH_STATE_NONCE_COOKIE), nonce), {
+      path: '/',
+      secure: true,
+      sameSite: 'lax',
+      expires: new Date(Date.now() + OAUTH_STATE_NONCE_TTL_MS),
+    })
+  } catch {
+    // the login link must keep working even if the cookie cannot be written
+  }
+}
+
+/** Read-only check of the state nonce against the cookie list; never modifies or deletes the cookie. */
+export const checkOauthNonce = (stateNonce: unknown): OauthNonceCheckResult => {
+  let cookieValue: string | undefined
+  try {
+    cookieValue = Cookies.get(OAUTH_STATE_NONCE_COOKIE)
+  } catch {
+    cookieValue = undefined
+  }
+  return compareOauthNonce(cookieValue, stateNonce)
 }
