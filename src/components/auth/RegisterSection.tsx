@@ -433,7 +433,7 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, isBusinessMembe
           <FacebookLoginButton />
         </div>
       )}
-      {!isBusinessMember && !!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'] && (
+      {!isBusinessMember && !!settings['auth.line_client_id'] && (
         <div className="mb-3">
           <LineLoginButton />
         </div>
@@ -447,7 +447,7 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, isBusinessMembe
       {!isBusinessMember &&
         (!!settings['auth.facebook_app_id'] ||
           !!settings['auth.google_client_id'] ||
-          (!!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'])) && (
+          !!settings['auth.line_client_id']) && (
           <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
         )}
 

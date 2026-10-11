@@ -160,7 +160,7 @@ const LoginSection: React.FC<{
           <FacebookLoginButton accountLinkToken={accountLinkToken} />
         </div>
       )}
-      {!isBusinessMember && !!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'] && (
+      {!isBusinessMember && !!settings['auth.line_client_id'] && (
         <div className="mb-3" style={{ width: '100%' }}>
           <LineLoginButton accountLinkToken={accountLinkToken} />
         </div>
@@ -175,7 +175,7 @@ const LoginSection: React.FC<{
         <>
           {!!settings['auth.facebook_app_id'] ||
             !!settings['auth.google_client_id'] ||
-            (!!settings['auth.line_client_id'] && !!settings['auth.line_client_secret'] && (
+            (!!settings['auth.line_client_id'] && (
               <StyledDivider>{formatMessage(commonMessages.defaults.or)}</StyledDivider>
             ))}
           <InputGroup className="mb-3">
