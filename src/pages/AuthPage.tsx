@@ -8,6 +8,7 @@ import { BooleanParam, StringParam, useQueryParam } from 'use-query-params'
 import LoginSection from '../components/auth/login/LoginSection'
 import RegisterSection from '../components/auth/RegisterSection'
 import DefaultLayout from '../components/layout/DefaultLayout'
+import { normalizeRedirect } from '../helpers/oauthState'
 import { AuthState } from '../types/member'
 
 const StyledContainer = styled(Container)`
@@ -24,8 +25,7 @@ const AuthPage: React.FC = () => {
 
   useEffect(() => {
     if (currentMember) {
-      const redirectUrl = Cookies.get('redirect')
-      window.location.assign(redirectUrl || '/')
+      window.location.assign(normalizeRedirect(Cookies.get('redirect')))
     }
   }, [currentMember])
 

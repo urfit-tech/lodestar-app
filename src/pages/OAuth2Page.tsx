@@ -3,17 +3,33 @@ import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { BackendServerError, BindDeviceError, LoginDeviceError } from 'lodestar-app-element/src/helpers/error'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
 import OverBindDeviceModal from '../components/auth/login/OverBindDeviceModal'
 import OverLoginDeviceModal from '../components/auth/login/OverLoginDeviceModal'
 import { handleError } from '../helpers'
+import { decodeOauthState, normalizeRedirect } from '../helpers/oauthState'
 import { codeMessages } from '../helpers/translation'
 import LoadingPage from '../pages/LoadingPage'
 
 export type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth' | 'cw'
+
+const providerTypes: ProviderType[] = ['facebook', 'google', 'line', 'parenting', 'commonhealth', 'cw']
+
+const parseOauthState = (rawState: string | null | undefined) => {
+  const state = decodeOauthState(rawState) ?? {}
+  const provider =
+    typeof state.provider === 'string' && providerTypes.includes(state.provider as ProviderType)
+      ? (state.provider as ProviderType)
+      : null
+  return {
+    provider,
+    redirect: normalizeRedirect(state.redirect ?? '/'),
+    accountLinkToken: typeof state.accountLinkToken === 'string' ? state.accountLinkToken : '',
+  }
+}
 
 const OAuth2Page: React.FC = () => {
   const { provider } = useParams<{ provider: ProviderType }>()
@@ -31,8 +47,10 @@ const DefaultOauth2Section: React.FC = () => {
   const history = useHistory()
   const [code] = useQueryParam('code', StringParam)
   const [state] = useQueryParam('state', StringParam)
-  const { settings } = useApp()
+  const { id: appId, settings } = useApp()
   const { isAuthenticating, currentMemberId, socialLogin } = useAuth()
+  const lineCodeExchangedRef = useRef(false)
+  const lineIdTokenRef = useRef<string | null>(null)
   // const updateYoutubeChannelIds = useUpdateMemberYouTubeChannelIds()
   const [isOverLoginDeviceModalVisible, setIsOverLoginDeviceModalVisible] = useState(false)
   const [isOverBindDeviceModalVisible, setIsOverBindDeviceModalVisible] = useState(false)
@@ -41,15 +59,19 @@ const DefaultOauth2Section: React.FC = () => {
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
   const accessToken = params.get('access_token')
 
-  const {
-    provider = null,
-    redirect = '/',
-    accountLinkToken = '',
-  }: {
-    provider: ProviderType | null
-    redirect: string
-    accountLinkToken: string
-  } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
+  const { provider, redirect, accountLinkToken } = parseOauthState(state || params.get('state'))
+
+  const showSocialLoginError = useCallback(
+    (error: any) => {
+      if (error instanceof BackendServerError && error.code in codeMessages) {
+        const code = error.code as keyof typeof codeMessages
+        message.error(formatMessage(codeMessages[code]))
+      } else {
+        message.error(error?.message)
+      }
+    },
+    [formatMessage],
+  )
 
   // const handleFetchYoutubeApi = useCallback(() => {
   //   fetch('https://www.googleapis.com/youtube/v3/channels?part=id&mine=true', {
@@ -81,56 +103,72 @@ const DefaultOauth2Section: React.FC = () => {
   //   }
   // }, [currentMemberId, handleFetchYoutubeApi, isAuthenticating, provider])
 
-  // Authorization Code Flow
+  // Authorization Code Flow (LINE): the code is exchanged by the backend, at most once per page
   useEffect(() => {
-    const clientId = settings['auth.line_client_id']
-    const clientSecret = settings['auth.line_client_secret']
-    if (!isAuthenticating && !currentMemberId && code && provider === 'line' && clientId && clientSecret) {
-      const hostPath = window.location.port
-        ? `https://${window.location.hostname}:${window.location.port}`
-        : `https://${window.location.hostname}`
-      const redirectUri = `${hostPath}/oauth2`
-
-      const params = new URLSearchParams({
-        grant_type: 'authorization_code',
-        code,
-        redirect_uri: redirectUri,
-        client_id: clientId,
-        client_secret: clientSecret,
-      })
-
-      const config = {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      }
+    if (
+      !isAuthenticating &&
+      !currentMemberId &&
+      code &&
+      provider === 'line' &&
+      settings['auth.line_client_id'] &&
+      appId &&
+      !lineCodeExchangedRef.current
+    ) {
+      lineCodeExchangedRef.current = true
       axios
-        .post<{ id_token: string }>('https://api.line.me/oauth2/v2.1/token', params, config)
+        .post<{ code: string; result: { token: string } | null }>(
+          `${process.env.REACT_APP_API_BASE_ROOT}/auth/get-oauth-token`,
+          {
+            appId,
+            provider: 'line',
+            redirectUri: `https://${window.location.host}/oauth2`,
+            code,
+          },
+          { withCredentials: true },
+        )
         .then(({ data }) => {
-          return socialLogin?.({
-            provider: provider,
-            providerToken: data.id_token,
+          const idToken = data?.code === 'SUCCESS' ? data.result?.token : undefined
+          if (typeof idToken !== 'string' || !idToken) {
+            throw new Error(data?.code || 'E_OAUTH_TOKEN')
+          }
+          lineIdTokenRef.current = idToken
+          if (!socialLogin) {
+            throw new Error('social login is unavailable')
+          }
+          return socialLogin({
+            provider: 'line',
+            providerToken: idToken,
             accountLinkToken: accountLinkToken,
-          }).catch(error => {
-            if (error instanceof LoginDeviceError) {
-              setIsOverLoginDeviceModalVisible(true)
-            }
-            if (error instanceof BindDeviceError) {
-              setIsOverBindDeviceModalVisible(true)
-            }
-
-            if (error instanceof BackendServerError) {
-              const code = error.code as keyof typeof codeMessages
-              message.error(formatMessage(codeMessages[code]))
-            } else {
-              message.error(error.message)
-            }
           })
         })
-        .then(() => (window.location.href = redirect))
-        .catch(handleError)
+        .then(() => {
+          window.location.href = redirect
+        })
+        .catch(error => {
+          if (error instanceof LoginDeviceError) {
+            setIsOverLoginDeviceModalVisible(true)
+            return
+          }
+          if (error instanceof BindDeviceError) {
+            setIsOverBindDeviceModalVisible(true)
+            return
+          }
+          showSocialLoginError(error)
+          window.location.href = redirect
+        })
     }
-  }, [accountLinkToken, isAuthenticating, currentMemberId, code, settings, provider, socialLogin, history, redirect])
+  }, [
+    accountLinkToken,
+    appId,
+    isAuthenticating,
+    currentMemberId,
+    code,
+    settings,
+    provider,
+    socialLogin,
+    redirect,
+    showSocialLoginError,
+  ])
 
   // Implicit Flow
   useEffect(() => {
@@ -179,7 +217,7 @@ const DefaultOauth2Section: React.FC = () => {
             setForceLoginLoading(true)
             socialLogin?.({
               provider: provider,
-              providerToken: accessToken,
+              providerToken: provider === 'line' ? lineIdTokenRef.current : accessToken,
               isForceLogin: true,
             })
               .then(r => {
@@ -205,11 +243,7 @@ const Oauth2Section: React.FC = () => {
   const accountLinkToken = sessionStorage.getItem('accountLinkToken') || ''
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
-  const {
-    redirect = '/',
-  }: {
-    redirect: string
-  } = JSON.parse(atob(decodeURIComponent(state || params.get('state') || '')) || '{}')
+  const { redirect } = parseOauthState(state || params.get('state'))
 
   useEffect(() => {
     if (!isAuthenticating && !currentMemberId && appId && code) {
@@ -225,14 +259,19 @@ const Oauth2Section: React.FC = () => {
           },
           { withCredentials: true },
         )
-        .then(({ data: { code, message, result } }) => {
-          if (code === 'SUCCESS') {
-            return socialLogin?.({
-              provider,
-              providerToken: result.token,
-              accountLinkToken: accountLinkToken,
-            })
+        .then(({ data }) => {
+          const token = data?.code === 'SUCCESS' ? data.result?.token : undefined
+          if (typeof token !== 'string' || !token) {
+            throw new Error(data?.message || data?.code || 'E_OAUTH_TOKEN')
           }
+          if (!socialLogin) {
+            throw new Error('social login is unavailable')
+          }
+          return socialLogin({
+            provider,
+            providerToken: token,
+            accountLinkToken: accountLinkToken,
+          })
         })
         .then(() => {
           window.location.href = redirect
