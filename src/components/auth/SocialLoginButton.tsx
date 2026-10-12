@@ -1,7 +1,7 @@
 import { Button, Icon, Spinner } from '@chakra-ui/react'
 import Cookies from 'js-cookie'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
@@ -30,6 +30,16 @@ const GoogleLogo = styled.span`
   background-position: center;
 `
 
+// Adds this page's nonce to the cookie list as soon as the login link exists, so links opened in
+// a new tab (middle click, long press) also carry a remembered nonce; clicks refresh it again.
+const useRememberOauthNonce = (ready: boolean) => {
+  useEffect(() => {
+    if (ready) {
+      rememberOauthNonce()
+    }
+  }, [ready])
+}
+
 const FacebookLoginButton: React.FC<{ accountLinkToken?: string }> = ({ accountLinkToken }) => {
   const { settings, loading } = useApp()
   const { formatMessage } = useIntl()
@@ -41,6 +51,8 @@ const FacebookLoginButton: React.FC<{ accountLinkToken?: string }> = ({ accountL
   } catch (error) {
     utm = {}
   }
+  useRememberOauthNonce(!loading)
+
   if (loading) {
     return <Spinner />
   }
@@ -92,6 +104,8 @@ const GoogleLoginButton: React.FC<{ accountLinkToken?: string }> = ({ accountLin
   } catch (error) {
     utm = {}
   }
+  useRememberOauthNonce(!loading)
+
   if (loading) {
     return <Spinner />
   }
@@ -143,6 +157,8 @@ const LineLoginButton: React.FC<{ accountLinkToken?: string }> = ({ accountLinkT
   } catch (error) {
     utm = {}
   }
+
+  useRememberOauthNonce(!loading)
 
   if (loading) {
     return <Spinner />
@@ -198,29 +214,30 @@ const ParentingLoginButton: React.FC<{ accountLinkToken?: string }> = ({ account
     utm = {}
   }
 
+  useRememberOauthNonce(!loading)
+
   if (loading) {
     return <Spinner />
   }
   return (
     <a
+      onClick={rememberOauthNonce}
       href={'https://accounts.parenting.com.tw/oauth/authorize?response_type=code&client_id={{CLIENT_ID}}&redirect_uri={{REDIRECT_URI}}&state={{STATE}}&scope={{SCOPE}}'
         .replace('{{CLIENT_ID}}', `${settings['auth.parenting.client_id']}`)
         .replace('{{REDIRECT_URI}}', encodeURIComponent(`${window.location.origin}/oauth2/parenting`))
         .replace('{{SCOPE}}', '')
         .replace(
           '{{STATE}}',
-          btoa(
-            JSON.stringify({
-              provider: 'parenting',
-              redirect:
-                returnTo ||
-                window.location.pathname +
-                  '?' +
-                  new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
-              accountLinkToken: accountLinkToken,
-              programContentId: programContentId,
-            }),
-          ),
+          createOauthState({
+            provider: 'parenting',
+            redirect:
+              returnTo ||
+              window.location.pathname +
+                '?' +
+                new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
+            accountLinkToken: accountLinkToken,
+            programContentId: programContentId,
+          }),
         )}
     >
       <Button
