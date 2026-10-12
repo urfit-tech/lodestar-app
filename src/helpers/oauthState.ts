@@ -179,7 +179,7 @@ export const rememberOauthNonce = (): void => {
     if (!nonce || window.location.protocol !== 'https:') {
       return
     }
-    Cookies.set(OAUTH_STATE_NONCE_COOKIE, appendOauthNonce(Cookies.get(OAUTH_STATE_NONCE_COOKIE), nonce), {
+    Cookies.set(OAUTH_STATE_NONCE_COOKIE, appendOauthNonce(readOauthNonceCookie(), nonce), {
       path: '/',
       secure: true,
       sameSite: 'lax',
