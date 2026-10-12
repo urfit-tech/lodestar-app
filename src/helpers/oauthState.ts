@@ -2,7 +2,8 @@ import Cookies from 'js-cookie'
 
 // OAuth state helpers shared by the social login buttons and the /oauth2 callback page.
 // Each page puts its nonce in the state and appends it to the __Host- cookie list
-// (see oauthNonce.fixture.json). The callback page only reports the comparison; nothing is rejected.
+// (see oauthNonce.fixture.json). The callback page reports the comparison and only logs in on match;
+// any other result is rejected.
 
 export const OAUTH_STATE_NONCE_COOKIE = '__Host-oauth_state_nonce'
 const OAUTH_STATE_NONCE_TTL_MS = 10 * 60 * 1000
@@ -189,11 +190,34 @@ export const rememberOauthNonce = (): void => {
   }
 }
 
+const readCookieValue = (value: string): string => {
+  // same value decoding as js-cookie, which writes the cookie
+  const unquoted = value[0] === '"' ? value.slice(1, -1) : value
+  return unquoted.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent)
+}
+
+/**
+ * Returns the nonce cookie list from document.cookie, or undefined. Names are compared literally and never decoded
+ * (so a `__%48ost-oauth_state_nonce` cookie set from a sibling subdomain is ignored), and when the name appears more
+ * than once the list is treated as missing because the browser does not tell which one is the host-only cookie.
+ */
+const readOauthNonceCookie = (): string | undefined => {
+  const values: string[] = []
+  document.cookie.split(';').forEach(part => {
+    const pair = part.trim()
+    const separatorIndex = pair.indexOf('=')
+    if (separatorIndex > 0 && pair.slice(0, separatorIndex) === OAUTH_STATE_NONCE_COOKIE) {
+      values.push(pair.slice(separatorIndex + 1))
+    }
+  })
+  return values.length === 1 ? readCookieValue(values[0]) : undefined
+}
+
 /** Read-only check of the state nonce against the cookie list; never modifies or deletes the cookie. */
 export const checkOauthNonce = (stateNonce: unknown): OauthNonceCheckResult => {
   let cookieValue: string | undefined
   try {
-    cookieValue = Cookies.get(OAUTH_STATE_NONCE_COOKIE)
+    cookieValue = readOauthNonceCookie()
   } catch {
     cookieValue = undefined
   }

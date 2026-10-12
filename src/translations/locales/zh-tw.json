@@ -353,6 +353,7 @@
   "code.E_NO_PAYMENT_METHOD": "找不到該付款方式",
   "code.E_NO_PRICE": "零元訂單無法建立交易",
   "code.E_NO_PRODUCT": "產品不存在",
+  "code.E_OAUTH_STATE": "登入驗證已失效，請重新登入",
   "code.E_ORDER_STATUS": "訂單已被限制，請重新下單",
   "code.E_OUTDATED_CODE": "此序號已過期",
   "code.E_PASSWORD": "密碼錯誤",
