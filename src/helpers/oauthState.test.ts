@@ -318,3 +318,91 @@ describe('without crypto.getRandomValues', () => {
     }
   })
 })
+
+describe('nonce writer raw cookie boundary (real js-cookie)', () => {
+  const originalLocation = window.location
+  const ATTACKER = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+  const VALID = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+  const ALIAS = '__%48ost-oauth_state_nonce'
+  let rawCookie: string
+  let writes: string[]
+
+  beforeEach(() => {
+    rawCookie = ''
+    writes = []
+    // Expose a raw cookie list and capture the actual js-cookie setter output.
+    // This tests application parsing, not browser enforcement of the __Host- prefix.
+    Object.defineProperty(document, 'cookie', {
+      configurable: true,
+      get: () => rawCookie,
+      set: (value: string) => writes.push(value),
+    })
+    delete (window as any).location
+    ;(window as any).location = { ...originalLocation, protocol: 'https:' }
+  })
+
+  afterEach(() => {
+    delete (document as any).cookie
+    delete (window as any).location
+    ;(window as any).location = originalLocation
+  })
+
+  const writtenValue = () => {
+    expect(writes).toHaveLength(1)
+    const pair = writes[0].split('; ')[0]
+    expect(pair.split('=')[0]).toBe(OAUTH_STATE_NONCE_COOKIE)
+    return pair.slice(pair.indexOf('=') + 1)
+  }
+  const pageNonce = () => decodeOauthState(createOauthState({}))?.nonce as string
+
+  it.each([
+    ['alias alone', `${ALIAS}=${ATTACKER}`, undefined],
+    ['alias before the literal name', `${ALIAS}=${ATTACKER}; ${OAUTH_STATE_NONCE_COOKIE}=${VALID}`, VALID],
+    ['alias after the literal name', `${OAUTH_STATE_NONCE_COOKIE}=${VALID}; ${ALIAS}=${ATTACKER}`, VALID],
+  ])('does not import an encoded name: %s', (_: string, cookies: string, valid: string | undefined) => {
+    rawCookie = cookies
+    expect(checkOauthNonce(ATTACKER)).toBe(valid ? 'mismatch' : 'no_cookie')
+    rememberOauthNonce()
+    // Observe the callback after the real writer's output becomes the literal cookie.
+    rawCookie = `${writes[0].split('; ')[0]}; ${ALIAS}=${ATTACKER}`
+    expect(checkOauthNonce(ATTACKER)).toBe('mismatch')
+    expect(checkOauthNonce(pageNonce())).toBe('match')
+    expect(writtenValue()).toBe(valid ? `${pageNonce()}.${valid}` : pageNonce())
+    if (valid) {
+      expect(checkOauthNonce(valid)).toBe('match')
+    }
+  })
+
+  it.each([
+    `${OAUTH_STATE_NONCE_COOKIE}=${ATTACKER}; ${OAUTH_STATE_NONCE_COOKIE}=${VALID}`,
+    `${OAUTH_STATE_NONCE_COOKIE}=${VALID}; ${OAUTH_STATE_NONCE_COOKIE}=${ATTACKER}`,
+    `${OAUTH_STATE_NONCE_COOKIE}=${ATTACKER}; ${OAUTH_STATE_NONCE_COOKIE}=${ATTACKER}`,
+  ])('does not import duplicate literal names: %s', (cookies: string) => {
+    rawCookie = cookies
+    expect(checkOauthNonce(ATTACKER)).toBe('no_cookie')
+    expect(checkOauthNonce(VALID)).toBe('no_cookie')
+    rememberOauthNonce()
+    expect(writtenValue()).toBe(pageNonce())
+  })
+
+  it('preserves quoted and percent-encoded value decoding for a single literal name', () => {
+    rawCookie = `${OAUTH_STATE_NONCE_COOKIE}="%62${VALID.slice(1)}%2E${ATTACKER}"`
+    expect(checkOauthNonce(VALID)).toBe('match')
+    rememberOauthNonce()
+    expect(writtenValue()).toBe(`${pageNonce()}.${VALID}.${ATTACKER}`)
+  })
+
+  it('preserves the five-entry cap and deduplication across pending tab nonces', () => {
+    const pending = ['1', '2', '3', '4', '5', '6'].map(value => value.repeat(32))
+    rawCookie = `${OAUTH_STATE_NONCE_COOKIE}=${pending.join('.')}`
+    rememberOauthNonce()
+    expect(writtenValue()).toBe([pageNonce(), ...pending.slice(0, 4)].join('.'))
+    rawCookie = writes[0].split('; ')[0]
+    writes = []
+    rememberOauthNonce()
+    expect(writtenValue()).toBe([pageNonce(), ...pending.slice(0, 4)].join('.'))
+    rawCookie = writes[0].split('; ')[0]
+    pending.slice(0, 4).forEach(nonce => expect(checkOauthNonce(nonce)).toBe('match'))
+    expect(checkOauthNonce(pending[4])).toBe('mismatch')
+  })
+})
