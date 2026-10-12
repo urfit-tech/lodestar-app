@@ -3,7 +3,7 @@ import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { BackendServerError, BindDeviceError, LoginDeviceError } from 'lodestar-app-element/src/helpers/error'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
@@ -48,17 +48,69 @@ const reportOauthCallbackCheck = (provider: ProviderType, result: OauthNonceChec
   }
 }
 
-// Compares the state nonce with the cookie list once per mount and reports the result.
-// Telemetry only: the login flow does not wait for it and nothing is rejected.
-const useOauthCallbackCheck = (provider: ProviderType | null, stateNonce: unknown) => {
+const OAUTH_REJECT_REDIRECT_DELAY_MS = 2000
+
+/** The redirect target after a rejected callback; '/' when the target would land on /oauth2 again. */
+const getOauthRejectTarget = (redirect: string): string => {
+  try {
+    return decodeURIComponent(redirect).toLowerCase().startsWith('/oauth2') ? '/' : redirect
+  } catch {
+    return '/'
+  }
+}
+
+// Compares the state nonce with the cookie list; null until the provider is known.
+// The callback page never writes the cookie, so the result only changes when the state does.
+const useOauthNonceResult = (provider: ProviderType | null, stateNonce: unknown) =>
+  useMemo(() => (provider ? checkOauthNonce(stateNonce) : null), [provider, stateNonce])
+
+// Reports the first known nonce result once per mount; the login flow does not wait for it.
+const useOauthCallbackCheck = (provider: ProviderType | null, nonceResult: OauthNonceCheckResult | null) => {
   const reportedRef = useRef(false)
   useEffect(() => {
-    if (reportedRef.current || !provider) {
+    if (reportedRef.current || !provider || !nonceResult) {
       return
     }
     reportedRef.current = true
-    reportOauthCallbackCheck(provider, checkOauthNonce(stateNonce))
-  }, [provider, stateNonce])
+    reportOauthCallbackCheck(provider, nonceResult)
+  }, [provider, nonceResult])
+}
+
+// Set by the first rejected callback of this page load. The page can be remounted (for example after the auth
+// context refreshes its token) once the address bar has been cleaned, so the redirect must outlive the component.
+let oauthRejectRedirectScheduled = false
+
+/** Test-only: forgets that a rejection redirect was scheduled in this page load. */
+export const resetOauthCallbackRejectionForTests = () => {
+  oauthRejectRedirectScheduled = false
+}
+
+// A callback is only completed when its state nonce matches this browser. Otherwise, once per page load, the code
+// or token is removed from the address bar first, the user is asked to sign in again and sent back to the redirect.
+// The redirect is never cancelled: a remount after the cleanup no longer sees the state and could not schedule it.
+const useOauthCallbackRejection = (
+  provider: ProviderType | null,
+  nonceResult: OauthNonceCheckResult | null,
+  redirect: string,
+) => {
+  const { formatMessage } = useIntl()
+
+  useEffect(() => {
+    if (oauthRejectRedirectScheduled || !provider || !nonceResult || nonceResult === 'match') {
+      return
+    }
+    oauthRejectRedirectScheduled = true
+    try {
+      window.history.replaceState(null, '', window.location.pathname)
+    } catch {
+      // still leave the page below
+    }
+    message.error(formatMessage(codeMessages.E_OAUTH_STATE))
+    const target = getOauthRejectTarget(redirect)
+    setTimeout(() => {
+      window.location.replace(target)
+    }, OAUTH_REJECT_REDIRECT_DELAY_MS)
+  }, [formatMessage, nonceResult, provider, redirect])
 }
 
 const OAuth2Page: React.FC = () => {
@@ -90,7 +142,9 @@ const DefaultOauth2Section: React.FC = () => {
   const accessToken = params.get('access_token')
 
   const { provider, redirect, accountLinkToken, nonce: stateNonce } = parseOauthState(state || params.get('state'))
-  useOauthCallbackCheck(provider, stateNonce)
+  const nonceResult = useOauthNonceResult(provider, stateNonce)
+  useOauthCallbackCheck(provider, nonceResult)
+  useOauthCallbackRejection(provider, nonceResult, redirect)
 
   const showSocialLoginError = useCallback(
     (error: any) => {
@@ -141,6 +195,7 @@ const DefaultOauth2Section: React.FC = () => {
       !currentMemberId &&
       code &&
       provider === 'line' &&
+      nonceResult === 'match' &&
       settings['auth.line_client_id'] &&
       appId &&
       !lineCodeExchangedRef.current
@@ -196,6 +251,7 @@ const DefaultOauth2Section: React.FC = () => {
     code,
     settings,
     provider,
+    nonceResult,
     socialLogin,
     redirect,
     showSocialLoginError,
@@ -203,7 +259,12 @@ const DefaultOauth2Section: React.FC = () => {
 
   // Implicit Flow
   useEffect(() => {
-    if (!isAuthenticating && !currentMemberId && (provider === 'google' || provider === 'facebook')) {
+    if (
+      !isAuthenticating &&
+      !currentMemberId &&
+      (provider === 'google' || provider === 'facebook') &&
+      nonceResult === 'match'
+    ) {
       socialLogin?.({
         provider: provider,
         providerToken: accessToken,
@@ -227,7 +288,7 @@ const DefaultOauth2Section: React.FC = () => {
           }
         })
     }
-  }, [isAuthenticating, currentMemberId, socialLogin, provider, accessToken, history, redirect])
+  }, [isAuthenticating, currentMemberId, socialLogin, provider, nonceResult, accessToken, history, redirect])
 
   return (
     <>
@@ -244,7 +305,7 @@ const DefaultOauth2Section: React.FC = () => {
           window.location.href = redirect
         }}
         onOk={() => {
-          if (provider) {
+          if (provider && nonceResult === 'match') {
             setForceLoginLoading(true)
             socialLogin?.({
               provider: provider,
@@ -274,11 +335,16 @@ const Oauth2Section: React.FC = () => {
   const accountLinkToken = sessionStorage.getItem('accountLinkToken') || ''
 
   const params = new URLSearchParams('?' + window.location.hash.replace('#', ''))
-  const { redirect, nonce: stateNonce } = parseOauthState(state || params.get('state'))
-  useOauthCallbackCheck(providerTypes.includes(provider) ? provider : null, stateNonce)
+  const rawState = state || params.get('state')
+  const { redirect, nonce: stateNonce } = parseOauthState(rawState)
+  // the route names the provider, so wait until the query (code or state) is available before judging the nonce
+  const nonceProvider = providerTypes.includes(provider) && (code || rawState) ? provider : null
+  const nonceResult = useOauthNonceResult(nonceProvider, stateNonce)
+  useOauthCallbackCheck(nonceProvider, nonceResult)
+  useOauthCallbackRejection(nonceProvider, nonceResult, redirect)
 
   useEffect(() => {
-    if (!isAuthenticating && !currentMemberId && appId && code) {
+    if (!isAuthenticating && !currentMemberId && appId && code && nonceResult === 'match') {
       const redirectUri = `${host}/oauth2/${provider}`
       axios
         .post(
@@ -310,7 +376,19 @@ const Oauth2Section: React.FC = () => {
         })
         .catch(handleError)
     }
-  }, [accountLinkToken, appId, code, currentMemberId, history, host, isAuthenticating, provider, redirect, socialLogin])
+  }, [
+    accountLinkToken,
+    appId,
+    code,
+    currentMemberId,
+    history,
+    host,
+    isAuthenticating,
+    nonceResult,
+    provider,
+    redirect,
+    socialLogin,
+  ])
 
   return <LoadingPage />
 }

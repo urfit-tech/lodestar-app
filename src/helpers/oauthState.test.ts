@@ -243,6 +243,66 @@ describe('rememberOauthNonce / checkOauthNonce', () => {
   })
 })
 
+describe('checkOauthNonce cookie parsing', () => {
+  const NONCE = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+  const OTHER = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+  let rawCookie: string
+
+  beforeEach(() => {
+    rawCookie = ''
+    Object.defineProperty(document, 'cookie', {
+      configurable: true,
+      get: () => rawCookie,
+      set: () => {
+        throw new Error('checkOauthNonce must not write cookies')
+      },
+    })
+  })
+
+  afterEach(() => {
+    delete (document as any).cookie
+  })
+
+  it.each(fixture.checkExamples.map((example: any) => [example.cookie, example.stateNonce, example.result]))(
+    'a single cookie %j with state nonce %j is %j',
+    (cookie: string | null, stateNonce: string | null, result: string) => {
+      rawCookie = cookie === null ? 'other=1' : `other=1; ${fixture.cookie.name}=${cookie}; last=2`
+      expect(checkOauthNonce(stateNonce)).toBe(result)
+    },
+  )
+
+  it('treats two cookies with the exact name as no cookie', () => {
+    rawCookie = `${fixture.cookie.name}=${NONCE}; ${fixture.cookie.name}=${OTHER}`
+    expect(checkOauthNonce(NONCE)).toBe('no_cookie')
+    expect(checkOauthNonce(OTHER)).toBe('no_cookie')
+  })
+
+  it('treats a duplicate as no cookie even when both values are equal', () => {
+    rawCookie = `${fixture.cookie.name}=${NONCE}; ${fixture.cookie.name}=${NONCE}`
+    expect(checkOauthNonce(NONCE)).toBe('no_cookie')
+  })
+
+  it('does not decode cookie names', () => {
+    rawCookie = `__%48ost-oauth_state_nonce=${NONCE}`
+    expect(checkOauthNonce(NONCE)).toBe('no_cookie')
+    rawCookie = `__%48ost-oauth_state_nonce=${NONCE}; ${fixture.cookie.name}=${OTHER}`
+    expect(checkOauthNonce(NONCE)).toBe('mismatch')
+    expect(checkOauthNonce(OTHER)).toBe('match')
+  })
+
+  it('ignores names that only contain or differ in case from the cookie name', () => {
+    rawCookie = `x${fixture.cookie.name}=${NONCE}; __host-oauth_state_nonce=${NONCE}; ${fixture.cookie.name}x=${NONCE}`
+    expect(checkOauthNonce(NONCE)).toBe('no_cookie')
+  })
+
+  it('splits at the first = only', () => {
+    rawCookie = `${fixture.cookie.name}=${OTHER}=${NONCE}`
+    expect(checkOauthNonce(NONCE)).toBe('no_cookie')
+    rawCookie = `${fixture.cookie.name}=${NONCE}.${OTHER}`
+    expect(checkOauthNonce(OTHER)).toBe('match')
+  })
+})
+
 describe('without crypto.getRandomValues', () => {
   it('returns the payload unchanged', () => {
     const getRandomValues = cryptoStub.getRandomValues
