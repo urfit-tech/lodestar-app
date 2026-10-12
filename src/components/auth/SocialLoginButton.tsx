@@ -5,6 +5,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
+import { createOauthState, rememberOauthNonce } from '../../helpers/oauthState'
 import { authMessages } from '../../helpers/translation'
 import FacebookLogoImage from '../../images/FB-logo.png'
 import GoogleLogoImage from '../../images/google-logo.png'
@@ -46,23 +47,22 @@ const FacebookLoginButton: React.FC<{ accountLinkToken?: string }> = ({ accountL
 
   return (
     <a
+      onClick={rememberOauthNonce}
       href={'https://www.facebook.com/v6.0/dialog/oauth?client_id={{CLIENT_ID}}&redirect_uri={{REDIRECT_URI}}&scope={{SCOPE}}&state={{STATE}}&response_type=token'
         .replace('{{CLIENT_ID}}', `${settings['auth.facebook_app_id']}`)
         .replace('{{REDIRECT_URI}}', `${window.location.origin}/oauth2`)
         .replace('{{SCOPE}}', 'public_profile,email')
         .replace(
           '{{STATE}}',
-          btoa(
-            JSON.stringify({
-              provider: 'facebook',
-              redirect:
-                returnTo ||
-                window.location.pathname +
-                  '?' +
-                  new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
-              accountLinkToken: accountLinkToken,
-            }),
-          ),
+          createOauthState({
+            provider: 'facebook',
+            redirect:
+              returnTo ||
+              window.location.pathname +
+                '?' +
+                new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
+            accountLinkToken: accountLinkToken,
+          }),
         )}
     >
       <Button
@@ -98,23 +98,22 @@ const GoogleLoginButton: React.FC<{ accountLinkToken?: string }> = ({ accountLin
 
   return (
     <a
+      onClick={rememberOauthNonce}
       href={'https://accounts.google.com/o/oauth2/v2/auth?client_id={{CLIENT_ID}}&response_type=token&scope={{SCOPE}}&access_type=online&redirect_uri={{REDIRECT_URI}}&state={{STATE}}&suppress_webview_warning=true'
         .replace('{{CLIENT_ID}}', `${settings['auth.google_client_id']}`)
         .replace('{{REDIRECT_URI}}', `${window.location.origin}/oauth2`)
         .replace('{{SCOPE}}', 'openid profile email')
         .replace(
           '{{STATE}}',
-          btoa(
-            JSON.stringify({
-              provider: 'google',
-              redirect:
-                returnTo ||
-                window.location.pathname +
-                  '?' +
-                  new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
-              accountLinkToken: accountLinkToken,
-            }),
-          ),
+          createOauthState({
+            provider: 'google',
+            redirect:
+              returnTo ||
+              window.location.pathname +
+                '?' +
+                new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
+            accountLinkToken: accountLinkToken,
+          }),
         )}
     >
       <Button
@@ -151,23 +150,22 @@ const LineLoginButton: React.FC<{ accountLinkToken?: string }> = ({ accountLinkT
 
   return (
     <a
+      onClick={rememberOauthNonce}
       href={'https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id={{CLIENT_ID}}&redirect_uri={{REDIRECT_URI}}&state={{STATE}}&scope={{SCOPE}}'
         .replace('{{CLIENT_ID}}', `${settings['auth.line_client_id']}`)
         .replace('{{REDIRECT_URI}}', `${window.location.origin}/oauth2`)
         .replace('{{SCOPE}}', 'profile%20openid%20email')
         .replace(
           '{{STATE}}',
-          btoa(
-            JSON.stringify({
-              provider: 'line',
-              redirect:
-                returnTo ||
-                window.location.pathname +
-                  '?' +
-                  new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
-              accountLinkToken: accountLinkToken,
-            }),
-          ),
+          createOauthState({
+            provider: 'line',
+            redirect:
+              returnTo ||
+              window.location.pathname +
+                '?' +
+                new URLSearchParams(window.location.search + '&' + new URLSearchParams(utm).toString()).toString(),
+            accountLinkToken: accountLinkToken,
+          }),
         )}
     >
       <Button
