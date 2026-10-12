@@ -76,22 +76,30 @@ const useOauthCallbackCheck = (provider: ProviderType | null, nonceResult: Oauth
   }, [provider, nonceResult])
 }
 
-// A callback is only completed when its state nonce matches this browser. Otherwise, once per mount, the code or
-// token is removed from the address bar first, the user is asked to sign in again and sent back to the redirect.
+// Set by the first rejected callback of this page load. The page can be remounted (for example after the auth
+// context refreshes its token) once the address bar has been cleaned, so the redirect must outlive the component.
+let oauthRejectRedirectScheduled = false
+
+/** Test-only: forgets that a rejection redirect was scheduled in this page load. */
+export const resetOauthCallbackRejectionForTests = () => {
+  oauthRejectRedirectScheduled = false
+}
+
+// A callback is only completed when its state nonce matches this browser. Otherwise, once per page load, the code
+// or token is removed from the address bar first, the user is asked to sign in again and sent back to the redirect.
+// The redirect is never cancelled: a remount after the cleanup no longer sees the state and could not schedule it.
 const useOauthCallbackRejection = (
   provider: ProviderType | null,
   nonceResult: OauthNonceCheckResult | null,
   redirect: string,
 ) => {
   const { formatMessage } = useIntl()
-  const rejectedRef = useRef(false)
-  const redirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    if (rejectedRef.current || !provider || !nonceResult || nonceResult === 'match') {
+    if (oauthRejectRedirectScheduled || !provider || !nonceResult || nonceResult === 'match') {
       return
     }
-    rejectedRef.current = true
+    oauthRejectRedirectScheduled = true
     try {
       window.history.replaceState(null, '', window.location.pathname)
     } catch {
@@ -99,19 +107,10 @@ const useOauthCallbackRejection = (
     }
     message.error(formatMessage(codeMessages.E_OAUTH_STATE))
     const target = getOauthRejectTarget(redirect)
-    redirectTimerRef.current = setTimeout(() => {
+    setTimeout(() => {
       window.location.replace(target)
     }, OAUTH_REJECT_REDIRECT_DELAY_MS)
   }, [formatMessage, nonceResult, provider, redirect])
-
-  useEffect(
-    () => () => {
-      if (redirectTimerRef.current !== null) {
-        clearTimeout(redirectTimerRef.current)
-      }
-    },
-    [],
-  )
 }
 
 const OAuth2Page: React.FC = () => {

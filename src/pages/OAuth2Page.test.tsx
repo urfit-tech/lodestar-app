@@ -3,7 +3,7 @@ import axios from 'axios'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
-import OAuth2Page from './OAuth2Page'
+import OAuth2Page, { resetOauthCallbackRejectionForTests } from './OAuth2Page'
 
 jest.mock('axios')
 const mockSocialLogin = jest.fn()
@@ -73,6 +73,7 @@ describe('OAuth2Page state nonce enforcement', () => {
   let locationReplace: jest.Mock
 
   beforeEach(() => {
+    resetOauthCallbackRejectionForTests()
     mockedAxios.post.mockReset()
     mockedAxios.post.mockImplementation(((url: string) =>
       url.endsWith('/auth/oauth-callback-check')
@@ -366,23 +367,65 @@ describe('OAuth2Page state nonce enforcement', () => {
       expectNotRejected()
     })
 
-    it('does not leave the page when unmounted before the rejection redirect', async () => {
+    it('still leaves the page when unmounted right after the rejection', async () => {
       jest.useFakeTimers()
       setImplicitCallback('google', '/x', { nonce: NONCE })
       cookieValue = OTHER_NONCE
 
       renderPage()
-
       await flushMicrotasks()
       expect(replaceStateSpy).toHaveBeenCalledTimes(1)
       act(() => {
         ReactDOM.unmountComponentAtNode(root)
       })
       act(() => {
-        jest.advanceTimersByTime(5000)
+        jest.advanceTimersByTime(1999)
       })
-
       expect(locationReplace).not.toHaveBeenCalled()
+      act(() => {
+        jest.advanceTimersByTime(1)
+      })
+      expect(locationReplace).toHaveBeenCalledTimes(1)
+      expect(locationReplace).toHaveBeenCalledWith('/x')
+      act(() => {
+        jest.advanceTimersByTime(10000)
+      })
+      expect(locationReplace).toHaveBeenCalledTimes(1)
+    })
+
+    it.each([
+      ['the cleaned address', true],
+      ['the same address', false],
+    ])('does not reject again when remounted with %s after a rejection', async (_, cleaned) => {
+      jest.useFakeTimers()
+      setImplicitCallback('google', '/x', { nonce: NONCE })
+      cookieValue = OTHER_NONCE
+
+      renderPage()
+      await flushMicrotasks()
+      expect(events).toEqual(['replaceState', 'message.error'])
+
+      act(() => {
+        ReactDOM.unmountComponentAtNode(root)
+      })
+      if (cleaned) {
+        mockRoute.query = {}
+        window.location.hash = ''
+      }
+      renderPage()
+      await flushMicrotasks()
+
+      expect(events).toEqual(['replaceState', 'message.error'])
+      expect(mockSocialLogin).not.toHaveBeenCalled()
+      act(() => {
+        jest.advanceTimersByTime(2000)
+      })
+      expect(locationReplace).toHaveBeenCalledTimes(1)
+      expect(locationReplace).toHaveBeenCalledWith('/x')
+      act(() => {
+        jest.advanceTimersByTime(10000)
+      })
+      expect(locationReplace).toHaveBeenCalledTimes(1)
     })
 
     it('logs in on match when the state only arrives on the second render', async () => {
