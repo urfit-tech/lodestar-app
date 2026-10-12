@@ -1745,6 +1745,10 @@ export const codeMessages = defineMessages({
     id: 'code.E_PROVIDER_TOKEN',
     defaultMessage: 'E_PROVIDER_TOKEN',
   },
+  E_OAUTH_STATE: {
+    id: 'code.E_OAUTH_STATE',
+    defaultMessage: '登入驗證已失效，請重新登入',
+  },
   E_UPDATE_PASSWORD: {
     id: 'code.E_UPDATE_PASSWORD',
     defaultMessage: '更新密碼錯誤',

@@ -353,6 +353,7 @@
   "code.E_NO_PAYMENT_METHOD": "The payment method could not be found",
   "code.E_NO_PRICE": "Zero-price orders cannot create transactions",
   "code.E_NO_PRODUCT": "product does not exist",
+  "code.E_OAUTH_STATE": "Your sign-in session expired. Please sign in again.",
   "code.E_ORDER_STATUS": "The order has been restricted, please place the order again",
   "code.E_OUTDATED_CODE": "The coupon has expired",
   "code.E_PASSWORD": "Wrong password",
