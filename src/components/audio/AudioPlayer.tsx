@@ -42,6 +42,7 @@ import {
 } from '../../images'
 import { ProgramContent } from '../../types/program'
 import { BREAK_POINT } from '../common/Responsive'
+import VolumeControl, { useAudioVolume } from '../common/VolumeControl'
 import PlaylistOverlay from './PlaylistOverlay'
 import audioMessages from './translation'
 
@@ -412,6 +413,7 @@ const AudioPlayer: React.FC<{
   const [duration, setDuration] = useState(0)
   const [progress, setProgress] = useState(0)
   const [playRate, setPlayRate] = useState(Number(localStorage.getItem('playRate')) || 1)
+  const { volume, muted, setVolume, setMuted } = useAudioVolume()
   const lastEndedTime = useRef<number>(0)
   const location = useLocation()
   const pathname = location.pathname
@@ -426,6 +428,13 @@ const AudioPlayer: React.FC<{
       setProgress(audioRef.current.currentTime || 0)
     }
   }, 500)
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume
+      audioRef.current.muted = muted
+    }
+  }, [volume, muted])
 
   useEffect(() => {
     if (audioUrl && audioRef.current) {
@@ -443,22 +452,31 @@ const AudioPlayer: React.FC<{
     <>
       <Box position="fixed" right="0" bottom="0" left="0" zIndex="1000">
         <OverlayBlock variant={showAction ? 'active' : ''} display={{ base: 'block', md: 'none' }}>
-          <ActionBlock alignItems="center" justifyContent="space-around" marginBottom="5px">
-            <div className="flex-grow-1 text-center">
-              <PlayRateButton
-                variant="overlay"
-                playRate={playRate}
-                onChange={rate => {
-                  setPlayRate(rate)
-                  localStorage.setItem('playRate', rate.toString())
-                  audioRef.current && (audioRef.current.playbackRate = rate)
-                }}
-              />
-            </div>
-            <Divider type="vertical" style={{ height: '49px' }} />
-            <div className="flex-grow-1 text-center">
-              <PlayModeButton variant="overlay" mode={mode} onChange={mode => onPlayModeChange(mode)} />
-            </div>
+          <ActionBlock flexDirection="column" marginBottom="5px">
+            <Flex alignItems="center" justifyContent="space-around">
+              <div className="flex-grow-1 text-center">
+                <PlayRateButton
+                  variant="overlay"
+                  playRate={playRate}
+                  onChange={rate => {
+                    setPlayRate(rate)
+                    localStorage.setItem('playRate', rate.toString())
+                    audioRef.current && (audioRef.current.playbackRate = rate)
+                  }}
+                />
+              </div>
+              <Divider type="vertical" style={{ height: '49px' }} />
+              <div className="flex-grow-1 text-center">
+                <PlayModeButton variant="overlay" mode={mode} onChange={mode => onPlayModeChange(mode)} />
+              </div>
+            </Flex>
+            <VolumeControl
+              variant="overlay"
+              volume={volume}
+              muted={muted}
+              onVolumeChange={setVolume}
+              onMutedChange={setMuted}
+            />
           </ActionBlock>
         </OverlayBlock>
 
@@ -585,6 +603,13 @@ const AudioPlayer: React.FC<{
                 </Flex>
                 <HStack spacing={{ base: '0px', lg: '10px' }} alignItems="center" justifyContent="end">
                   <HStack display={{ base: 'none', md: 'flex' }}>
+                    <VolumeControl
+                      variant="bar"
+                      volume={volume}
+                      muted={muted}
+                      onVolumeChange={setVolume}
+                      onMutedChange={setMuted}
+                    />
                     <PlayRateButton
                       variant="bar"
                       playRate={playRate}
