@@ -14,9 +14,13 @@ const GlobalPodcastPlayer: React.FC = () => {
     changeMode,
     playing,
     rate,
+    volume,
+    muted,
     duration,
     progress,
     changeRate,
+    changeVolume,
+    changeMuted,
     changePlayingState,
     podcastProgramIds,
     currentIndex,
@@ -47,11 +51,15 @@ const GlobalPodcastPlayer: React.FC = () => {
           playing={playing}
           mode={mode}
           playRate={rate}
+          volume={volume}
+          muted={muted}
           onPlay={() => changePlayingState?.(true)}
           onPause={() => changePlayingState?.(false)}
           onBackward={(seconds = 5) => seek?.(progress - seconds)}
           onForward={(seconds = 5) => seek?.(progress + seconds)}
           onPlayRateChange={rate => changeRate?.(rate)}
+          onVolumeChange={volume => changeVolume?.(volume)}
+          onMutedChange={muted => changeMuted?.(muted)}
           onPlayModeChange={mode => changeMode?.(mode)}
           onSeek={progress => seek?.(progress)}
           onClose={() => close?.()}
