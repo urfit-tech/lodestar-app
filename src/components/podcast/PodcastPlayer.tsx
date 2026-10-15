@@ -29,6 +29,7 @@ import {
   TimesIcon,
 } from '../../images'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
+import VolumeControl, { canControlVolume } from '../common/VolumeControl'
 import PlaylistOverlay from './PlaylistOverlay'
 
 const messages = defineMessages({
@@ -209,12 +210,16 @@ const PodcastPlayer: React.FC<{
   duration: number
   progress: number
   playRate?: number
+  volume?: number
+  muted?: boolean
   mode: PodcastPlayerMode
   onPlay?: () => void
   onPause?: () => void
   onBackward?: (seconds?: number) => void
   onForward?: (seconds?: number) => void
   onPlayRateChange?: (playRate: number) => void
+  onVolumeChange?: (volume: number) => void
+  onMutedChange?: (muted: boolean) => void
   onPlayModeChange?: (mode: PodcastPlayerMode) => void
   onBeforeSeek?: (progress: number) => void
   onSeek?: (progress: number) => void
@@ -230,12 +235,16 @@ const PodcastPlayer: React.FC<{
   duration,
   progress,
   playRate = 1,
+  volume = 1,
+  muted = false,
   mode = 'loop',
   onPlay,
   onPause,
   onBackward,
   onForward,
   onPlayRateChange,
+  onVolumeChange,
+  onMutedChange,
   onPlayModeChange,
   onBeforeSeek,
   onSeek,
@@ -245,19 +254,28 @@ const PodcastPlayer: React.FC<{
   onNext,
 }) => {
   const [showAction, setShowAction] = useState(false)
+  const volumeControlProps = {
+    volume,
+    muted,
+    onVolumeChange: (volume: number) => onVolumeChange?.(volume),
+    onMutedChange: (muted: boolean) => onMutedChange?.(muted),
+  }
 
   return (
     <StyledWrapper>
       <Responsive.Default>
         <OverlayBlock active={showAction}>
-          <ActionBlock className="d-flex align-items-center justify-content-around">
-            <div className="flex-grow-1 text-center">
-              <PlayRateButton variant="overlay" playRate={playRate} onChange={rate => onPlayRateChange?.(rate)} />
+          <ActionBlock>
+            <div className="d-flex align-items-center justify-content-around">
+              <div className="flex-grow-1 text-center">
+                <PlayRateButton variant="overlay" playRate={playRate} onChange={rate => onPlayRateChange?.(rate)} />
+              </div>
+              <Divider type="vertical" style={{ height: '49px' }} />
+              <div className="flex-grow-1 text-center">
+                <PlayModeButton variant="overlay" mode={mode} onChange={mode => onPlayModeChange?.(mode)} />
+              </div>
             </div>
-            <Divider type="vertical" style={{ height: '49px' }} />
-            <div className="flex-grow-1 text-center">
-              <PlayModeButton variant="overlay" mode={mode} onChange={mode => onPlayModeChange?.(mode)} />
-            </div>
+            <VolumeControl variant="overlay" {...volumeControlProps} />
           </ActionBlock>
         </OverlayBlock>
       </Responsive.Default>
@@ -331,7 +349,13 @@ const PodcastPlayer: React.FC<{
             </div>
             <div className="col-3 col-lg-4 d-flex align-items-center justify-content-end">
               <Responsive.Desktop>
-                <PlayRateButton variant="bar" playRate={playRate} onChange={rate => onPlayRateChange?.(rate)} />
+                <VolumeControl variant="bar" {...volumeControlProps} />
+                <PlayRateButton
+                  variant="bar"
+                  className={canControlVolume ? 'ml-4' : undefined}
+                  playRate={playRate}
+                  onChange={rate => onPlayRateChange?.(rate)}
+                />
                 <PlayModeButton
                   variant="bar"
                   mode={mode}
