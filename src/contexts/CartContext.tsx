@@ -6,6 +6,7 @@ import { ConversionApiContent, ConversionApiEvent } from 'lodestar-app-element/s
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import hasura from '../hasura'
 import { getTrackingCookie } from '../helpers'
+import { isConversionApiEnabled } from '../helpers/conversionApi'
 import { useMember } from '../hooks/member'
 import { CartOperatorEnum } from '../services/cart/CartOperatorEnum'
 import { CreateCartOperationContextFactory } from '../services/cart/CreateCartOperationContextFactory'
@@ -90,11 +91,7 @@ export const CartProvider: React.FC = ({ children }) => {
             },
           }
           const { conversionApi, conversionApiData } = getConversionApiData(member, { contents, event })
-          if (
-            settings['tracking.fb_conversion_api.pixel_id'] &&
-            settings['tracking.fb_conversion_api.access_token'] &&
-            enabledModules.fb_conversion_api
-          ) {
+          if (isConversionApiEnabled(settings, enabledModules)) {
             if (authToken) await conversionApi(authToken, 'AddToCart').catch(error => console.log(error))
             Object.assign(trackingOptions, { fb: conversionApiData })
           }

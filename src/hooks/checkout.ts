@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
 import hasura from '../hasura'
 import { getTrackingCookie } from '../helpers'
+import { isConversionApiEnabled } from '../helpers/conversionApi'
 import {
   InvoiceProps,
   OrderDiscountProps,
@@ -114,12 +115,7 @@ export const useCheck = ({
     const { ip, country, countryCode } = await fetchCurrentGeolocation()
     const trackingCookie = getTrackingCookie()
     const trackingOptions = { ...trackingCookie }
-    if (
-      settings['tracking.fb_conversion_api.pixel_id'] &&
-      settings['tracking.fb_conversion_api.access_token'] &&
-      enabledModules.fb_conversion_api
-    )
-      Object.assign(trackingOptions, { fb: conversionApiData })
+    if (isConversionApiEnabled(settings, enabledModules)) Object.assign(trackingOptions, { fb: conversionApiData })
 
     ReactGA.plugin.execute('ec', 'setAction', 'checkout', { step: 4 })
     tracking.checkout(resourceCollection.filter(notEmpty), coupon)
