@@ -90,6 +90,7 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { AuthModalContext } from '../../components/auth/AuthModal'
+import { isConversionApiEnabled } from '../../helpers/conversionApi'
 import { commonMessages } from '../../helpers/translation'
 import { useEnrolledMembershipCardsWithDiscountInfo } from '../../hooks/card'
 import { MembershipCardProps } from '../../types/checkout'
@@ -582,11 +583,7 @@ const MultiPeriodCheckoutModal: React.FC<CheckoutPeriodsModalProps> = ({
       })
     }
 
-    if (
-      settings['tracking.fb_conversion_api.pixel_id'] &&
-      settings['tracking.fb_conversion_api.access_token'] &&
-      enabledModules.fb_conversion_api
-    ) {
+    if (isConversionApiEnabled(settings, enabledModules)) {
       const contents: ConversionApiContent[] = [
         { id: productTarget.title || productId, quantity: getSafeTotalQuantity(productDetails) },
       ]
