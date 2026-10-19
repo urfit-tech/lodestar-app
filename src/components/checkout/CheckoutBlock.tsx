@@ -34,6 +34,7 @@ import AdminCard from '../../components/common/AdminCard'
 import DefaultLayout from '../../components/layout/DefaultLayout'
 import CartContext from '../../contexts/CartContext'
 import { rgba } from '../../helpers'
+import { isConversionApiEnabled } from '../../helpers/conversionApi'
 import { checkoutMessages, commonMessages } from '../../helpers/translation'
 import { useCheck, useMemberShop, usePhysicalProductCollection } from '../../hooks/checkout'
 import { useMemberValidation } from '../../hooks/common'
@@ -389,11 +390,7 @@ const CheckoutBlock: React.FC<{
     }
 
     const { conversionApiData, conversionApi } = getConversionApiData(member, { contents, event })
-    if (
-      settings['tracking.fb_conversion_api.pixel_id'] &&
-      settings['tracking.fb_conversion_api.access_token'] &&
-      enabledModules.fb_conversion_api
-    ) {
+    if (isConversionApiEnabled(settings, enabledModules)) {
       if (authToken) await conversionApi(authToken, 'AddPaymentInfo').catch(error => console.log(error))
     }
 
