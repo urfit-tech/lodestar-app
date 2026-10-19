@@ -1,4 +1,5 @@
 import { Skeleton } from 'antd'
+import { omit } from 'ramda'
 import { useEffect } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { useCheck } from '../hooks/checkout'
@@ -22,6 +23,7 @@ const ContractDealPage: React.FC = () => {
 
 const DealComponent: React.FC<{
   memberContract: {
+    id: string
     startedAt: any
     endedAt: any
     values: any
@@ -36,10 +38,13 @@ const DealComponent: React.FC<{
 }> = ({ memberContract }) => {
   const history = useHistory()
 
+  // 後端 /order/create 只讓 app-owner／MEMBER_CONTRACT_INSERT／APPOINTMENT_PLAN_ADMIN 帶 isContract、totalPrice、
+  // installmentPlans（一般會員會收到 403 E_ORDER_FIELD_FORBIDDEN）。會員本人成交自己的合約時，只送 memberContractId，
+  // 這三個欄位由後端讀 member_contract 列補上。
   let options: { [key: string]: any } = {}
 
   memberContract?.values?.orderProducts.forEach((p: any) => {
-    options[p.product_id] = { ...p, isContract: true, quantity: p.options?.quantity }
+    options[p.product_id] = { ...omit(['totalPrice', 'isContract'], p), quantity: p.options?.quantity }
   })
   const { placeOrder } = useCheck({
     productIds: memberContract?.values?.orderProducts.map((p: any) => p.product_id),
@@ -48,8 +53,8 @@ const DealComponent: React.FC<{
     options: {
       ...options,
       ...memberContract?.values.options,
-      installmentPlans: memberContract?.values.paymentOptions.installmentPlans,
       paymentMode: memberContract?.values.paymentOptions.paymentMode,
+      memberContractId: memberContract.id,
     },
   })
 
