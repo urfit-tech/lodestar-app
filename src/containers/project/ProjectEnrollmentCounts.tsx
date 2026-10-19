@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
 import { Spinner } from '@chakra-ui/spinner'
+import { sum } from 'ramda'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import hasura from '../../hasura'
@@ -27,11 +28,11 @@ const ProjectEnrollmentCounts: React.FC<{
     return <span>{formatMessage(commonMessages.status.readingError)}</span>
   }
 
-  const count =
-    (data.project_plan_enrollment_aggregate.aggregate &&
-      data.project_plan_enrollment_aggregate.aggregate.count &&
-      data.project_plan_enrollment_aggregate.aggregate.count) ||
-    0
+  const count = sum(
+    data.project_by_pk?.project_plans.map(
+      projectPlan => projectPlan.project_plan_enrollment_count?.enrollment_count || 0,
+    ) || [],
+  )
 
   if (numberOnly) {
     return <>{count}</>
@@ -42,9 +43,13 @@ const ProjectEnrollmentCounts: React.FC<{
 
 const GET_PROJECT_ENROLLMENT_COUNT = gql`
   query GET_PROJECT_ENROLLMENT_COUNT($projectId: uuid!) {
-    project_plan_enrollment_aggregate(where: { project_plan: { project_id: { _eq: $projectId } } }) {
-      aggregate {
-        count
+    project_by_pk(id: $projectId) {
+      id
+      project_plans {
+        id
+        project_plan_enrollment_count {
+          enrollment_count
+        }
       }
     }
   }
