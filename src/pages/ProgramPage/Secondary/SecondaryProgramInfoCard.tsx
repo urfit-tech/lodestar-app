@@ -1,4 +1,4 @@
-import { Icon, Text } from '@chakra-ui/react'
+import { Icon, Text, TextProps } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -26,9 +26,9 @@ const StyledCountBlock = styled.div`
     justify-content: space-around;
   }
 `
-const Title = props => <Text color="primary.500" fontSize="16px" fontWeight="bold" {...props} />
+const Title: React.FC<TextProps> = props => <Text color="primary.500" fontSize="16px" fontWeight="bold" {...props} />
 
-const Content = props => <Text color="primary.500" fontSize="16px" fontWeight="bold" {...props} />
+const Content: React.FC<TextProps> = props => <Text color="primary.500" fontSize="16px" fontWeight="bold" {...props} />
 
 const layoutTemplateConfigMap: Record<string, string> = {
   expectedSections: '2d668b9d-9fd5-47a4-9fef-b24184287233',

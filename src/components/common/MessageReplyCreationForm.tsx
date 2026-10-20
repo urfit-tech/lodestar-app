@@ -28,11 +28,11 @@ export const StyledEditor = styled(BraftEditor)`
   }
 `
 type MessageReplyCreationFormProps = FormComponentProps & {
-  issue: Issue
-  onRefetch: RefetchIssueReply
-  onSubmit?: (content: any) => Promise<{ data: hasura.INSERT_ISSUE_REPLY }>
-  pollingStatus: PollingStatus
-  setPollingStatus: (value: React.SetStateAction<PollingStatus>) => void
+  issue?: Issue
+  onRefetch?: RefetchIssueReply
+  onSubmit?: (content: any) => Promise<{ data?: hasura.INSERT_ISSUE_REPLY | null } | void>
+  pollingStatus?: PollingStatus
+  setPollingStatus?: (value: React.SetStateAction<PollingStatus>) => void
 }
 const MessageReplyCreationForm: React.FC<MessageReplyCreationFormProps> = ({
   issue,
@@ -47,11 +47,11 @@ const MessageReplyCreationForm: React.FC<MessageReplyCreationFormProps> = ({
   const { currentMemberId, authToken } = useAuth()
   const { id: appId } = useApp()
   const { settings } = useApp()
-  const { id: issueId, memberId } = issue
   const apolloClient = useApolloClient()
 
-  const conditionallyPollUntilTheNextReplyNotFromAuthorOfIssueUpdated = (issueReplyId: string) => {
-    if (settings['program_issue.prompt_reply'] && onRefetch) {
+  const conditionallyPollUntilTheNextReplyNotFromAuthorOfIssueUpdated = (issueReplyId?: string) => {
+    if (settings['program_issue.prompt_reply'] && issue && onRefetch && setPollingStatus && issueReplyId) {
+      const { id: issueId, memberId } = issue
       const getTargetReply = (issueReplies: IssueReply[]) =>
         getTheNextReplyNotFromAuthorOfIssue(memberId)(issueReplies)(issueReplyId)
       const cond = (now: Date) => (issueReplies: IssueReply[]) =>
@@ -62,14 +62,14 @@ const MessageReplyCreationForm: React.FC<MessageReplyCreationFormProps> = ({
 
   const handleSubmit = () => {
     form.validateFields((error, values) => {
-      if (!error) {
+      if (!error && onSubmit) {
         setReplying(true)
-        onSubmit?.(values.content.toRAW())
+        onSubmit(values.content.toRAW())
           .then(res => {
             form.resetFields()
             onRefetch?.()
             conditionallyPollUntilTheNextReplyNotFromAuthorOfIssueUpdated(
-              res.data.insert_issue_reply?.returning?.[0]?.id,
+              res?.data?.insert_issue_reply?.returning?.[0]?.id,
             )
           })
           .catch(err => message.error(err.message))
@@ -112,7 +112,7 @@ const MessageReplyCreationForm: React.FC<MessageReplyCreationFormProps> = ({
         )}
       </Form.Item>
       <Form.Item style={{ textAlign: 'right' }}>
-        <Button variant="primary" type="submit" loading={replying} disabled={pollingStatus === 'START'}>
+        <Button variant="primary" type="submit" loading={replying} disabled={!onSubmit || pollingStatus === 'START'}>
           {formatMessage(commonMessages.button.reply)}
         </Button>
       </Form.Item>

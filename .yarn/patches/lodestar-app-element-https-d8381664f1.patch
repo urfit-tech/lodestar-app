@@ -1,0 +1,135 @@
+diff --git a/src/components/collections/ActivityCollection.tsx b/src/components/collections/ActivityCollection.tsx
+index f06cb18b93a31fa925eede544c90b5c0c63584a4..e14a35e06d15792eafdbddb94027c43493c6d36e 100644
+--- a/src/components/collections/ActivityCollection.tsx
++++ b/src/components/collections/ActivityCollection.tsx
+@@ -3,7 +3,6 @@ import moment from 'moment'
+ import { sum, uniqBy } from 'ramda'
+ import { useHistory } from 'react-router'
+ import { StringParam } from 'serialize-query-params'
+-import { DeepPick } from 'ts-deep-pick/lib'
+ import { useQueryParam } from 'use-query-params'
+ import { getActivityCollectionQuery } from '../../graphql/queries'
+ import * as hasura from '../../hasura'
+@@ -17,8 +16,7 @@ import CategorySelector from '../common/CategorySelector'
+ import Collection, { CollectionLayout, ContextCollection } from './Collection'
+ import CollectionCarousel from './CollectionCarousel'
+ 
+-// @ts-ignore
+-type ActivityData = DeepPick<
++type ActivityData = Pick<
+   Activity,
+   | 'id'
+   | 'coverUrl'
+@@ -26,12 +24,11 @@ type ActivityData = DeepPick<
+   | 'organizerId'
+   | 'isParticipantVisible'
+   | 'totalParticipants'
+-  | 'sessions.[].startedAt'
+-  | 'sessions.[].endedAt'
+-  | 'tickets.[].limit'
+-  | 'tickets.[].price'
+   | 'categories'
+->
++> & {
++  sessions: Pick<Activity['sessions'][number], 'startedAt' | 'endedAt'>[]
++  tickets: Pick<Activity['tickets'][number], 'limit' | 'price'>[]
++}
+ type ActivityContextCollection = ContextCollection<ActivityData>
+ 
+ export type ActivityCollectionProps = {
+diff --git a/src/components/collections/PostCollection.tsx b/src/components/collections/PostCollection.tsx
+index 5b1847865039103704bc801eece4d3bf1d439f37..dac10d772b5f7bd6b5479e6d48e3d983c9d70a49 100644
+--- a/src/components/collections/PostCollection.tsx
++++ b/src/components/collections/PostCollection.tsx
+@@ -2,7 +2,6 @@ import { gql, useQuery } from '@apollo/client'
+ import { pipe, prop, sortBy, uniqBy } from 'ramda'
+ import { useHistory } from 'react-router'
+ import { StringParam } from 'serialize-query-params'
+-import { DeepPick } from 'ts-deep-pick/lib'
+ import { useQueryParam } from 'use-query-params'
+ import { getPostCollectionQuery } from '../../graphql/queries'
+ import * as hasura from '../../hasura'
+@@ -17,8 +16,7 @@ import CategorySelector from '../common/CategorySelector'
+ import Collection, { CollectionLayout, ContextCollection } from './Collection'
+ import CollectionCarousel from './CollectionCarousel'
+ 
+-// @ts-ignore
+-type PostData = DeepPick<
++type PostData = Pick<
+   Post,
+   'id' | 'codeName' | 'title' | 'coverUrl' | 'videoUrl' | 'publishedAt' | 'views' | 'pinnedAt' | 'author' | 'categories'
+ >
+diff --git a/src/components/collections/ProjectCollection.tsx b/src/components/collections/ProjectCollection.tsx
+index 841d505f5662192d403c34d9425a6e431e42f56c..fa8df3124888272398af1883ffe5a0ac9c766a8d 100644
+--- a/src/components/collections/ProjectCollection.tsx
++++ b/src/components/collections/ProjectCollection.tsx
+@@ -1,7 +1,6 @@
+ import { gql, useQuery } from '@apollo/client'
+ import { sum, uniqBy } from 'ramda'
+ import { StringParam } from 'serialize-query-params'
+-import { DeepPick } from 'ts-deep-pick/lib'
+ import { useQueryParam } from 'use-query-params'
+ import { getProjectCollectionQuery } from '../../graphql/queries'
+ import * as hasura from '../../hasura'
+@@ -15,7 +14,7 @@ import CategorySelector from '../common/CategorySelector'
+ import Collection, { CollectionLayout, ContextCollection } from './Collection'
+ import CollectionCarousel from './CollectionCarousel'
+ 
+-type ProjectData = DeepPick<
++type ProjectData = Pick<
+   Project,
+   | 'id'
+   | 'title'
+diff --git a/src/components/common/Craftize.tsx b/src/components/common/Craftize.tsx
+index 25205e5a3673da782946ef60a35238acaa5a20f8..48ee73f1d019f1f2145758c927256ed3b734fb92 100644
+--- a/src/components/common/Craftize.tsx
++++ b/src/components/common/Craftize.tsx
+@@ -13,7 +13,7 @@ import { clone, mergeDeepRight } from 'ramda'
+ import { useMediaQuery } from 'react-responsive'
+ import { stringify as stringifyStyle } from 'react-style-editor'
+ import styled, { css, CSSObject } from 'styled-components'
+-import { ElementBaseProps, ElementComponent, ElementProps } from '../../types/element'
++import { ElementBaseProps, ElementComponent } from '../../types/element'
+ import { DESKTOP_BREAK_POINT, TABLET_BREAK_POINT } from './Responsive'
+ 
+ const CraftRefBlock = styled.div<{
+@@ -61,9 +61,15 @@ export type PropsWithCraft<P> = ElementBaseProps<P> & {
+ }
+ export type CraftTemplate = { rootNodeId: NodeId; serializedNodes: SerializedNodes }
+ const Craftize = <P extends object>(WrappedComponent: ElementComponent<P>) => {
++  type CraftElementProps = PropsWithCraft<P> & {
++    editing?: boolean
++    backgroundImages?: { mobile: string; tablet: string; desktop: string }
++  }
++  // styled-components loses the generic state union through its Omit-based props.
++  // The wrapper only adds styles and forwards all props; Craft nodes supply P.
+   const StyledCraftElement = styled(WrappedComponent)(
+-    (props: PropsWithCraft<P>) => props.customStyle,
+-  ) as ElementComponent<P>
++    (props: CraftElementProps) => props.customStyle,
++  ) as unknown as React.ComponentType<CraftElementProps>
+   const Component: UserComponent<PropsWithCraft<P>> = props => {
+     const node = useNode(node => node)
+     const editor = useEditor(state => ({
+@@ -97,7 +103,7 @@ const Craftize = <P extends object>(WrappedComponent: ElementComponent<P>) => {
+         {editor.editing && node.events.hovered && <CraftController />}
+         <style>{stringifyStyle(node.data.custom?.style || [])}</style>
+         <StyledCraftElement
+-          {...(responsiveProps as ElementProps<P>)}
++          {...responsiveProps}
+           customStyle={{
+             ...customStyleFormat(props.customStyle),
+             [`@media (max-width: ${TABLET_BREAK_POINT - 1}px)`]: customStyleFormat(
+diff --git a/src/components/common/Image.tsx b/src/components/common/Image.tsx
+index d06e96ad6c310c3d6b46d16d3c6ddfbe44acbb9e..2236ab7999a794fb5abdc47de8920eda16e7d967 100644
+--- a/src/components/common/Image.tsx
++++ b/src/components/common/Image.tsx
+@@ -98,7 +98,7 @@ const Image: ElementComponent<ImageProps & { customStyle?: CSSObject }> = props
+ }
+ 
+ type CustomRatioImageProps = {
+-  className: string
++  className?: string
+   width: string
+   ratio: number
+   shape?: 'rounded' | 'circle'

@@ -165,7 +165,6 @@ const ProgramPlanCard: React.FC<{
             </Button>
           )}
           defaultProductId={`ProgramPlan_${programPlan.id}`}
-          onAuthRequired={() => setAuthModalVisible?.(true)}
           warningText={
             listPrice <= 0 || (typeof salePrice === 'number' && salePrice <= 0)
               ? formatMessage(productMessages.program.defaults.warningText)
@@ -175,7 +174,6 @@ const ProgramPlanCard: React.FC<{
       ) : enabledModules.group_buying && programPlan.groupBuyingPeople > 1 ? (
         <CheckoutProductModal
           defaultProductId={`ProgramPlan_${programPlan.id}`}
-          onAuthRequired={() => setAuthModalVisible?.(true)}
           renderTrigger={({ isLoading, onOpen }) => (
             <Button
               colorScheme="primary"

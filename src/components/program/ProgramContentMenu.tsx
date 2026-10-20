@@ -835,7 +835,7 @@ const EbookSecondaryMenu: React.FC<{
                 fontWeight="500"
                 {...(ebookCurrentToc && ebookCurrentToc !== '' && toc.href.includes(ebookCurrentToc)
                   ? { color: `${theme.colors.primary[500]}` }
-                  : '#585858')}
+                  : { color: '#585858' })}
               >
                 {toc.label}
               </Box>
@@ -876,7 +876,7 @@ const EbookSecondaryMenu: React.FC<{
                   fontWeight="500"
                   {...(ebookCurrentToc && ebookCurrentToc !== '' && subitem.href.includes(ebookCurrentToc)
                     ? { color: `${theme.colors.primary[500]}` }
-                    : '#585858')}
+                    : { color: '#585858' })}
                 >
                   {subitem.label}
                 </Box>

@@ -20,7 +20,6 @@ import {
   reduce,
   repeat,
   sort,
-  splitWhen,
 } from 'ramda'
 
 export type ProductForOptimizer = { identifier: any; price: number }
@@ -103,13 +102,10 @@ export const greedyOptimizer: DiscountUsageOptimizer = products => discounts => 
     const discountsExtraAmount = max(0, result.leftDiscounts.length - leftProductAmount - 1)
     const justFullDiscountIndex = findJustFullDiscountIndexInSortedDiscounts(targetProduct)(sortedDiscounts) ?? 0
 
-    const [discountsExtra, discountsReservedForLeftProducts]: Array<Array<DiscountForOptimizer>> = addIndex(
-      splitWhen as any,
-    )((_, index) => index > discountsExtraAmount)(sortedDiscounts)
-
-    const [discountsWithFullDiscount, discountsWithPartialDiscount] = addIndex(splitWhen as any)(
-      (_, index) => index > justFullDiscountIndex,
-    )(sortedDiscounts)
+    const discountsExtra = sortedDiscounts.slice(0, discountsExtraAmount + 1)
+    const discountsReservedForLeftProducts = sortedDiscounts.slice(discountsExtraAmount + 1)
+    const discountsWithFullDiscount = sortedDiscounts.slice(0, justFullDiscountIndex + 1)
+    const discountsWithPartialDiscount = sortedDiscounts.slice(justFullDiscountIndex + 1)
 
     const targetDiscount = (last as any)(
       discountsWithPartialDiscount.length >= leftProductAmount ? discountsWithFullDiscount : discountsExtra,
