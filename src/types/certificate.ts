@@ -23,3 +23,12 @@ export type MemberCertificate = {
   memberId: string
   certificate: Certificate
 }
+
+// Public API DTO: deliberately excludes member ids, arbitrary values and certificate templates.
+export type SharedCertificate = {
+  holderName: string
+  certificateTitle: string
+  deliveredAt: string
+  expiredAt: string | null
+  number: string
+}
