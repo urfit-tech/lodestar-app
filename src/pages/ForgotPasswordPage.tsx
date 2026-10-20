@@ -9,8 +9,9 @@ import styled from 'styled-components'
 import MigrationInput from '../components/common/MigrationInput'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import { handleError } from '../helpers'
-import { codeMessages, commonMessages } from '../helpers/translation'
+import { formatAuthError, readAuthResponse } from '../helpers/authResponse'
+import { commonMessages } from '../helpers/translation'
+import { authCooldownKey, saveAuthCooldown } from '../hooks/authCooldown'
 
 const StyledContainer = styled.div`
   padding: 4rem 1rem;
@@ -54,14 +55,18 @@ const ForgotPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
           appId,
           account: trimedEmail,
         })
-        .then(({ data: { code } }) => {
-          if (code === 'SUCCESS') {
-            history.push(`/check-email?email=${trimedEmail}&type=forgot-password`)
+        .then(({ data }) => {
+          const { code } = data
+          if (code === 'SUCCESS' || code === 'E_NO_MEMBER') {
+            const seconds = readAuthResponse(data).retryAfter || 60
+            saveAuthCooldown(authCooldownKey(appId, 'reset', trimedEmail), seconds)
+            message.info(formatAuthError({ retryAfter: seconds }, formatMessage))
+            history.push(`/check-email?email=${encodeURIComponent(trimedEmail)}&type=forgot-password`)
           } else {
-            message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+            message.error(formatAuthError(data, formatMessage))
           }
         })
-        .catch(handleError)
+        .catch(error => message.error(formatAuthError(error, formatMessage)))
         .finally(() => setLoading(false))
     })
   }

@@ -8,7 +8,7 @@ import OAuth2Page, { resetOauthCallbackRejectionForTests } from './OAuth2Page'
 jest.mock('axios')
 const mockSocialLogin = jest.fn()
 const mockRoute: { provider?: string; query: Record<string, string | undefined> } = { query: {} }
-const mockHistory = {}
+const mockHistory = { replace: jest.fn() }
 jest.mock('lodestar-app-element/src/contexts/AppContext', () => ({
   useApp: () => ({ id: 'app-id', settings: { 'auth.line_client_id': 'line-client' } }),
 }))
@@ -73,6 +73,7 @@ describe('OAuth2Page state nonce enforcement', () => {
   let locationReplace: jest.Mock
 
   beforeEach(() => {
+    mockHistory.replace.mockReset()
     resetOauthCallbackRejectionForTests()
     mockedAxios.post.mockReset()
     mockedAxios.post.mockImplementation(((url: string) =>
@@ -129,6 +130,24 @@ describe('OAuth2Page state nonce enforcement', () => {
       ReactDOM.render(<OAuth2Page />, root)
     })
   }
+
+  it.each(['google', 'facebook'])(
+    '%s rejection leaves the loading page and carries a translated error code',
+    async provider => {
+      cookieValue = NONCE
+      mockRoute.query.state = encodeState({ provider, nonce: NONCE, redirect: '/' })
+      window.location.hash = '#access_token=provider-token'
+      mockSocialLogin.mockRejectedValue({
+        response: { status: 429, data: { code: 'E_TOO_MANY_ATTEMPTS', retryAfter: 123 } },
+      })
+      renderPage()
+      await flushMicrotasks()
+      expect(mockHistory.replace).toHaveBeenCalledWith('/auth', {
+        authError: expect.objectContaining({ code: 'E_TOO_MANY_ATTEMPTS', retryAfter: 123 }),
+      })
+      expect(mockSocialLogin).toHaveBeenCalledTimes(1)
+    },
+  )
 
   const expectRejected = (target: string) => {
     expect(events).toEqual(['replaceState', 'message.error'])

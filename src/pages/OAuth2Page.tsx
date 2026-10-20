@@ -2,14 +2,14 @@ import { message } from 'antd'
 import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { BackendServerError, BindDeviceError, LoginDeviceError } from 'lodestar-app-element/src/helpers/error'
+import { BindDeviceError, LoginDeviceError } from 'lodestar-app-element/src/helpers/error'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useHistory, useParams } from 'react-router-dom'
 import { StringParam, useQueryParam } from 'use-query-params'
 import OverBindDeviceModal from '../components/auth/login/OverBindDeviceModal'
 import OverLoginDeviceModal from '../components/auth/login/OverLoginDeviceModal'
-import { handleError } from '../helpers'
+import { readAuthResponse } from '../helpers/authResponse'
 import { checkOauthNonce, decodeOauthState, normalizeRedirect, OauthNonceCheckResult } from '../helpers/oauthState'
 import { codeMessages } from '../helpers/translation'
 import LoadingPage from '../pages/LoadingPage'
@@ -132,6 +132,7 @@ const DefaultOauth2Section: React.FC = () => {
   const { id: appId, settings } = useApp()
   const { isAuthenticating, currentMemberId, socialLogin } = useAuth()
   const lineCodeExchangedRef = useRef(false)
+  const implicitLoginStarted = useRef(false)
   const lineIdTokenRef = useRef<string | null>(null)
   // const updateYoutubeChannelIds = useUpdateMemberYouTubeChannelIds()
   const [isOverLoginDeviceModalVisible, setIsOverLoginDeviceModalVisible] = useState(false)
@@ -148,14 +149,9 @@ const DefaultOauth2Section: React.FC = () => {
 
   const showSocialLoginError = useCallback(
     (error: any) => {
-      if (error instanceof BackendServerError && error.code in codeMessages) {
-        const code = error.code as keyof typeof codeMessages
-        message.error(formatMessage(codeMessages[code]))
-      } else {
-        message.error(error?.message)
-      }
+      history.replace('/auth', { authError: readAuthResponse(error) })
     },
-    [formatMessage],
+    [history],
   )
 
   // const handleFetchYoutubeApi = useCallback(() => {
@@ -240,7 +236,6 @@ const DefaultOauth2Section: React.FC = () => {
             return
           }
           showSocialLoginError(error)
-          window.location.href = redirect
         })
     }
   }, [
@@ -263,8 +258,10 @@ const DefaultOauth2Section: React.FC = () => {
       !isAuthenticating &&
       !currentMemberId &&
       (provider === 'google' || provider === 'facebook') &&
+      !implicitLoginStarted.current &&
       nonceResult === 'match'
     ) {
+      implicitLoginStarted.current = true
       socialLogin?.({
         provider: provider,
         providerToken: accessToken,
@@ -275,17 +272,14 @@ const DefaultOauth2Section: React.FC = () => {
         .catch(error => {
           if (error instanceof LoginDeviceError) {
             setIsOverLoginDeviceModalVisible(true)
+            return
           }
           if (error instanceof BindDeviceError) {
             setIsOverBindDeviceModalVisible(true)
+            return
           }
 
-          if (error instanceof BackendServerError) {
-            const code = error.code as keyof typeof codeMessages
-            message.error(formatMessage(codeMessages[code]))
-          } else {
-            message.error(error.message)
-          }
+          showSocialLoginError(error)
         })
     }
   }, [isAuthenticating, currentMemberId, socialLogin, provider, nonceResult, accessToken, history, redirect])
@@ -315,7 +309,7 @@ const DefaultOauth2Section: React.FC = () => {
               .then(r => {
                 window.location.href = redirect
               })
-              .catch(handleError)
+              .catch(error => history.replace('/auth', { authError: readAuthResponse(error) }))
           }
         }}
         loading={forceLoginLoading}
@@ -360,7 +354,7 @@ const Oauth2Section: React.FC = () => {
         .then(({ data }) => {
           const token = data?.code === 'SUCCESS' ? data.result?.token : undefined
           if (typeof token !== 'string' || !token) {
-            throw new Error(data?.message || data?.code || 'E_OAUTH_TOKEN')
+            throw data
           }
           if (!socialLogin) {
             throw new Error('social login is unavailable')
@@ -374,7 +368,7 @@ const Oauth2Section: React.FC = () => {
         .then(() => {
           window.location.href = redirect
         })
-        .catch(handleError)
+        .catch(error => history.replace('/auth', { authError: readAuthResponse(error) }))
     }
   }, [
     accountLinkToken,
