@@ -25,7 +25,7 @@ const MemberCertificatePage: React.FC = () => {
     )
   }
 
-  if (!memberCertificate?.certificate) {
+  if (!memberCertificate) {
     return <ForbiddenPage />
   }
 
@@ -33,7 +33,7 @@ const MemberCertificatePage: React.FC = () => {
     <Layout>
       <StyledPageHeader
         isVip={isVip}
-        title={memberCertificate?.certificate.title}
+        title={memberCertificate.certificateTitle}
         backIcon={<img src={crossIcon} height={20} alt="back" />}
         onBack={() => {
           history.push('/settings/certificates')
