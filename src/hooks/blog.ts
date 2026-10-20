@@ -3,6 +3,7 @@ import { max, min } from 'lodash'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import hasura from '../hasura'
 import { isUUIDv4, notEmpty } from '../helpers'
+import { recordResourceView } from '../helpers/publicResource'
 import { PostLatestProps, PostLinkProps, PostPreviewProps, PostRoleName } from '../types/blog'
 
 const GET_POST_ISSUES_BY_IDS = gql`
@@ -559,17 +560,7 @@ const useNearPost = (publishedAt?: Date) => {
   }
 }
 
-export const useAddPostViews = () => {
-  const [addPostViews] = useMutation<hasura.ADD_POST_VIEWS, hasura.ADD_POST_VIEWSVariables>(gql`
-    mutation ADD_POST_VIEWS($id: uuid!) {
-      update_post(where: { id: { _eq: $id } }, _inc: { views: 1 }) {
-        affected_rows
-      }
-    }
-  `)
-
-  return (id: string) => addPostViews({ variables: { id } })
-}
+export const useAddPostViews = () => (id: string) => recordResourceView('post', id)
 
 export const useLatestPost = (filter?: { limit?: number }) => {
   const { loading, error, data, refetch } = useQuery<hasura.GET_LATEST_POST, hasura.GET_LATEST_POSTVariables>(

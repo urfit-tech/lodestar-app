@@ -2,6 +2,7 @@ import { gql, useMutation, useQuery } from '@apollo/client'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
 import hasura from '../hasura'
+import { recordResourceView } from '../helpers/publicResource'
 import { ProjectIntroProps, ProjectProps } from '../types/project'
 
 export const usePhysicalEnrolledProjectPlanIds = (memberId: string) => {
@@ -484,14 +485,6 @@ export const useMutateProject = (projectId: string) => {
     }
   `)
 
-  const [addProjectViewsHandler] = useMutation<hasura.ADD_PROJECT_VIEWS, hasura.ADD_PROJECT_VIEWSVariables>(gql`
-    mutation ADD_PROJECT_VIEWS($projectId: uuid!) {
-      update_project(where: { id: { _eq: $projectId } }, _inc: { views: 1 }) {
-        affected_rows
-      }
-    }
-  `)
-
   const insertProjectReaction = () => {
     return insertProjectReactionHandler({ variables: { projectId, memberId: currentMemberId || '' } })
   }
@@ -499,7 +492,7 @@ export const useMutateProject = (projectId: string) => {
     return deleteProjectReactionHandler({ variables: { projectId, memberId: currentMemberId || '' } })
   }
   const addProjectView = () => {
-    return addProjectViewsHandler({ variables: { projectId } })
+    return recordResourceView('project', projectId)
   }
 
   return {

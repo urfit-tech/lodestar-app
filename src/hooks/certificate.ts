@@ -1,5 +1,7 @@
 import { gql, useQuery } from '@apollo/client'
+import useSWR from 'swr'
 import hasura from '../hasura'
+import { getSharedCertificate } from '../helpers/publicResource'
 import { Certificate, MemberCertificate } from '../types/certificate'
 
 export const useMemberCertificateCollection = (memberId: string) => {
@@ -73,74 +75,12 @@ export const useMemberCertificateCollection = (memberId: string) => {
 }
 
 export const useMemberCertificate = (memberCertificateId: string) => {
-  const { loading, data, error, refetch } = useQuery<
-    hasura.GET_MEMBER_CERTIFICATE,
-    hasura.GET_MEMBER_CERTIFICATEVariables
-  >(
-    gql`
-      query GET_MEMBER_CERTIFICATE($id: uuid!) {
-        member_certificate_by_pk(id: $id) {
-          id
-          number
-          values
-          delivered_at
-          expired_at
-          member_id
-          certificate {
-            id
-            title
-            description
-            code
-            qualification
-            period_type
-            period_amount
-            created_at
-            updated_at
-            meta_tag
-            certificate_template {
-              id
-              template
-              background_image
-            }
-          }
-        }
-      }
-    `,
-    { variables: { id: memberCertificateId } },
+  const { data, error, isLoading, mutate } = useSWR(
+    memberCertificateId ? ['shared-certificate', memberCertificateId] : null,
+    ([, id]) => getSharedCertificate(id),
+    { shouldRetryOnError: false, revalidateOnFocus: false },
   )
-  const memberCertificate: MemberCertificate | null =
-    loading || error || !data || !data.member_certificate_by_pk
-      ? null
-      : {
-          id: data.member_certificate_by_pk.id,
-          number: data.member_certificate_by_pk.number,
-          values: data.member_certificate_by_pk.values,
-          deliveredAt: new Date(data.member_certificate_by_pk.delivered_at),
-          expiredAt: data.member_certificate_by_pk.expired_at
-            ? new Date(data.member_certificate_by_pk.expired_at)
-            : null,
-          memberId: data.member_certificate_by_pk.member_id,
-          certificate: {
-            id: data.member_certificate_by_pk.id,
-            title: data.member_certificate_by_pk.certificate?.title || '',
-            description: data.member_certificate_by_pk.certificate?.description || '',
-            qualification: data.member_certificate_by_pk.certificate?.qualification || '',
-            periodType: data.member_certificate_by_pk.certificate?.period_type || '',
-            periodAmount: data.member_certificate_by_pk.certificate?.period_amount,
-            createdAt: new Date(data.member_certificate_by_pk.certificate?.created_at),
-            code: data.member_certificate_by_pk.certificate?.code || '',
-            template: data.member_certificate_by_pk.certificate?.certificate_template?.template || null,
-            templateImage: data.member_certificate_by_pk.certificate?.certificate_template?.background_image || null,
-            metaTag: data.member_certificate_by_pk.certificate?.meta_tag,
-          },
-        }
-
-  return {
-    loading,
-    error,
-    data: memberCertificate,
-    refetch,
-  }
+  return { data: data || null, error, loading: isLoading, refetch: mutate }
 }
 
 export const useCertificate = (certificateId: string) => {

@@ -4,6 +4,7 @@ import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { sum } from 'ramda'
 import { useEffect, useMemo, useState } from 'react'
 import hasura from '../hasura'
+import { recordResourceView } from '../helpers/publicResource'
 import { Category } from '../types/general'
 import {
   DisplayMode,
@@ -567,16 +568,8 @@ export const useProgram = (programId: string) => {
     }
   }, [data, programPlans])
 
-  const [addProgramViewsHandler] = useMutation<hasura.ADD_PROGRAM_VIEWS, hasura.ADD_PROGRAM_VIEWSVariables>(gql`
-    mutation ADD_PROGRAM_VIEWS($programId: uuid!) {
-      update_program(where: { id: { _eq: $programId } }, _inc: { views: 1 }) {
-        affected_rows
-      }
-    }
-  `)
-
   const addProgramView = () => {
-    return addProgramViewsHandler({ variables: { programId } })
+    return recordResourceView('program', programId)
   }
 
   return {

@@ -1,8 +1,8 @@
 import { Box, Spinner } from '@chakra-ui/react'
 import { Layout } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
-import { StyledLayoutContent } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
 import { StyledPageHeader } from '../../components/common/StyledPageHeader'
+import { StyledLayoutContent } from '../../components/layout/DefaultLayout/DefaultLayout.styled'
 import { useMemberCertificate } from '../../hooks/certificate'
 import { useVipTheme } from '../../hooks/member'
 import crossIcon from '../../images/times.svg'
@@ -26,7 +26,7 @@ const MemberCertificatePage: React.FC = () => {
     )
   }
 
-  if (!memberCertificate?.certificate) {
+  if (!memberCertificate) {
     return <ForbiddenPage />
   }
 
@@ -35,7 +35,7 @@ const MemberCertificatePage: React.FC = () => {
       <MemberCertificatePageHelmet memberCertificate={memberCertificate} />
       <StyledPageHeader
         isVip={isVip}
-        title={memberCertificate?.certificate.title}
+        title={memberCertificate.certificateTitle}
         backIcon={<img src={crossIcon} height={20} alt="back" />}
         onBack={() => {
           history.push('/settings/certificates')
