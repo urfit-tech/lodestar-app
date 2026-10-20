@@ -40,3 +40,9 @@ it('handles legacy Error(code), unknown codes, malformed input and transport err
     expect(formatAuthError(error, format)).toBe('操作失敗，請稍後再試')
   }
 })
+
+it('preserves Retry-After headers through the HTTP client ApiError wrapper', () => {
+  const response = { status: 429, data: { code: 'E_TOO_MANY_ATTEMPTS' }, headers: { 'retry-after': '3599' } }
+  expect(readAuthResponse({ response }).retryAfter).toBe(3599)
+  expect(readAuthResponse({ status: 429, details: response.data, cause: { response } }).retryAfter).toBe(3599)
+})

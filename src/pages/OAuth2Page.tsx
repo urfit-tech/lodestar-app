@@ -310,6 +310,7 @@ const DefaultOauth2Section: React.FC = () => {
                 window.location.href = redirect
               })
               .catch(error => history.replace('/auth', { authError: readAuthResponse(error) }))
+              .finally(() => setForceLoginLoading(false))
           }
         }}
         loading={forceLoginLoading}

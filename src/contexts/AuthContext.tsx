@@ -9,6 +9,7 @@ import { Member, UserRole } from 'lodestar-app-element/src/types/data'
 import { LodestarWindow } from 'lodestar-app-element/src/types/lodestar.window'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import ReactGA from 'react-ga'
+import { readAuthResponse } from '../helpers/authResponse'
 declare let window: LodestarWindow
 
 type ProviderType = 'facebook' | 'google' | 'line' | 'parenting' | 'commonhealth' | 'cw'
@@ -66,7 +67,11 @@ export const useAuth = () => useContext(AuthContext)
 
 export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) => {
   const [isAuthenticating, setIsAuthenticating] = useState(defaultAuthContext.isAuthenticating)
-  const [authToken, setAuthToken] = useState<string | null>((window as any).AUTH_TOKEN || null)
+  const [authToken, setAuthTokenState] = useState<string | null>((window as any).AUTH_TOKEN || null)
+  const setAuthToken = useCallback((token: string | null) => {
+    ;(window as any).AUTH_TOKEN = token
+    setAuthTokenState(token)
+  }, [])
   const payload = useMemo(() => (authToken ? parsePayload(authToken) : null), [authToken])
 
   useEffect(() => {
@@ -115,11 +120,10 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
       }
     } catch {
       setAuthToken(null)
-      ;(window as any).AUTH_TOKEN = null
     } finally {
       setIsAuthenticating(false)
     }
-  }, [appId])
+  }, [appId, setAuthToken])
 
   const currentMember = payload && {
     id: payload.sub,
@@ -163,7 +167,7 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
               isBusiness: data.isBusiness ?? false,
             },
             { withCredentials: true },
-          ).then(({ data: { code, message, result } }) => {
+          ).then(({ data: { code, message, result, retryAfter } }) => {
             if (code === 'SUCCESS') {
               if (!data.withoutLogin) {
                 setAuthToken(result.authToken)
@@ -252,7 +256,7 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
               } catch {}
             } else {
               setAuthToken(null)
-              throw new Error(code)
+              throw Object.assign(new Error(code), { code, retryAfter })
             }
           }),
         login: async ({ account, password, accountLinkToken }) => {
@@ -260,7 +264,7 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
           const { ip, country, countryCode } = await fetchCurrentGeolocation()
           try {
             const {
-              data: { code, message, result },
+              data: { code, message, result, retryAfter },
             } = await Axios.post(
               `${process.env.REACT_APP_API_BASE_ROOT}/auth/general-login`,
               { appId, account, password, fingerPrintId, geoLocation: { ip, country, countryCode } },
@@ -273,10 +277,14 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
                 window.location.assign(`/line-binding?accountLinkToken=${accountLinkToken}`)
               }
             } else if (code === 'I_RESET_PASSWORD') {
-              window.location.assign(`/check-email?email=${account}&type=reset-password`)
+              window.location.assign(
+                `/check-email?email=${encodeURIComponent(account)}&type=reset-password&retryAfter=${
+                  readAuthResponse({ retryAfter }).retryAfter || 60
+                }&requestedAt=${Date.now()}`,
+              )
             } else {
               setAuthToken(null)
-              throw Object.assign(getBackendServerError(code, message, result), { code })
+              throw Object.assign(getBackendServerError(code, message, result), { code, retryAfter })
             }
 
             return { code }
@@ -296,7 +304,7 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
             },
             { withCredentials: true },
           )
-            .then(async ({ data: { code, message, result } }) => {
+            .then(async ({ data: { code, message, result, retryAfter } }) => {
               if (code === 'SUCCESS') {
                 setAuthToken(result.authToken)
                 const decodedToken = parsePayload(result.authToken)
@@ -308,7 +316,7 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
                 }
               } else {
                 setAuthToken(null)
-                throw Object.assign(getBackendServerError(code, message, result), { code })
+                throw Object.assign(getBackendServerError(code, message, result), { code, retryAfter })
               }
             })
             .catch(error => {
@@ -322,11 +330,11 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
               memberId,
             },
             { withCredentials: true, headers: { Authorization: 'Bearer ' + authToken } },
-          ).then(({ data: { code, message, result } }) => {
+          ).then(({ data: { code, message, result, retryAfter } }) => {
             if (code === 'SUCCESS') {
               setAuthToken(result.authToken)
             } else {
-              throw new Error(code)
+              throw Object.assign(new Error(code), { code, retryAfter })
             }
           })
         },
@@ -342,9 +350,9 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
               phoneNumber,
             },
             { withCredentials: true },
-          ).then(({ data: { code, message, result } }) => {
+          ).then(({ data: { code, message, result, retryAfter } }) => {
             if (code !== 'SUCCESS') {
-              throw new Error(code)
+              throw Object.assign(new Error(code), { code, retryAfter })
             }
           }),
         verifySmsCode: async ({ phoneNumber, code }) =>
@@ -356,9 +364,9 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
               code,
             },
             { withCredentials: true },
-          ).then(({ data: { code, message, result } }) => {
+          ).then(({ data: { code, message, result, retryAfter } }) => {
             if (code !== 'SUCCESS' || !result?.codeValid) {
-              throw new Error(code)
+              throw Object.assign(new Error(code), { code, retryAfter })
             }
           }),
         forceLogin: async ({ account, password, accountLinkToken }) => {
@@ -367,20 +375,25 @@ export const AuthProvider: React.FC<{ appId: string }> = ({ appId, children }) =
             { appId, account, password },
             { withCredentials: true },
           )
-            .then(({ data: { code, result } }) => {
+            .then(({ data: { code, result, retryAfter } }) => {
               if (code === 'SUCCESS') {
                 setAuthToken(result.authToken)
                 if (accountLinkToken && result.authToken) {
                   window.location.assign(`/line-binding?accountLinkToken=${accountLinkToken}`)
                 }
               } else if (code === 'I_RESET_PASSWORD') {
-                window.location.assign(`/check-email?email=${account}&type=reset-password`)
+                window.location.assign(
+                  `/check-email?email=${encodeURIComponent(account)}&type=reset-password&retryAfter=${
+                    readAuthResponse({ retryAfter }).retryAfter || 60
+                  }&requestedAt=${Date.now()}`,
+                )
               } else {
                 setAuthToken(null)
-                throw new Error(code)
+                throw Object.assign(new Error(code), { code, retryAfter })
               }
             })
             .catch((error: AxiosError) => {
+              setAuthToken(null)
               throw error
             })
         },
