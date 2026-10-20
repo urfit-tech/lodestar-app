@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import { act, Simulate } from 'react-dom/test-utils'
 import ForgotPasswordPage from './ForgotPasswordPage'
 
-const mockPost = jest.fn()
+const mockPost = jest.fn<Promise<unknown>, any[]>()
 const mockPush = jest.fn()
 const mockMessage = jest.fn()
 let mockSubmit: any

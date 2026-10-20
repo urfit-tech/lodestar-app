@@ -5,7 +5,7 @@ import { act } from 'react-dom/test-utils'
 import { readAuthResponse } from '../helpers/authResponse'
 import { AuthProvider, useAuth } from './AuthContext'
 
-const mockPost = jest.fn()
+const mockPost = jest.fn<Promise<unknown>, any[]>()
 jest.mock('axios', () => ({ __esModule: true, default: { post: (...args: any[]) => mockPost(...args) } }))
 jest.mock('lodestar-app-element/src/helpers', () => ({
   getBackendServerError: (code: string, message: string) => Object.assign(new Error(message), { code }),

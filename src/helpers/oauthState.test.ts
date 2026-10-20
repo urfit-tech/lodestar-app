@@ -29,7 +29,7 @@ const {
   rememberOauthNonce,
 } = require('./oauthState') as OauthStateModule
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const fixture = require('./oauthNonce.fixture.json')
+const fixture = require('./oauthNonce.fixture.json') as typeof import('./oauthNonce.fixture.json')
 
 describe('normalizeRedirect', () => {
   it('keeps relative paths with search and hash', () => {
@@ -117,14 +117,17 @@ describe('nonce cookie contract (oauthNonce.fixture.json)', () => {
     expect(OAUTH_STATE_NONCE_COOKIE).toBe(fixture.cookie.name)
   })
 
-  it.each(fixture.appendExamples.map((example: any) => [example.before, example.add, example.after]))(
-    'append(%j, %j) = %j',
-    (before: string | null, add: string, after: string) => {
-      const value = appendOauthNonce(before, add)
-      expect(value).toBe(after)
-      expect(value).toMatch(new RegExp(fixture.valueFormat))
-    },
-  )
+  it.each(
+    fixture.appendExamples.map((example): [string | null, string, string] => [
+      example.before,
+      example.add,
+      example.after,
+    ]),
+  )('append(%j, %j) = %j', (before: string | null, add: string, after: string) => {
+    const value = appendOauthNonce(before, add)
+    expect(value).toBe(after)
+    expect(value).toMatch(new RegExp(fixture.valueFormat))
+  })
 
   it('keeps at most maxEntries and never duplicates', () => {
     let value: string | null = null
@@ -136,13 +139,16 @@ describe('nonce cookie contract (oauthNonce.fixture.json)', () => {
     expect(value!.split(fixture.separator)).toEqual(nonces.slice(-fixture.maxEntries).reverse())
   })
 
-  it.each(fixture.checkExamples.map((example: any) => [example.cookie, example.stateNonce, example.result]))(
-    'check(cookie=%j, stateNonce=%j) = %j',
-    (cookie: string | null, stateNonce: string | null, result: string) => {
-      expect(fixture.checkResults).toContain(result)
-      expect(compareOauthNonce(cookie, stateNonce)).toBe(result)
-    },
-  )
+  it.each(
+    fixture.checkExamples.map((example): [string | null, string | null, string] => [
+      example.cookie,
+      example.stateNonce,
+      example.result,
+    ]),
+  )('check(cookie=%j, stateNonce=%j) = %j', (cookie: string | null, stateNonce: string | null, result: string) => {
+    expect(fixture.checkResults).toContain(result)
+    expect(compareOauthNonce(cookie, stateNonce)).toBe(result)
+  })
 
   it.each([
     ['a missing state nonce and no cookie', null, undefined, 'no_state_nonce'],
@@ -263,7 +269,13 @@ describe('checkOauthNonce cookie parsing', () => {
     delete (document as any).cookie
   })
 
-  it.each(fixture.checkExamples.map((example: any) => [example.cookie, example.stateNonce, example.result]))(
+  it.each(
+    fixture.checkExamples.map((example): [string | null, string | null, string] => [
+      example.cookie,
+      example.stateNonce,
+      example.result,
+    ]),
+  )(
     'a single cookie %j with state nonce %j is %j',
     (cookie: string | null, stateNonce: string | null, result: string) => {
       rawCookie = cookie === null ? 'other=1' : `other=1; ${fixture.cookie.name}=${cookie}; last=2`

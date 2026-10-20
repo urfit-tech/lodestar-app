@@ -5985,6 +5985,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/jest@npm:26.0.24":
+  version: 26.0.24
+  resolution: "@types/jest@npm:26.0.24"
+  dependencies:
+    jest-diff: "npm:^26.0.0"
+    pretty-format: "npm:^26.0.0"
+  checksum: 10c0/1085ac96af43566518daf3aca60cb7881bfe2ffe1f5343738933e386ebf909095fde15273c3e99c685854dfc833b05b156fb5daf68707c0daa1c0c0db13a665b
+  languageName: node
+  linkType: hard
+
 "@types/js-cookie@npm:^3.0.2":
   version: 3.0.2
   resolution: "@types/js-cookie@npm:3.0.2"
@@ -14580,7 +14590,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-diff@npm:^26.6.2":
+"jest-diff@npm:^26.0.0, jest-diff@npm:^26.6.2":
   version: 26.6.2
   resolution: "jest-diff@npm:26.6.2"
   dependencies:
@@ -16078,6 +16088,7 @@ __metadata:
     "@types/decamelize": "npm:^3.0.3"
     "@types/dompurify": "npm:^3.0.5"
     "@types/howler": "npm:^2.2.4"
+    "@types/jest": "npm:26.0.24"
     "@types/js-cookie": "npm:^3.0.2"
     "@types/jsonwebtoken": "npm:8.5.0"
     "@types/lodash": "npm:^4.14.157"
@@ -16180,7 +16191,7 @@ __metadata:
     styled-system: "npm:^5.1.5"
     swr: "npm:2.2.5"
     ts-deep-pick: "npm:^0.2.2"
-    typescript: "npm:4.4.3"
+    typescript: "npm:4.9.5"
     use-query-params: "npm:1.2.3"
     use-tw-zipcode: "npm:^2.0.4"
     uuid: "npm:8.3.2"
@@ -19144,7 +19155,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:^26.6.0, pretty-format@npm:^26.6.2":
+"pretty-format@npm:^26.0.0, pretty-format@npm:^26.6.0, pretty-format@npm:^26.6.2":
   version: 26.6.2
   resolution: "pretty-format@npm:26.6.2"
   dependencies:
@@ -23685,6 +23696,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:4.9.5":
+  version: 4.9.5
+  resolution: "typescript@npm:4.9.5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/5f6cad2e728a8a063521328e612d7876e12f0d8a8390d3b3aaa452a6a65e24e9ac8ea22beb72a924fd96ea0a49ea63bb4e251fb922b12eedfb7f7a26475e5c56
+  languageName: node
+  linkType: hard
+
 "typescript@npm:^4.0":
   version: 4.6.2
   resolution: "typescript@npm:4.6.2"
@@ -23712,6 +23733,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10c0/9051000445e39cc44d90f2e7e1e57d4f8d8b802103b80d66971d89182696047314cc1b11eb6f59ec3244e6cbaebc3b4bb31e72944d3d3f67c7be416d6d300702
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A4.9.5#optional!builtin<compat/typescript>":
+  version: 4.9.5
+  resolution: "typescript@patch:typescript@npm%3A4.9.5#optional!builtin<compat/typescript>::version=4.9.5&hash=289587"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/e3333f887c6829dfe0ab6c1dbe0dd1e3e2aeb56c66460cb85c5440c566f900c833d370ca34eb47558c0c69e78ced4bfe09b8f4f98b6de7afed9b84b8d1dd06a1
   languageName: node
   linkType: hard
 
