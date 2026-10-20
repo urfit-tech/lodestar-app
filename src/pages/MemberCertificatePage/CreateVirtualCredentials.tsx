@@ -1,9 +1,8 @@
-import { render } from 'mustache'
+import DOMPurify from 'dompurify'
 import styled from 'styled-components'
 
 type PropsTypes = {
   html: string
-  templateVars: string
   certificateRef?: React.Ref<HTMLDivElement>
   scale: number
 }
@@ -19,7 +18,7 @@ export const StyledCertificateCard = styled.div<{ scale: number }>`
   transform-origin: top left;
 `
 
-export const VirtualCredentials: React.FC<PropsTypes> = ({ html, templateVars, certificateRef, scale }) => {
+export const VirtualCredentials: React.FC<PropsTypes> = ({ html, certificateRef, scale }) => {
   function getIndex(html: string, label: string, index: number): number {
     return html.indexOf(label, index)
   }
@@ -56,7 +55,7 @@ export const VirtualCredentials: React.FC<PropsTypes> = ({ html, templateVars, c
     <StyledCertificateCard
       ref={certificateRef}
       scale={scale}
-      dangerouslySetInnerHTML={{ __html: render(_html, templateVars) }}
+      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(_html) }}
     />
   )
 }
