@@ -161317,7 +161317,7 @@ export type GetMemberByUsernameVariables = Exact<{
 }>;
 
 
-export type GetMemberByUsername = { __typename?: 'query_root', member_public: Array<{ __typename?: 'member_public', id?: string | null }> };
+export type GetMemberByUsername = { __typename?: 'query_root', member_public: Array<{ __typename?: 'member_public', id?: string | null, name?: string | null }> };
 
 export type GetTeacherNamesByIdsVariables = Exact<{
   memberIds: Array<Scalars['String']> | Scalars['String'];

@@ -35,9 +35,14 @@ const parseEventMetadata = (metadata: any): ParsedEventMetadata => {
     const studentIds = parsed.studentIds || (parsed.studentId ? [parsed.studentId] : undefined)
     const orderIds = parsed.orderIds || (parsed.orderId ? [parsed.orderId] : undefined)
     const classroomIds = Array.isArray(parsed.classroomIds)
-      ? Array.from(new Set(parsed.classroomIds.filter(Boolean)))
+      ? Array.from(
+          new Set<string>(
+            parsed.classroomIds.filter((id: unknown): id is string => typeof id === 'string' && id.length > 0),
+          ),
+        )
       : []
-    const classroomId = parsed.classroomId || classroomIds[0]
+    const classroomId =
+      typeof parsed.classroomId === 'string' && parsed.classroomId ? parsed.classroomId : classroomIds[0]
     if (classroomId && !classroomIds.includes(classroomId)) {
       classroomIds.unshift(classroomId)
     }
@@ -149,8 +154,7 @@ const transformToCalendarEvent = (
     isExternal: metadata.isExternal,
     status: event.source_target ? CalendarEventStatus.Published : CalendarEventStatus.Scheduled,
     courseType:
-      scheduleTypeToCourseType(metadata.scheduleType) ??
-      determineCourseType(event.event_metadata, event.title),
+      scheduleTypeToCourseType(metadata.scheduleType) ?? determineCourseType(event.event_metadata, event.title),
     needOnlineRoom: metadata.needOnlineRoom,
     hostMemberId: event.host_member_id,
     materialName: metadata.material || metadata.materialName,
@@ -397,9 +401,6 @@ export const useStudentCourseSummaries = (events: CalendarEvent[]) => {
 
 // Hook to get teaching course summaries for teachers
 export const useTeacherCourseSummaries = (events: CalendarEvent[]) => {
-  const summaries = useMemo<TeachingCourseSummary[]>(
-    () => buildTeacherSummaries({ events }),
-    [events],
-  )
+  const summaries = useMemo<TeachingCourseSummary[]>(() => buildTeacherSummaries({ events }), [events])
   return { summaries, loading: false }
 }

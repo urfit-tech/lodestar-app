@@ -391,7 +391,7 @@ export const usePost = (search: string) => {
   const postSuggestIssues = postSuggestIssueIds.length === 0 ? [] : postSuggestIssuesData?.issue || []
   const { prevPost, nextPost } = useNearPost(dataPost?.published_at)
 
-  const post: any | null = !dataPost
+  const post = !dataPost
     ? null
     : {
         id: dataPost.id,

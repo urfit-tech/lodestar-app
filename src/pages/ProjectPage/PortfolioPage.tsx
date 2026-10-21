@@ -7,7 +7,6 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import ReactPlayer from 'react-player'
 import { Link } from 'react-router-dom'
-import { DeepPick } from 'ts-deep-pick/lib'
 import ApplyTagModal from '../../components/common/ApplyTagModal'
 import LikesCountButton from '../../components/common/LikedCountButton'
 import SocialSharePopover from '../../components/common/SocialSharePopover'
@@ -23,33 +22,18 @@ import { Project } from '../../types/project'
 import LoadingPage from '../LoadingPage'
 import pageMessages from '../translation'
 
-// @ts-ignore
-type Portfolio = DeepPick<
-  Project,
-  | 'id'
-  | 'title'
-  | 'description'
-  | 'coverUrl'
-  | 'views'
-  | 'createdAt'
-  | 'creator.id'
-  | 'creator.name'
-  | 'creator.pictureUrl'
-  | 'author.id'
-  | 'author.name'
-  | 'author.pictureUrl'
-  | 'projectTags.[].id'
-  | 'projectTags.[].name'
-  | 'projectRoles.[].id'
-  | 'projectRoles.[].agreedAt'
-  | 'projectRoles.[].member.id'
-  | 'projectRoles.[].member.name'
-  | 'projectRoles.[].member.pictureUrl'
-  | 'projectRoles.[].identity.id'
-  | 'projectRoles.[].identity.name'
-  | 'projectReactions.[].id'
-  | 'projectReactions.[].member.id'
-> & {
+type PortfolioMember = Pick<NonNullable<Project['creator']>, 'id' | 'name' | 'pictureUrl'>
+type Portfolio = Pick<Project, 'id' | 'title' | 'description' | 'coverUrl' | 'views' | 'createdAt'> & {
+  creator: PortfolioMember | null
+  author: PortfolioMember | null
+  projectTags: { id: string; name: string }[]
+  projectRoles: {
+    id: string
+    agreedAt: Date | null
+    member: PortfolioMember
+    identity: Pick<Project['projectRoles'][number]['identity'], 'id' | 'name'>
+  }[]
+  projectReactions: { id: string; member: Pick<PortfolioMember, 'id'> }[]
   relatedProjects: {
     id: string
     previewUrl: string | null

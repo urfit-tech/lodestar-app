@@ -1,10 +1,9 @@
 import { Button, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react'
 import { message, Modal } from 'antd'
-import { AxiosError } from 'axios'
 import { CommonTitleMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { BackendServerError, BindDeviceError, LoginDeviceError } from 'lodestar-app-element/src/helpers/error'
+import { BindDeviceError, LoginDeviceError } from 'lodestar-app-element/src/helpers/error'
 import { useTracking } from 'lodestar-app-element/src/hooks/tracking'
 import React, { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -14,7 +13,8 @@ import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
 import { handleError } from '../../../helpers'
-import { authMessages, codeMessages, commonMessages } from '../../../helpers/translation'
+import { formatAuthError } from '../../../helpers/authResponse'
+import { authMessages, commonMessages } from '../../../helpers/translation'
 import { AuthState } from '../../../types/member'
 import { AuthModalContext, StyledAction, StyledDivider, StyledTitle } from '../AuthModal'
 import { FacebookLoginButton, GoogleLoginButton, LineLoginButton, ParentingLoginButton } from '../SocialLoginButton'
@@ -93,12 +93,7 @@ const LoginSection: React.FC<{
           if (error instanceof BindDeviceError) {
             setIsOverBindDeviceModalVisible(true)
           }
-          if (error instanceof BackendServerError) {
-            const code = error.code as keyof typeof codeMessages
-            message.error(formatMessage(codeMessages[code]))
-          } else {
-            message.error(error.message)
-          }
+          message.error(formatAuthError(error, formatMessage))
         })
         .finally(() => setLoading(false))
     },
@@ -127,13 +122,8 @@ const LoginSection: React.FC<{
           returnTo && history.push(returnTo)
           message.success(formatMessage(localAuthMessages.default.LoginSection.loginSuccess))
         })
-        .catch((error: AxiosError) => {
-          if (error.isAxiosError && error.response) {
-            const code = error.response.data.code as keyof typeof codeMessages
-            message.error(formatMessage(codeMessages[code]))
-          } else {
-            message.error(error.message)
-          }
+        .catch(error => {
+          message.error(formatAuthError(error, formatMessage))
         })
         .catch(handleError)
         .finally(() => {

@@ -15,7 +15,8 @@
     "trans:extract": "echo 'Messages extracted during compilation'",
     "trans:manage": "node manageTranslations.js",
     "trans:clean": "rm -rf ./src/extracted",
-    "trans": "npm run trans:clean && npm run trans:compile && npm run trans:extract && npm run trans:manage && npm run trans:clean"
+    "trans": "npm run trans:clean && npm run trans:compile && npm run trans:extract && npm run trans:manage && npm run trans:clean",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
@@ -56,7 +57,7 @@
     "jszip": "^3.10.1",
     "libphonenumber-js": "1.9.34",
     "lodash": "^4.17.15",
-    "lodestar-app-element": "urfit-tech/lodestar-app-element#v1.95.14",
+    "lodestar-app-element": "patch:lodestar-app-element@https%3A//github.com/urfit-tech/lodestar-app-element.git%23commit=c44a0ae2cb5ac3707d641002ccc8af1e921b17b7#~/.yarn/patches/lodestar-app-element-https-d8381664f1.patch",
     "marked": "4.3.0",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.31",
@@ -118,6 +119,7 @@
     "@types/decamelize": "^3.0.3",
     "@types/dompurify": "^3.0.5",
     "@types/howler": "^2.2.4",
+    "@types/jest": "26.0.24",
     "@types/js-cookie": "^3.0.2",
     "@types/jsonwebtoken": "8.5.0",
     "@types/lodash": "^4.14.157",
@@ -160,7 +162,7 @@
     "react-scripts": "4.0.3",
     "sass": "^1.57.1",
     "source-map-explorer": "^2.4.2",
-    "typescript": "4.4.3"
+    "typescript": "4.9.5"
   },
   "resolutions": {
     "@craftjs/utils": "0.1.0-beta.20",

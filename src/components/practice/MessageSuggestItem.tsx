@@ -113,9 +113,7 @@ const MessageSuggestItem: React.FC<{
                     <div className="mt-5">
                       <MessageReplyCreationForm
                         onSubmit={content =>
-                          insertIssueReply(content)
-                            .then(() => refetchIssueReplies().then(() => onRefetch?.()))
-                            .catch(() => {})
+                          insertIssueReply(content).then(() => refetchIssueReplies().then(() => onRefetch?.()))
                         }
                       />
                     </div>

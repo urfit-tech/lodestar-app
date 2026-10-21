@@ -7,12 +7,13 @@ import { FormComponentProps } from 'antd/lib/form'
 import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
-import { handleError } from 'lodestar-app-element/src/helpers'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import hasura from '../../hasura'
+import { formatAuthError, readAuthResponse } from '../../helpers/authResponse'
 import { commonMessages, profileMessages, settingsMessages } from '../../helpers/translation'
+import { authCooldownKey, useAuthCooldown } from '../../hooks/authCooldown'
 import { GET_MEMBER_EMAIL, GET_MEMBER_USERNAME, useMember, useUpdateMember } from '../../hooks/member'
 import { ReactComponent as YouTubeIcon } from '../../images/youtube-icon.svg'
 import AdminCard from '../common/AdminCard'
@@ -75,97 +76,40 @@ const UnVerifiedSuffix: React.FC<{}> = () => {
 
 const CountDownText: React.FC<{ email: string; memberId: string }> = ({ email, memberId }) => {
   const { formatMessage } = useIntl()
-  const [count, setCount] = useState<number>(30)
-  const [showButton, setShowButton] = useState<boolean>(true)
-
   const { authToken } = useAuth()
   const { id: appId } = useApp()
-  const handleClickTimersRef = useRef<{
-    interval?: ReturnType<typeof setInterval>
-    timeout?: ReturnType<typeof setTimeout>
-  }>({})
-
-  useEffect(() => {
-    return () => {
-      if (handleClickTimersRef.current.interval) clearInterval(handleClickTimersRef.current.interval)
-      if (handleClickTimersRef.current.timeout) clearTimeout(handleClickTimersRef.current.timeout)
-    }
-  }, [])
-
-  useEffect(() => {
-    const lastVerificationSent = Number(localStorage.getItem('verifyTime'))
-    const currentTime = Math.round(new Date().getTime() / 1000)
-    const seconds = currentTime - lastVerificationSent
-
-    if (seconds > 30) {
-      setCount(30)
-      setShowButton(true)
-      localStorage.removeItem('verifyTime')
-      return () => {}
-    } else {
-      setCount(30 - seconds)
-      setShowButton(false)
-      const initialInterval = setInterval(() => {
-        setCount(currentTime => --currentTime)
-      }, 1000)
-
-      const initialTimeout = setTimeout(() => {
-        clearInterval(initialInterval)
-        setShowButton(true)
-        setCount(30)
-        localStorage.removeItem('verifyTime')
-      }, 1000 * (30 - seconds))
-
-      return () => {
-        clearInterval(initialInterval)
-        clearTimeout(initialTimeout)
-        setShowButton(true)
-      }
-    }
-  }, [])
-
-  const handleClick = () => {
-    const currentTime = Math.round(new Date().getTime() / 1000)
-    localStorage.setItem('verifyTime', currentTime.toString())
-    axios
-      .post(
+  const [loading, setLoading] = useState(false)
+  const { remaining, start } = useAuthCooldown(authCooldownKey(appId, 'verify', memberId))
+  const handleClick = async () => {
+    if (loading || remaining) return
+    setLoading(true)
+    try {
+      const { data } = await axios.post(
         `${process.env.REACT_APP_API_BASE_ROOT}/auth/request-email-verification`,
-        {
-          appId,
-          memberId,
-          email,
-        },
+        { appId, memberId, email },
         { headers: { Authorization: `Bearer ${authToken}` } },
       )
-      .then(({ data: { code } }) => {
-        message.success(formatMessage(localProfileMessages.ProfileAccountAdminCard.sendVerifiedEmailSuccessfully))
-        setShowButton(false)
-
-        if (handleClickTimersRef.current.interval) clearInterval(handleClickTimersRef.current.interval)
-        if (handleClickTimersRef.current.timeout) clearTimeout(handleClickTimersRef.current.timeout)
-
-        handleClickTimersRef.current.interval = setInterval(() => {
-          setCount(currentCount => --currentCount)
-        }, 1000)
-
-        handleClickTimersRef.current.timeout = setTimeout(() => {
-          if (handleClickTimersRef.current.interval) clearInterval(handleClickTimersRef.current.interval)
-          setShowButton(true)
-          setCount(30)
-          localStorage.removeItem('currentTime')
-        }, 1000 * 30)
-      })
-      .catch(handleError)
+      if (data.code !== 'SUCCESS') throw data
+      const seconds = readAuthResponse(data).retryAfter || 60
+      start(seconds)
+      message.info(formatAuthError({ retryAfter: seconds }, formatMessage))
+    } catch (error) {
+      const seconds = readAuthResponse(error).retryAfter
+      if (seconds) start(seconds)
+      message.error(formatAuthError(error, formatMessage))
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div className="d-flex ml-2 align-items-center">
-      {showButton ? (
-        <StyledButton colorScheme="teal" variant="link" onClick={handleClick}>
+      {remaining === 0 ? (
+        <StyledButton colorScheme="teal" variant="link" onClick={handleClick} isLoading={loading}>
           {formatMessage(localProfileMessages.ProfileAccountAdminCard.sendEmail)}
         </StyledButton>
       ) : (
-        <StyledText>{formatMessage(localProfileMessages.ProfileAccountAdminCard.sendEmailAfter, { count })}</StyledText>
+        <StyledText>{formatAuthError({ retryAfter: remaining }, formatMessage)}</StyledText>
       )}
     </div>
   )

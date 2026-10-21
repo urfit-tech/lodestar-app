@@ -1,6 +1,5 @@
 import dayjs from 'dayjs'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import { DeepPick } from 'ts-deep-pick/lib'
 import PageHelmet from '../../components/common/PageHelmet'
 import { getBraftContent, notEmpty } from '../../helpers'
 import { usePublicMember } from '../../hooks/member'
@@ -14,23 +13,13 @@ const schemaTypeMap = {
 
 // FIXME: it should change to another structured data
 // https://developers.google.com/search/docs/advanced/structured-data/event
-type ActivityPageHelmetProps = DeepPick<
+type ActivityPageHelmetProps = Pick<
   Activity,
-  | 'id'
-  | 'title'
-  | 'description'
-  | 'coverUrl'
-  | 'tags'
-  | 'publishedAt'
-  | 'tickets.[].startedAt'
-  | 'tickets.[].endedAt'
-  | 'tickets.[].price'
-  | 'organizerId'
-  | 'sessions.[].location'
-  | 'sessions.[].onlineLink'
-  | 'sessions.[].startedAt'
-  | 'sessions.[].endedAt'
->
+  'id' | 'title' | 'description' | 'coverUrl' | 'tags' | 'publishedAt' | 'organizerId'
+> & {
+  tickets: Pick<Activity['tickets'][number], 'startedAt' | 'endedAt' | 'price'>[]
+  sessions: Pick<Activity['sessions'][number], 'location' | 'onlineLink' | 'startedAt' | 'endedAt'>[]
+}
 const ActivityPageHelmet: React.FC<{ activity: ActivityPageHelmetProps }> = ({ activity }) => {
   const app = useApp()
 
