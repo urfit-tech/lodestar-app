@@ -1,0 +1,23 @@
+{
+  "owner_size": [
+    1880,
+    1388
+  ],
+  "baseline_size": [
+    1880,
+    1388
+  ],
+  "pixel_identical": true,
+  "different_pixels": 0,
+  "public_size": [
+    2400,
+    740
+  ],
+  "anonymous_other_identical": true,
+  "files": {
+    "owner-download.png": "dbf45c25427e76add4a2be299e87bbde47b1ccca32baa40602a10f41c49baed6",
+    "baseline-download.png": "dbf45c25427e76add4a2be299e87bbde47b1ccca32baa40602a10f41c49baed6",
+    "anonymous-download.png": "a429bfdbbaa11382b77d887e7624f7df0f3758f8449c1da376d7a9442aaea55c",
+    "other-member-download.png": "a429bfdbbaa11382b77d887e7624f7df0f3758f8449c1da376d7a9442aaea55c"
+  }
+}
