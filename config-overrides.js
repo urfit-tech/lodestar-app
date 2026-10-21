@@ -1,14 +1,13 @@
 const { override, fixBabelImports, addLessLoader, removeModuleScopePlugin, babelInclude } = require('customize-cra')
 const path = require('path')
+const webpack = require('webpack')
 const rewireReactHotLoader = require('react-app-rewire-hot-loader')
 const defaultThemeVars = require('./src/theme.json')
 
 const ReactCompilerConfig = {
   target: '17',
   compilationMode: 'annotation',
-  sources: filename =>
-    filename.includes(path.resolve('src')) &&
-    !filename.includes('lodestar-app-element'),
+  sources: filename => filename.includes(path.resolve('src')) && !filename.includes('lodestar-app-element'),
 }
 
 module.exports = override(
@@ -26,6 +25,14 @@ module.exports = override(
     },
   }),
   (config, env) => {
+    // Include relative imports inside element so every consumer shares one auth context.
+    config.plugins.push(
+      new webpack.NormalModuleReplacementPlugin(/AuthContext$/, resource => {
+        if (resource.request.includes('lodestar-app-element/') || resource.context.includes('lodestar-app-element')) {
+          resource.request = path.resolve(__dirname, 'src/contexts/AuthContext.tsx')
+        }
+      }),
+    )
     const isDev = env === 'development' || process.env.NODE_ENV === 'development'
     if (isDev) {
       config = rewireReactHotLoader(config, 'development')
@@ -41,10 +48,7 @@ module.exports = override(
             ...rule.options,
             cacheDirectory: true,
             compact: true,
-            plugins: [
-              ['babel-plugin-react-compiler', ReactCompilerConfig],
-              ...(rule.options.plugins || []),
-            ],
+            plugins: [['babel-plugin-react-compiler', ReactCompilerConfig], ...(rule.options.plugins || [])],
           }
           if (Array.isArray(rule.include)) {
             rule.include.push(path.resolve(__dirname, 'node_modules/lodestar-app-element/src'))

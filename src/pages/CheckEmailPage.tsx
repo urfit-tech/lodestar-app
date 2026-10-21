@@ -2,13 +2,14 @@ import { Icon } from '@chakra-ui/icons'
 import { Button, message } from 'antd'
 import axios from 'axios'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
-import { StringParam, useQueryParam } from 'use-query-params'
+import { NumberParam, StringParam, useQueryParam } from 'use-query-params'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import { handleError } from '../helpers'
-import { codeMessages, commonMessages, usersMessages } from '../helpers/translation'
+import { formatAuthError, readAuthResponse } from '../helpers/authResponse'
+import { commonMessages, usersMessages } from '../helpers/translation'
+import { authCooldownKey, useAuthCooldown } from '../hooks/authCooldown'
 import { ReactComponent as CheckEmailIcon } from '../images/check-email.svg'
 
 const StyledContainer = styled.div`
@@ -30,38 +31,35 @@ const CheckEmailPage: React.FC = () => {
   const { formatMessage } = useIntl()
   const [email] = useQueryParam('email', StringParam)
   const [type] = useQueryParam('type', StringParam)
+  const [retryAfter] = useQueryParam('retryAfter', NumberParam)
+  const [requestedAt] = useQueryParam('requestedAt', NumberParam)
+  const [openedAt] = useState(Date.now)
   const [loading, setLoading] = useState(false)
-  const resendTimerRef = useRef<ReturnType<typeof setTimeout>>()
+  const { remaining, start } = useAuthCooldown(
+    authCooldownKey(appId, 'reset', email || ''),
+    type === 'reset-password' ? readAuthResponse({ retryAfter }).retryAfter || 60 : 0,
+    type === 'reset-password' && requestedAt && requestedAt > 0 && requestedAt <= openedAt ? requestedAt : 0,
+  )
 
-  useEffect(() => {
-    return () => {
-      if (resendTimerRef.current) clearTimeout(resendTimerRef.current)
-    }
-  }, [])
-
-  const handleResendEmail = () => {
+  const handleResendEmail = async () => {
+    if (!email || loading || remaining) return
     setLoading(true)
-    if (!email) {
-      if (resendTimerRef.current) clearTimeout(resendTimerRef.current)
-      resendTimerRef.current = setTimeout(() => {
-        setLoading(false)
-      }, 3000)
-      return
-    }
-    axios
-      .post(`${process.env.REACT_APP_API_BASE_ROOT}/auth/forgot-password`, {
+    try {
+      const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_ROOT}/auth/forgot-password`, {
         appId,
         account: email,
       })
-      .then(({ data: { code } }) => {
-        if (code === 'SUCCESS') {
-          message.success(formatMessage(usersMessages.messages.resetPassword))
-        } else {
-          message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
-        }
-      })
-      .catch(handleError)
-      .finally(() => setLoading(false))
+      if (data.code !== 'SUCCESS' && data.code !== 'E_NO_MEMBER') throw data
+      const seconds = readAuthResponse(data).retryAfter || 60
+      start(seconds)
+      message.info(formatAuthError({ retryAfter: seconds }, formatMessage))
+    } catch (error) {
+      const seconds = readAuthResponse(error).retryAfter
+      if (seconds) start(seconds)
+      message.error(formatAuthError(error, formatMessage))
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -81,8 +79,10 @@ const CheckEmailPage: React.FC = () => {
 
         <StyledAction>
           <span>{formatMessage(usersMessages.content.unreceivedEmail)}</span>
-          <Button type="link" size="small" onClick={handleResendEmail} loading={loading}>
-            {formatMessage(commonMessages.button.resendEmail)}
+          <Button type="link" size="small" onClick={handleResendEmail} loading={loading} disabled={remaining > 0}>
+            {remaining > 0
+              ? formatAuthError({ retryAfter: remaining }, formatMessage)
+              : formatMessage(commonMessages.button.resendEmail)}
           </Button>
         </StyledAction>
       </StyledContainer>
