@@ -1,13 +1,79 @@
 import { Skeleton } from '@chakra-ui/skeleton'
 import { first, last } from 'lodash'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { IconType } from 'react-icons'
+import { MdForward10, MdForward30, MdReplay10, MdReplay30 } from 'react-icons/md'
+import { defineMessages, useIntl } from 'react-intl'
+import styled from 'styled-components'
 import videojs, { VideoJsPlayer, VideoJsPlayerOptions } from 'video.js'
 import 'video.js/dist/video-js.min.css'
 import 'videojs-contrib-quality-levels'
 import 'videojs-hls-quality-selector'
 import LocaleContext from '../../contexts/LocaleContext'
 import { isIOS, isMobile } from '../../helpers'
+
+const messages = defineMessages({
+  skipBackward: { id: 'common.VideoPlayer.skipBackward', defaultMessage: '倒退 {seconds} 秒' },
+  skipForward: { id: 'common.VideoPlayer.skipForward', defaultMessage: '快轉 {seconds} 秒' },
+})
+
+// shown right after the play button, in this order
+const SKIP_BUTTONS: { seconds: number; icon: IconType }[] = [
+  { seconds: -30, icon: MdReplay30 },
+  { seconds: -10, icon: MdReplay10 },
+  { seconds: 10, icon: MdForward10 },
+  { seconds: 30, icon: MdForward30 },
+]
+
+type SkipButtonOptions = videojs.ComponentOptions & { seconds: number; label: string }
+
+const VideoJsButton = videojs.getComponent('Button')
+
+class SkipButton extends VideoJsButton {
+  constructor(player: VideoJsPlayer, options: SkipButtonOptions) {
+    super(player, options)
+    this.controlText(options.label)
+  }
+
+  buildCSSClass() {
+    const { seconds } = this.options_ as SkipButtonOptions
+    return `vjs-skip-button vjs-skip-button-${Math.abs(seconds)} ${super.buildCSSClass()}`
+  }
+
+  handleClick() {
+    const { seconds } = this.options_ as SkipButtonOptions
+    const player = this.player()
+    const duration = player.duration()
+    const targetTime = Math.max(0, player.currentTime() + seconds)
+    player.currentTime(Number.isFinite(duration) && duration > 0 ? Math.min(duration, targetTime) : targetTime)
+  }
+}
+
+videojs.registerComponent('SkipButton', SkipButton)
+
+const StyledVideoWrapper = styled.div`
+  .vjs-skip-button {
+    cursor: pointer;
+  }
+  .vjs-skip-button .vjs-icon-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  .vjs-skip-button svg {
+    width: 2.2em;
+    height: 2.2em;
+  }
+  /* narrow players already hide the time and speed controls; keep only the 10-second buttons there */
+  .video-js.vjs-layout-tiny .vjs-skip-button-30,
+  .video-js.vjs-layout-x-small .vjs-skip-button-30,
+  .video-js.vjs-layout-small .vjs-skip-button-30 {
+    display: none;
+  }
+`
 
 type VideoJsPlayerProps = {
   autoPlay?: boolean
@@ -39,6 +105,8 @@ const VideoPlayer: React.FC<VideoJsPlayerProps> = props => {
   const playerRef = useRef<VideoJsPlayer | null>(null)
   const { currentLocale } = useContext(LocaleContext)
   const { enabledModules } = useApp()
+  const { formatMessage } = useIntl()
+  const [skipIconTargets, setSkipIconTargets] = useState<{ element: Element; icon: IconType }[]>([])
   const videoOptions: VideoJsPlayerOptions = {
     html5: {
       vhs: {
@@ -157,6 +225,29 @@ const VideoPlayer: React.FC<VideoJsPlayerProps> = props => {
     }
   }
 
+  const addSkipButtons = (player: VideoJsPlayer) => {
+    const controlBar = player.getChild('ControlBar')
+    if (!controlBar) {
+      return
+    }
+    const iconTargets = SKIP_BUTTONS.map(({ seconds, icon }, index) => {
+      const button = controlBar.addChild(
+        'SkipButton',
+        {
+          seconds,
+          label: formatMessage(seconds < 0 ? messages.skipBackward : messages.skipForward, {
+            seconds: Math.abs(seconds),
+          }),
+        },
+        index + 1,
+      )
+      return { element: button.el().querySelector('.vjs-icon-placeholder'), icon }
+    })
+    setSkipIconTargets(
+      iconTargets.filter((target): target is { element: Element; icon: IconType } => target.element !== null),
+    )
+  }
+
   // Dispose the Video.js player when the functional component unmounts
   useEffect(() => {
     const player = playerRef.current
@@ -173,7 +264,7 @@ const VideoPlayer: React.FC<VideoJsPlayerProps> = props => {
   if (props.error) return <div>{props.error}</div>
 
   return (
-    <div>
+    <StyledVideoWrapper>
       <video
         controlsList="nodownload"
         width="100%"
@@ -181,6 +272,7 @@ const VideoPlayer: React.FC<VideoJsPlayerProps> = props => {
         ref={ref => {
           if (ref && !playerRef.current && Number(videoOptions.sources?.length) > 0) {
             playerRef.current = videojs(ref, videoOptions, function () {
+              addSkipButtons(this)
               this.on('loadeddata', () => {
                 setCaption(playerRef.current as VideoJsPlayer)
                 props.onLoadedData && props.onLoadedData.bind(null, this)
@@ -207,7 +299,10 @@ const VideoPlayer: React.FC<VideoJsPlayerProps> = props => {
         autoPlay={props.autoPlay}
         controls
       ></video>
-    </div>
+      {skipIconTargets.map(({ element, icon: SkipIcon }, index) =>
+        createPortal(<SkipIcon />, element, `skip-icon-${index}`),
+      )}
+    </StyledVideoWrapper>
   )
 }
 

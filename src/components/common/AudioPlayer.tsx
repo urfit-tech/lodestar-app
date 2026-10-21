@@ -31,6 +31,7 @@ import {
   TimesIcon,
 } from '../../images'
 import Responsive, { BREAK_POINT } from '../common/Responsive'
+import VolumeControl, { canControlVolume, useAudioVolume } from '../common/VolumeControl'
 import commonMessages from './translation'
 
 type AudioPlayerMode = 'loop' | 'single-loop' | 'random'
@@ -205,6 +206,7 @@ const AudioPlayer: React.FC<{
   const [loading, setLoading] = useState(true)
   const [playing, setPlaying] = useState(false)
   const [playRate, setPlayRate] = useState(Number(localStorage.getItem('audioPlayer.rate')) || 1)
+  const { volume, muted, setVolume, setMuted } = useAudioVolume()
   const [duration, setDuration] = useState(0)
   const [progress, setProgress] = useState(0)
   const [timeCodeAudioUrl, setTimeCodeAudioUrl] = useState('')
@@ -229,6 +231,13 @@ const AudioPlayer: React.FC<{
     duration > 0 && setLoading(false)
     setTimeCodeAudioUrl(`${audioUrl}#t=${new Date(lastEndedTime.current * 1000).toISOString().slice(11, 19)}`)
   }, [audioUrl, duration])
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume
+      audioRef.current.muted = muted
+    }
+  }, [volume, muted])
 
   useEffect(() => {
     localStorage.setItem('audioPlayer.rate', JSON.stringify(playRate))
@@ -277,7 +286,11 @@ const AudioPlayer: React.FC<{
                 <StyledDuration>{`${durationFormat(progress)} / ${durationFormat(duration)}`}</StyledDuration>
               </div>
             </Responsive.Desktop>
-            <div className="col-10 col-lg-4 d-flex align-items-center justify-content-center">
+            <div
+              className={`${
+                canControlVolume ? 'col-9' : 'col-10'
+              } col-lg-4 d-flex align-items-center justify-content-center`}
+            >
               {mode === 'default' && onPrev ? (
                 <StyledShiftButton type="link" variant="bar" onClick={() => onPrev?.()}>
                   <Icon as={PrevIcon} />
@@ -322,8 +335,35 @@ const AudioPlayer: React.FC<{
                 </StyledShiftButton>
               ) : null}
             </div>
-            <div className="col-1 col-lg-4 d-flex align-items-center justify-content-end">
-              <PlayRateButton variant="bar" playRate={playRate} onChange={rate => setPlayRate(rate)} />
+            <div
+              className={`${
+                canControlVolume ? 'col-2' : 'col-1'
+              } col-lg-4 d-flex align-items-center justify-content-end`}
+            >
+              <Responsive.Desktop>
+                <VolumeControl
+                  variant="bar"
+                  volume={volume}
+                  muted={muted}
+                  onVolumeChange={setVolume}
+                  onMutedChange={setMuted}
+                />
+              </Responsive.Desktop>
+              <Responsive.Default>
+                <VolumeControl
+                  variant="popover"
+                  volume={volume}
+                  muted={muted}
+                  onVolumeChange={setVolume}
+                  onMutedChange={setMuted}
+                />
+              </Responsive.Default>
+              <PlayRateButton
+                variant="bar"
+                className={canControlVolume ? 'ml-2 ml-lg-3' : undefined}
+                playRate={playRate}
+                onChange={rate => setPlayRate(rate)}
+              />
               {/* // TODO: 循環播放視情況再來進行擴充 */}
               {/* <PlayModeButton
                 variant="bar"
