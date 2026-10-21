@@ -2,6 +2,7 @@ import { useInterval } from '@chakra-ui/react'
 import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import React, { createContext, useEffect, useRef, useState } from 'react'
+import { useAudioVolume } from '../components/common/VolumeControl'
 import { usePodcastProgramContent } from '../hooks/podcast'
 import { PodcastProgramContent } from '../types/podcast'
 
@@ -19,11 +20,15 @@ type PodcastPlayerContextValue = {
   visible: boolean
   mode: PodcastPlayerMode
   rate: number
+  volume: number
+  muted: boolean
   duration: number
   progress: number
   currentPodcastProgramContent: PodcastProgramContent | null
   changePlayingState?: (state: boolean) => void
   changeRate?: (rate: number) => void
+  changeVolume?: (volume: number) => void
+  changeMuted?: (muted: boolean) => void
   changeMode?: (mode: PodcastPlayerMode) => void
   close?: () => void
   shift?: (quantity: number) => void
@@ -47,6 +52,8 @@ const defaultPodcastPlayerContext: PodcastPlayerContextValue = {
   visible: false,
   mode: (localStorage.getItem('podcast.mode') || 'loop') as PodcastPlayerMode,
   rate: Number(localStorage.getItem('podcast.rate')) || 1,
+  volume: 1,
+  muted: false,
   duration: 0,
   progress: 0,
 }
@@ -65,6 +72,7 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
   const { loadingPodcastProgram, podcastProgram } = usePodcastProgramContent(currentPodcastProgramId)
   const [playing, setPlaying] = useState(defaultPodcastPlayerContext.playing)
   const [rate, setRate] = useState(defaultPodcastPlayerContext.rate)
+  const { volume, muted, setVolume, setMuted } = useAudioVolume()
   const [duration, setDuration] = useState(0)
   // const { podcastProgramProgress, refetchPodcastProgramProgress } = usePodcastProgramProgress(currentPodcastProgramId)
   const [progress, setProgress] = useState(0)
@@ -74,6 +82,13 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
     localStorage.setItem('podcast.rate', JSON.stringify(rate))
     audioRef.current && (audioRef.current.playbackRate = rate)
   }, [rate])
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume
+      audioRef.current.muted = muted
+    }
+  }, [volume, muted])
 
   useEffect(() => {
     localStorage.setItem('podcast.playing', Number(playing).toString())
@@ -164,6 +179,8 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
           loading: loadingPodcastProgram,
           playing,
           rate,
+          volume,
+          muted,
           currentIndex,
           podcastProgramIds,
           podcastAlbumId,
@@ -178,6 +195,12 @@ export const PodcastPlayerProvider: React.FC = ({ children }) => {
           },
           changeRate: rate => {
             setRate(rate)
+          },
+          changeVolume: volume => {
+            setVolume(volume)
+          },
+          changeMuted: muted => {
+            setMuted(muted)
           },
           changeMode: mode => {
             modeRef.current = mode
