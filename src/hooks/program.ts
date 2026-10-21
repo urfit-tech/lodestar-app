@@ -598,10 +598,8 @@ export const useProgramPlansEnrollmentsAggregateList = (programPlanIds: string[]
       query GetProgramPlansEnrollmentsAggregate($programPlanIds: [uuid!]!) {
         program_plan(where: { id: { _in: $programPlanIds } }) {
           id
-          program_plan_enrollments_aggregate {
-            aggregate {
-              count
-            }
+          program_plan_enrollment_count {
+            enrollment_count
           }
         }
       }
@@ -614,7 +612,7 @@ export const useProgramPlansEnrollmentsAggregateList = (programPlanIds: string[]
   }[] =
     data?.program_plan.map(v => ({
       id: v.id,
-      enrollmentCount: v.program_plan_enrollments_aggregate.aggregate?.count || 0,
+      enrollmentCount: v.program_plan_enrollment_count?.enrollment_count || 0,
     })) || []
 
   return {
@@ -770,9 +768,10 @@ export const useProgramPlanEnrollment = (programPlanId: string) => {
   >(
     gql`
       query GET_PROGRAM_PLAN_ENROLLMENT($programPlanId: uuid!) {
-        program_plan_enrollment_aggregate(where: { program_plan_id: { _eq: $programPlanId } }) {
-          aggregate {
-            count
+        program_plan_by_pk(id: $programPlanId) {
+          id
+          program_plan_enrollment_count {
+            enrollment_count
           }
         }
       }
@@ -782,9 +781,7 @@ export const useProgramPlanEnrollment = (programPlanId: string) => {
 
   return {
     numProgramPlanEnrollments:
-      loading || error || !data || !data.program_plan_enrollment_aggregate.aggregate
-        ? 0
-        : data.program_plan_enrollment_aggregate.aggregate.count || 0,
+      loading || error || !data ? 0 : data.program_plan_by_pk?.program_plan_enrollment_count?.enrollment_count || 0,
     loadingProgramPlanEnrollments: loading,
     refetchProgramPlanEnrollments: refetch,
   }

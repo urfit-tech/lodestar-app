@@ -15,22 +15,20 @@ const ProjectPlanEnrollmentCount: React.FC<{ projectPlanId: string }> = ({ proje
     return <span>{formatMessage(productMessages.project.paragraph.noPerson)}</span>
   }
 
-  if (!data.project_plan_enrollment_aggregate.aggregate) {
-    return <span>{formatMessage(productMessages.project.paragraph.zeroPerson)}</span>
-  }
-
   return (
     <span>
-      {data.project_plan_enrollment_aggregate.aggregate.count || 0} {formatMessage(commonMessages.unit.people)}
+      {data.project_plan_by_pk?.project_plan_enrollment_count?.enrollment_count || 0}{' '}
+      {formatMessage(commonMessages.unit.people)}
     </span>
   )
 }
 
 const GET_PROJECT_PLAN_ENROLLMENT_COUNT = gql`
   query GET_PROJECT_PLAN_ENROLLMENT_COUNT($projectPlanId: uuid!) {
-    project_plan_enrollment_aggregate(where: { project_plan_id: { _eq: $projectPlanId } }) {
-      aggregate {
-        count
+    project_plan_by_pk(id: $projectPlanId) {
+      id
+      project_plan_enrollment_count {
+        enrollment_count
       }
     }
   }

@@ -54,10 +54,8 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
             sale_price
             sold_at
             discount_down_price
-            program_package_plan_enrollments_aggregate {
-              aggregate {
-                count
-              }
+            program_package_plan_enrollment_count {
+              enrollment_count
             }
           }
         }
@@ -97,7 +95,7 @@ export const useProgramPackageIntroduction = (programPackageId: string) => {
             salePrice: programPackagePlan.sale_price,
             soldAt: programPackagePlan.sold_at ? new Date(programPackagePlan.sold_at) : null,
             discountDownPrice: programPackagePlan.discount_down_price,
-            enrollmentCount: programPackagePlan.program_package_plan_enrollments_aggregate.aggregate?.count || 0,
+            enrollmentCount: programPackagePlan.program_package_plan_enrollment_count?.enrollment_count || 0,
           })),
           programs: data.program_package_by_pk.program_package_programs.map(packageProgram => ({
             id: packageProgram.program.id,
