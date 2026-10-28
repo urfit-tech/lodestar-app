@@ -80,7 +80,19 @@ const NotFoundPage: React.FC<{
   const content = (
     <>
       <Helmet>
+        <title>
+          {formatMessage(
+            isPaymentGatewayError
+              ? commonMessages.title.systemBusy
+              : variant === 'error'
+              ? commonMessages.title.error
+              : variant === 'repairing'
+              ? commonMessages.title.repairing
+              : commonMessages.title.routeError,
+          )}
+        </title>
         <meta name="robots" content="noindex" />
+        {!variant && !isPaymentGatewayError && <meta name="prerender-status-code" content="404" />}
       </Helmet>
       <StyledWrapper>
         {isPaymentGatewayError ? (
