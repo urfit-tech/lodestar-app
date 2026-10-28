@@ -1,6 +1,8 @@
 import { MultiLineTruncationMixin } from 'lodestar-app-element/src/components/common'
 import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
 import React from 'react'
+import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { Link, useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { StringParam, useQueryParam } from 'use-query-params'
@@ -10,6 +12,7 @@ import PostPreviewCover from '../components/blog/PostPreviewCover'
 import PostPreviewMeta from '../components/blog/PostPreviewMeta'
 import DefaultLayout from '../components/layout/DefaultLayout'
 import { desktopViewMixin } from '../helpers'
+import { commonMessages } from '../helpers/translation'
 import { usePostPreviewCollection } from '../hooks/blog'
 import NotFoundPage from './NotFoundPage'
 
@@ -51,6 +54,7 @@ const StyledAbstract = styled.div`
 `
 
 const BlogPostCollectionPage: React.FC = () => {
+  const { formatMessage } = useIntl()
   const history = useHistory()
   const [categories] = useQueryParam('categories', StringParam)
   const [tags] = useQueryParam('tags', StringParam)
@@ -63,6 +67,10 @@ const BlogPostCollectionPage: React.FC = () => {
 
   return (
     <DefaultLayout white>
+      <Helmet>
+        <title>{formatMessage(commonMessages.content.blog)}</title>
+        {tags != null && <meta name="robots" content="noindex, follow" />}
+      </Helmet>
       <StyledBanner>
         <div className="container">
           <StyledBannerTitle>

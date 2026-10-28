@@ -72,7 +72,7 @@ const BlogPostPageHelmet: React.FC<{ post: Post }> = ({ post }) => {
         ...post.tags.map(tag => ({ property: 'article:tag', content: tag })),
       ]}
     >
-      <link rel="canonical" href={window.location.origin + `/posts/${post.id}`} />
+      <link rel="canonical" href={window.location.origin + `/posts/${encodeURIComponent(post.codeName || post.id)}`} />
     </PageHelmet>
   )
 }
