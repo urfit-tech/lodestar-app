@@ -9,8 +9,9 @@ import styled from 'styled-components'
 import MigrationInput from '../components/common/MigrationInput'
 import { BREAK_POINT } from '../components/common/Responsive'
 import DefaultLayout from '../components/layout/DefaultLayout'
-import { handleError } from '../helpers'
-import { codeMessages, commonMessages } from '../helpers/translation'
+import { formatAuthError, readAuthResponse } from '../helpers/authResponse'
+import { commonMessages } from '../helpers/translation'
+import { authCooldownKey, useAuthCooldown } from '../hooks/authCooldown'
 
 const StyledContainer = styled.div`
   padding: 4rem 1rem;
@@ -39,9 +40,12 @@ const ForgotPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
   const { formatMessage } = useIntl()
   const history = useHistory()
   const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState('')
+  const { remaining, start } = useAuthCooldown(authCooldownKey(appId, 'reset', email))
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (loading || remaining) return
     form.validateFields((error, values) => {
       if (error) {
         return
@@ -54,14 +58,22 @@ const ForgotPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
           appId,
           account: trimedEmail,
         })
-        .then(({ data: { code } }) => {
-          if (code === 'SUCCESS') {
-            history.push(`/check-email?email=${trimedEmail}&type=forgot-password`)
+        .then(({ data }) => {
+          const { code } = data
+          if (code === 'SUCCESS' || code === 'E_NO_MEMBER') {
+            const seconds = readAuthResponse(data).retryAfter || 60
+            start(seconds)
+            message.info(formatAuthError({ retryAfter: seconds }, formatMessage))
+            history.push(`/check-email?email=${encodeURIComponent(trimedEmail)}&type=forgot-password`)
           } else {
-            message.error(formatMessage(codeMessages[code as keyof typeof codeMessages]))
+            throw data
           }
         })
-        .catch(handleError)
+        .catch(error => {
+          const seconds = readAuthResponse(error).retryAfter
+          if (seconds) start(seconds)
+          message.error(formatAuthError(error, formatMessage))
+        })
         .finally(() => setLoading(false))
     })
   }
@@ -87,14 +99,17 @@ const ForgotPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
               ],
             })(
               <MigrationInput
+                onChange={event => setEmail(event.target.value)}
                 placeholder={formatMessage(commonMessages.form.option.email)}
                 suffix={<Icon type="mail" />}
               />,
             )}
           </Form.Item>
           <Form.Item className="m-0">
-            <Button htmlType="submit" type="primary" block loading={loading}>
-              {formatMessage(commonMessages.button.confirm)}
+            <Button htmlType="submit" type="primary" block loading={loading} disabled={remaining > 0}>
+              {remaining > 0
+                ? formatAuthError({ retryAfter: remaining }, formatMessage)
+                : formatMessage(commonMessages.button.confirm)}
             </Button>
           </Form.Item>
         </Form>

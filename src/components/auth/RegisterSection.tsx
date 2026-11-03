@@ -16,7 +16,8 @@ import { v4 as uuid } from 'uuid'
 import { useCustomRenderer } from '../../contexts/CustomRendererContext'
 import hasura from '../../hasura'
 import { uploadFile } from '../../helpers'
-import { codeMessages, commonMessages } from '../../helpers/translation'
+import { formatAuthError } from '../../helpers/authResponse'
+import { commonMessages } from '../../helpers/translation'
 import { useSignUpProperty } from '../../hooks/common'
 import { GET_MEMBER_EMAIL, GET_MEMBER_USERNAME } from '../../hooks/member'
 import { AuthState } from '../../types/member'
@@ -222,21 +223,7 @@ const RegisterSection: React.FC<RegisterSectionProps> = ({ form, isBusinessMembe
           setVisible?.(false)
           setIsBusinessMember?.(false)
         } catch (error: any) {
-          const code = error.message as keyof typeof codeMessages
-          if (process.env.NODE_ENV === 'development') {
-            message.error(formatMessage(codeMessages[code]))
-          } else {
-            switch (code) {
-              case 'E_USERNAME_EXISTS':
-                message.error(formatMessage(authMessages.RegisterSection.usernameIsAlreadyRegistered))
-                break
-              case 'E_EMAIL_EXISTS':
-                message.error(formatMessage(authMessages.RegisterSection.emailIsAlreadyRegistered))
-                break
-              default:
-                message.error(formatMessage(authMessages.RegisterSection.registerFailed))
-            }
-          }
+          message.error(formatAuthError(error, formatMessage))
         } finally {
           setLoading(false)
         }
