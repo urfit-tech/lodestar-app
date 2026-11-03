@@ -121,10 +121,8 @@ export const useMemberProjectCollection = (memberId: string) => {
             is_participants_visible
             is_physical
             is_limited
-            project_plan_enrollments_aggregate {
-              aggregate {
-                count
-              }
+            project_plan_enrollment_count {
+              enrollment_count
             }
           }
           author: project_roles(where: { identity: { name: { _eq: "author" } } }) {
@@ -168,9 +166,7 @@ export const useMemberProjectCollection = (memberId: string) => {
           totalSales: project.project_sales?.total_sales,
           views: project.views,
           enrollmentCount: sum(
-            project.project_plans.map(
-              projectPlan => projectPlan.project_plan_enrollments_aggregate.aggregate?.count || 0,
-            ),
+            project.project_plans.map(projectPlan => projectPlan.project_plan_enrollment_count?.enrollment_count || 0),
           ),
           categories: project.project_categories.map(projectCategory => ({
             id: projectCategory.category.id,
@@ -246,10 +242,8 @@ export const useProject = (projectId: string) => {
             project_plan_inventory_status {
               buyable_quantity
             }
-            project_plan_enrollments_aggregate {
-              aggregate {
-                count
-              }
+            project_plan_enrollment_count {
+              enrollment_count
             }
           }
         }
@@ -289,7 +283,7 @@ export const useProject = (projectId: string) => {
           totalSales: data.project_by_pk.project_sales?.total_sales || 0,
           enrollmentCount: sum(
             data.project_by_pk.project_plans.map(
-              projectPlan => projectPlan.project_plan_enrollments_aggregate.aggregate?.count || 0,
+              projectPlan => projectPlan.project_plan_enrollment_count?.enrollment_count || 0,
             ),
           ),
 
@@ -327,7 +321,7 @@ export const useProject = (projectId: string) => {
                 : false,
             isEnrolled: enrolledProjectPlanIds.includes(projectPlan.id),
             buyableQuantity: projectPlan.project_plan_inventory_status?.buyable_quantity ?? null,
-            projectPlanEnrollmentCount: projectPlan.project_plan_enrollments_aggregate.aggregate?.count || 0,
+            projectPlanEnrollmentCount: projectPlan.project_plan_enrollment_count?.enrollment_count || 0,
           })),
         }
 
@@ -385,10 +379,8 @@ export const useProjectIntroCollection = (filter?: { categoryId?: string }) => {
             is_participants_visible
             is_physical
             is_limited
-            project_plan_enrollments_aggregate {
-              aggregate {
-                count
-              }
+            project_plan_enrollment_count {
+              enrollment_count
             }
           }
           project_categories {
@@ -425,9 +417,7 @@ export const useProjectIntroCollection = (filter?: { categoryId?: string }) => {
           isCountdownTimerVisible: project.is_countdown_timer_visible,
           totalSales: project.project_sales?.total_sales || 0,
           enrollmentCount: sum(
-            project.project_plans.map(
-              projectPlan => projectPlan.project_plan_enrollments_aggregate.aggregate?.count || 0,
-            ),
+            project.project_plans.map(projectPlan => projectPlan.project_plan_enrollment_count?.enrollment_count || 0),
           ),
           categories: project.project_categories.map(projectCategory => ({
             id: projectCategory.category.id,

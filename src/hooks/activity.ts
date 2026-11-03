@@ -357,10 +357,8 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
                 title
               }
             }
-            activity_ticket_enrollments_aggregate {
-              aggregate {
-                count
-              }
+            activity_ticket_enrollment_count {
+              enrollment_count
             }
             activity_ticket_enrollments(where: { member_id: { _eq: $memberId } }) {
               order_log_id
@@ -426,7 +424,7 @@ export const useActivity = ({ activityId, memberId }: { activityId: string; memb
             type: v.activity_session_type as ActivitySession['type'],
             title: v.activity_session.title,
           })),
-          participants: v.activity_ticket_enrollments_aggregate.aggregate?.count || 0,
+          participants: v.activity_ticket_enrollment_count?.enrollment_count || 0,
           enrollments: v.activity_ticket_enrollments.map(v => ({
             orderId: v.order_log_id || '',
             orderProductId: v.order_product_id,
