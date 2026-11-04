@@ -1,0 +1,44 @@
+[
+  {
+    "identity": "anonymous",
+    "publicStatus": 200,
+    "publicKeys": [
+      "holderName",
+      "certificateTitle",
+      "deliveredAt",
+      "expiredAt",
+      "number"
+    ],
+    "directOwnerFilterRows": 0,
+    "privateNoteReturned": false,
+    "privateEmailReturned": false
+  },
+  {
+    "identity": "qa-owner",
+    "publicStatus": 200,
+    "publicKeys": [
+      "holderName",
+      "certificateTitle",
+      "deliveredAt",
+      "expiredAt",
+      "number"
+    ],
+    "directOwnerFilterRows": 1,
+    "privateNoteReturned": true,
+    "privateEmailReturned": true
+  },
+  {
+    "identity": "qa-other",
+    "publicStatus": 200,
+    "publicKeys": [
+      "holderName",
+      "certificateTitle",
+      "deliveredAt",
+      "expiredAt",
+      "number"
+    ],
+    "directOwnerFilterRows": 0,
+    "privateNoteReturned": false,
+    "privateEmailReturned": false
+  }
+]
