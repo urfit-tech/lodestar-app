@@ -58,16 +58,12 @@ const programFieldsFragment = gql`
       ended_at
       is_participants_visible
       published_at
-      program_plan_enrollments_aggregate {
-        aggregate {
-          count
-        }
+      program_plan_enrollment_count {
+        enrollment_count
       }
     }
-    program_enrollments_aggregate {
-      aggregate {
-        count
-      }
+    program_enrollment_count {
+      enrollment_count
     }
     program_content_sections {
       program_contents {
@@ -182,11 +178,9 @@ const useLatestPrograms: () => {
           ),
         ),
         enrollmentCount:
-          (program.program_enrollments_aggregate.aggregate?.count || 0) +
+          (program.program_enrollment_count?.enrollment_count || 0) +
           sum(
-            program.program_plans.map(
-              programPlan => programPlan.program_plan_enrollments_aggregate.aggregate?.count || 0,
-            ),
+            program.program_plans.map(programPlan => programPlan.program_plan_enrollment_count?.enrollment_count || 0),
           ),
         roles: program.program_roles.map(programRole => ({
           id: programRole.id,
@@ -284,11 +278,9 @@ const useAffordablePrograms: () => {
           ),
         ),
         enrollmentCount:
-          (program.program_enrollments_aggregate.aggregate?.count || 0) +
+          (program.program_enrollment_count?.enrollment_count || 0) +
           sum(
-            program.program_plans.map(
-              programPlan => programPlan.program_plan_enrollments_aggregate.aggregate?.count || 0,
-            ),
+            program.program_plans.map(programPlan => programPlan.program_plan_enrollment_count?.enrollment_count || 0),
           ),
         roles: [],
         plans: program.program_plans.map(programPlan => ({
@@ -367,11 +359,9 @@ const useHottestTagPrograms: () => {
           ),
         ),
         enrollmentCount:
-          (program.program_enrollments_aggregate.aggregate?.count || 0) +
+          (program.program_enrollment_count?.enrollment_count || 0) +
           sum(
-            program.program_plans.map(
-              programPlan => programPlan.program_plan_enrollments_aggregate.aggregate?.count || 0,
-            ),
+            program.program_plans.map(programPlan => programPlan.program_plan_enrollment_count?.enrollment_count || 0),
           ),
         roles: program.program_roles.map(programRole => ({
           id: programRole.id,
@@ -455,11 +445,9 @@ const useUnitCategoryPrograms: () => {
           ),
         ),
         enrollmentCount:
-          (program.program_enrollments_aggregate.aggregate?.count || 0) +
+          (program.program_enrollment_count?.enrollment_count || 0) +
           sum(
-            program.program_plans.map(
-              programPlan => programPlan.program_plan_enrollments_aggregate.aggregate?.count || 0,
-            ),
+            program.program_plans.map(programPlan => programPlan.program_plan_enrollment_count?.enrollment_count || 0),
           ),
         roles: program.program_roles.map(programRole => ({
           id: programRole.id,
@@ -543,11 +531,9 @@ const useSystematicCategoryPrograms: () => {
           ),
         ),
         enrollmentCount:
-          (program.program_enrollments_aggregate.aggregate?.count || 0) +
+          (program.program_enrollment_count?.enrollment_count || 0) +
           sum(
-            program.program_plans.map(
-              programPlan => programPlan.program_plan_enrollments_aggregate.aggregate?.count || 0,
-            ),
+            program.program_plans.map(programPlan => programPlan.program_plan_enrollment_count?.enrollment_count || 0),
           ),
         roles: program.program_roles.map(programRole => ({
           id: programRole.id,
