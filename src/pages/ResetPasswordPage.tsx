@@ -43,6 +43,25 @@ const StyledTitle = styled.h1`
   letter-spacing: 0.8px;
 `
 
+// 作品標記邀請連結的 token 是後端簽發的 JWT（type: ProjectPortfolioParticipantSetPassword），payload 帶受邀 email。
+// 這裡只解出 email 當登入帳號，不驗簽；送出時 /auth/set-participant-password 由後端驗證 token。
+const getEmailFromToken = (token?: string | null): string => {
+  try {
+    const base64 = (token || '').split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+    const binary = window.atob(base64 + '='.repeat((4 - (base64.length % 4)) % 4))
+    const json = decodeURIComponent(
+      binary
+        .split('')
+        .map(char => '%' + ('00' + char.charCodeAt(0).toString(16)).slice(-2))
+        .join(''),
+    )
+    const payload = JSON.parse(json)
+    return typeof payload?.email === 'string' ? payload.email : ''
+  } catch {
+    return ''
+  }
+}
+
 const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
   const { formatMessage } = useIntl()
   const { login, authToken, currentMemberId, isAuthenticating } = useAuth()
@@ -55,10 +74,12 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
   const apolloClient = useApolloClient()
   const [loading, setLoading] = useState(false)
 
-  const { data: memberEmailData, loading: loadingMemberEmail } = useQuery<
-    hasura.GET_EMAIL_AND_NAME_BY_MEMBER_ID,
-    hasura.GET_EMAIL_AND_NAME_BY_MEMBER_IDVariables
-  >(GET_EMAIL_AND_NAME_BY_MEMBER_ID, { variables: { memberId: memberId || '' } })
+  const participantEmail = getEmailFromToken(token)
+
+  const { data: memberNameData, loading: loadingMemberName } = useQuery<
+    hasura.GET_NAME_BY_MEMBER_ID,
+    hasura.GET_NAME_BY_MEMBER_IDVariables
+  >(GET_NAME_BY_MEMBER_ID, { variables: { memberId: memberId || '' } })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -81,7 +102,7 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
               if (code === 'SUCCESS') {
                 tracking.login()
                 login({
-                  account: memberEmailData?.member_public[0].email || '',
+                  account: participantEmail,
                   password: values.password,
                 })
                   .then(
@@ -160,13 +181,13 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
     <DefaultLayout centeredBox>
       <StyledContainer>
         {isProjectPortfolioParticipant ? (
-          loadingMemberEmail ? (
+          loadingMemberName ? (
             <Spin />
           ) : (
             <>
               <StyledTitle>
                 {formatMessage(pageMessages.ResetPasswordPage.TitleFirstText, {
-                  account: memberEmailData?.member_public[0].email,
+                  account: participantEmail,
                 })}
                 <br />
                 {formatMessage(pageMessages.ResetPasswordPage.TitleSecondText)}
@@ -178,10 +199,10 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
         )}
 
         <Form onSubmit={handleSubmit}>
-          {isProjectPortfolioParticipant && memberEmailData && (
+          {isProjectPortfolioParticipant && memberNameData && (
             <Form.Item>
               {form.getFieldDecorator('name', {
-                initialValue: memberEmailData?.member_public[0].name,
+                initialValue: memberNameData?.member_public[0]?.name,
                 rules: [
                   {
                     required: true,
@@ -247,7 +268,7 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
             )}
           </Form.Item>
           <Form.Item className="m-0">
-            <Button htmlType="submit" type="primary" block loading={loading || loadingMemberEmail}>
+            <Button htmlType="submit" type="primary" block loading={loading || loadingMemberName}>
               {formatMessage(commonMessages.button.confirm)}
             </Button>
           </Form.Item>
@@ -257,11 +278,11 @@ const ResetPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
   )
 }
 
-const GET_EMAIL_AND_NAME_BY_MEMBER_ID = gql`
-  query GET_EMAIL_AND_NAME_BY_MEMBER_ID($memberId: String!) {
+// 只查姓名當表單預設值（訪客與 general-member 都可讀 name）；email 改由邀請 token 取得
+const GET_NAME_BY_MEMBER_ID = gql`
+  query GET_NAME_BY_MEMBER_ID($memberId: String!) {
     member_public(where: { id: { _eq: $memberId } }) {
       id
-      email
       name
     }
   }

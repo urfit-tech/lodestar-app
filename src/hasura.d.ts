@@ -160214,14 +160214,6 @@ export type GET_PRODUCT_SKUVariables = Exact<{
 
 export type GET_PRODUCT_SKU = { __typename?: 'query_root', product: Array<{ __typename?: 'product', id: string, type: string, target: string, sku?: string | null }> };
 
-export type SEARCH_MEMBERVariables = Exact<{
-  email: Scalars['String'];
-  appId: Scalars['String'];
-}>;
-
-
-export type SEARCH_MEMBER = { __typename?: 'query_root', member_public: Array<{ __typename?: 'member_public', id?: string | null }> };
-
 export type GET_IDENTITYVariables = Exact<{
   condition: identity_bool_exp;
 }>;
@@ -161396,12 +161388,12 @@ export type GET_PROJECT_PORTFOLIOVariables = Exact<{
 
 export type GET_PROJECT_PORTFOLIO = { __typename?: 'query_root', project_by_pk?: { __typename?: 'project', id: any, title: string, description?: string | null, cover_url?: string | null, views: any, created_at: any, creator?: { __typename?: 'member_public', id?: string | null, name?: string | null, picture_url?: string | null } | null, author: Array<{ __typename?: 'project_role', id: any, member?: { __typename?: 'member_public', id?: string | null, name?: string | null, picture_url?: string | null } | null }>, project_tags: Array<{ __typename?: 'project_tag', id: any, tag_name: string, tag?: { __typename?: 'tag', name: string, project_tags: Array<{ __typename?: 'project_tag', project?: { __typename?: 'project', id: any, type: string, published_at?: any | null, title: string, cover_url?: string | null, preview_url?: string | null, creator?: { __typename?: 'member_public', id?: string | null, name?: string | null, picture_url?: string | null } | null } | null }> } | null }>, project_roles: Array<{ __typename?: 'project_role', id: any, agreed_at?: any | null, member?: { __typename?: 'member_public', id?: string | null, name?: string | null, picture_url?: string | null } | null, identity: { __typename?: 'identity', id: any, name: string } }>, project_reactions: Array<{ __typename?: 'project_reaction', id: any, member_id: string }> } | null };
 
-export type GET_EMAIL_AND_NAME_BY_MEMBER_IDVariables = Exact<{
+export type GET_NAME_BY_MEMBER_IDVariables = Exact<{
   memberId: Scalars['String'];
 }>;
 
 
-export type GET_EMAIL_AND_NAME_BY_MEMBER_ID = { __typename?: 'query_root', member_public: Array<{ __typename?: 'member_public', id?: string | null, email?: string | null, name?: string | null }> };
+export type GET_NAME_BY_MEMBER_ID = { __typename?: 'query_root', member_public: Array<{ __typename?: 'member_public', id?: string | null, name?: string | null }> };
 
 export type GET_COIN_LOG_COLLECTIONVariables = Exact<{
   memberId: Scalars['String'];
