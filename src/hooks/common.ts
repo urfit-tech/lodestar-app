@@ -1,8 +1,8 @@
 import { ApolloClient, gql, useApolloClient, useQuery } from '@apollo/client'
-import { useApp } from 'lodestar-app-element/src/contexts/AppContext'
+import axios from 'axios'
 import { useAuth } from 'lodestar-app-element/src/contexts/AuthContext'
 import { MetaProductType } from 'lodestar-app-element/src/types/metaProduct'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import hasura from '../hasura'
 import { getProductEnrollmentFromLodestar, useDeepCompareEffect } from '../helpers'
@@ -416,22 +416,59 @@ export const GET_PRODUCT_SKU = gql`
   }
 `
 
-export const useMemberValidation = (email: string) => {
-  const { currentMemberId } = useAuth()
-  const { id: appId } = useApp()
-  const { loading, error, data, refetch } = useQuery(
-    gql`
-      query SEARCH_MEMBER($email: String!, $appId: String!) {
-        member_public(where: { email: { _eq: $email }, app_id: { _eq: $appId } }) {
-          id
-        }
-      }
-    `,
-    { variables: { email, appId } },
+// 以 email 找會員改走後端 API（限本租戶、精確比對、每人有查詢次數上限），不再直接查 member_public.email
+const MEMBER_LOOKUP_DEBOUNCE_MS = 400
+
+const lookupMembersByEmail = async (authToken: string, emails: string[]) => {
+  const { data } = await axios.post<{ code: string; result?: { members?: { id: string; email: string }[] } | null }>(
+    `${process.env.REACT_APP_API_BASE_ROOT}/member/lookup-by-email`,
+    { emails },
+    { headers: { Authorization: `Bearer ${authToken}` } },
   )
+  if (data?.code !== 'SUCCESS') {
+    throw new Error(data?.code || 'E_MEMBER_LOOKUP')
+  }
+  return data.result?.members || []
+}
+
+export const useMemberValidation = (email: string) => {
+  const { currentMemberId, authToken } = useAuth()
+  const [lookup, setLookup] = useState<{ email: string; memberId: string | null; error?: Error }>()
+  const requestSeqRef = useRef(0)
   const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$/
   const isEmailInvalid = !!email && !emailRegex.test(email)
-  const memberId: string | null = data?.member_public[0]?.id || null
+  // 空值、格式不符或未登入都不呼叫 API，直接視為查無此會員
+  const shouldLookup = !!email && !isEmailInvalid && !!authToken
+
+  const fetchMemberId = useCallback(
+    async (targetEmail: string) => {
+      if (!authToken) return
+      const seq = ++requestSeqRef.current
+      try {
+        const members = await lookupMembersByEmail(authToken, [targetEmail])
+        if (seq === requestSeqRef.current) setLookup({ email: targetEmail, memberId: members[0]?.id || null })
+      } catch (error) {
+        if (seq === requestSeqRef.current) setLookup({ email: targetEmail, memberId: null, error: error as Error })
+      }
+    },
+    [authToken],
+  )
+
+  useEffect(() => {
+    if (!shouldLookup) return
+    const timer = setTimeout(() => fetchMemberId(email), MEMBER_LOOKUP_DEBOUNCE_MS)
+    return () => {
+      clearTimeout(timer)
+      // email 改變或元件卸載後，忽略還沒回來的舊結果
+      requestSeqRef.current++
+    }
+  }, [email, shouldLookup, fetchMemberId])
+
+  const isResolved = shouldLookup && lookup?.email === email
+  const loading = shouldLookup && !isResolved
+  const error = isResolved ? lookup?.error : undefined
+  const memberId: string | null = isResolved ? lookup?.memberId || null : null
+  const refetch = () => (shouldLookup ? fetchMemberId(email) : Promise.resolve())
 
   type Status = 'success' | 'error' | 'validating' | undefined
 
