@@ -46,7 +46,8 @@ const ActivityParticipantMeta: React.FC<{ activityId: string; options?: { organi
     },
   })
 
-  const participantCount = activitiesEnrollmentAggregate?.activity_enrollment_aggregate.aggregate?.count || 0
+  const participantCount =
+    activitiesEnrollmentAggregate?.activity_ticket_enrollment_count_aggregate.aggregate?.sum?.enrollment_count || 0
   const totalSeats = activityTicketsAggregate?.activity_ticket_aggregate.aggregate?.sum?.count || 0
 
   return (
@@ -71,9 +72,11 @@ const ActivityParticipantMeta: React.FC<{ activityId: string; options?: { organi
 export default ActivityParticipantMeta
 const GetActivitiesEnrollmentAggregate = gql`
   query GetActivitiesEnrollmentAggregate($condition: activity_bool_exp!) {
-    activity_enrollment_aggregate(where: { activity: $condition }, distinct_on: order_log_id) {
+    activity_ticket_enrollment_count_aggregate(where: { activity: $condition }) {
       aggregate {
-        count
+        sum {
+          enrollment_count
+        }
       }
     }
   }

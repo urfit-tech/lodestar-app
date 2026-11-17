@@ -192,10 +192,8 @@ export const SEARCH_PRODUCT_COLLECTION = gql`
           name
         }
       }
-      activity_enrollments_aggregate {
-        aggregate {
-          count
-        }
+      activity_enrollment_count {
+        enrollment_count
       }
       activity_sessions_aggregate {
         aggregate {
@@ -289,10 +287,8 @@ export const SEARCH_PRODUCT_COLLECTION = gql`
         is_participants_visible
         is_physical
         is_limited
-        project_plan_enrollments_aggregate {
-          aggregate {
-            count
-          }
+        project_plan_enrollment_count {
+          enrollment_count
         }
       }
       author: project_roles(where: { identity: { name: { _eq: "author" } } }) {
@@ -536,7 +532,7 @@ export const useSearchProductCollection = (
         name: projectCategory.category.name,
       })),
       enrollmentCount: sum(
-        project.project_plans.map(projectPlan => projectPlan.project_plan_enrollments_aggregate.aggregate?.count || 0),
+        project.project_plans.map(projectPlan => projectPlan.project_plan_enrollment_count?.enrollment_count || 0),
       ),
       projectPlans: project.project_plans.map(project_plan => ({
         id: project_plan.id,
@@ -778,7 +774,7 @@ export const useSearchProductCollection = (
           id: activityCategory.category.id,
           name: activityCategory.category.name,
         })),
-        participantCount: activity.activity_enrollments_aggregate.aggregate?.count || 0,
+        participantCount: activity.activity_enrollment_count?.enrollment_count || 0,
         totalSeats: activity.activity_tickets_aggregate.aggregate?.sum?.count || 0,
         tickets: activity.activity_tickets_aggregate?.nodes?.map(ticket => ({
           id: ticket.id,
