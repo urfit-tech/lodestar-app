@@ -24,7 +24,6 @@ export const OWNED_MEMBER_CERTIFICATE = gql`
         period_amount
         created_at
         updated_at
-        meta_tag
         certificate_template {
           id
           template
@@ -69,7 +68,6 @@ export const useOwnedMemberCertificate = (id: string, enabled: boolean) => {
             periodType: certificate.period_type ?? null,
             periodAmount: certificate.period_amount ?? null,
             createdAt: new Date(certificate.created_at),
-            metaTag: certificate.meta_tag,
             template: certificate.certificate_template?.template || null,
             templateImage: certificate.certificate_template?.background_image || null,
           },

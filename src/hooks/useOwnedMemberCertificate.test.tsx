@@ -25,7 +25,6 @@ const row = {
     period_amount: null,
     created_at: '2026-10-01',
     updated_at: '2026-10-01',
-    meta_tag: null,
     certificate_template: {
       id: 'template',
       template: '<div>PRIVATE TEMPLATE</div>',
