@@ -1,8 +1,8 @@
 import { gql, useQuery } from '@apollo/client'
-import useSWR from 'swr'
+import { useEffect, useState } from 'react'
 import hasura from '../hasura'
 import { getSharedCertificate } from '../helpers/publicResource'
-import { Certificate, MemberCertificate } from '../types/certificate'
+import { Certificate, MemberCertificate, SharedCertificate } from '../types/certificate'
 
 export const useMemberCertificateCollection = (memberId: string) => {
   const { loading, data, error, refetch } = useQuery<
@@ -74,13 +74,23 @@ export const useMemberCertificateCollection = (memberId: string) => {
   }
 }
 
+// One request per id: no retry on error, no refetch on focus.
 export const useMemberCertificate = (memberCertificateId: string) => {
-  const { data, error, isLoading, mutate } = useSWR(
-    memberCertificateId ? ['shared-certificate', memberCertificateId] : null,
-    ([, id]) => getSharedCertificate(id),
-    { shouldRetryOnError: false, revalidateOnFocus: false },
-  )
-  return { data: data || null, error, loading: isLoading, refetch: mutate }
+  const [result, setResult] = useState<{ id: string; data: SharedCertificate | null; error: unknown }>()
+  useEffect(() => {
+    if (!memberCertificateId) return
+    let active = true
+    getSharedCertificate(memberCertificateId).then(
+      data => active && setResult({ id: memberCertificateId, data: data || null, error: null }),
+      error => active && setResult({ id: memberCertificateId, data: null, error }),
+    )
+    return () => {
+      active = false
+    }
+  }, [memberCertificateId])
+  // A result for another id is stale: report loading until this id's request settles.
+  const current = memberCertificateId && result?.id === memberCertificateId ? result : null
+  return { data: current?.data || null, error: current?.error, loading: !!memberCertificateId && !current }
 }
 
 export const useCertificate = (certificateId: string) => {

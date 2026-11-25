@@ -43,7 +43,6 @@ const certificate: MemberCertificate = {
     periodType: null,
     periodAmount: null,
     createdAt: new Date('2026-10-01'),
-    metaTag: {},
     template:
       '<div style="position: relative;"><div style="background-image: url({{backgroundImage}})"><b>{{name}}</b><span>{{number}}</span></div></div>',
     templateImage: 'https://example.com/original-background.png',
