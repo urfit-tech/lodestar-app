@@ -67,6 +67,8 @@ export type ActivityFromLodestarAPI = {
   isParticipantsVisible: boolean
   coverUrl: string | null
   publishedAt: string | null
+  // set when the activity was deleted in the admin; older lodestar-server versions don't return it
+  deletedAt?: string | null
   supportLocales: Array<string> | null
   activityTags: ActivityTag[]
   activityCategories: ActivityCategory[]

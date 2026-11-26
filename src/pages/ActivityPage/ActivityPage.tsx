@@ -94,9 +94,11 @@ const ActivityPage: React.FC = () => {
     )
   }
 
+  // a deleted activity is not found (NotFoundPage also makes prerender answer crawlers with 404)
   if (
     error ||
     !activityData ||
+    !!activityData.deletedAt ||
     (activityData?.supportLocales !== null && !activityData?.supportLocales?.some(locale => locale === currentLocale))
   ) {
     return <NotFoundPage />
