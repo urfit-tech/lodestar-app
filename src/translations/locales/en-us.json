@@ -289,6 +289,7 @@
   "checkout.label.unknownDeliveryMethod": "Unknown Delivery Method",
   "checkout.message.checkingCoins": "Checking Coins",
   "checkout.message.error.couponExist": "CouponExist cannot be created because the coupon code already exists",
+  "checkout.message.error.createOrder": "Failed to create the order. Please try again later, or contact customer service if checkout still fails.",
   "checkout.message.error.creditCard": "Incorrect credit card information",
   "checkout.message.error.discount": "Unable to update discount plan",
   "checkout.message.notEnoughCoins": "Not enough Coins",

@@ -394,7 +394,7 @@ const CheckoutBlock: React.FC<{
       if (authToken) await conversionApi(authToken, 'AddPaymentInfo').catch(error => console.log(error))
     }
 
-    const { orderId, paymentNo, payToken } = await placeOrder(
+    const placedOrder = await placeOrder(
       'perpetual',
       {
         ...invoice,
@@ -402,7 +402,21 @@ const CheckoutBlock: React.FC<{
       },
       payment,
       conversionApiData,
-    )
+    ).catch(error => {
+      console.error(error)
+      toast({
+        title: formatMessage(checkoutMessages.message.createOrderError),
+        status: 'error',
+        duration: 6000,
+        isClosable: true,
+        position: 'top',
+      })
+      return null
+    })
+    if (!placedOrder) {
+      return
+    }
+    const { orderId, paymentNo, payToken } = placedOrder
 
     await updateMemberMetadata({
       variables: {

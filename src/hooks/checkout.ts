@@ -107,7 +107,7 @@ export const useCheck = ({
     JSON.stringify(shipping),
   ])
 
-  const placeOrder = async (
+  const createOrder = async (
     paymentType: 'perpetual' | 'subscription' | 'groupBuying',
     invoice: InvoiceProps,
     payment?: PaymentProps | null,
@@ -158,6 +158,14 @@ export const useCheck = ({
       throw new Error('create order failed: ' + message)
     }
   }
+
+  // a failed order must stop the spinner, otherwise the checkout button keeps loading and the member can't retry;
+  // on success it keeps loading until the caller navigates to the payment page
+  const placeOrder = (...args: Parameters<typeof createOrder>) =>
+    createOrder(...args).catch(error => {
+      setOrderPlacing(false)
+      throw error
+    })
 
   const totalPrice =
     sum(
