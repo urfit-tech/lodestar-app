@@ -11,7 +11,7 @@ export type Certificate = {
   periodType: string | null
   periodAmount: string | null
   createdAt: Date
-  metaTag: MetaTag
+  metaTag?: MetaTag
 }
 
 export type MemberCertificate = {
