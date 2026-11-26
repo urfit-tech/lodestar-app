@@ -567,6 +567,10 @@ export const checkoutMessages = {
   message: defineMessages({
     creditCardError: { id: 'checkout.message.error.creditCard', defaultMessage: '信用卡資料錯誤' },
     discountError: { id: 'checkout.message.error.discount', defaultMessage: '無法更新折扣方案' },
+    createOrderError: {
+      id: 'checkout.message.error.createOrder',
+      defaultMessage: '訂單建立失敗，請稍後再試；若仍無法結帳，請聯繫客服',
+    },
     couponExistError: {
       id: 'checkout.message.error.couponExist',
       defaultMessage: '無法創建折扣方案，可能原因為此折扣碼已存在',
